@@ -2,7 +2,7 @@
 import * as React from "react";
 
 interface FeatureTileProps {
-  icon: React.ElementType;
+  icon: React.ElementType<{ className?: string }>;
   title: string;
   description: string;
 }
