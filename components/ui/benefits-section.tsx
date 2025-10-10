@@ -69,7 +69,7 @@ const BenefitsSection = ({
                         className="w-full h-full object-contain opacity-60"
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <IconComponent className="h-6 w-6 text-primary" />
+                        {IconComponent && <IconComponent className="h-6 w-6 text-primary" />}
                       </div>
                     </div>
                   </div>
