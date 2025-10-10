@@ -6,7 +6,7 @@ export function TrustPill({
   children,
   tone = "blue", // "blue" | "gold"
 }: { 
-  icon: React.ElementType; 
+  icon: React.ElementType<{ className?: string }>; 
   children: React.ReactNode; 
   tone?: "blue"|"gold"; 
 }) {
