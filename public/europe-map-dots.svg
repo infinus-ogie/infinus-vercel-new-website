@@ -1,0 +1,52 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Europe outline with simplified borders -->
+  <path d="M50 80 L80 60 L120 50 L160 60 L200 70 L240 80 L260 100 L250 130 L220 140 L180 135 L150 125 L120 110 L90 100 L60 90 Z" 
+        fill="#f8fafc" 
+        stroke="#e2e8f0" 
+        stroke-width="2" 
+        opacity="0.8"/>
+  
+  <!-- Background dots for texture -->
+  <circle cx="70" cy="70" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="90" cy="60" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="110" cy="55" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="130" cy="65" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="150" cy="75" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="170" cy="85" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="190" cy="95" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="210" cy="105" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="230" cy="115" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="140" cy="105" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="160" cy="115" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="180" cy="125" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="200" cy="135" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="100" cy="90" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="120" cy="100" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="80" cy="80" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  <circle cx="60" cy="85" r="1.5" fill="#cbd5e1" opacity="0.4"/>
+  
+  <!-- Highlighted European dots (larger and more prominent) -->
+  <!-- Western Europe highlights -->
+  <circle cx="70" cy="70" r="3" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="90" cy="60" r="3" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="110" cy="55" r="3" fill="#3b82f6" opacity="0.8"/>
+  
+  <!-- Central Europe highlights -->
+  <circle cx="130" cy="65" r="3" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="150" cy="75" r="3" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="170" cy="85" r="3" fill="#3b82f6" opacity="0.8"/>
+  
+  <!-- Eastern Europe highlights -->
+  <circle cx="190" cy="95" r="3" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="210" cy="105" r="3" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="230" cy="115" r="3" fill="#3b82f6" opacity="0.8"/>
+  
+  <!-- Southern Europe highlights -->
+  <circle cx="140" cy="105" r="3" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="160" cy="115" r="3" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="180" cy="125" r="3" fill="#3b82f6" opacity="0.8"/>
+  
+  <!-- Serbia region highlight (most prominent) -->
+  <circle cx="190" cy="115" r="4" fill="#1d4ed8" opacity="1"/>
+  <circle cx="200" cy="120" r="3" fill="#3b82f6" opacity="0.8"/>
+</svg>
