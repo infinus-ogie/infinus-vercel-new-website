@@ -106,7 +106,7 @@ export default function ContactPage() {
 
       {/* New Contact Design */}
       <Contact2 
-        title="Contact Our SAP Experts"
+        title="Start your SAP transformation"
         description="Ready to transform your business with SAP? Get in touch with our expert team for implementation, support, and consulting services. We're here to help you succeed."
         email="office@infinus.rs"
         address="Tresnjinog cveta 1, Belgrade, Serbia"
@@ -121,7 +121,7 @@ export default function ContactPage() {
               Ready to Get Started?
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Join hundreds of satisfied clients who have transformed their business 
+              Join satisfied clients who have transformed their business 
               with our SAP expertise. Contact us today for a free consultation.
             </p>
             
