@@ -1,0 +1,30 @@
+# Infinus Website Project Rules
+
+## Git & Repository Rules
+- **ALWAYS use infinus-ogie GitHub account** for this project
+- **NEVER use brivio or any other account** for commits/pushes
+- Repository: `infinus-ogie/infinus-vercel-new-website`
+- Branch: `main`
+- Token: Use environment variable or secure storage
+
+## Vercel Deployment Rules
+- **ALWAYS use infinus Vercel account** for deployments
+- **NEVER use brivio or any other Vercel account**
+- Project name: `infinus-vercel-new-website`
+- Team: `Infinus' projects`
+
+## Development Rules
+- Use TypeScript for all components
+- Fix TypeScript errors before pushing
+- Use `.npmrc` with `legacy-peer-deps=true` for dependency conflicts
+- Test locally before pushing to GitHub
+
+## File Management Rules
+- Large files (PDFs, videos) should use Vercel Blob, not Git
+- Keep repository under 1GB
+- Use proper .gitignore for node_modules, .next, etc.
+
+## Communication Rules
+- Always remind user to use infinus accounts
+- Never suggest using brivio or other accounts
+- Confirm account usage before any Git/Vercel operations
