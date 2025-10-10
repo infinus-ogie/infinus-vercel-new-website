@@ -64,7 +64,7 @@ const BenefitsSection = ({
                   <div className="flex justify-center mb-4 relative">
                     <div className="relative w-16 h-16">
                       <img 
-                        src="/benefits-from-working-with-us-images/europe.png" 
+                        src="/benefits-from-working-with-us-images/europe-6.png" 
                         alt="Europe map" 
                         className="w-full h-full object-contain opacity-60"
                       />

@@ -1,5 +1,5 @@
 import { NavBarDemo } from "@/components/ui/navbar-demo"
-import { Footer7 } from "@/components/ui/footer-7"
+import Footer from "@/components/ui/footer"
 
 export default function SiteLayout({
   children,
@@ -12,7 +12,7 @@ export default function SiteLayout({
       <main className="flex-1">
         {children}
       </main>
-      <Footer7 />
+      <Footer />
     </div>
   )
 }

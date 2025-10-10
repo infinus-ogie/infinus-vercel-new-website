@@ -38,7 +38,7 @@ import { FaqSection } from "@/components/ui/Faq";
 import { ResourceList } from "@/components/ui/ResourceList";
 import ProServicesHero from "@/components/sections/growth/ProServicesHero";
 import { NavBarDemo } from "@/components/ui/navbar-demo";
-import { Footer7 } from "@/components/ui/footer-7";
+import Footer from "@/components/ui/footer";
 import { StatCard } from "@/components/ui/StatCard";
 import { FeatureTile } from "@/components/ui/FeatureTile";
 import { StatPills } from "@/components/ui/StatPills";
@@ -218,7 +218,7 @@ export default function ProfessionalServicesPage() {
         <ProServicesHero
           title="GROW with SAP:"
           subtitle="Inovacije za Professional Services kompanije"
-          description="ERP rešenje za rast, agilnost i profitabilnost. Profesionalne usluge su pod pritiskom: vrhunsko korisničko iskustvo, privlačenje i zadržavanje talenata i brze tehnološke promene. Kako uskladiti ljude i procese u jednom fleksibilnom sistemu koji omogućava profitabilan i održiv rast?"
+          description="ERP rešenje za rast, agilnost i profitabilnost. Uskladite ljude, procese i projekte u jednom fleksibilnom sistemu."
           badge={{ label: "PROGRAM", text: "GROW with SAP" }}
           ctas={[
             { text: "Preuzmite materijale", href: "#downloads", primary: true }
@@ -447,26 +447,15 @@ export default function ProfessionalServicesPage() {
               Zakažite kratak poziv i proverite kako SAP Cloud ERP može da podrži vaš rast.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
                 href="/contact"
-                onClick={() => window.gtag?.('event','cta_click',{cta:'schedule_call', page:'professional-services'})}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#2F62D9] hover:bg-[#2857c7] active:translate-y-px
-                           px-8 py-4 text-white text-lg font-semibold shadow-sm focus-visible:outline-none
-                           focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#2F62D9] min-h-[56px]"
+                onClick={() => window.gtag?.('event','cta_click',{cta:'send_inquiry', page:'professional-services'})}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2F62D9] hover:bg-[#2857c7] active:translate-y-px
+                           px-6 py-3 text-white text-base font-semibold shadow-sm focus-visible:outline-none
+                           focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#2F62D9] min-h-[48px]"
               >
-                <Calendar className="h-5 w-5 opacity-90" />
-                Zakažite kratak poziv
-              </a>
-
-              <a
-                href="/contact"
-                onClick={() => window.gtag?.('event','cta_click',{cta:'send_message', page:'professional-services'})}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-300
-                           px-8 py-4 text-lg font-semibold text-slate-900 hover:bg-slate-50 active:translate-y-px
-                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-600 min-h-[56px]"
-              >
-                <MessageCircle className="h-5 w-5 opacity-90" />
+                <MessageCircle className="h-4 w-4 opacity-90" />
                 Pošaljite upit
               </a>
             </div>
@@ -492,7 +481,7 @@ export default function ProfessionalServicesPage() {
         </Section>
 
       </main>
-      <Footer7 />
+      <Footer />
     </div>
   );
 }

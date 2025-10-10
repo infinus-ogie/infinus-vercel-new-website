@@ -2,6 +2,8 @@ import Script from "next/script"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
 import { 
   generatePageJsonLd, 
   getCurrentDate, 
@@ -11,6 +13,7 @@ import {
 } from "@/lib/jsonld"
 import { generatePageMetadata } from "@/lib/seo"
 import { getBreadcrumbs } from "@/lib/breadcrumbs"
+import { Mail, FileText } from "lucide-react"
 
 // SEO Metadata
 export const metadata = generatePageMetadata(
@@ -44,6 +47,8 @@ const jsonLd = generatePageJsonLd({
 })
 
 export default function PrivacyPage() {
+  const lastUpdated = new Date().toLocaleDateString()
+  
   return (
     <>
       {/* JSON-LD Script */}
@@ -55,130 +60,174 @@ export default function PrivacyPage() {
         }}
       />
 
-      {/* Breadcrumbs */}
-      <Section surface="surface-1">
-        <Container>
-          <Breadcrumbs items={getBreadcrumbs("/privacy")} />
-        </Container>
-      </Section>
 
       {/* Content */}
-      <Section>
+      <Section className="pt-32">
         <Container>
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Privacy Policy
-            </h1>
-            <p className="text-lg text-muted-foreground mb-8">
-              Last updated: {new Date().toLocaleDateString()}
-            </p>
-            
-            <div className="prose prose-lg max-w-none">
-              <h2>Introduction</h2>
-              <p>
-                Infinus ("we," "our," or "us") is committed to protecting your privacy. 
-                This Privacy Policy explains how we collect, use, disclose, and safeguard 
-                your information when you visit our website or use our services.
-              </p>
+          <div className="max-w-7xl mx-auto" lang="en">
+            {/* Header */}
+            <div className="mb-12">
+              <h1 className="text-5xl md:text-6xl font-bold mb-4 leading-tight">
+                Privacy Policy
+              </h1>
+              <div className="flex items-center gap-4 mb-6">
+                <Badge variant="secondary" className="text-sm">
+                  Last updated: {lastUpdated}
+                </Badge>
+              </div>
+            </div>
 
-              <h2>Information We Collect</h2>
-              <h3>Personal Information</h3>
-              <p>
-                We may collect personal information that you voluntarily provide to us, including:
-              </p>
-              <ul>
-                <li>Name and contact information (email address, phone number)</li>
-                <li>Company information</li>
-                <li>Information provided through contact forms</li>
-                <li>Communication preferences</li>
-              </ul>
-
-              <h3>Automatically Collected Information</h3>
-              <p>
-                We may automatically collect certain information about your device and usage, including:
-              </p>
-              <ul>
-                <li>IP address and location data</li>
-                <li>Browser type and version</li>
-                <li>Pages visited and time spent on our website</li>
-                <li>Referring website information</li>
-              </ul>
-
-              <h2>How We Use Your Information</h2>
-              <p>We use the information we collect to:</p>
-              <ul>
-                <li>Provide and improve our services</li>
-                <li>Respond to your inquiries and requests</li>
-                <li>Send you relevant information about our services</li>
-                <li>Analyze website usage and performance</li>
-                <li>Comply with legal obligations</li>
-              </ul>
-
-              <h2>Information Sharing and Disclosure</h2>
-              <p>
-                We do not sell, trade, or otherwise transfer your personal information to 
-                third parties without your consent, except as described in this Privacy Policy. 
-                We may share your information in the following circumstances:
-              </p>
-              <ul>
-                <li>With service providers who assist us in operating our website and services</li>
-                <li>When required by law or to protect our rights</li>
-                <li>In connection with a business transfer or acquisition</li>
-              </ul>
-
-              <h2>Data Security</h2>
-              <p>
-                We implement appropriate technical and organizational measures to protect 
-                your personal information against unauthorized access, alteration, disclosure, 
-                or destruction. However, no method of transmission over the internet or 
-                electronic storage is 100% secure.
-              </p>
-
-              <h2>Cookies and Tracking Technologies</h2>
-              <p>
-                We use cookies and similar tracking technologies to enhance your experience 
-                on our website. You can control cookie settings through your browser preferences.
-              </p>
-
-              <h2>Your Rights</h2>
-              <p>Depending on your location, you may have the following rights regarding your personal information:</p>
-              <ul>
-                <li>Access to your personal information</li>
-                <li>Correction of inaccurate information</li>
-                <li>Deletion of your personal information</li>
-                <li>Restriction of processing</li>
-                <li>Data portability</li>
-                <li>Objection to processing</li>
-              </ul>
-
-              <h2>Third-Party Links</h2>
-              <p>
-                Our website may contain links to third-party websites. We are not responsible 
-                for the privacy practices or content of these external sites.
-              </p>
-
-              <h2>Children's Privacy</h2>
-              <p>
-                Our services are not directed to children under 13 years of age. We do not 
-                knowingly collect personal information from children under 13.
-              </p>
-
-              <h2>Changes to This Privacy Policy</h2>
-              <p>
-                We may update this Privacy Policy from time to time. We will notify you of 
-                any changes by posting the new Privacy Policy on this page and updating the 
-                "Last updated" date.
-              </p>
-
-              <h2>Contact Us</h2>
-              <p>
-                If you have any questions about this Privacy Policy or our privacy practices, 
-                please contact us at:
-              </p>
-              <ul>
-                <li>Email: office@infinus.rs</li>
-                <li>Address: Infinus d.o.o., Tresnjinog cveta 1, 11070 Belgrade, Serbia</li>
-              </ul>
+            {/* Two Column Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Left Sidebar - Table of Contents */}
+              <div className="lg:col-span-1">
+                <div className="toc sticky top-24 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 no-print">
+                  <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Table of Contents
+                  </h3>
+                  <nav className="space-y-2">
+                    <a href="#introduction" className="block text-sm text-blue-600 hover:text-blue-800">Introduction</a>
+                    <a href="#information-collection" className="block text-sm text-blue-600 hover:text-blue-800">Information Collection</a>
+                    <a href="#use-of-information" className="block text-sm text-blue-600 hover:text-blue-800">Use of Information</a>
+                    <a href="#sharing-of-information" className="block text-sm text-blue-600 hover:text-blue-800">Sharing of Information</a>
+                    <a href="#data-security" className="block text-sm text-blue-600 hover:text-blue-800">Data Security</a>
+                    <a href="#your-rights" className="block text-sm text-blue-600 hover:text-blue-800">Your Rights</a>
+                    <a href="#changes-to-privacy-policy" className="block text-sm text-blue-600 hover:text-blue-800">Changes to Privacy Policy</a>
+                    <a href="#contact-us" className="block text-sm text-blue-600 hover:text-blue-800">Contact Us</a>
+                  </nav>
+                </div>
+              </div>
+              
+              {/* Main Content */}
+              <div className="lg:col-span-3">
+                <div className="prose prose-lg max-w-none">
+                  <section id="introduction" className="mb-12">
+                    <p className="text-lg leading-relaxed text-gray-700">
+                      At Infinus, we are committed to protecting your privacy and personal information. This Privacy Policy outlines the information we collect, how it is used, and your rights to control that information.
+                    </p>
+                  </section>
+                  
+                  <section id="information-collection" className="mb-12">
+                    <h2 className="text-2xl font-bold mb-6 pb-3 border-b border-gray-200">
+                      Information Collection
+                    </h2>
+                    <p className="mb-6 text-gray-700 leading-relaxed">
+                      We collect information that you voluntarily provide to us when you:
+                    </p>
+                    <ul className="list-disc pl-6 mb-6 space-y-3 text-gray-700">
+                      <li>Sign up for our services</li>
+                      <li>Participate in our events or surveys</li>
+                      <li>Engage with us through our website or other channels</li>
+                      <li>Contact us for support or inquiries</li>
+                    </ul>
+                    <p className="text-gray-700 leading-relaxed">
+                      This information may include your name, email address, phone number, company information, and other contact details.
+                    </p>
+                  </section>
+                  
+                  <section id="use-of-information" className="mb-12">
+                    <h2 className="text-2xl font-bold mb-6 pb-3 border-b border-gray-200">
+                      Use of Information
+                    </h2>
+                    <p className="mb-6 text-gray-700 leading-relaxed">
+                      The information we collect is used to:
+                    </p>
+                    <ul className="list-disc pl-6 mb-6 space-y-3 text-gray-700">
+                      <li>Provide you with the best possible service and experience</li>
+                      <li>Send you updates and news about our services and offerings</li>
+                      <li>Customize your experience on our website</li>
+                      <li>Respond to your inquiries and provide customer support</li>
+                      <li>Improve our services and develop new offerings</li>
+                    </ul>
+                  </section>
+                  
+                  <section id="sharing-of-information" className="mb-12">
+                    <h2 className="text-2xl font-bold mb-6 pb-3 border-b border-gray-200">
+                      Sharing of Information
+                    </h2>
+                    <p className="mb-6 text-gray-700 leading-relaxed">
+                      Infinus will not sell or rent your personal information to third parties. We may share your information with:
+                    </p>
+                    <ul className="list-disc pl-6 mb-6 space-y-3 text-gray-700">
+                      <li>Service providers who help us provide our services (they are obligated to keep information confidential)</li>
+                      <li>Legal authorities when required by law or to protect our rights</li>
+                      <li>Business partners with your explicit consent</li>
+                    </ul>
+                  </section>
+                  
+                  <section id="data-security" className="mb-12">
+                    <h2 className="text-2xl font-bold mb-6 pb-3 border-b border-gray-200">
+                      Data Security
+                    </h2>
+                    <p className="mb-6 text-gray-700 leading-relaxed">
+                      Infinus takes appropriate measures to protect the security of your personal information, including:
+                    </p>
+                    <ul className="list-disc pl-6 mb-6 space-y-3 text-gray-700">
+                      <li>Encryption of sensitive data in transit and at rest</li>
+                      <li>Regular security audits and assessments</li>
+                      <li>Access controls and authentication measures</li>
+                      <li>Staff training on data protection best practices</li>
+                    </ul>
+                    <p className="text-gray-700 leading-relaxed">
+                      However, no method of transmission over the internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your personal information, we cannot guarantee its absolute security.
+                    </p>
+                  </section>
+                  
+                  <section id="your-rights" className="mb-12">
+                    <h2 className="text-2xl font-bold mb-6 pb-3 border-b border-gray-200">
+                      Your Rights
+                    </h2>
+                    <p className="mb-6 text-gray-700 leading-relaxed">
+                      You have the following rights regarding your personal information:
+                    </p>
+                    <ul className="list-disc pl-6 mb-6 space-y-3 text-gray-700">
+                      <li>Access your personal information we hold about you</li>
+                      <li>Update or correct inaccurate information</li>
+                      <li>Request deletion of your information</li>
+                      <li>Object to processing of your information</li>
+                      <li>Request data portability</li>
+                    </ul>
+                    <p className="text-gray-700 leading-relaxed">
+                      You can exercise these rights by contacting us at the address provided below.
+                    </p>
+                  </section>
+                  
+                  <section id="changes-to-privacy-policy" className="mb-12">
+                    <h2 className="text-2xl font-bold mb-6 pb-3 border-b border-gray-200">
+                      Changes to Privacy Policy
+                    </h2>
+                    <p className="text-gray-700 leading-relaxed">
+                      Infinus may change this Privacy Policy from time to time, so please review it periodically. If we make any material changes, we will notify you by email or through a notice on our website.
+                    </p>
+                  </section>
+                  
+                  <section id="contact-us" className="print-break">
+                    <h2 className="text-2xl font-bold mb-6 pb-3 border-b border-gray-200">
+                      Contact Us
+                    </h2>
+                    <Card className="contact-card border-2 border-blue-100 bg-blue-50/50">
+                      <CardContent className="p-6">
+                        <div className="flex items-start gap-4">
+                          <Mail className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
+                          <div>
+                            <h3 className="font-semibold text-lg mb-2">Privacy Questions?</h3>
+                            <p className="text-gray-700 mb-3 leading-relaxed">
+                              If you have any questions about this Privacy Policy or the information we collect, please contact us:
+                            </p>
+                            <a 
+                              href="mailto:office@infinus.rs" 
+                              className="text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                              office@infinus.rs
+                            </a>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </section>
+                </div>
+              </div>
             </div>
           </div>
         </Container>

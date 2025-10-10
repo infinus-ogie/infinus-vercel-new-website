@@ -319,3 +319,34 @@
 .animate-scaleUp {
   animation: scaleUp 0.3s ease-in-out forwards;
 }
+
+/* Print styles for privacy policy */
+@media print {
+  .no-print { 
+    display: none !important; 
+  }
+  .print-break { 
+    page-break-before: always; 
+  }
+  body { 
+    font-size: 12pt; 
+    line-height: 1.4; 
+  }
+  h1 { 
+    font-size: 18pt; 
+    margin-bottom: 12pt; 
+  }
+  h2 { 
+    font-size: 14pt; 
+    margin-top: 16pt; 
+    margin-bottom: 8pt; 
+  }
+  .toc { 
+    display: none; 
+  }
+  .contact-card { 
+    border: 1px solid #000; 
+    padding: 8pt; 
+    margin-top: 16pt; 
+  }
+}

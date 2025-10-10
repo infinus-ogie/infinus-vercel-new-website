@@ -2,7 +2,7 @@ import Script from "next/script"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
-import { ContactForm } from "@/components/forms/contact-form"
+import { Contact2 } from "@/components/ui/contact-2"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
   Mail, 
@@ -103,101 +103,15 @@ export default function ContactPage() {
         }}
       />
 
-      {/* Breadcrumbs */}
-      <Section surface="surface-1">
-        <Container>
-          <Breadcrumbs items={getBreadcrumbs("/contact")} />
-        </Container>
-      </Section>
 
-      {/* Hero Section */}
-      <Section surface="surface-0">
-        <Container>
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Contact Our SAP Experts
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Ready to transform your business with SAP? Get in touch with our expert team 
-              for implementation, support, and consulting services. We're here to help you succeed.
-            </p>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Contact Form & Info */}
-      <Section surface="surface-1">
-        <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Contact Form */}
-            <div className="lg:col-span-2">
-              <ContactForm />
-            </div>
-
-            {/* Contact Information */}
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
-                <p className="text-muted-foreground mb-6">
-                  We're here to help with your SAP needs. Choose the most convenient 
-                  way to reach us.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {contactInfo.map((info, index) => (
-                  <Card key={index}>
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2 rounded-lg bg-primary/10">
-                          <info.icon className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <CardTitle className="text-lg">{info.title}</CardTitle>
-                          <CardDescription>{info.description}</CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm whitespace-pre-line">{info.details}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {/* Additional Info */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <MessageSquare className="h-5 w-5" />
-                    <span>Why Choose Us?</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm">
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <span>SAP Gold Partner certification</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <span>15+ years of experience</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <span>500+ successful projects</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <span>24/7 support available</span>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </Container>
-      </Section>
+      {/* New Contact Design */}
+      <Contact2 
+        title="Contact Our SAP Experts"
+        description="Ready to transform your business with SAP? Get in touch with our expert team for implementation, support, and consulting services. We're here to help you succeed."
+        email="office@infinus.rs"
+        address="Tresnjinog cveta 1, Belgrade, Serbia"
+        web={{ label: "infinus.co", url: "https://infinus.co" }}
+      />
 
       {/* CTA Section */}
       <Section>

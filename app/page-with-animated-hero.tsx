@@ -6,7 +6,7 @@ import { Section } from "@/components/ui/section"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Header } from "@/components/layout/header"
-import { Footer7 } from "@/components/ui/footer-7"
+import Footer from "@/components/ui/footer"
 import { Hero } from "@/components/ui/animated-hero"
 import { Feature } from "@/components/ui/feature-section-with-grid"
 import { AnimatedSapExpertise } from "@/components/ui/animated-sap-expertise"
@@ -343,7 +343,7 @@ export default function HomePageWithAnimatedHero() {
           </Container>
         </Section>
       </main>
-      <Footer7 />
+      <Footer />
     </div>
   )
 }

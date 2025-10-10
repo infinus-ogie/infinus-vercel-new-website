@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Activity, ArrowRight, Files, Flower, GalleryVerticalEnd, MapPin } from 'lucide-react'
+import { Activity, ArrowRight, Files, Flower, GalleryVerticalEnd, MapPin, Layers, Rocket } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts'
 import { Card } from '@/components/ui/card'
 import * as React from "react"
@@ -44,7 +44,7 @@ export default function CombinedFeaturedSection() {
           <div className="relative mt-4">
             <div className="flex justify-center">
               <img 
-                src="/europe-map-dots.svg" 
+                src="/benefits-from-working-with-us-images/europe-6.png" 
                 alt="Europe map with dots" 
                 className="w-full max-w-md h-auto opacity-80"
               />
@@ -69,33 +69,39 @@ export default function CombinedFeaturedSection() {
         </div>
 
         {/* 3. CHART - Bottom Left */}
-        <div className="rounded-none border border-gray-200 dark:border-gray-800 bg-muted p-6 space-y-4">
+        <div className="rounded-none border border-gray-200 dark:border-gray-800 bg-muted p-6">
           <div className="flex items-center gap-2 text-base font-bold text-gray-700 dark:text-gray-300 mb-4">
             <Activity className="w-4 h-4" />
             Competitive Pricing
           </div>
-          <h3 className="text-xl font-normal text-gray-900 dark:text-white">
-            By sourcing with us, you can take advantage of cost-effective services without sacrificing quality.{" "}
+          <h3 className="text-xl font-normal text-gray-900 dark:text-white mb-20">
+            By sourcing with us, you get enterprise-grade delivery at an optimized cost.{" "}
             <span className="text-gray-500 dark:text-gray-400"></span>
           </h3>
-          <MonitoringChart />
+          <div className="mt-16">
+            <MonitoringChart />
+          </div>
         </div>
 
         {/* ✅ 4. ALL FEATURE CARDS - Bottom Right */}
         <div className="grid sm:grid-cols-2 rounded-none bg-card">
           <FeatureCard
             icon={<Files className="w-4 h-4" />}
-            image="/our-services/sap-implementation.png"
             title="Flexible Solutions"
             subtitle="We offer flexible engagement models tailored to your unique needs and challenges, whether you need short-term support or long-term solutions."
             description=""
+            largeIcon={Layers}
+            accent="blue"
+            iconPosition="20"
           />
           <FeatureCard
             icon={<Flower className="w-4 h-4" />}
-            image="/our-services/sap-support.png"
             title="Rapid Time-to-Value"
             subtitle="Fit-to-standard first, then targeted add-ons."
             description=""
+            largeIcon={Rocket}
+            accent="indigo"
+            iconPosition="40"
           />
         </div>
         </div>
@@ -104,39 +110,55 @@ export default function CombinedFeaturedSection() {
   )
 }
 
-// ----------------- Feature Card Component -------------------
-function FeatureCard({ icon, image, title, subtitle, description }: { icon: React.ReactNode, image: string, title: string, subtitle: string, description: string }) {
+// ----------------- Feature Card Component (icon-first, mobile-safe) -------------------
+function FeatureCard({
+  icon,            // mali icon pored naslova (ostaje)
+  title,
+  subtitle,
+  description,
+  largeIcon: LargeIcon, // NOVO: velika ilustracija
+  accent = "blue",      // NOVO: boja gradijenta
+  iconPosition = "0",   // NOVO: pozicija ikone u procentima od dna
+}: {
+  icon: React.ReactNode
+  title: string
+  subtitle: string
+  description: string
+  largeIcon: React.ComponentType<{ className?: string }>
+  accent?: "blue" | "indigo" | "cyan" | "purple"
+  iconPosition?: string
+}) {
+  const accents = {
+    blue:   "from-sky-400 to-blue-600",
+    indigo: "from-indigo-400 to-indigo-700",
+    cyan:   "from-cyan-400 to-blue-500",
+    purple: "from-fuchsia-400 to-purple-600",
+  } as const
+
   return (
-    <div className="relative flex flex-col gap-3 p-4 border border-gray-200 dark:border-gray-800 bg-background transition">
-      <div className="flex items-center gap-4">
-        <div>
-          <span className="text-base font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-4">
-            {icon}
-            {title}
-          </span>
-          <h3 className="text-lg font-normal text-gray-900 dark:text-white">
-            {subtitle}{" "}
-            <span className="text-gray-500 dark:text-gray-400">{description}</span>
-          </h3>
-        </div>
+    <div className="relative flex flex-col gap-3 p-4 border border-gray-200 dark:border-gray-800 bg-background">
+      {/* Tekstualni blok */}
+      <div className="flex-1 min-w-0">
+        <span className="text-base font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
+          {icon}
+          {title}
+        </span>
+        <h3 className="text-lg font-normal text-gray-900 dark:text-white">
+          {subtitle}{" "}
+          <span className="text-gray-500 dark:text-gray-400">{description}</span>
+        </h3>
       </div>
 
-      {/* Card pinned to bottom right */}
-      <Card className="absolute bottom-0 right-0 w-24 h-20 sm:w-32 sm:h-28 md:w-40 md:h-32 border-8 border-r-0 border-b-0 rounded-tl-xl rounded-br-none rounded-tr-none rounded-bl-none overflow-hidden">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className="object-cover"
-        />
-      </Card>
-
-      {/* Arrow icon on top of Card (optional) */}
-      <div className="absolute bottom-2 right-2 p-3 flex items-center gap-2 border border-gray-200 dark:border-gray-800 rounded-full hover:-rotate-45 transition z-10 bg-background">
-        <ArrowRight className="w-4 h-4 text-primary" />
+      {/* Velika ikona u donjem desnom uglu */}
+      <div
+        aria-hidden="true"
+        className="absolute right-3 grid place-items-center rounded-full bg-gradient-to-br from-blue-500 to-blue-300 
+                    w-16 h-16 md:w-20 md:h-20"
+        style={{ bottom: `${iconPosition}%` }}
+      >
+        <LargeIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
       </div>
     </div>
-
   )
 }
 
@@ -144,22 +166,22 @@ function FeatureCard({ icon, image, title, subtitle, description }: { icon: Reac
 
 // ----------------- Chart -------------------
 const chartData = [
-  { month: 'May', desktop: 56, mobile: 224 },
-  { month: 'June', desktop: 90, mobile: 300 },
-  { month: 'July', desktop: 126, mobile: 252 },
-  { month: 'Aug', desktop: 205, mobile: 410 },
-  { month: 'Sep', desktop: 200, mobile: 126 },
-  { month: 'Oct', desktop: 400, mobile: 800 },
+  { stage: 'Discovery', market: 82,  infinus: 70 },
+  { stage: 'Design',    market: 95,  infinus: 78 },
+  { stage: 'Build',     market: 120, infinus: 92 },
+  { stage: 'Test',      market: 110, infinus: 88 },
+  { stage: 'Go-live',   market: 130, infinus: 98 },
+  { stage: 'Hypercare', market: 105, infinus: 85 },
 ]
 
 const chartConfig = {
-  desktop: {
-    label: 'Infinus Dashboard (Desktop)',
-    color: '#2563eb', // Primary Blue
+  market: {
+    label: 'Typical vendor cost',
+    color: '#2563eb', // tamnija (bivši "desktop")
   },
-  mobile: {
-    label: 'Infinus App (Mobile)',
-    color: '#60a5fa', // Lighter Blue
+  infinus: {
+    label: 'Infinus optimized',
+    color: '#60a5fa', // svetlija (bivši "mobile")
   },
 } satisfies ChartConfig
 
@@ -167,23 +189,86 @@ const chartConfig = {
 function MonitoringChart() {
   return (
     <ChartContainer className="h-60 aspect-auto" config={chartConfig}>
-      <AreaChart data={chartData}>
+      <AreaChart
+        data={chartData}
+        margin={{ top: 10, right: 0, left: 0, bottom: 8 }} // malo vazduha
+      >
         <defs>
-          <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-desktop)" stopOpacity={0.8} />
-            <stop offset="55%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
+          <linearGradient id="fillMarket" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stopColor="var(--color-market)"  stopOpacity={0.8} />
+            <stop offset="55%" stopColor="var(--color-market)"  stopOpacity={0.1} />
           </linearGradient>
-          <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-mobile)" stopOpacity={0.8} />
-            <stop offset="55%" stopColor="var(--color-mobile)" stopOpacity={0.1} />
+          <linearGradient id="fillInfinus" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stopColor="var(--color-infinus)" stopOpacity={0.8} />
+            <stop offset="55%" stopColor="var(--color-infinus)" stopOpacity={0.1} />
           </linearGradient>
         </defs>
-        <XAxis hide />
+
+        {/* Čitljivija X-osa (faze) */}
+        <XAxis
+          dataKey="stage"
+          axisLine={false}
+          tickLine={false}
+          tick={{ fill: '#94a3b8', fontSize: 11 }}
+          height={20}
+        />
+
         <YAxis hide />
         <CartesianGrid vertical={false} horizontal={false} />
-        <ChartTooltip cursor={false} content={<ChartTooltipContent className="dark:bg-muted" />} />
-        <Area strokeWidth={2} dataKey="mobile" type="monotone" fill="url(#fillMobile)" stroke="var(--color-mobile)" />
-        <Area strokeWidth={2} dataKey="desktop" type="monotone" fill="url(#fillDesktop)" stroke="var(--color-desktop)" />
+
+        {/* Tooltip: Stage + ušteda u % desno */}
+        <ChartTooltip
+          cursor={false}
+          content={
+            <ChartTooltipContent
+              className="dark:bg-muted"
+              labelFormatter={(label, payload) => {
+                const row = payload?.[0]?.payload
+                if (!row) return label
+                const savings = Math.round(((row.market - row.infinus) / row.market) * 100)
+                return (
+                  <div className="flex items-center justify-between gap-4">
+                    <span>{row.stage}</span>
+                    <span className="text-emerald-600 font-medium">Save {savings}%</span>
+                  </div>
+                )
+              }}
+              formatter={(value, name, item, index, row) => {
+                // Lepše nazive u tooltipu:
+                const label =
+                  item?.dataKey === 'market' ? 'Typical vendor cost' : 'Infinus optimized'
+                // Prikaži indeks kao broj (možeš dodati "index" ako želiš)
+                return [value, label]
+              }}
+            />
+          }
+        />
+
+        {/* Serije */}
+        <Area
+          type="monotone"
+          dataKey="market"
+          stroke="var(--color-market)"
+          fill="url(#fillMarket)"
+          strokeWidth={2}
+          dot={false}
+          activeDot={{ r: 3 }}
+        />
+        <Area
+          type="monotone"
+          dataKey="infinus"
+          stroke="var(--color-infinus)"
+          fill="url(#fillInfinus)"
+          strokeWidth={2}
+          dot={false}
+          activeDot={{ r: 3 }}
+        />
+
+        {/* Legenda sa jasnim labelama */}
+        <ChartLegend
+          verticalAlign="bottom"
+          content={<ChartLegendContent className="pt-2" />}
+        />
       </AreaChart>
     </ChartContainer>
   )

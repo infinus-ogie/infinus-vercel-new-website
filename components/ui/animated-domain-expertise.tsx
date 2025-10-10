@@ -64,15 +64,12 @@ export function AnimatedDomainExpertise() {
     <div className="w-full py-20 lg:py-40">
       <div className="container mx-auto">
         <div className="flex flex-col gap-10">
-          <div className="flex gap-4 flex-col items-start">
-            <div>
-              <Badge>Domain Expertise</Badge>
-            </div>
+          <div className="flex gap-4 flex-col items-center text-center">
             <div className="flex gap-2 flex-col">
-              <h2 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular text-left">
-                Industry-Specific SAP Solutions
+              <h2 className="mb-3 text-pretty text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6 lg:max-w-3xl lg:text-5xl text-slate-900">
+                Domain Expertise
               </h2>
-              <p className="text-lg max-w-xl lg:max-w-lg leading-relaxed tracking-tight text-muted-foreground text-left">
+              <p className="mb-8 text-muted-foreground md:text-base lg:max-w-2xl lg:text-lg">
                 We deliver specialized SAP implementations and consulting services across diverse industries, ensuring your business gets the most value from your technology investments.
               </p>
             </div>
@@ -100,8 +97,8 @@ export function AnimatedDomainExpertise() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="text-xl tracking-tight mb-2">{domain.title}</h3>
-                    <p className="text-muted-foreground text-base">
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{domain.title}</h3>
+                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                       {domain.description}
                     </p>
                   </div>

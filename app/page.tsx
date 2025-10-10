@@ -9,10 +9,10 @@ import { ServiceCard } from "@/components/content/service-card"
 import ServicesSection from "./(site)/_components/ServicesSection"
 import { Cloud, Headphones, Settings, CheckCircle } from "lucide-react"
 import { NavBarDemo } from "@/components/ui/navbar-demo"
-import { Footer7 } from "@/components/ui/footer-7"
+import Footer from "@/components/ui/footer"
 import { HeroGeometric } from "@/components/ui/shape-landing-hero"
 import { Feature } from "@/components/ui/feature-section-with-grid"
-import SAPExpertiseSection from "./(site)/_components/SAPExpertiseSection"
+import { AnimatedSapExpertise } from "@/components/ui/animated-sap-expertise"
 import DomainExpertiseSection from "./(site)/_components/DomainExpertiseSection"
 import CombinedFeaturedSection from "@/components/ui/combined-featured-section"
 import AboutSection from "@/components/ui/about-section"
@@ -155,7 +155,9 @@ export default function HomePage() {
         <CombinedFeaturedSection />
 
         {/* [E] SAP Expertise Section */}
-        <SAPExpertiseSection />
+        <Section surface="surface-1" data-section="sap-expertise">
+          <AnimatedSapExpertise />
+        </Section>
 
         {/* [F] Domain Expertise Section */}
         <DomainExpertiseSection />
@@ -165,7 +167,7 @@ export default function HomePage() {
           <JoinSection />
         </Section>
       </main>
-      <Footer7 />
+      <Footer />
     </div>
   )
 }

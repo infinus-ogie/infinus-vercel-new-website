@@ -20,7 +20,7 @@ type Copy = {
 
 // Replace these with your exact About copy (1:1). Strings are placeholders.
 const defaultCopy: Copy = {
-  title: "About Us.",
+  title: "About Us",
   intro:
     "Infinus is a SAP Gold Partner focused on SAP solutions and business transformation.",
   paragraphs: [
@@ -36,13 +36,13 @@ const defaultCopy: Copy = {
     "SAP Business Technology Platform",
   ],
   ctaLabel: "Learn more",
-  ctaHref: "/about",
+  ctaHref: "/contact",
 };
 
 export default function AboutSection({ copy = defaultCopy }: { copy?: Copy }) {
   return (
     <section id="about" data-section="about" className="section section--surface-0">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-32 pb-16 md:pt-40 md:pb-24">
         <div className="grid items-start gap-10 md:grid-cols-12">
           {/* LEFT - SAP badge / visual */}
           <figure className="md:col-span-5">
@@ -60,7 +60,7 @@ export default function AboutSection({ copy = defaultCopy }: { copy?: Copy }) {
 
           {/* RIGHT - text + bullets + CTA (copy 1:1) */}
           <div className="md:col-span-7">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
+            <h2 className="mb-3 text-pretty text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6 lg:max-w-3xl lg:text-5xl text-slate-900">
               {copy.title}
             </h2>
 

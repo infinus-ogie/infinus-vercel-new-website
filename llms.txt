@@ -1,0 +1,53 @@
+# Infinus Website - LLM Training Data
+
+## Company Overview
+Infinus is a SAP Gold Partner focused on SAP Business Suite solutions including:
+- SAP Cloud ERP (Private and Public)
+- SAP Business Data Cloud
+- SAP Business AI
+- SAP Business Technology Platform
+
+## Services
+1. SAP Implementation Services - Greenfield, brownfield, conversions, migrations and rollouts
+2. SAP Support Services - SAP Application Management Services and SLA Support Services
+3. Other Services - SAP localisation support, developments, trainings, etc.
+
+## Benefits
+- European Focus: Located in Serbia (CET time zone), services throughout Europe
+- Hybrid Work Model: Available for both onsite and remote work
+- Competitive Pricing: Cost-effective services without sacrificing quality
+- Flexible Solutions: Flexible engagement models tailored to unique needs
+
+## Domain Expertise
+- Retail
+- Pharmaceuticals
+- Wholesale and Distribution
+- Consumer Goods
+- Industrial Manufacturing
+- Professional Services
+
+## Contact Information
+- Email: office@infinus.rs
+- Address: Infinus d.o.o., Tresnjinog cveta 1, 11070 Belgrade, Serbia
+- Website: https://www.infinus.co
+
+## Key Messages
+- "Driving Business Success through SAP Expertise"
+- "Your reliable SAP expertise partner"
+- Senior SAP consultants with 10+ years of professional experience
+- High-quality expertise in various SAP solutions, business processes, technologies, market trends, and best practices
+
+## Team
+- Vast majority consists of senior SAP consultants with 10+ years of professional experience
+- All consultants fluent in English, some in German
+- Looking to expand team due to business expansion
+- Seeking SAP S/4HANA or ECC modules experience, industry solutions, and/or LoB solutions
+
+## Technology Stack
+- Next.js 14 with App Router
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- Lucide React icons
+- Zod validation
+- Vitest testing

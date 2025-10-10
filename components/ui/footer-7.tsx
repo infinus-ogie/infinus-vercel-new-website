@@ -44,6 +44,7 @@ const defaultSections = [
       { name: "Professional Services", href: "/professional-services" },
       { name: "FAQ", href: "/faq" },
       { name: "Contact", href: "/contact" },
+      { name: "Privacy Policy", href: "/privacy" },
     ],
   },
   {
@@ -71,7 +72,10 @@ const defaultSocialLinks = [
   { icon: <FaLinkedin className="size-7" />, href: "#", label: "LinkedIn" },
 ];
 
-const defaultLegalLinks: Array<{ name: string; href: string }> = [];
+const defaultLegalLinks: Array<{ name: string; href: string }> = [
+  { name: "Privacy Policy", href: "/privacy" },
+  { name: "Cookie Settings", href: "#" },
+];
 
 export const Footer7 = ({
   logo = {
@@ -137,7 +141,18 @@ export const Footer7 = ({
           </div>
         </div>
         <div className="mt-8 flex flex-col justify-between gap-4 border-t py-8 text-xs font-medium text-muted-foreground md:flex-row md:items-center md:text-left">
-          <p className="order-2 lg:order-1">{copyright}</p>
+          <div className="order-2 lg:order-1 flex flex-col gap-2">
+            <p>{copyright}</p>
+            {legalLinks.length > 0 && (
+              <div className="flex gap-4">
+                {legalLinks.map((link, idx) => (
+                  <Link key={idx} href={link.href} className="hover:text-primary transition-colors">
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
           <p className="order-1 text-sm font-medium">
             Developed by <a href="https://www.brivio.co/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 transition-colors font-semibold">
               Brivio

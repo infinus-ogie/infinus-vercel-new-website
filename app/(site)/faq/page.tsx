@@ -111,7 +111,7 @@ export default function FAQPage() {
 
 
       {/* Hero Section */}
-      <Section>
+      <Section className="pt-32">
         <Container>
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
