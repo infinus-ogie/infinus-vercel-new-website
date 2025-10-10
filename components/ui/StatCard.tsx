@@ -4,7 +4,7 @@ import { useInView } from "framer-motion";
 import { CountUp } from "./CountUp";
 
 interface StatCardProps {
-  icon: React.ElementType;
+  icon: React.ElementType<{ className?: string }>;
   valueParts: { end: number; prefix?: string; suffix?: string };
   label: string;
   underline?: boolean;
