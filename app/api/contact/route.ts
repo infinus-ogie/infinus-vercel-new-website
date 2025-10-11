@@ -2,14 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { sendContactFormEmail } from '@/lib/email'
 
-// Configure for larger file uploads
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
-}
+// Note: In App Router, body parsing is handled automatically
+// File size limits are handled in the route handler logic
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -17,7 +11,8 @@ const contactFormSchema = z.object({
   phone: z.string().optional(),
   company: z.string().optional(),
   subject: z.string().min(5, "Subject must be at least 5 characters"),
-  message: z.string().min(10, "Message must be at least 10 characters")
+  message: z.string().min(10, "Message must be at least 10 characters"),
+  attachment: z.any().optional()
 })
 
 export async function POST(request: NextRequest) {
@@ -50,21 +45,22 @@ export async function POST(request: NextRequest) {
       email: formData.get('email') as string,
       phone: formData.get('phone') as string || undefined,
       subject: formData.get('subject') as string,
-      message: formData.get('message') as string
+      message: formData.get('message') as string,
+      attachment: attachment && attachment.size > 0 ? attachment : undefined
     }
     
-    // Validate the form data (without attachment)
+    // Validate the form data
     const validatedData = contactFormSchema.parse(body)
     
-    // Add attachment after validation with size check
-    if (attachment && attachment.size > 0) {
+    // Check attachment if present
+    if (validatedData.attachment && validatedData.attachment.size > 0) {
       // Check file size (max 10MB)
       const maxSize = 10 * 1024 * 1024 // 10MB
-      if (attachment.size > maxSize) {
+      if (validatedData.attachment.size > maxSize) {
         return NextResponse.json(
           { 
             success: false, 
-            message: `File size too large. Maximum allowed size is 10MB. Your file is ${(attachment.size / 1024 / 1024).toFixed(2)}MB.` 
+            message: `File size too large. Maximum allowed size is 10MB. Your file is ${(validatedData.attachment.size / 1024 / 1024).toFixed(2)}MB.` 
           },
           { status: 400 }
         )
@@ -72,7 +68,7 @@ export async function POST(request: NextRequest) {
       
       // Check file type
       const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain']
-      if (!allowedTypes.includes(attachment.type)) {
+      if (!allowedTypes.includes(validatedData.attachment.type)) {
         return NextResponse.json(
           { 
             success: false, 
@@ -81,8 +77,6 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         )
       }
-      
-      validatedData.attachment = attachment
     }
     
     // Send email notification
@@ -100,7 +94,7 @@ export async function POST(request: NextRequest) {
       const emailResult = await sendContactFormEmail(validatedData)
       
       if (!emailResult.success) {
-        console.error('Failed to send email:', emailResult.error)
+        console.error('Failed to send email:', 'error' in emailResult ? emailResult.error : 'Unknown error')
         return NextResponse.json(
           { 
             success: false, 
@@ -111,7 +105,7 @@ export async function POST(request: NextRequest) {
       }
       
       // Check if there was a warning about attachment
-      if (emailResult.warning) {
+      if ('warning' in emailResult && emailResult.warning) {
         console.log('Email sent with warning:', emailResult.warning)
         return NextResponse.json(
           { 
