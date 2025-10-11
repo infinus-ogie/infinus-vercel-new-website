@@ -92,6 +92,12 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
         xl: "0.75rem",
         "2xl": "1rem",
+        'tremor-default': '0.5rem',
+        'tremor-small': '0.375rem',
+        'tremor-full': '9999px',
+      },
+      fontSize: {
+        'tremor-label': ['0.75rem', '1rem'],
       },
       container: { 
         center: true, 

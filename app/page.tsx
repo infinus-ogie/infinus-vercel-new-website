@@ -6,15 +6,14 @@ import { Section } from "@/components/ui/section"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ServiceCard } from "@/components/content/service-card"
-import ServicesSection from "./(site)/_components/ServicesSection"
 import { Cloud, Headphones, Settings, CheckCircle } from "lucide-react"
 import { NavBarDemo } from "@/components/ui/navbar-demo"
 import Footer from "@/components/ui/footer"
 import { HeroGeometric } from "@/components/ui/shape-landing-hero"
 import { Feature } from "@/components/ui/feature-section-with-grid"
-import { AnimatedSapExpertise } from "@/components/ui/animated-sap-expertise"
+import { SapServicesSection } from "@/components/ui/sap-services-section"
+import { PartnershipBenefitsSection } from "@/components/ui/partnership-benefits-section"
 import DomainExpertiseSection from "./(site)/_components/DomainExpertiseSection"
-import CombinedFeaturedSection from "@/components/ui/combined-featured-section"
 import AboutSection from "@/components/ui/about-section"
 import { JoinSection } from "@/components/ui/join-section"
 import { 
@@ -140,23 +139,23 @@ export default function HomePage() {
         <div className="hero-dark">
           <HeroGeometric 
             badge="SAP Gold Partner"
-            title1="Business Success"
-            title2="by SAP Expertise"
+            title1="Turning SAP Expertise"
+            title2="into Business Advantage"
           />
         </div>
 
         {/* [B] About Us Section */}
         <AboutSection />
 
-        {/* [C] Our Services Section */}
-        <ServicesSection />
 
-        {/* [D] Benefits from working with us Section */}
-        <CombinedFeaturedSection />
+        {/* [D] Our SAP Services Section */}
+        <Section id="our-expertise" surface="surface-1" data-section="sap-services">
+          <SapServicesSection />
+        </Section>
 
-        {/* [E] SAP Expertise Section */}
-        <Section id="sap-expertise" surface="surface-1" data-section="sap-expertise">
-          <AnimatedSapExpertise />
+        {/* [E] Partnership Benefits Section */}
+        <Section id="partnership-benefits" surface="surface-1" data-section="partnership-benefits">
+          <PartnershipBenefitsSection />
         </Section>
 
         {/* [F] Domain Expertise Section */}

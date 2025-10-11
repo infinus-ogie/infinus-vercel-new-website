@@ -45,7 +45,7 @@ export default function DomainExpertiseSection() {
 
   return (
     <section id="domain-expertise" data-section="domain" className="section section--surface-0" aria-labelledby="domains-title">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-12 md:py-16">
         <header className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-medium tracking-wider text-slate-500 uppercase">Industries</p>
           <h2 id="domains-title" className="mt-2 text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">

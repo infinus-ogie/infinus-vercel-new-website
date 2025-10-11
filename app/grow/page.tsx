@@ -55,7 +55,7 @@ const pageData = {
 
 const breadcrumbItems = [
   { name: "Home", url: "/" },
-  { name: "Grow", url: "/grow" }
+  { name: "GROW", url: "/grow" }
 ];
 
 const articleData = {
@@ -382,7 +382,7 @@ export default function GrowPage() {
             <IndustriesScroll />
           </div>
 
-          {/* EXISTING PARAGRAPH — do not change the text */}
+          {/* EXISTING PARAGRAPH - do not change the text */}
           <p className="text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto">
             Infinus d.o.o. je SAP Gold Partner sa više od 30 sertifikovanih SAP konsultanata i brojnim regionalnim i međunarodnim referencama. Naš fokus je da pomognemo brzorastućim kompanijama da kroz SAP Cloud ERP dobiju strukturu, kontrolu i agilnost potrebnu za sledeću fazu rasta.
           </p>

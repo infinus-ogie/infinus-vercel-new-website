@@ -211,7 +211,7 @@ export function NavBar({ items, className }: NavBarProps) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   className={cn(
-                    "absolute top-full left-0 w-56 rounded-lg shadow-lg border backdrop-blur-lg z-50 mt-2",
+                    "absolute top-full left-0 w-72 rounded-lg shadow-lg border backdrop-blur-lg z-50 mt-2",
                     textColor === 'text-white/90' 
                       ? "bg-black/80 border-white/20" 
                       : "bg-white/95 border-slate-200/60"

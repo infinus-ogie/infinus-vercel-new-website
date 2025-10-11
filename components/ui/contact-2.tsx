@@ -51,6 +51,7 @@ export const Contact2 = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isValid, setIsValid] = useState(false)
+  const [warning, setWarning] = useState<string | null>(null)
 
   // Validate form on every change
   useEffect(() => {
@@ -82,19 +83,48 @@ export const Contact2 = ({
       // Validate form data
       const validatedData = contactFormSchema.parse(formData)
       
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Create FormData to handle file uploads
+      const formDataToSend = new FormData()
+      formDataToSend.append('name', validatedData.name)
+      formDataToSend.append('email', validatedData.email)
+      formDataToSend.append('subject', validatedData.subject)
+      formDataToSend.append('message', validatedData.message)
+      if (validatedData.phone) {
+        formDataToSend.append('phone', validatedData.phone)
+      }
+      if (validatedData.attachment) {
+        formDataToSend.append('attachment', validatedData.attachment)
+      }
       
-      console.log("Form submitted:", validatedData)
-      setIsSubmitted(true)
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-        attachment: null
+      // Submit to API
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        body: formDataToSend,
       })
+
+      const result = await response.json()
+
+      if (result.success) {
+        console.log("Form submitted successfully:", validatedData)
+        setIsSubmitted(true)
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+          attachment: null
+        })
+        
+        // Show warning if attachment couldn't be processed
+        if (result.warning) {
+          console.warn("Attachment warning:", result.warning)
+          setWarning(result.warning)
+        }
+      } else {
+        console.error("Form submission failed:", result.message)
+        setErrors({ general: result.message || "Failed to send message. Please try again." })
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: FormErrors = {}
@@ -104,6 +134,9 @@ export const Contact2 = ({
           }
         })
         setErrors(fieldErrors)
+      } else {
+        console.error("Error submitting form:", error)
+        setErrors({ general: "An error occurred. Please try again." })
       }
     } finally {
       setIsSubmitting(false)
@@ -120,7 +153,27 @@ export const Contact2 = ({
             <p className="text-gray-600 mb-6">
               Your message has been sent successfully. We'll get back to you soon.
             </p>
-            <Button onClick={() => setIsSubmitted(false)} variant="outline">
+            {warning && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-yellow-800">Attachment Notice</h3>
+                    <div className="mt-2 text-sm text-yellow-700">
+                      <p>Your message was sent successfully, but the attachment could not be processed. Please try sending the file separately or contact us directly.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <Button onClick={() => {
+              setIsSubmitted(false)
+              setWarning(null)
+            }} variant="outline">
               Send Another Message
             </Button>
           </div>

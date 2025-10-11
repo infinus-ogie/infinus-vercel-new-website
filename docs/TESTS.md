@@ -244,7 +244,7 @@ describe('Navigation', () => {
     expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /about/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /services/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /growth/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /grow/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /professional services/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /faq/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /contact/i })).toBeInTheDocument()

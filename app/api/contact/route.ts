@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { sendContactFormEmail } from '@/lib/email'
+
+// Configure for larger file uploads
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+}
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -12,22 +22,118 @@ const contactFormSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const formData = await request.formData()
     
-    // Validate the form data
+    // Extract form data
+    const attachment = formData.get('attachment') as File
+    console.log('Attachment received:', attachment ? {
+      name: attachment.name,
+      size: attachment.size,
+      type: attachment.type,
+      lastModified: attachment.lastModified
+    } : 'No attachment')
+    
+    // Debug attachment details
+    if (attachment && attachment.size > 0) {
+      console.log('Attachment details:', {
+        name: attachment.name,
+        size: attachment.size,
+        type: attachment.type,
+        lastModified: attachment.lastModified,
+        stream: typeof attachment.stream,
+        arrayBuffer: typeof attachment.arrayBuffer
+      })
+    }
+    
+    const body = {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string || undefined,
+      subject: formData.get('subject') as string,
+      message: formData.get('message') as string
+    }
+    
+    // Validate the form data (without attachment)
     const validatedData = contactFormSchema.parse(body)
     
-    // Here you would typically:
-    // 1. Send an email notification
-    // 2. Save to a database
-    // 3. Integrate with CRM system
-    // 4. Send confirmation email to user
+    // Add attachment after validation with size check
+    if (attachment && attachment.size > 0) {
+      // Check file size (max 10MB)
+      const maxSize = 10 * 1024 * 1024 // 10MB
+      if (attachment.size > maxSize) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            message: `File size too large. Maximum allowed size is 10MB. Your file is ${(attachment.size / 1024 / 1024).toFixed(2)}MB.` 
+          },
+          { status: 400 }
+        )
+      }
+      
+      // Check file type
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain']
+      if (!allowedTypes.includes(attachment.type)) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            message: `File type not allowed. Please upload PDF, DOC, DOCX, or TXT files only.` 
+          },
+          { status: 400 }
+        )
+      }
+      
+      validatedData.attachment = attachment
+    }
     
-    // For now, we'll just log the data and return success
-    console.log('Contact form submission:', validatedData)
+    // Send email notification
+    try {
+      console.log('Attempting to send email with data:', {
+        name: validatedData.name,
+        email: validatedData.email,
+        subject: validatedData.subject,
+        hasAttachment: !!validatedData.attachment,
+        attachmentName: validatedData.attachment?.name,
+        attachmentSize: validatedData.attachment?.size,
+        attachmentType: validatedData.attachment?.type
+      })
+      
+      const emailResult = await sendContactFormEmail(validatedData)
+      
+      if (!emailResult.success) {
+        console.error('Failed to send email:', emailResult.error)
+        return NextResponse.json(
+          { 
+            success: false, 
+            message: 'Failed to send email notification' 
+          },
+          { status: 500 }
+        )
+      }
+      
+      // Check if there was a warning about attachment
+      if (emailResult.warning) {
+        console.log('Email sent with warning:', emailResult.warning)
+        return NextResponse.json(
+          { 
+            success: true, 
+            message: 'Message sent successfully, but attachment could not be processed. Please try sending the file separately or contact us directly.',
+            warning: emailResult.warning
+          },
+          { status: 200 }
+        )
+      }
+    } catch (emailError) {
+      console.error('Error in email sending process:', emailError)
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: 'Error processing email: ' + (emailError instanceof Error ? emailError.message : 'Unknown error')
+        },
+        { status: 500 }
+      )
+    }
     
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    console.log('Contact form submission processed successfully:', validatedData)
     
     return NextResponse.json(
       { 

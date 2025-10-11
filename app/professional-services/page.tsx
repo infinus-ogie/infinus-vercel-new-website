@@ -216,9 +216,9 @@ export default function ProfessionalServicesPage() {
 
         {/* Hero Section */}
         <ProServicesHero
-          title="GROW with SAP:"
-          subtitle="Inovacije za Professional Services kompanije"
-          description="ERP rešenje za rast, agilnost i profitabilnost. Uskladite ljude, procese i projekte u jednom fleksibilnom sistemu."
+          title="SAP Cloud ERP za Professional Services kompanije"
+          subtitle=""
+          description="Upravljajte projektima, resursima, procesima i profitabilnošću uz rešenje koje razume vaš biznis. Efikasan, skalabilan i agilan ERP za firme koje prodaju znanje, vreme i usluge."
           badge={{ label: "PROGRAM", text: "GROW with SAP" }}
           ctas={[
             { text: "Preuzmite materijale", href: "#downloads", primary: true }
@@ -424,7 +424,7 @@ export default function ProfessionalServicesPage() {
               <IndustriesScroll />
             </div>
 
-            {/* EXISTING PARAGRAPH — do not change the text */}
+            {/* EXISTING PARAGRAPH - do not change the text */}
             <p className="text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto">
               Infinus d.o.o. je SAP Gold Partner sa više od 30 sertifikovanih SAP konsultanata i brojnim regionalnim i međunarodnim referencama. Naš fokus je da pomognemo profesionalnim uslužnim kompanijama da kroz SAP Cloud ERP dobiju strukturu, kontrolu i agilnost potrebnu za sledeću fazu rasta.
             </p>

@@ -5,7 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle, Upload, X } from "lucide-react";
+import { CheckCircle, Upload, X, ShieldCheck, Users2, Globe2 } from "lucide-react";
+import { StatPills } from "@/components/ui/StatPills";
+import { TrustPill } from "@/components/ui/TrustPill";
 
 // shadcn/ui components
 import { Label } from "@/components/ui/label";
@@ -54,6 +56,7 @@ export function JoinSection() {
   const [fileName, setFileName] = useState<string>("");
   const [fileSize, setFileSize] = useState<string>("");
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -77,6 +80,11 @@ export function JoinSection() {
     },
   });
 
+  // Set client-side flag to prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Capture UTM if present
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -90,19 +98,29 @@ export function JoinSection() {
   async function onSubmit(values: FormValues) {
     setSuccess(null);
 
-    // if you have an API route, post there; otherwise simulate success
     try {
-      // const formData = new FormData();
-      // Object.entries(values).forEach(([k, v]) => formData.append(k, (v as any) ?? ""));
-      // await fetch("/api/contact", { method: "POST", body: formData });
+      const response = await fetch("/api/join-team", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-      await new Promise((r) => setTimeout(r, 800)); // simulate
-      setSuccess("Thanks for your application. We'll get back to you!");
-      reset({ name: "", phone: "", email: "", linkedin: "", subject: "", message: "", utm_source: "", utm_medium: "", utm_campaign: "" });
-      setFileName("");
-      setFileSize("");
-    } catch {
-      // you can surface a toast or inline error here
+      const result = await response.json();
+
+      if (result.success) {
+        setSuccess("Thanks for your application. We'll get back to you!");
+        reset({ name: "", phone: "", email: "", linkedin: "", subject: "", message: "", utm_source: "", utm_medium: "", utm_campaign: "" });
+        setFileName("");
+        setFileSize("");
+      } else {
+        console.error("Form submission failed:", result.message);
+        // You can add error handling here, like showing a toast notification
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // You can add error handling here, like showing a toast notification
     }
   }
 
@@ -156,17 +174,20 @@ export function JoinSection() {
               </p>
               <p className="max-w-[65ch] text-slate-600 leading-relaxed">We will be glad to talk with you!</p>
             </div>
-            {/* Trust points with icons */}
-            <ul className="mt-6 space-y-3">
-              <li className="flex items-center gap-3 text-slate-600">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span>SAP Gold Partner</span>
-              </li>
-              <li className="flex items-center gap-3 text-slate-600">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span>15+ years experience</span>
-              </li>
-            </ul>
+            {/* Trust badges */}
+            <div className="mt-6">
+              <div className="flex flex-col gap-3 max-w-md">
+                {/* First row: two badges */}
+                <div className="flex gap-3">
+                  <TrustPill icon={ShieldCheck} tone="gold" variant="light">SAP Gold Partner</TrustPill>
+                  <TrustPill icon={Users2} tone="blue" variant="light">30+ experienced consultants</TrustPill>
+                </div>
+                {/* Second row: third badge aligned to the left */}
+                <div className="flex">
+                  <TrustPill icon={Globe2} tone="blue" variant="light">20+ satisfied customers</TrustPill>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* RIGHT: form card */}
@@ -188,7 +209,7 @@ export function JoinSection() {
                       aria-describedby={errors.name ? "name-error" : undefined}
                       {...register("name")}
                     />
-                    {errors.name && (
+                    {isClient && errors.name && (
                       <p id="name-error" className="mt-1 text-sm text-red-600">{errors.name.message}</p>
                     )}
                   </div>
@@ -223,7 +244,7 @@ export function JoinSection() {
                       aria-describedby={errors.email ? "email-error" : undefined}
                       {...register("email")}
                     />
-                    {errors.email && (
+                    {isClient && errors.email && (
                       <p id="email-error" className="mt-1 text-sm text-red-600">{errors.email.message}</p>
                     )}
                   </div>
@@ -240,7 +261,7 @@ export function JoinSection() {
                       aria-describedby={errors.linkedin ? "linkedin-error" : undefined}
                       {...register("linkedin")}
                     />
-                    {errors.linkedin && (
+                    {isClient && errors.linkedin && (
                       <p id="linkedin-error" className="mt-1 text-sm text-red-600">{errors.linkedin.message}</p>
                     )}
                   </div>
@@ -259,7 +280,7 @@ export function JoinSection() {
                     aria-describedby={errors.subject ? "subject-error" : undefined}
                     {...register("subject")}
                   />
-                  {errors.subject && (
+                  {isClient && errors.subject && (
                     <p id="subject-error" className="mt-1 text-sm text-red-600">{errors.subject.message}</p>
                   )}
                 </div>
@@ -277,7 +298,7 @@ export function JoinSection() {
                     aria-describedby={errors.message ? "message-error" : undefined}
                     {...register("message")}
                   />
-                  {errors.message && (
+                  {isClient && errors.message && (
                     <p id="message-error" className="mt-1 text-sm text-red-600">{errors.message.message}</p>
                   )}
                 </div>
@@ -329,7 +350,7 @@ export function JoinSection() {
                       </div>
                     )}
                   </div>
-                  {errors.file && <p className="mt-1 text-sm text-red-600">{errors.file.message as string}</p>}
+                  {isClient && errors.file && <p className="mt-1 text-sm text-red-600">{errors.file.message as string}</p>}
                 </div>
 
                 {/* UTM hidden fields */}
@@ -356,7 +377,7 @@ export function JoinSection() {
                   </p>
                 </div>
 
-                {success && (
+                {isClient && success && (
                   <div role="status" aria-live="polite" className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
                     <p className="text-sm font-medium text-green-800">{success}</p>
                   </div>

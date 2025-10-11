@@ -40,7 +40,7 @@ Home Page Sections (A-H):
 - `/faq` - FAQ page (copy from original Q&A)
 - `/contact` - Contact page (form with original fields)
 - `/privacy` - Privacy Policy (copy from original)
-- `/growth` - Placeholder page (hero + paragraph)
+- `/grow` - GROW with SAP program page (hero + materials)
 - `/professional-services` - Placeholder page (hero + paragraph)
 
 #### 5. SEO & Structured Data
@@ -70,7 +70,7 @@ Home Page Sections (A-H):
 - **Error Handling**: Proper validation feedback
 
 #### 9. Navigation
-- **Header**: Logo left, navigation right (Home, Services, About, Growth, Professional Services, FAQ, Contact)
+- **Header**: Logo left, navigation right (Home, Services, About, GROW, Professional Services, FAQ, Contact)
 - **Footer**: Company description, navigation links, contact info, copyright, privacy link
 
 #### 10. Content Sources

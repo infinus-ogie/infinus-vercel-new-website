@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, User, Briefcase, FileText, MessageCircle, HelpCircle, ChevronDown, Zap, Users, Menu, X } from 'lucide-react'
+import { Home, User, Briefcase, FileText, MessageCircle, HelpCircle, ChevronDown, Zap, Users, Menu, X, Star } from 'lucide-react'
 import { NavBar } from "@/components/ui/tubelight-navbar"
 import Link from "next/link"
 import Image from "next/image"
@@ -16,23 +16,15 @@ export function NavBarDemo() {
   const navItems = [
     { name: 'Home', url: '/', icon: <Home size={18} strokeWidth={2.5} /> },
     { name: 'About', url: '/#about', icon: <User size={18} strokeWidth={2.5} /> },
-    { name: 'Services', url: '/#services', icon: <Briefcase size={18} strokeWidth={2.5} /> },
+    { name: 'Our Expertise', url: '/#domain-expertise', icon: <Briefcase size={18} strokeWidth={2.5} /> },
+    { name: 'Benefits', url: '/#partnership-benefits', icon: <Star size={18} strokeWidth={2.5} /> },
     { 
-      name: 'Expertise', 
-      url: '#', 
-      icon: <Zap size={18} strokeWidth={2.5} />,
-      submenu: [
-        { name: 'SAP Expertise', url: '/#sap-expertise' },
-        { name: 'Domain Expertise', url: '/#domain-expertise' }
-      ]
-    },
-    { 
-      name: 'Grow with SAP', 
+      name: 'Focus Topics', 
       url: '#', 
       icon: <FileText size={18} strokeWidth={2.5} />,
       submenu: [
-        { name: 'Grow - Overview', url: '/grow' },
-        { name: 'Grow - Professional Services', url: '/professional-services' }
+        { name: 'GROW with SAP: Finance', url: '/grow' },
+        { name: 'SAP for Professional Services', url: '/professional-services' }
       ]
     },
     { name: 'Contact', url: '/contact', icon: <MessageCircle size={18} strokeWidth={2.5} /> },

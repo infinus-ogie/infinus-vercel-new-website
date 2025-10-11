@@ -166,7 +166,7 @@ export const PAGE_METADATA = {
     keywords: [...DEFAULT_KEYWORDS, 'about Infinus', 'SAP Gold Partner', 'company history']
   },
   growth: {
-    title: 'Growth Services - Business Transformation & Scaling',
+    title: 'GROW Services - Business Transformation & Scaling',
     description: 'Accelerate your business growth with our strategic consulting and digital transformation services. Scale efficiently with expert guidance.',
     keywords: [...DEFAULT_KEYWORDS, ...SERVICE_KEYWORDS.growth]
   },

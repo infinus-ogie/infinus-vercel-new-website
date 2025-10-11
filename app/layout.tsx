@@ -3,6 +3,8 @@ import { Inter, IBM_Plex_Sans } from "next/font/google"
 import "./globals.css"
 import { SITE_CONFIG } from "@/lib/jsonld"
 import { Toaster } from "sonner"
+import VendorScripts from "./_components/VendorScripts"
+import RouteChangeTracker from "./_components/RouteChangeTracker"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -102,6 +104,10 @@ export default function RootLayout({
       <body className={`${inter.variable} ${ibmPlexSans.variable} font-sans`}>
         {children}
         <Toaster position="top-right" richColors />
+        
+        {/* Vendor/marketing tags mount point */}
+        <VendorScripts />
+        <RouteChangeTracker />
       </body>
     </html>
   )

@@ -22,38 +22,33 @@ const footerConfig = {
         { label: "Tresnjinog cveta 1, 11070 Belgrade, Serbia", href: "#" },
         { label: "office@infinus.rs", href: "mailto:office@infinus.rs" },
         { label: "+381 11 123 4567", href: "tel:+381111234567" },
-        { label: "Follow Us", href: "https://www.linkedin.com/company/infinus", isExternal: true },
+        { label: "LinkedIn", href: "https://www.linkedin.com/company/infinus1/posts/?feedView=all", isExternal: true, isLinkedIn: true },
       ],
     },
     {
-      title: "Services",
+      title: "Our Expertise",
       links: [
-        { label: "SAP Implementation Services", href: "/#services" },
-        { label: "SAP Support Services", href: "/#services" },
-        { label: "Other Services", href: "/#services" },
+        { label: "SAP Advisory & Consulting", href: "/#our-expertise" },
+        { label: "SAP Implementations", href: "/#our-expertise" },
+        { label: "SAP Application Management & Support", href: "/#our-expertise" },
+        { label: "SAP Integration & Process Optimization", href: "/#our-expertise" },
+        { label: "SAP Extensions & Innovation", href: "/#our-expertise" },
       ],
     },
     {
       title: "Company",
       links: [
         { label: "About Us", href: "/#about" },
-        { label: "Grow", href: "/grow" },
-        { label: "Professional Services", href: "/professional-services" },
+        { label: "GROW with SAP: Finance", href: "/grow" },
+        { label: "SAP for Professional Services", href: "/professional-services" },
         { label: "FAQ", href: "/faq" },
         { label: "Contact", href: "/contact" },
       ],
     },
     {
-      title: "Expertise",
-      links: [
-        { label: "SAP Expertise", href: "/#sap-expertise" },
-        { label: "Domain Expertise", href: "/#domain-expertise" },
-      ],
-    },
-    {
       title: "Resources",
       links: [
-        { label: "Grow Materials", href: "/grow#downloads" },
+        { label: "GROW Materials", href: "/grow#downloads" },
         { label: "Professional Services Materials", href: "/professional-services#downloads" },
       ],
     },
@@ -93,7 +88,7 @@ export default function Footer() {
 
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
           {/* Links Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 flex-1">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-12 flex-1">
             {footerConfig.columns.map((col, idx) => (
               <div key={idx} className={col.title === "Contact Information" ? "relative" : ""}>
                 {col.title === "Contact Information" ? (
@@ -104,10 +99,19 @@ export default function Footer() {
                         <li key={i}>
                           <Link
                             href={link.href}
-                            className="text-[0.85rem] text-white/80 hover:text-blue-300 transition"
+                            className="text-[0.85rem] text-white/80 hover:text-blue-300 transition flex items-center gap-2"
                             {...(link.isExternal && { target: "_blank", rel: "noopener noreferrer" })}
                           >
-                            {link.label}
+                            {link.isLinkedIn ? (
+                              <>
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                {link.label}
+                              </>
+                            ) : (
+                              link.label
+                            )}
                           </Link>
                         </li>
                       ))}

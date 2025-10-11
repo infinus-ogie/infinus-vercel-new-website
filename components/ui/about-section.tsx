@@ -22,14 +22,12 @@ type Copy = {
 const defaultCopy: Copy = {
   title: "About Us",
   intro:
-    "Infinus is a SAP Gold Partner focused on SAP solutions and business transformation.",
+    "Infinus is SAP Gold Partner focused on SAP Business Suite solutions, with special focus on SAP Cloud ERP (Private and Public) and SAP Business AI",
   paragraphs: [
-    // TODO: paste your exact text here (keep paragraph boundaries clean)
-    "Our experienced SAP consultants bring high-quality expertise across processes, technologies, and best practices to deliver reliable outcomes.",
-    "We support organizations with proven methodologies and a modern approach to SAP Cloud and platform services.",
+    "Our experienced SAP consultants can bring high-quality expertise in various SAP solutions, business processes, technologies, industries and best practices to deliver best-in-class consulting services and solutions for your business.",
+    "The vast majority of our team consists of senior SAP consultants with 10+ years of professional experience.",
   ],
   bullets: [
-    // TODO: keep this list equal to your real bullet list (order matters)
     "SAP Cloud ERP (Private and Public)",
     "SAP Business Data Cloud",
     "SAP Business AI",

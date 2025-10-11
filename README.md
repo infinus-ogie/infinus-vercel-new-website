@@ -16,7 +16,7 @@ A modern Next.js 14 website for Infinus, a certified SAP Gold Partner providing 
 - **Home** (`/`) - Hero section, services preview, trust indicators
 - **Services** (`/services`) - Comprehensive SAP services overview
 - **About** (`/about`) - Company information and values
-- **Growth** (`/growth`) - Business transformation and scaling services
+- **GROW** (`/grow`) - Business transformation and scaling services
 - **Professional Services** (`/professional-services`) - Strategic SAP consulting
 - **FAQ** (`/faq`) - Frequently asked questions with accordion interface
 - **Contact** (`/contact`) - Contact form with validation and company information

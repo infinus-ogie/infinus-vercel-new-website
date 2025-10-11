@@ -40,7 +40,7 @@ const defaultSections = [
     title: "Company",
     links: [
       { name: "About", href: "/#about" },
-      { name: "Grow", href: "/grow" },
+      { name: "GROW", href: "/grow" },
       { name: "Professional Services", href: "/professional-services" },
       { name: "FAQ", href: "/faq" },
       { name: "Contact", href: "/contact" },
@@ -55,7 +55,7 @@ const defaultSections = [
     ],
   },
   {
-    title: "Grow Materials",
+    title: "GROW Materials",
     links: [
       { name: "CFO Insights & Finance Resources", href: "/grow#downloads" },
     ],

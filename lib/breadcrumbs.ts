@@ -21,7 +21,7 @@ export function generateBreadcrumbs(pathname: string): BreadcrumbItem[] {
   const pathMap: Record<string, string> = {
     'about': 'About',
     'services': 'Services',
-    'grow': 'Grow',
+    'grow': 'GROW',
     'professional-services': 'Professional Services',
     'faq': 'FAQ',
     'contact': 'Contact',
@@ -58,7 +58,7 @@ export const BREADCRUMB_DATA: Record<string, BreadcrumbItem[]> = {
   ],
   '/grow': [
     { name: 'Home', url: '/' },
-    { name: 'Grow', url: '/grow' }
+    { name: 'GROW', url: '/grow' }
   ],
   '/professional-services': [
     { name: 'Home', url: '/' },

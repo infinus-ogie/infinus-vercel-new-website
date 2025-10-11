@@ -5,6 +5,7 @@ import { Award, Shield, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { HeroPartnerBadge } from "./HeroPartnerBadge";
+import { TrustStrip } from "./TrustStrip";
 
 
 function ElegantShape({
@@ -185,9 +186,17 @@ function HeroGeometric({
                         animate="visible"
                     >
                         <p className="text-base sm:text-lg md:text-xl text-white/50 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
-                            Crafting exceptional digital experiences through
-                            innovative design and cutting-edge technology.
+                            Empowering companies to work smarter and grow faster
                         </p>
+                    </motion.div>
+
+                    <motion.div
+                        custom={3}
+                        variants={fadeUpVariants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <TrustStrip />
                     </motion.div>
                 </div>
             </div>
