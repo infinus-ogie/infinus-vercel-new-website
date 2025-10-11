@@ -138,7 +138,7 @@ function FeatureCard({
   return (
     <div className="relative flex flex-col gap-3 p-4 border border-gray-200 dark:border-gray-800 bg-background">
       {/* Tekstualni blok */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 pr-20 md:pr-24">
         <span className="text-base font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2 mb-3">
           {icon}
           {title}

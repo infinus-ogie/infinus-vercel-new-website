@@ -155,7 +155,7 @@ export default function HomePage() {
         <CombinedFeaturedSection />
 
         {/* [E] SAP Expertise Section */}
-        <Section surface="surface-1" data-section="sap-expertise">
+        <Section id="sap-expertise" surface="surface-1" data-section="sap-expertise">
           <AnimatedSapExpertise />
         </Section>
 

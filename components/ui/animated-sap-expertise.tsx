@@ -49,13 +49,13 @@ export function AnimatedSapExpertise() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto pb-8">
             {sapExpertiseItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <MagicCard
                   key={item.id}
-                  className="cursor-pointer flex-col items-start justify-start p-6 h-48"
+                  className="cursor-pointer flex-col items-start justify-start p-6 min-h-48 h-auto"
                   gradientColor="#3B82F6" // Jedna plavkasta boja za sve kartice
                   gradientSize={400}
                   gradientOpacity={0.08} // Mnogo blaža, jedva vidljiva
