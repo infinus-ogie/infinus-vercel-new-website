@@ -37,8 +37,8 @@ const footerConfig = {
       title: "Company",
       links: [
         { label: "About Us", href: "/#about" },
-        { label: "Professional Services", href: "/professional-services" },
         { label: "Grow", href: "/grow" },
+        { label: "Professional Services", href: "/professional-services" },
         { label: "FAQ", href: "/faq" },
         { label: "Contact", href: "/contact" },
       ],

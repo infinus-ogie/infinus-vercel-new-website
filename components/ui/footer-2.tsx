@@ -14,12 +14,11 @@ const footerLinks = [
   {
     title: "Company",
     links: [
-      { href: "/#about", label: "About" },
+      { href: "/#about", label: "About Us" },
       { href: "/grow", label: "Grow" },
       { href: "/professional-services", label: "Professional Services" },
       { href: "/faq", label: "FAQ" },
       { href: "/contact", label: "Contact" },
-      { href: "/privacy", label: "Privacy Policy" },
     ],
   },
   {
