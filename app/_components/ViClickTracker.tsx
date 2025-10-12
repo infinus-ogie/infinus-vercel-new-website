@@ -20,24 +20,27 @@ declare global {
 
 export default function ViClickTracker() {
   useEffect(() => {
-    // Check if tracking should be enabled
-    const isEnabled = 
-      process.env.NEXT_PUBLIC_DNB_VI_ENABLED === "true" &&
-      localStorage.getItem("marketing_consent") === "true";
+    // Check if user has given consent
+    const hasConsent = localStorage.getItem("marketing_consent") === "true";
+    const dnbViEnabled = process.env.NEXT_PUBLIC_DNB_VI_ENABLED === "true";
 
-    if (!isEnabled) {
+    if (!hasConsent) {
       if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-        console.log("[ViClickTracker] Tracking disabled - consent or flag not set");
+        console.log("[ViClickTracker] Tracking disabled - no consent");
       }
       return;
     }
 
-    // Check if D&B VI is available
-    if (typeof window === "undefined" || !window.dnbvid) {
+    if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
+      console.log("[ViClickTracker] Tracking enabled", { dnbViEnabled, hasConsent });
+    }
+
+    // Check if D&B VI is available (only if enabled)
+    if (dnbViEnabled && (typeof window === "undefined" || !window.dnbvid)) {
       if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
         console.log("[ViClickTracker] D&B VI not available");
       }
-      return;
+      // Don't return here - we still want GA4 tracking to work
     }
 
     const handleClick = (event: MouseEvent) => {
@@ -76,27 +79,29 @@ export default function ViClickTracker() {
         });
       }
 
-      // Send to D&B Visitor Intelligence
-      try {
-        window.dnbvid?.getData(
-          process.env.NEXT_PUBLIC_DNB_VI_ACCOUNT!,
-          "json",
-          "T",
-          {
-            p1: type,
-            p2: label,
-            p3: href,
-            p4: pagePath,
-          },
-          () => {
-            if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-              console.log("[ViClickTracker] D&B VI data sent successfully");
+      // Send to D&B Visitor Intelligence (only if enabled)
+      if (dnbViEnabled && window.dnbvid) {
+        try {
+          window.dnbvid.getData(
+            process.env.NEXT_PUBLIC_DNB_VI_ACCOUNT!,
+            "json",
+            "T",
+            {
+              p1: type,
+              p2: label,
+              p3: href,
+              p4: pagePath,
+            },
+            () => {
+              if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
+                console.log("[ViClickTracker] D&B VI data sent successfully");
+              }
             }
+          );
+        } catch (error) {
+          if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
+            console.error("[ViClickTracker] Error sending to D&B VI:", error);
           }
-        );
-      } catch (error) {
-        if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-          console.error("[ViClickTracker] Error sending to D&B VI:", error);
         }
       }
 
@@ -130,27 +135,29 @@ export default function ViClickTracker() {
         console.log("[ViClickTracker] Manual test event:", { type, label, href, page });
       }
 
-      // Send to D&B Visitor Intelligence
-      try {
-        window.dnbvid?.getData(
-          process.env.NEXT_PUBLIC_DNB_VI_ACCOUNT!,
-          "json",
-          "T",
-          {
-            p1: type,
-            p2: label,
-            p3: href,
-            p4: page,
-          },
-          () => {
-            if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-              console.log("[ViClickTracker] D&B VI manual test data sent successfully");
+      // Send to D&B Visitor Intelligence (only if enabled)
+      if (dnbViEnabled && window.dnbvid) {
+        try {
+          window.dnbvid.getData(
+            process.env.NEXT_PUBLIC_DNB_VI_ACCOUNT!,
+            "json",
+            "T",
+            {
+              p1: type,
+              p2: label,
+              p3: href,
+              p4: page,
+            },
+            () => {
+              if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
+                console.log("[ViClickTracker] D&B VI manual test data sent successfully");
+              }
             }
+          );
+        } catch (error) {
+          if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
+            console.error("[ViClickTracker] Error sending manual test to D&B VI:", error);
           }
-        );
-      } catch (error) {
-        if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-          console.error("[ViClickTracker] Error sending manual test to D&B VI:", error);
         }
       }
 

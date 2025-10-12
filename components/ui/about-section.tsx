@@ -22,16 +22,16 @@ type Copy = {
 const defaultCopy: Copy = {
   title: "About Us",
   intro:
-    "Infinus is SAP Gold Partner focused on SAP Business Suite solutions, with special focus on SAP Cloud ERP (Private and Public) and SAP Business AI",
+    "Infinus is an SAP Gold Partner specializing in SAP Cloud ERP (Public and Private) and SAP Business AI, delivering deep expertise across the SAP Business Suite portfolio.",
   paragraphs: [
-    "Our experienced SAP consultants can bring high-quality expertise in various SAP solutions, business processes, technologies, industries and best practices to deliver best-in-class consulting services and solutions for your business.",
-    "The vast majority of our team consists of senior SAP consultants with 10+ years of professional experience.",
+    "Our team of experienced consultants combines technology know-how with business process understanding to deliver best-in-class SAP consulting services and tailored solutions that drive measurable results.",
+    "The majority of our experts are senior SAP consultants with over a decade of professional experience across various industries, technologies, and functional areas.",
   ],
   bullets: [
-    "SAP Cloud ERP (Private and Public)",
-    "SAP Business Data Cloud",
+    "SAP Cloud ERP (Public and Private)",
     "SAP Business AI",
-    "SAP Business Technology Platform",
+    "SAP Business Technology Platform (BTP)",
+    "SAP Business Data Cloud",
   ],
   ctaLabel: "Learn more",
   ctaHref: "/contact",

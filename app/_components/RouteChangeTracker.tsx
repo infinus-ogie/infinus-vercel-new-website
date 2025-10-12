@@ -9,12 +9,38 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 function hasConsent() {
   try {
-    return typeof window !== "undefined" && localStorage.getItem("marketing_consent") === "true";
-  } catch { return false; }
+    const consent = typeof window !== "undefined" && localStorage.getItem("marketing_consent") === "true";
+    console.log('[RouteChangeTracker] Consent check:', { consent, hasWindow: typeof window !== "undefined" });
+    return consent;
+  } catch (e) { 
+    console.log('[RouteChangeTracker] Consent check error:', e);
+    return false; 
+  }
 }
 
 function callViOnce(url: string, title: string) {
-  // Retry loop (up to ~10s)
+  console.log('[RouteChangeTracker] callViOnce called:', { url, title, hasGtag: typeof (window as any).gtag !== "undefined", GA_ID });
+  
+  // Send GA4 page_view immediately if gtag is available
+  if (typeof window !== "undefined" && (window as any).gtag && GA_ID) {
+    (window as any).gtag('event', 'page_view', {
+      page_location: window.location.href,
+      page_path: window.location.pathname + window.location.search,
+      page_title: document.title
+    });
+    console.log("GA4 pageview sent", { url, title });
+  } else {
+    console.log("GA4 pageview NOT sent - missing requirements:", { 
+      hasWindow: typeof window !== "undefined", 
+      hasGtag: typeof (window as any).gtag !== "undefined", 
+      GA_ID 
+    });
+  }
+
+  // Only run D&B VI if enabled
+  if (!ENABLED) return;
+
+  // Retry loop for D&B VI (up to ~10s)
   let tries = 0, MAX = 50;
   const tick = () => {
     try {
@@ -29,16 +55,6 @@ function callViOnce(url: string, title: string) {
           try { window.dispatchEvent(new CustomEvent("dnb_vi_ready", { detail: dnb_Data })); } catch {}
         }
       });
-      
-      // Send GA4 page_view if gtag is available
-      if (typeof window !== "undefined" && (window as any).gtag && GA_ID) {
-        (window as any).gtag('event', 'page_view', {
-          page_location: window.location.href,
-          page_path: window.location.pathname + window.location.search,
-          page_title: document.title
-        });
-        if (DEBUG) console.log("GA4 pageview sent", { url, title });
-      }
     } catch (e) {
       if (DEBUG) console.error("DNB VI route-call error", e);
     }
@@ -53,7 +69,9 @@ export default function RouteChangeTracker() {
   const timer = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!ENABLED || !hasConsent()) return;
+    // Always run if we have consent, regardless of D&B VI enabled status
+    // This ensures GA4 page_view tracking works even when D&B VI is disabled
+    if (!hasConsent()) return;
 
     // Debounce 200ms – da se title/DOM ažuriraju i izbegnu dupli pozivi
     if (timer.current) window.clearTimeout(timer.current);

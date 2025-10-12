@@ -7,6 +7,7 @@ import VendorScripts from "./_components/VendorScripts"
 import RouteChangeTracker from "./_components/RouteChangeTracker"
 import ViClickTracker from "./_components/ViClickTracker"
 import GoogleAnalytics from "./_components/GoogleAnalytics"
+import DnbVisitorPixel from "@/components/analytics/DnbVisitorPixel"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -105,10 +106,10 @@ export default function RootLayout({
         <Toaster position="top-right" richColors />
         
         {/* Vendor/marketing tags mount point */}
-        <VendorScripts />
         <RouteChangeTracker />
         <ViClickTracker />
         <GoogleAnalytics />
+        <DnbVisitorPixel />
       </body>
     </html>
   )

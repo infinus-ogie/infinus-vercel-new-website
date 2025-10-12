@@ -23,6 +23,7 @@ export default function VendorScripts() {
       typeof window !== "undefined"
         ? localStorage.getItem("marketing_consent") === "true"
         : true; // on SSR assume false/true; tweak as needed
+    console.log('[VendorScripts] Consent check:', { consent, DNB_ENABLED });
     setCanLoadMarketing(consent);
   }, []);
 

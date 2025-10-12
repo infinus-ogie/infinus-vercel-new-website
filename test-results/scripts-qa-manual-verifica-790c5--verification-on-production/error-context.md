@@ -1,0 +1,333 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - link "Home" [ref=e9] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e10]: Home
+      - link "About" [ref=e12] [cursor=pointer]:
+        - /url: /#about
+        - generic [ref=e13]: About
+      - link "Our Expertise" [ref=e15] [cursor=pointer]:
+        - /url: /#our-expertise
+        - generic [ref=e16]: Our Expertise
+      - link "Benefits" [ref=e18] [cursor=pointer]:
+        - /url: /#partnership-benefits
+        - generic [ref=e19]: Benefits
+      - button "Focus Topics" [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: Focus Topics
+        - img [ref=e23]
+      - link "Contact" [ref=e26] [cursor=pointer]:
+        - /url: /contact
+        - generic [ref=e27]: Contact
+      - link "FAQ" [ref=e29] [cursor=pointer]:
+        - /url: /faq
+        - generic [ref=e30]: FAQ
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - img "Professional Services Growth Overview" [ref=e33]
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: PROGRAM
+            - generic [ref=e40]: GROW with SAP
+          - heading "SAP Cloud ERP za Professional Services kompanije" [level=1] [ref=e41]:
+            - generic [ref=e42]: SAP Cloud ERP za
+            - generic [ref=e43]: Professional Services
+            - generic [ref=e44]: kompanije
+          - paragraph [ref=e45]: Upravljajte projektima, resursima, procesima i profitabilnošću uz rešenje koje razume vaš biznis. Efikasan, skalabilan i agilan ERP za firme koje prodaju znanje, vreme i usluge.
+          - link "Preuzmite materijale" [active] [ref=e47] [cursor=pointer]:
+            - /url: /growth-professional-services-materials/Professional_Services_pack.zip
+      - generic [ref=e50]:
+        - heading "Zašto baš sada" [level=2] [ref=e52]
+        - paragraph [ref=e54]: "Profesionalne usluge su pod pritiskom: vrhunsko korisničko iskustvo, privlačenje i zadržavanje talenata i brze tehnološke promene. Kako uskladiti ljude i procese u jednom fleksibilnom sistemu koji omogućava profitabilan i održiv rast?"
+        - generic [ref=e56]:
+          - article [ref=e57]:
+            - article "85% firmi u profesionalnim uslugama beleži rast prihoda, ali manje od 70% i rast profitabilnosti" [ref=e58]:
+              - img [ref=e60]
+              - heading "85%" [level=3] [ref=e62]:
+                - generic [ref=e63]: 85%
+              - paragraph [ref=e65]: firmi u profesionalnim uslugama beleži rast prihoda, ali manje od 70% i rast profitabilnosti
+          - article [ref=e66]:
+            - article "40% lidera smatra inovacije i nove poslovne modele ključnim, ali ističu prepreke u skaliranju i zastarele sisteme" [ref=e67]:
+              - img [ref=e69]
+              - heading "40%" [level=3] [ref=e71]:
+                - generic [ref=e72]: 40%
+              - paragraph [ref=e74]: lidera smatra inovacije i nove poslovne modele ključnim, ali ističu prepreke u skaliranju i zastarele sisteme
+          - article [ref=e75]:
+            - article "78% kompanija već koristi Cloud ERP da unapredi agilnost, optimizuje procese i isporuči bolja iskustva klijentima" [ref=e76]:
+              - img [ref=e78]
+              - heading "78%" [level=3] [ref=e80]:
+                - generic [ref=e81]: 78%
+              - paragraph [ref=e83]: kompanija već koristi Cloud ERP da unapredi agilnost, optimizuje procese i isporuči bolja iskustva klijentima
+          - article [ref=e84]:
+            - article "53% planira da usvoji AI u narednih 12 meseci radi veće efikasnosti i produktivnosti" [ref=e85]:
+              - img [ref=e87]
+              - heading "53%" [level=3] [ref=e90]:
+                - generic [ref=e91]: 53%
+              - paragraph [ref=e93]: planira da usvoji AI u narednih 12 meseci radi veće efikasnosti i produktivnosti
+        - paragraph [ref=e94]:
+          - text: "Izvor:"
+          - link "SAP i Oxford Economics istraživanje, 2024" [ref=e95] [cursor=pointer]:
+            - /url: https://www.oxfordeconomics.com/resource/professional-services-research/
+      - generic [ref=e98]:
+        - heading "Kako SAP Cloud ERP pomaže uslužnim kompanijama" [level=2] [ref=e100]:
+          - text: Kako SAP Cloud ERP pomaže
+          - text: uslužnim kompanijama
+        - generic [ref=e101]:
+          - article "Povežite ljude i procese – Uskladite talente sa potrebama projekata uz digitalne alate, AI i automatizaciju." [ref=e102]:
+            - generic [ref=e103]:
+              - img [ref=e105]
+              - heading "Povežite ljude i procese" [level=3] [ref=e110]
+              - paragraph [ref=e111]: Uskladite talente sa potrebama projekata uz digitalne alate, AI i automatizaciju.
+          - article "Ubrzajte isporuku usluga – Skratite vreme postavljanja projekata, povećajte preciznost procena i poboljšajte praćenje profitabilnosti." [ref=e112]:
+            - generic [ref=e113]:
+              - img [ref=e115]
+              - heading "Ubrzajte isporuku usluga" [level=3] [ref=e120]
+              - paragraph [ref=e121]: Skratite vreme postavljanja projekata, povećajte preciznost procena i poboljšajte praćenje profitabilnosti.
+          - article "Otvorite nove izvore prihoda – Kreirajte i monetizujte nove poslovne modele, od XaaS i pretplata do kombinovanih usluga i digitalnih rešenja." [ref=e122]:
+            - generic [ref=e123]:
+              - img [ref=e125]
+              - heading "Otvorite nove izvore prihoda" [level=3] [ref=e127]
+              - paragraph [ref=e128]: Kreirajte i monetizujte nove poslovne modele, od XaaS i pretplata do kombinovanih usluga i digitalnih rešenja.
+          - article "Postignite konkurentsku prednost – Obezbedite real-time uvide u marže projekata, iskorišćenost resursa i KPI-jeve kako biste donosili brže i sigurnije odluke." [ref=e129]:
+            - generic [ref=e130]:
+              - img [ref=e132]
+              - heading "Postignite konkurentsku prednost" [level=3] [ref=e136]
+              - paragraph [ref=e137]: Obezbedite real-time uvide u marže projekata, iskorišćenost resursa i KPI-jeve kako biste donosili brže i sigurnije odluke.
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - generic [ref=e142]:
+            - heading "Preuzmite materijale za profesionalne usluge" [level=2] [ref=e143]
+            - paragraph [ref=e144]: Pristupite našoj sveobuhvatnoj kolekciji resursa, istraživanja i vodiča koji će vam pomoći da razvijete profesionalne usluge sa SAP rešenjima.
+          - link "Preuzmi ceo paket (ZIP)" [ref=e145] [cursor=pointer]:
+            - /url: /growth-professional-services-materials/Professional_Services_pack.zip
+            - img [ref=e146]
+            - text: Preuzmi ceo paket (ZIP)
+        - generic [ref=e149]:
+          - 'article "Staying Ahead: How Professional Services firms use automation to become agile – Istraživanje o tome kako profesionalne uslužne kompanije koriste automatizaciju za postizanje agilnosti i rasta profitabilnosti." [ref=e150]':
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - generic [ref=e153]: PDF document
+                - generic [ref=e154]: Research
+              - 'heading "Staying Ahead: How Professional Services firms use automation to become agile" [level=3] [ref=e155]'
+              - paragraph [ref=e156]: Istraživanje o tome kako profesionalne uslužne kompanije koriste automatizaciju za postizanje agilnosti i rasta profitabilnosti.
+              - 'link "Preuzmi Staying Ahead: How Professional Services firms use automation to become agile" [ref=e158] [cursor=pointer]':
+                - /url: /growth-professional-services-materials/34388_Oxford_ProServPartner_91961.pdf
+                - img [ref=e159]
+                - text: Preuzmi PDF
+          - 'article "Rethinking Service Innovation: How business model transformation drives growth – Analiza transformacije poslovnih modela u profesionalnim uslugama i njihovog uticaja na rast kompanija." [ref=e162]':
+            - generic [ref=e163]:
+              - generic [ref=e164]:
+                - generic [ref=e165]: PDF document
+                - generic [ref=e166]: Analysis
+              - 'heading "Rethinking Service Innovation: How business model transformation drives growth" [level=3] [ref=e167]'
+              - paragraph [ref=e168]: Analiza transformacije poslovnih modela u profesionalnim uslugama i njihovog uticaja na rast kompanija.
+              - 'link "Preuzmi Rethinking Service Innovation: How business model transformation drives growth" [ref=e170] [cursor=pointer]':
+                - /url: /growth-professional-services-materials/34390_Oxford_ServInnovPartner_91960.pdf
+                - img [ref=e171]
+                - text: Preuzmi PDF
+          - 'article "XaaS: How midsize organizations are innovating services (Infographic) – Vizuelni pregled kako srednje kompanije inoviraju usluge kroz XaaS modele poslovanja." [ref=e174]':
+            - generic [ref=e175]:
+              - generic [ref=e176]:
+                - generic [ref=e177]: PDF document
+                - generic [ref=e178]: Infographic
+              - 'heading "XaaS: How midsize organizations are innovating services (Infographic)" [level=3] [ref=e179]'
+              - paragraph [ref=e180]: Vizuelni pregled kako srednje kompanije inoviraju usluge kroz XaaS modele poslovanja.
+              - 'link "Preuzmi XaaS: How midsize organizations are innovating services (Infographic)" [ref=e182] [cursor=pointer]':
+                - /url: /growth-professional-services-materials/35353_ServiceInnovationPartnerIG_91829.pdf
+                - img [ref=e183]
+                - text: Preuzmi PDF
+          - article "How can the XaaS business model drive innovative growth… (TechTarget) – Tehnička analiza XaaS modela poslovanja i njegovog potencijala za inovativni rast kompanija." [ref=e186]:
+            - generic [ref=e187]:
+              - generic [ref=e188]:
+                - generic [ref=e189]: PDF document
+                - generic [ref=e190]: Technical Analysis
+              - heading "How can the XaaS business model drive innovative growth… (TechTarget)" [level=3] [ref=e191]
+              - paragraph [ref=e192]: Tehnička analiza XaaS modela poslovanja i njegovog potencijala za inovativni rast kompanija.
+              - link "Preuzmi How can the XaaS business model drive innovative growth… (TechTarget)" [ref=e194] [cursor=pointer]:
+                - /url: /growth-professional-services-materials/Techtarget-How can the XaaS business model drive innovative growth for your services, software or digital content bu.pdf
+                - img [ref=e195]
+                - text: Preuzmi PDF
+      - generic [ref=e200]:
+        - heading "O Infinusu" [level=2] [ref=e201]
+        - generic [ref=e202]:
+          - generic [ref=e203]:
+            - img [ref=e205]
+            - generic [ref=e208]: SAP Gold Partner
+          - generic [ref=e209]:
+            - img [ref=e211]
+            - generic [ref=e215]: 30+ experienced consultants
+          - generic [ref=e216]:
+            - img [ref=e218]
+            - generic [ref=e223]: 20+ satisfied customers
+        - generic [ref=e225]:
+          - paragraph [ref=e226]: Industrije
+          - generic [ref=e228]:
+            - generic [ref=e229]:
+              - img [ref=e231]
+              - generic [ref=e234]: Retail
+            - generic [ref=e235]:
+              - img [ref=e237]
+              - generic [ref=e240]: Pharmaceuticals
+            - generic [ref=e241]:
+              - img [ref=e243]
+              - generic [ref=e248]: Wholesale & Distribution
+            - generic [ref=e249]:
+              - img [ref=e251]
+              - generic [ref=e255]: Consumer Goods
+            - generic [ref=e256]:
+              - img [ref=e258]
+              - generic [ref=e260]: Industrial Manufacturing
+            - generic [ref=e261]:
+              - img [ref=e263]
+              - generic [ref=e266]: Professional Services
+            - generic [ref=e267]:
+              - img [ref=e269]
+              - generic [ref=e271]: Travel
+            - generic [ref=e272]:
+              - img [ref=e274]
+              - generic [ref=e277]: Oil & Gas
+            - generic [ref=e278]:
+              - img [ref=e280]
+              - generic [ref=e284]: Telco
+            - generic [ref=e285]:
+              - img [ref=e287]
+              - generic [ref=e290]: Retail
+            - generic [ref=e291]:
+              - img [ref=e293]
+              - generic [ref=e296]: Pharmaceuticals
+            - generic [ref=e297]:
+              - img [ref=e299]
+              - generic [ref=e304]: Wholesale & Distribution
+            - generic [ref=e305]:
+              - img [ref=e307]
+              - generic [ref=e311]: Consumer Goods
+            - generic [ref=e312]:
+              - img [ref=e314]
+              - generic [ref=e316]: Industrial Manufacturing
+            - generic [ref=e317]:
+              - img [ref=e319]
+              - generic [ref=e322]: Professional Services
+            - generic [ref=e323]:
+              - img [ref=e325]
+              - generic [ref=e327]: Travel
+            - generic [ref=e328]:
+              - img [ref=e330]
+              - generic [ref=e333]: Oil & Gas
+            - generic [ref=e334]:
+              - img [ref=e336]
+              - generic [ref=e340]: Telco
+        - paragraph [ref=e341]: Infinus d.o.o. je SAP Gold Partner sa više od 30 sertifikovanih SAP konsultanata i brojnim regionalnim i međunarodnim referencama. Naš fokus je da pomognemo profesionalnim uslužnim kompanijama da kroz SAP Cloud ERP dobiju strukturu, kontrolu i agilnost potrebnu za sledeću fazu rasta.
+      - generic [ref=e344]:
+        - heading "Spremni da razgovaramo?" [level=2] [ref=e345]
+        - paragraph [ref=e346]: Zakažite kratak poziv i proverite kako SAP Cloud ERP može da podrži vaš rast.
+        - link "Pošaljite upit" [ref=e348] [cursor=pointer]:
+          - /url: /contact
+          - img [ref=e349]
+          - text: Pošaljite upit
+        - paragraph [ref=e351]:
+          - img [ref=e352]
+          - text: Odgovaramo u roku jednog radnog dana
+      - generic [ref=e358]:
+        - heading "Često postavljana pitanja" [level=2] [ref=e360]
+        - generic [ref=e362]:
+          - heading "Da li je SAP Cloud ERP prevelik za profesionalne uslužne kompanije?" [level=3] [ref=e364]:
+            - button "Da li je SAP Cloud ERP prevelik za profesionalne uslužne kompanije?" [ref=e365] [cursor=pointer]:
+              - img [ref=e367]
+              - generic [ref=e370]: Da li je SAP Cloud ERP prevelik za profesionalne uslužne kompanije?
+              - img [ref=e371]
+          - heading "Kako SAP pomaže oko skaliranja i agilnosti u profesionalnim uslugama?" [level=3] [ref=e374]:
+            - button "Kako SAP pomaže oko skaliranja i agilnosti u profesionalnim uslugama?" [ref=e375] [cursor=pointer]:
+              - img [ref=e377]
+              - generic [ref=e380]: Kako SAP pomaže oko skaliranja i agilnosti u profesionalnim uslugama?
+              - img [ref=e381]
+          - heading "Koja je uloga AI u profesionalnim uslugama?" [level=3] [ref=e384]:
+            - button "Koja je uloga AI u profesionalnim uslugama?" [ref=e385] [cursor=pointer]:
+              - img [ref=e387]
+              - generic [ref=e390]: Koja je uloga AI u profesionalnim uslugama?
+              - img [ref=e391]
+    - contentinfo [ref=e393]:
+      - generic [ref=e395]:
+        - generic [ref=e396]:
+          - img "Infinus Logo" [ref=e398]
+          - paragraph [ref=e399]: Infinus d.o.o. is a SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.
+        - generic [ref=e401]:
+          - generic [ref=e403]:
+            - heading "Contact Information" [level=3] [ref=e404]
+            - list [ref=e405]:
+              - listitem [ref=e406]:
+                - link "Tresnjinog cveta 1, 11070 Belgrade, Serbia" [ref=e407] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e408]:
+                - link "office@infinus.rs" [ref=e409] [cursor=pointer]:
+                  - /url: mailto:office@infinus.rs
+              - listitem [ref=e410]:
+                - link "LinkedIn" [ref=e411] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/infinus1/posts/?feedView=all
+                  - img [ref=e412]
+                  - text: LinkedIn
+          - generic [ref=e414]:
+            - heading "Our Expertise" [level=3] [ref=e415]
+            - list [ref=e416]:
+              - listitem [ref=e417]:
+                - link "SAP Advisory & Consulting" [ref=e418] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e419]:
+                - link "SAP Implementations" [ref=e420] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e421]:
+                - link "SAP Application Management & Support" [ref=e422] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e423]:
+                - link "SAP Integration & Process Optimization" [ref=e424] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e425]:
+                - link "SAP Extensions & Innovation" [ref=e426] [cursor=pointer]:
+                  - /url: /#our-expertise
+          - generic [ref=e427]:
+            - heading "Company" [level=3] [ref=e428]
+            - list [ref=e429]:
+              - listitem [ref=e430]:
+                - link "About Us" [ref=e431] [cursor=pointer]:
+                  - /url: /#about
+              - listitem [ref=e432]:
+                - 'link "GROW with SAP: Finance" [ref=e433] [cursor=pointer]':
+                  - /url: /grow
+              - listitem [ref=e434]:
+                - link "SAP for Professional Services" [ref=e435] [cursor=pointer]:
+                  - /url: /professional-services
+              - listitem [ref=e436]:
+                - link "FAQ" [ref=e437] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e438]:
+                - link "Contact" [ref=e439] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e440]:
+            - heading "Resources" [level=3] [ref=e441]
+            - list [ref=e442]:
+              - listitem [ref=e443]:
+                - link "GROW Materials" [ref=e444] [cursor=pointer]:
+                  - /url: /grow#downloads
+              - listitem [ref=e445]:
+                - link "Professional Services Materials" [ref=e446] [cursor=pointer]:
+                  - /url: /professional-services#downloads
+          - generic [ref=e447]:
+            - heading "Legal" [level=3] [ref=e448]
+            - list [ref=e449]:
+              - listitem [ref=e450]:
+                - link "Privacy Policy" [ref=e451] [cursor=pointer]:
+                  - /url: /privacy
+        - generic [ref=e452]:
+          - paragraph [ref=e453]: © 2025 Infinus. All rights reserved.
+          - generic [ref=e454]:
+            - link "Privacy" [ref=e456] [cursor=pointer]:
+              - /url: /privacy
+            - paragraph [ref=e457]:
+              - text: Developed by
+              - link "Brivio" [ref=e458] [cursor=pointer]:
+                - /url: https://www.brivio.co/
+  - region "Notifications alt+T"
+  - alert [ref=e459]
+```

@@ -147,13 +147,13 @@ function HeroGeometric({
             </div>
 
             <div className="relative z-10 container mx-auto px-4 md:px-6">
-                <div className="max-w-3xl mx-auto text-center">
+                <div className="max-w-5xl mx-auto text-center">
                     <motion.div
                         custom={0}
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
-                        className="mb-8 md:mb-12"
+                        className="mb-8 md:mb-12 mt-2 md:mt-4 lg:mt-6"
                     >
                         <HeroPartnerBadge />
                     </motion.div>
@@ -164,17 +164,13 @@ function HeroGeometric({
                         initial="hidden"
                         animate="visible"
                     >
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-6 md:mb-8 tracking-tight">
+                        <h1 className="text-center font-light leading-tight tracking-tight text-[42px] md:text-[56px] lg:text-[64px] xl:text-[72px] mb-6 md:mb-8">
                             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
-                                {title1}
+                                Turning SAP Expertise
                             </span>
-                            <br />
-                            <span
-                                className={cn(
-                                    "bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-white/90 to-blue-400 "
-                                )}
-                            >
-                                {title2}
+                            <br className="hidden lg:block" />
+                            <span className="lg:inline bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-white/90 to-blue-400">
+                                into Business Advantage
                             </span>
                         </h1>
                     </motion.div>
@@ -185,7 +181,7 @@ function HeroGeometric({
                         initial="hidden"
                         animate="visible"
                     >
-                        <p className="text-base sm:text-lg md:text-xl text-white/50 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
+                        <p className="mx-auto text-center text-slate-300 text-base md:text-lg lg:text-xl max-w-none lg:max-w-4xl md:whitespace-nowrap lg:whitespace-nowrap mb-8 px-4">
                             Empowering companies to work smarter and grow faster
                         </p>
                     </motion.div>
