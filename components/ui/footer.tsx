@@ -12,7 +12,6 @@ const footerConfig = {
   },
   contact: {
     email: "office@infinus.rs",
-    phone: "+381 11 123 4567",
     address: "Tresnjinog cveta 1, 11070 Belgrade, Serbia",
   },
   columns: [
@@ -21,7 +20,6 @@ const footerConfig = {
       links: [
         { label: "Tresnjinog cveta 1, 11070 Belgrade, Serbia", href: "#" },
         { label: "office@infinus.rs", href: "mailto:office@infinus.rs" },
-        { label: "+381 11 123 4567", href: "tel:+381111234567" },
         { label: "LinkedIn", href: "https://www.linkedin.com/company/infinus1/posts/?feedView=all", isExternal: true, isLinkedIn: true },
       ],
     },
