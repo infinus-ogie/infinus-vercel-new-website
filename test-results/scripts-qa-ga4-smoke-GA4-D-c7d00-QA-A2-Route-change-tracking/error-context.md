@@ -1,0 +1,372 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - link "Home" [ref=e9] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e10]: Home
+      - link "About" [ref=e12] [cursor=pointer]:
+        - /url: /#about
+        - generic [ref=e13]: About
+      - link "Our Expertise" [ref=e15] [cursor=pointer]:
+        - /url: /#our-expertise
+        - generic [ref=e16]: Our Expertise
+      - link "Benefits" [ref=e18] [cursor=pointer]:
+        - /url: /#partnership-benefits
+        - generic [ref=e19]: Benefits
+      - button "Focus Topics" [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: Focus Topics
+        - img [ref=e23]
+      - link "Contact" [ref=e26] [cursor=pointer]:
+        - /url: /contact
+        - generic [ref=e27]: Contact
+      - link "FAQ" [ref=e29] [cursor=pointer]:
+        - /url: /faq
+        - generic [ref=e30]: FAQ
+    - main [ref=e31]:
+      - generic [ref=e52]:
+        - generic "Infinus" [ref=e54]:
+          - img "Infinus" [ref=e55]
+        - heading "Turning SAP Expertise into Business Advantage" [level=1] [ref=e57]:
+          - text: Turning SAP Expertise
+          - text: into Business Advantage
+        - paragraph [ref=e59]: Empowering companies to work smarter and grow faster
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - img [ref=e65]
+            - generic [ref=e68]: SAP Gold Partner
+          - generic [ref=e69]:
+            - img [ref=e71]
+            - generic [ref=e75]: 30+ experienced consultants
+          - generic [ref=e76]:
+            - img [ref=e78]
+            - generic [ref=e83]: 20+ satisfied customers
+      - generic [ref=e86]:
+        - figure [ref=e87]:
+          - img "SAP Gold Partner" [ref=e89]
+        - generic [ref=e90]:
+          - heading "About Us" [level=2] [ref=e91]
+          - paragraph [ref=e92]: Infinus is an SAP Gold Partner specializing in SAP Cloud ERP (Public and Private) and SAP Business AI, delivering deep expertise across the SAP Business Suite portfolio.
+          - paragraph [ref=e93]: Our team of experienced consultants combines technology know-how with business process understanding to deliver best-in-class SAP consulting services and tailored solutions that drive measurable results.
+          - paragraph [ref=e94]: The majority of our experts are senior SAP consultants with over a decade of professional experience across various industries, technologies, and functional areas.
+          - list [ref=e95]:
+            - listitem [ref=e96]:
+              - img [ref=e97]
+              - generic [ref=e100]: SAP Cloud ERP (Public and Private)
+            - listitem [ref=e101]:
+              - img [ref=e102]
+              - generic [ref=e105]: SAP Business AI
+            - listitem [ref=e106]:
+              - img [ref=e107]
+              - generic [ref=e110]: SAP Business Technology Platform (BTP)
+            - listitem [ref=e111]:
+              - img [ref=e112]
+              - generic [ref=e115]: SAP Business Data Cloud
+          - link "Learn more" [ref=e117] [cursor=pointer]:
+            - /url: /contact
+            - text: Learn more
+            - img [ref=e118]
+      - generic [ref=e124]:
+        - generic [ref=e126]:
+          - heading "Our Expertise in Action" [level=2] [ref=e127]
+          - paragraph [ref=e128]: We combine business insight and SAP expertise to help companies operate smarter, faster, and with confidence. From strategy to support, we're your trusted partner throughout the entire SAP lifecycle.
+        - generic [ref=e129]:
+          - link "SAP Advisory & Consulting We define the right SAP strategy for your business - aligning technology with your goals and ensuring measurable outcomes." [ref=e130] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e132]:
+              - generic [ref=e133]:
+                - img [ref=e135]
+                - heading "SAP Advisory & Consulting" [level=3] [ref=e137]
+              - paragraph [ref=e138]: We define the right SAP strategy for your business - aligning technology with your goals and ensuring measurable outcomes.
+          - link "SAP Implementations Fast, transparent, and reliable deployments based on SAP Activate and proven best practices - tailored to your operations." [ref=e139] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e141]:
+              - generic [ref=e142]:
+                - img [ref=e144]
+                - heading "SAP Implementations" [level=3] [ref=e147]
+              - paragraph [ref=e148]: Fast, transparent, and reliable deployments based on SAP Activate and proven best practices - tailored to your operations.
+          - link "SAP Application Management & Support Continuous monitoring, optimization, and expert guidance to keep your SAP system stable, secure, and up to date." [ref=e149] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - img [ref=e154]
+                - heading "SAP Application Management & Support" [level=3] [ref=e156]
+              - paragraph [ref=e157]: Continuous monitoring, optimization, and expert guidance to keep your SAP system stable, secure, and up to date.
+          - link "SAP Integration & Process Optimization Connecting SAP with other systems to streamline workflows, improve visibility, and eliminate operational silos." [ref=e158] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e160]:
+              - generic [ref=e161]:
+                - img [ref=e163]
+                - heading "SAP Integration & Process Optimization" [level=3] [ref=e165]
+              - paragraph [ref=e166]: Connecting SAP with other systems to streamline workflows, improve visibility, and eliminate operational silos.
+          - link "SAP Extensions & Innovation Enhancing standard SAP functionality through custom developments, analytics, and BTP innovations for your specific needs." [ref=e167] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e169]:
+              - generic [ref=e170]:
+                - img [ref=e172]
+                - heading "SAP Extensions & Innovation" [level=3] [ref=e174]
+              - paragraph [ref=e175]: Enhancing standard SAP functionality through custom developments, analytics, and BTP innovations for your specific needs.
+      - generic [ref=e180]:
+        - generic [ref=e182]:
+          - heading "Benefits working with us" [level=2] [ref=e183]
+          - paragraph [ref=e184]: Partnering with Infinus means working with experts who understand both SAP technology and real business challenges.
+        - generic [ref=e185]:
+          - link "Deep SAP Expertise 20+ years of combined consulting experience across SAP ECC, S/4HANA, ABAP, BTP, LoB solutions and platforms - proven knowledge, delivered with precision." [ref=e186] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e188]:
+              - generic [ref=e189]:
+                - img [ref=e191]
+                - heading "Deep SAP Expertise" [level=3] [ref=e195]
+              - paragraph [ref=e196]: 20+ years of combined consulting experience across SAP ECC, S/4HANA, ABAP, BTP, LoB solutions and platforms - proven knowledge, delivered with precision.
+          - link "Business Understanding We speak the language of CFOs, COOs, and CEOs - translating complex SAP concepts into clear business outcomes." [ref=e197] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e199]:
+              - generic [ref=e200]:
+                - img [ref=e202]
+                - heading "Business Understanding" [level=3] [ref=e207]
+              - paragraph [ref=e208]: We speak the language of CFOs, COOs, and CEOs - translating complex SAP concepts into clear business outcomes.
+          - link "Trusted Partnership We act as an extension of your team - transparent, accountable, and fully aligned with your success." [ref=e209] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e211]:
+              - generic [ref=e212]:
+                - img [ref=e214]
+                - heading "Trusted Partnership" [level=3] [ref=e217]
+              - paragraph [ref=e218]: We act as an extension of your team - transparent, accountable, and fully aligned with your success.
+          - link "End-to-End Capability From advisory and implementation to support and optimization - we cover the full SAP lifecycle with one team." [ref=e219] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e221]:
+              - generic [ref=e222]:
+                - img [ref=e224]
+                - heading "End-to-End Capability" [level=3] [ref=e234]
+              - paragraph [ref=e235]: From advisory and implementation to support and optimization - we cover the full SAP lifecycle with one team.
+          - link "Agility & Predictability Fast execution, minimal disruption, and results you can measure - powered by SAP Activate methodology and best practices." [ref=e236] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e238]:
+              - generic [ref=e239]:
+                - img [ref=e241]
+                - heading "Agility & Predictability" [level=3] [ref=e243]
+              - paragraph [ref=e244]: Fast execution, minimal disruption, and results you can measure - powered by SAP Activate methodology and best practices.
+          - link "Regional Presence, European Reach Headquartered in Serbia with clients across the EU - combining local dedication with international standards." [ref=e245] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e247]:
+              - generic [ref=e248]:
+                - img [ref=e250]
+                - heading "Regional Presence, European Reach" [level=3] [ref=e252]
+              - paragraph [ref=e253]: Headquartered in Serbia with clients across the EU - combining local dedication with international standards.
+      - region "Domain Expertise" [ref=e254]:
+        - generic [ref=e255]:
+          - generic [ref=e256]:
+            - paragraph [ref=e257]: Industries
+            - heading "Domain Expertise" [level=2] [ref=e258]
+            - paragraph [ref=e259]: Industry-specific SAP solutions delivered with deep process knowledge.
+          - list [ref=e260]:
+            - listitem [ref=e261]:
+              - link "Retail domain" [ref=e262] [cursor=pointer]:
+                - /url: /services#retail
+                - figure "Retail" [ref=e263]:
+                  - img "Retail industry" [ref=e264]
+                  - generic:
+                    - generic: Retail
+            - listitem [ref=e266]:
+              - link "Pharmaceuticals domain" [ref=e267] [cursor=pointer]:
+                - /url: /services#pharma
+                - figure "Pharmaceuticals" [ref=e268]:
+                  - img "Pharmaceuticals industry" [ref=e269]
+                  - generic:
+                    - generic: Pharmaceuticals
+            - listitem [ref=e271]:
+              - link "Wholesale and Distribution domain" [ref=e272] [cursor=pointer]:
+                - /url: /services#wholesale
+                - figure "Wholesale and Distribution" [ref=e273]:
+                  - img "Wholesale and Distribution" [ref=e274]
+                  - generic:
+                    - generic: Wholesale and Distribution
+            - listitem [ref=e276]:
+              - link "Consumer Goods domain" [ref=e277] [cursor=pointer]:
+                - /url: /services#consumer-goods
+                - figure "Consumer Goods" [ref=e278]:
+                  - img "Consumer goods" [ref=e279]
+                  - generic:
+                    - generic: Consumer Goods
+            - listitem [ref=e281]:
+              - link "Industrial Manufacturing domain" [ref=e282] [cursor=pointer]:
+                - /url: /services#manufacturing
+                - figure "Industrial Manufacturing" [ref=e283]:
+                  - img "Industrial manufacturing" [ref=e284]
+                  - generic:
+                    - generic: Industrial Manufacturing
+            - listitem [ref=e286]:
+              - link "Professional Services domain" [ref=e287] [cursor=pointer]:
+                - /url: /services#professional
+                - figure "Professional Services" [ref=e288]:
+                  - img "Professional services" [ref=e289]
+                  - generic:
+                    - generic: Professional Services
+            - listitem [ref=e291]:
+              - link "Travel domain" [ref=e292] [cursor=pointer]:
+                - /url: /services#travel
+                - figure "Travel" [ref=e293]:
+                  - img "Travel industry" [ref=e294]
+                  - generic:
+                    - generic: Travel
+            - listitem [ref=e296]:
+              - link "Oil & Gas domain" [ref=e297] [cursor=pointer]:
+                - /url: /services#oilgas
+                - figure "Oil & Gas" [ref=e298]:
+                  - img "Oil and gas sector" [ref=e299]
+                  - generic:
+                    - generic: Oil & Gas
+            - listitem [ref=e301]:
+              - link "Telco domain" [ref=e302] [cursor=pointer]:
+                - /url: /services#telco
+                - figure "Telco" [ref=e303]:
+                  - img "Telecommunications" [ref=e304]
+                  - generic:
+                    - generic: Telco
+      - generic [ref=e310]:
+        - generic [ref=e311]:
+          - heading "Join Our Team" [level=2] [ref=e312]
+          - generic [ref=e313]:
+            - paragraph [ref=e314]: Due to continues business expansion, we are looking to expand our team.
+            - paragraph [ref=e315]: If you have experience in some of SAP S/4HANA or ECC modules and areas, industry solutions, and/or LOB solutions, and if you are interested to become a member of the agile team of dedicated SAP professionals, please contact us.
+            - paragraph [ref=e316]: We will be glad to talk with you!
+          - generic [ref=e318]:
+            - generic [ref=e319]:
+              - generic [ref=e320]:
+                - img [ref=e322]
+                - generic [ref=e325]: SAP Gold Partner
+              - generic [ref=e326]:
+                - img [ref=e328]
+                - generic [ref=e332]: 30+ experienced consultants
+            - generic [ref=e334]:
+              - img [ref=e336]
+              - generic [ref=e341]: 20+ satisfied customers
+        - generic [ref=e344]:
+          - generic [ref=e345]:
+            - generic [ref=e346]:
+              - generic [ref=e347]: Your Name *
+              - textbox "Your Name *" [ref=e348]:
+                - /placeholder: Nikola Trivic
+            - generic [ref=e349]:
+              - generic [ref=e350]: Phone Number
+              - textbox "Phone Number" [ref=e351]:
+                - /placeholder: +381 64 123 4567
+              - paragraph [ref=e352]: Include country code (E.164 format)
+          - generic [ref=e353]:
+            - generic [ref=e354]:
+              - generic [ref=e355]: Your Email *
+              - textbox "Your Email *" [ref=e356]:
+                - /placeholder: name@company.com
+            - generic [ref=e357]:
+              - generic [ref=e358]: LinkedIn URL
+              - textbox "LinkedIn URL" [ref=e359]:
+                - /placeholder: https://linkedin.com/in/yourprofile
+          - generic [ref=e360]:
+            - generic [ref=e361]: Subject *
+            - textbox "Subject *" [ref=e362]:
+              - /placeholder: SAP Consultant Position
+          - generic [ref=e363]:
+            - generic [ref=e364]: Message *
+            - textbox "Message *" [ref=e365]:
+              - /placeholder: Tell us about your SAP experience and why you'd like to join our team...
+          - generic [ref=e366]:
+            - generic [ref=e367]: Attach your resume (optional)
+            - generic [ref=e368]:
+              - button "Choose File" [ref=e369] [cursor=pointer]
+              - generic [ref=e370]:
+                - img [ref=e371]
+                - paragraph [ref=e374]: Click to upload or drag and drop
+                - paragraph [ref=e375]: PDF, DOC, DOCX (max 5MB)
+          - generic [ref=e376]:
+            - button "Submit Application" [ref=e377] [cursor=pointer]
+            - paragraph [ref=e378]: We reply within 1 business day.
+            - paragraph [ref=e379]:
+              - text: By submitting this form you agree to our
+              - link "Privacy Policy" [ref=e380] [cursor=pointer]:
+                - /url: /privacy
+              - text: .
+    - contentinfo [ref=e381]:
+      - generic [ref=e383]:
+        - generic [ref=e384]:
+          - img "Infinus Logo" [ref=e386]
+          - paragraph [ref=e387]: Infinus d.o.o. is a SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.
+        - generic [ref=e389]:
+          - generic [ref=e391]:
+            - heading "Contact Information" [level=3] [ref=e392]
+            - list [ref=e393]:
+              - listitem [ref=e394]:
+                - link "Tresnjinog cveta 1, 11070 Belgrade, Serbia" [ref=e395] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e396]:
+                - link "office@infinus.rs" [ref=e397] [cursor=pointer]:
+                  - /url: mailto:office@infinus.rs
+              - listitem [ref=e398]:
+                - link "LinkedIn" [ref=e399] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/infinus1/posts/?feedView=all
+                  - img [ref=e400]
+                  - text: LinkedIn
+          - generic [ref=e402]:
+            - heading "Our Expertise" [level=3] [ref=e403]
+            - list [ref=e404]:
+              - listitem [ref=e405]:
+                - link "SAP Advisory & Consulting" [ref=e406] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e407]:
+                - link "SAP Implementations" [ref=e408] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e409]:
+                - link "SAP Application Management & Support" [ref=e410] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e411]:
+                - link "SAP Integration & Process Optimization" [ref=e412] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e413]:
+                - link "SAP Extensions & Innovation" [ref=e414] [cursor=pointer]:
+                  - /url: /#our-expertise
+          - generic [ref=e415]:
+            - heading "Company" [level=3] [ref=e416]
+            - list [ref=e417]:
+              - listitem [ref=e418]:
+                - link "About Us" [ref=e419] [cursor=pointer]:
+                  - /url: /#about
+              - listitem [ref=e420]:
+                - 'link "GROW with SAP: Finance" [ref=e421] [cursor=pointer]':
+                  - /url: /grow
+              - listitem [ref=e422]:
+                - link "SAP for Professional Services" [ref=e423] [cursor=pointer]:
+                  - /url: /professional-services
+              - listitem [ref=e424]:
+                - link "FAQ" [ref=e425] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e426]:
+                - link "Contact" [ref=e427] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e428]:
+            - heading "Resources" [level=3] [ref=e429]
+            - list [ref=e430]:
+              - listitem [ref=e431]:
+                - link "GROW Materials" [ref=e432] [cursor=pointer]:
+                  - /url: /grow#downloads
+              - listitem [ref=e433]:
+                - link "Professional Services Materials" [ref=e434] [cursor=pointer]:
+                  - /url: /professional-services#downloads
+          - generic [ref=e435]:
+            - heading "Legal" [level=3] [ref=e436]
+            - list [ref=e437]:
+              - listitem [ref=e438]:
+                - link "Privacy Policy" [ref=e439] [cursor=pointer]:
+                  - /url: /privacy
+        - generic [ref=e440]:
+          - paragraph [ref=e441]: © 2025 Infinus. All rights reserved.
+          - generic [ref=e442]:
+            - link "Privacy" [ref=e444] [cursor=pointer]:
+              - /url: /privacy
+            - paragraph [ref=e445]:
+              - text: Developed by
+              - link "Brivio" [ref=e446] [cursor=pointer]:
+                - /url: https://www.brivio.co/
+  - region "Notifications alt+T"
+  - alert [ref=e447]
+```

@@ -7,30 +7,40 @@ const ACCOUNT = process.env.NEXT_PUBLIC_DNB_VI_ACCOUNT || "paapi1084";
 const DEBUG = process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true";
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
+// ========== DEBUG LOGGING START ==========
+const DEBUG_ROUTE = true;
+const log = (...args: any[]) => DEBUG_ROUTE && console.log('[RouteTracker DEBUG]', ...args);
+// ========== DEBUG LOGGING END ==========
+
 function hasConsent() {
   try {
     const consent = typeof window !== "undefined" && localStorage.getItem("marketing_consent") === "true";
-    console.log('[RouteChangeTracker] Consent check:', { consent, hasWindow: typeof window !== "undefined" });
+    log('Consent check:', { consent, hasWindow: typeof window !== "undefined" });
     return consent;
   } catch (e) { 
-    console.log('[RouteChangeTracker] Consent check error:', e);
+    log('Consent check error:', e);
     return false; 
   }
 }
 
 function callViOnce(url: string, title: string) {
-  console.log('[RouteChangeTracker] callViOnce called:', { url, title, hasGtag: typeof (window as any).gtag !== "undefined", GA_ID });
+  log('callViOnce called:', { url, title, hasGtag: typeof (window as any).gtag !== "undefined", GA_ID });
   
   // Send GA4 page_view immediately if gtag is available
   if (typeof window !== "undefined" && (window as any).gtag && GA_ID) {
+    log('Sending GA4 page_view event');
     (window as any).gtag('event', 'page_view', {
       page_location: window.location.href,
       page_path: window.location.pathname + window.location.search,
       page_title: document.title
     });
-    console.log("GA4 pageview sent", { url, title });
+    log("GA4 page_view sent successfully:", { 
+      page_location: window.location.href,
+      page_path: window.location.pathname + window.location.search,
+      page_title: document.title
+    });
   } else {
-    console.log("GA4 pageview NOT sent - missing requirements:", { 
+    log("GA4 page_view NOT sent - missing requirements:", { 
       hasWindow: typeof window !== "undefined", 
       hasGtag: typeof (window as any).gtag !== "undefined", 
       GA_ID 

@@ -1,0 +1,316 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - link "Home" [ref=e9] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e10]: Home
+      - link "About" [ref=e12] [cursor=pointer]:
+        - /url: /#about
+        - generic [ref=e13]: About
+      - link "Our Expertise" [ref=e15] [cursor=pointer]:
+        - /url: /#our-expertise
+        - generic [ref=e16]: Our Expertise
+      - link "Benefits" [ref=e18] [cursor=pointer]:
+        - /url: /#partnership-benefits
+        - generic [ref=e19]: Benefits
+      - button "Focus Topics" [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: Focus Topics
+        - img [ref=e23]
+      - link "Contact" [ref=e26] [cursor=pointer]:
+        - /url: /contact
+        - generic [ref=e27]: Contact
+      - link "FAQ" [ref=e29] [cursor=pointer]:
+        - /url: /faq
+        - generic [ref=e30]: FAQ
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - img "Professional Services Growth Overview" [ref=e33]
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: PROGRAM
+            - generic [ref=e40]: GROW with SAP
+          - 'heading "GROW with SAP: Finansije kao pokretač rasta" [level=1] [ref=e41]':
+            - generic [ref=e42]: "GROW with SAP:"
+            - generic [ref=e43]: Finansije kao pokretač
+            - generic [ref=e44]: rasta
+          - paragraph [ref=e45]: Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija koje danas rade bez ERP-a ili sa zastarelim sistemima.
+          - link "Preuzmite materijale" [active] [ref=e47] [cursor=pointer]:
+            - /url: /downloads/CFO_pack.zip
+      - generic [ref=e50]:
+        - heading "Zašto baš sada" [level=2] [ref=e52]
+        - paragraph [ref=e54]: Danas finansije nisu samo brojke. CFO i finansijski menadžeri preuzimaju ključnu ulogu u tehnologiji, bezbednosti, ESG zahtevima i usklađenosti. Problem? Ručni, nepovezani procesi i zastareli sistemi ne prate tempo rasta - ograničavaju tačnost, brzinu donošenja odluka i zadovoljstvo klijenata.
+        - generic [ref=e56]:
+          - article [ref=e57]:
+            - article "2 od 3 finansijskih direktora kažu da njihovi trenutni sistemi ne mogu da skaliraju uz rast poslovanja." [ref=e58]:
+              - img [ref=e60]
+              - heading "2 od 3" [level=3] [ref=e62]:
+                - generic [ref=e63]: 2 od 3
+              - paragraph [ref=e65]: finansijskih direktora kažu da njihovi trenutni sistemi ne mogu da skaliraju uz rast poslovanja.
+          - article [ref=e66]:
+            - article "70%+ CFO-a navodi da su globalni računovodstveni standardi, bezbednost podataka i usklađenost najveći izazovi." [ref=e67]:
+              - img [ref=e69]
+              - heading "70%+" [level=3] [ref=e71]:
+                - generic [ref=e72]: 70%+
+              - paragraph [ref=e74]: CFO-a navodi da su globalni računovodstveni standardi, bezbednost podataka i usklađenost najveći izazovi.
+          - article [ref=e75]:
+            - article "81% finansijskih lidera veruje da će veštačka inteligencija i Cloud ERP imati pozitivan uticaj na strategiju i korporativne finansije." [ref=e76]:
+              - img [ref=e78]
+              - heading "81%" [level=3] [ref=e81]:
+                - generic [ref=e82]: 81%
+              - paragraph [ref=e84]: finansijskih lidera veruje da će veštačka inteligencija i Cloud ERP imati pozitivan uticaj na strategiju i korporativne finansije.
+        - paragraph [ref=e85]:
+          - text: "Izvor:"
+          - link "Oxford Economics (CFO Insights), 2024" [ref=e86] [cursor=pointer]:
+            - /url: https://www.oxfordeconomics.com/resource/cfo-insights/
+      - generic [ref=e89]:
+        - heading "Kako SAP Cloud ERP pomaže vašem poslovanju da raste" [level=2] [ref=e91]:
+          - text: Kako SAP Cloud ERP pomaže
+          - text: vašem poslovanju da raste
+        - generic [ref=e92]:
+          - article "Pojednostavite rad – Automatizujte procese zatvaranja perioda, upravljanje potraživanjima i obavezama, konsolidaciju i izveštavanje." [ref=e93]:
+            - generic [ref=e94]:
+              - img [ref=e96]
+              - heading "Pojednostavite rad" [level=3] [ref=e98]
+              - paragraph [ref=e99]: Automatizujte procese zatvaranja perioda, upravljanje potraživanjima i obavezama, konsolidaciju i izveštavanje.
+          - article "Ubrzajte rast – Koristite industrijski specifične best practice šablone, podržite više entiteta, valuta i jezika i brže uđite na nova tržišta." [ref=e100]:
+            - generic [ref=e101]:
+              - img [ref=e103]
+              - heading "Ubrzajte rast" [level=3] [ref=e106]
+              - paragraph [ref=e107]: Koristite industrijski specifične best practice šablone, podržite više entiteta, valuta i jezika i brže uđite na nova tržišta.
+          - article "Osigurajte uspeh – Obezbedite jedinstveni izvor finansijske istine, tačne i pravovremene uvide i podršku za sve regulatorne zahteve." [ref=e108]:
+            - generic [ref=e109]:
+              - img [ref=e111]
+              - heading "Osigurajte uspeh" [level=3] [ref=e113]
+              - paragraph [ref=e114]: Obezbedite jedinstveni izvor finansijske istine, tačne i pravovremene uvide i podršku za sve regulatorne zahteve.
+          - article "Pripremite se za budućnost – Integrišite finansije, HR i druge funkcije, uz podršku AI i naprednih analitika za bolje donošenje odluka." [ref=e115]:
+            - generic [ref=e116]:
+              - img [ref=e118]
+              - heading "Pripremite se za budućnost" [level=3] [ref=e121]
+              - paragraph [ref=e122]: Integrišite finansije, HR i druge funkcije, uz podršku AI i naprednih analitika za bolje donošenje odluka.
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - generic [ref=e127]:
+            - heading "Preuzmite materijale za brzorastuće kompanije" [level=2] [ref=e128]
+            - paragraph [ref=e129]: Ovde možete preuzeti besplatne materijale koji objašnjavaju kako finansije mogu postati pokretač rasta – i saznajte na konkretnim primerima kako SAP Cloud ERP podržava skaliranje poslovanja.
+          - link "Preuzmi ceo paket (ZIP)" [ref=e130] [cursor=pointer]:
+            - /url: /downloads/CFO_pack.zip
+            - img [ref=e131]
+            - text: Preuzmi ceo paket (ZIP)
+        - generic [ref=e134]:
+          - 'article "Oxford Economics izveštaj: CFO Insights – Šta finansijski lideri planiraju i gde su prepreke: skaliranje, usklađenost i uloga AI/Cloud ERP-a." [ref=e135]':
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - generic [ref=e138]: PDF document
+                - generic [ref=e139]: Research
+              - 'heading "Oxford Economics izveštaj: CFO Insights" [level=3] [ref=e140]'
+              - paragraph [ref=e141]: "Šta finansijski lideri planiraju i gde su prepreke: skaliranje, usklađenost i uloga AI/Cloud ERP-a."
+              - 'link "Preuzmi Oxford Economics izveštaj: CFO Insights" [ref=e143] [cursor=pointer]':
+                - /url: /downloads/CFO_Insights_OxfordEconomics.pdf
+                - img [ref=e144]
+                - text: Preuzmi PDF
+          - article "Checklista za CFO i finansijske menadžere – Ključna pitanja prilikom izbora ERP rešenja - kako pojednostaviti rad, ubrzati rast i obezbediti usklađenost." [ref=e147]:
+            - generic [ref=e148]:
+              - generic [ref=e149]:
+                - generic [ref=e150]: PDF document
+                - generic [ref=e151]: Checklist
+              - heading "Checklista za CFO i finansijske menadžere" [level=3] [ref=e152]
+              - paragraph [ref=e153]: Ključna pitanja prilikom izbora ERP rešenja - kako pojednostaviti rad, ubrzati rast i obezbediti usklađenost.
+              - link "Preuzmi Checklista za CFO i finansijske menadžere" [ref=e155] [cursor=pointer]:
+                - /url: /downloads/Finance_Checklist.pdf
+                - img [ref=e156]
+                - text: Preuzmi PDF
+          - 'article "Infografik: 3 uvida o finansijama i rastu – Brzi uvidi o procesima koji usporavaju finansije i kako Cloud ERP pomaže u skaliranju." [ref=e159]':
+            - generic [ref=e160]:
+              - generic [ref=e161]:
+                - generic [ref=e162]: PDF document
+                - generic [ref=e163]: Infographic
+              - 'heading "Infografik: 3 uvida o finansijama i rastu" [level=3] [ref=e164]'
+              - paragraph [ref=e165]: Brzi uvidi o procesima koji usporavaju finansije i kako Cloud ERP pomaže u skaliranju.
+              - 'link "Preuzmi Infografik: 3 uvida o finansijama i rastu" [ref=e167] [cursor=pointer]':
+                - /url: /downloads/Finance_3_Insights.pdf
+                - img [ref=e168]
+                - text: Preuzmi PDF
+      - generic [ref=e173]:
+        - heading "O Infinusu" [level=2] [ref=e174]
+        - generic [ref=e175]:
+          - generic [ref=e176]:
+            - img [ref=e178]
+            - generic [ref=e181]: SAP Gold Partner
+          - generic [ref=e182]:
+            - img [ref=e184]
+            - generic [ref=e188]: 30+ experienced consultants
+          - generic [ref=e189]:
+            - img [ref=e191]
+            - generic [ref=e196]: 20+ satisfied customers
+        - generic [ref=e198]:
+          - paragraph [ref=e199]: Industrije
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - img [ref=e204]
+              - generic [ref=e207]: Retail
+            - generic [ref=e208]:
+              - img [ref=e210]
+              - generic [ref=e213]: Pharmaceuticals
+            - generic [ref=e214]:
+              - img [ref=e216]
+              - generic [ref=e221]: Wholesale & Distribution
+            - generic [ref=e222]:
+              - img [ref=e224]
+              - generic [ref=e228]: Consumer Goods
+            - generic [ref=e229]:
+              - img [ref=e231]
+              - generic [ref=e233]: Industrial Manufacturing
+            - generic [ref=e234]:
+              - img [ref=e236]
+              - generic [ref=e239]: Professional Services
+            - generic [ref=e240]:
+              - img [ref=e242]
+              - generic [ref=e244]: Travel
+            - generic [ref=e245]:
+              - img [ref=e247]
+              - generic [ref=e250]: Oil & Gas
+            - generic [ref=e251]:
+              - img [ref=e253]
+              - generic [ref=e257]: Telco
+            - generic [ref=e258]:
+              - img [ref=e260]
+              - generic [ref=e263]: Retail
+            - generic [ref=e264]:
+              - img [ref=e266]
+              - generic [ref=e269]: Pharmaceuticals
+            - generic [ref=e270]:
+              - img [ref=e272]
+              - generic [ref=e277]: Wholesale & Distribution
+            - generic [ref=e278]:
+              - img [ref=e280]
+              - generic [ref=e284]: Consumer Goods
+            - generic [ref=e285]:
+              - img [ref=e287]
+              - generic [ref=e289]: Industrial Manufacturing
+            - generic [ref=e290]:
+              - img [ref=e292]
+              - generic [ref=e295]: Professional Services
+            - generic [ref=e296]:
+              - img [ref=e298]
+              - generic [ref=e300]: Travel
+            - generic [ref=e301]:
+              - img [ref=e303]
+              - generic [ref=e306]: Oil & Gas
+            - generic [ref=e307]:
+              - img [ref=e309]
+              - generic [ref=e313]: Telco
+        - paragraph [ref=e314]: Infinus d.o.o. je SAP Gold Partner sa više od 30 sertifikovanih SAP konsultanata i brojnim regionalnim i međunarodnim referencama. Naš fokus je da pomognemo brzorastućim kompanijama da kroz SAP Cloud ERP dobiju strukturu, kontrolu i agilnost potrebnu za sledeću fazu rasta.
+      - generic [ref=e317]:
+        - heading "Spremni da razgovaramo?" [level=2] [ref=e318]
+        - paragraph [ref=e319]: Zakažite kratak poziv i proverite kako SAP Cloud ERP može da podrži vaš rast.
+        - link "Pošaljite upit" [ref=e321] [cursor=pointer]:
+          - /url: /contact
+          - img [ref=e322]
+          - text: Pošaljite upit
+        - paragraph [ref=e324]:
+          - img [ref=e325]
+          - text: Odgovaramo u roku jednog radnog dana
+      - generic [ref=e331]:
+        - heading "Često postavljana pitanja" [level=2] [ref=e333]
+        - generic [ref=e335]:
+          - heading "Da li je SAP Cloud ERP prevelik za srednje i brzorastuće firme bez ERP-a?" [level=3] [ref=e337]:
+            - button "Da li je SAP Cloud ERP prevelik za srednje i brzorastuće firme bez ERP-a?" [ref=e338] [cursor=pointer]:
+              - img [ref=e340]
+              - generic [ref=e343]: Da li je SAP Cloud ERP prevelik za srednje i brzorastuće firme bez ERP-a?
+              - img [ref=e344]
+          - heading "Kako SAP pomaže oko usklađenosti i standarda?" [level=3] [ref=e347]:
+            - button "Kako SAP pomaže oko usklađenosti i standarda?" [ref=e348] [cursor=pointer]:
+              - img [ref=e350]
+              - generic [ref=e353]: Kako SAP pomaže oko usklađenosti i standarda?
+              - img [ref=e354]
+          - heading "Koja je uloga AI u finansijama?" [level=3] [ref=e357]:
+            - button "Koja je uloga AI u finansijama?" [ref=e358] [cursor=pointer]:
+              - img [ref=e360]
+              - generic [ref=e363]: Koja je uloga AI u finansijama?
+              - img [ref=e364]
+    - contentinfo [ref=e366]:
+      - generic [ref=e368]:
+        - generic [ref=e369]:
+          - img "Infinus Logo" [ref=e371]
+          - paragraph [ref=e372]: Infinus d.o.o. is a SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.
+        - generic [ref=e374]:
+          - generic [ref=e376]:
+            - heading "Contact Information" [level=3] [ref=e377]
+            - list [ref=e378]:
+              - listitem [ref=e379]:
+                - link "Tresnjinog cveta 1, 11070 Belgrade, Serbia" [ref=e380] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e381]:
+                - link "office@infinus.rs" [ref=e382] [cursor=pointer]:
+                  - /url: mailto:office@infinus.rs
+              - listitem [ref=e383]:
+                - link "LinkedIn" [ref=e384] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/company/infinus1/posts/?feedView=all
+                  - img [ref=e385]
+                  - text: LinkedIn
+          - generic [ref=e387]:
+            - heading "Our Expertise" [level=3] [ref=e388]
+            - list [ref=e389]:
+              - listitem [ref=e390]:
+                - link "SAP Advisory & Consulting" [ref=e391] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e392]:
+                - link "SAP Implementations" [ref=e393] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e394]:
+                - link "SAP Application Management & Support" [ref=e395] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e396]:
+                - link "SAP Integration & Process Optimization" [ref=e397] [cursor=pointer]:
+                  - /url: /#our-expertise
+              - listitem [ref=e398]:
+                - link "SAP Extensions & Innovation" [ref=e399] [cursor=pointer]:
+                  - /url: /#our-expertise
+          - generic [ref=e400]:
+            - heading "Company" [level=3] [ref=e401]
+            - list [ref=e402]:
+              - listitem [ref=e403]:
+                - link "About Us" [ref=e404] [cursor=pointer]:
+                  - /url: /#about
+              - listitem [ref=e405]:
+                - 'link "GROW with SAP: Finance" [ref=e406] [cursor=pointer]':
+                  - /url: /grow
+              - listitem [ref=e407]:
+                - link "SAP for Professional Services" [ref=e408] [cursor=pointer]:
+                  - /url: /professional-services
+              - listitem [ref=e409]:
+                - link "FAQ" [ref=e410] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e411]:
+                - link "Contact" [ref=e412] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e413]:
+            - heading "Resources" [level=3] [ref=e414]
+            - list [ref=e415]:
+              - listitem [ref=e416]:
+                - link "GROW Materials" [ref=e417] [cursor=pointer]:
+                  - /url: /grow#downloads
+              - listitem [ref=e418]:
+                - link "Professional Services Materials" [ref=e419] [cursor=pointer]:
+                  - /url: /professional-services#downloads
+          - generic [ref=e420]:
+            - heading "Legal" [level=3] [ref=e421]
+            - list [ref=e422]:
+              - listitem [ref=e423]:
+                - link "Privacy Policy" [ref=e424] [cursor=pointer]:
+                  - /url: /privacy
+        - generic [ref=e425]:
+          - paragraph [ref=e426]: © 2025 Infinus. All rights reserved.
+          - generic [ref=e427]:
+            - link "Privacy" [ref=e429] [cursor=pointer]:
+              - /url: /privacy
+            - paragraph [ref=e430]:
+              - text: Developed by
+              - link "Brivio" [ref=e431] [cursor=pointer]:
+                - /url: https://www.brivio.co/
+  - region "Notifications alt+T"
+  - alert [ref=e432]
+```

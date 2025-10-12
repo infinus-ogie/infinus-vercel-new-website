@@ -1,12 +1,16 @@
 import type { Metadata } from "next"
 import { Inter, IBM_Plex_Sans } from "next/font/google"
+import Script from "next/script"
 import "./globals.css"
 import { SITE_CONFIG } from "@/lib/jsonld"
 import { Toaster } from "sonner"
 import VendorScripts from "./_components/VendorScripts"
-import RouteChangeTracker from "./_components/RouteChangeTracker"
+// TEMPORARY HOTFIX: Commented out for campaign launch
+// import RouteChangeTracker from "./_components/RouteChangeTracker"
 import ViClickTracker from "./_components/ViClickTracker"
-import GoogleAnalytics from "./_components/GoogleAnalytics"
+// TEMPORARY HOTFIX: Commented out for campaign launch
+// import GoogleAnalytics from "./_components/GoogleAnalytics"
+import GAFast from "./_components/GAFast"
 import DnbVisitorPixel from "@/components/analytics/DnbVisitorPixel"
 
 const inter = Inter({ 
@@ -100,16 +104,36 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1e40af" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        {/* TEMPORARY HOTFIX: Unconditional GA4 for campaign launch (no Consent Mode) */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-S0YZ6MZWK1"
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-S0YZ6MZWK1', { send_page_view: false });
+            console.log('[GA4] Initialized (hotfix mode)');
+          `}
+        </Script>
       </head>
       <body className={`${inter.variable} ${ibmPlexSans.variable} font-sans`}>
         {children}
         <Toaster position="top-right" richColors />
         
         {/* Vendor/marketing tags mount point */}
-        <RouteChangeTracker />
+        {/* TEMPORARY HOTFIX: Commented out consent-aware trackers */}
+        {/* <RouteChangeTracker /> */}
+        {/* <GoogleAnalytics /> */}
         <ViClickTracker />
-        <GoogleAnalytics />
         <DnbVisitorPixel />
+        
+        {/* TEMPORARY HOTFIX: Unconditional page_view tracking */}
+        <GAFast />
       </body>
     </html>
   )

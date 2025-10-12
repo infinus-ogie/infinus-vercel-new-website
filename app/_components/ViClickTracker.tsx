@@ -18,22 +18,17 @@ declare global {
   }
 }
 
+// ========== DEBUG LOGGING START ==========
+const DEBUG_CLICK = true;
+const log = (...args: any[]) => DEBUG_CLICK && console.log('[ViClickTracker DEBUG]', ...args);
+// ========== DEBUG LOGGING END ==========
+
 export default function ViClickTracker() {
   useEffect(() => {
-    // Check if user has given consent
-    const hasConsent = localStorage.getItem("marketing_consent") === "true";
+    // TEMPORARY HOTFIX: Skip consent checks for campaign launch
+    console.log('[ViClickTracker] Initializing (hotfix mode - unconditional tracking)');
+    
     const dnbViEnabled = process.env.NEXT_PUBLIC_DNB_VI_ENABLED === "true";
-
-    if (!hasConsent) {
-      if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-        console.log("[ViClickTracker] Tracking disabled - no consent");
-      }
-      return;
-    }
-
-    if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-      console.log("[ViClickTracker] Tracking enabled", { dnbViEnabled, hasConsent });
-    }
 
     // Check if D&B VI is available (only if enabled)
     if (dnbViEnabled && (typeof window === "undefined" || !window.dnbvid)) {
@@ -50,6 +45,8 @@ export default function ViClickTracker() {
       const viElement = target.closest('[data-vi="download"], [data-vi="zip"]');
       
       if (!viElement) return;
+
+      log('Click detected on VI element');
 
       // Get the anchor element (either the element itself or find the anchor within)
       const anchor = viElement.tagName === 'A' 
@@ -69,19 +66,12 @@ export default function ViClickTracker() {
       const doc = viElement.getAttribute('data-vi-doc') || '';
       const pagePath = window.location.pathname;
 
-      if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-        console.log("[ViClickTracker] Click detected:", {
-          type,
-          label,
-          href,
-          doc,
-          pagePath
-        });
-      }
+      log('Click details:', { type, label, href, doc, pagePath });
 
       // Send to D&B Visitor Intelligence (only if enabled)
       if (dnbViEnabled && window.dnbvid) {
         try {
+          log('Sending to D&B VI');
           window.dnbvid.getData(
             process.env.NEXT_PUBLIC_DNB_VI_ACCOUNT!,
             "json",
@@ -93,35 +83,32 @@ export default function ViClickTracker() {
               p4: pagePath,
             },
             () => {
-              if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-                console.log("[ViClickTracker] D&B VI data sent successfully");
-              }
+              log('D&B VI data sent successfully');
             }
           );
         } catch (error) {
-          if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-            console.error("[ViClickTracker] Error sending to D&B VI:", error);
-          }
+          log('Error sending to D&B VI:', error);
         }
       }
 
-      // Send to GA4
+      // Send to GA4 (TEMPORARY HOTFIX: unconditional)
       try {
         const eventName = type === "zip" ? "vi_zip_click" : "vi_download_click";
-        window.gtag?.("event", eventName, {
-          item_name: label,
-          link_url: href,
-          file_name: doc,
-          page_location: pagePath
-        });
+        console.log('[ViClickTracker] Firing GA4 event:', eventName, { label, href, doc });
         
-        if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-          console.log("[ViClickTracker] GA4 event sent successfully:", eventName);
+        if (typeof (window as any).gtag === "function") {
+          (window as any).gtag("event", eventName, {
+            item_name: label,
+            link_url: href,
+            file_name: doc,
+            page_location: pagePath
+          });
+          console.log('[ViClickTracker] GA4 event fired successfully:', eventName);
+        } else {
+          console.warn('[ViClickTracker] gtag not available');
         }
       } catch (error) {
-        if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-          console.error("[ViClickTracker] Error sending to GA4:", error);
-        }
+        console.error('[ViClickTracker] Error sending to GA4:', error);
       }
     };
 
@@ -181,21 +168,18 @@ export default function ViClickTracker() {
       }
     };
 
-    // Add event listeners
-    document.addEventListener('click', handleClick, { passive: true });
+    // Add event listeners - use CAPTURE phase (true) to fire BEFORE navigation
+    console.log('[ViClickTracker] Adding click listener with CAPTURE PHASE');
+    document.addEventListener('click', handleClick, true);
     window.addEventListener('vi_manual_click', handleManualClick as EventListener);
 
-    if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-      console.log("[ViClickTracker] Click tracking initialized");
-    }
+    console.log('[ViClickTracker] Click tracking initialized successfully (hotfix mode)');
 
     // Cleanup
     return () => {
-      document.removeEventListener('click', handleClick);
+      console.log('[ViClickTracker] Cleaning up click tracking');
+      document.removeEventListener('click', handleClick, true);
       window.removeEventListener('vi_manual_click', handleManualClick as EventListener);
-      if (process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true") {
-        console.log("[ViClickTracker] Click tracking cleaned up");
-      }
     };
   }, []);
 

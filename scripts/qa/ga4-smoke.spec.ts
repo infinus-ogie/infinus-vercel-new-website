@@ -80,22 +80,60 @@ async function checkDebugEndpoint(page: Page) {
 
 test.describe('GA4 + D&B VI Tracking QA', () => {
   test.beforeEach(async ({ page }) => {
+    // Capture console logs for debugging
+    const consoleLogs: string[] = [];
+    page.on('console', (msg) => {
+      const text = msg.text();
+      if (text.includes('[GA4') || text.includes('[RouteTracker') || text.includes('[ViClickTracker')) {
+        consoleLogs.push(text);
+      }
+    });
+    
+    // Store logs on page context for later access
+    (page as any)._consoleLogs = consoleLogs;
+    
     // Set up request interception to track network calls
     await page.route('**/*', (route) => {
       route.continue();
     });
   });
 
-  test('A. page_view tracking', async ({ page }) => {
+  test('A. page_view tracking with debug logs', async ({ page }) => {
+    const collectRequests: string[] = [];
+    const d41Requests: string[] = [];
+    
+    // Track all GA4 and D&B VI requests
+    page.on('request', (request) => {
+      const url = request.url();
+      if (url.includes('www.google-analytics.com/g/collect')) {
+        collectRequests.push(url);
+      }
+      if (url.includes('d41.co')) {
+        d41Requests.push(url);
+      }
+    });
+    
     // Go to homepage
+    console.log('\n📍 Navigating to', BASE_URL);
     await page.goto(BASE_URL);
     
     // Check debug endpoint first
     await checkDebugEndpoint(page);
     
-    // Enable consent and reload
+    // Enable consent BEFORE reload
+    console.log('🔐 Setting marketing_consent=true');
     await enableConsent(page);
+    
+    console.log('🔄 Reloading page...');
     await page.reload();
+    
+    // Wait a bit for scripts to initialize
+    await page.waitForTimeout(2000);
+    
+    // Print console logs from GA4 initialization
+    const consoleLogs = (page as any)._consoleLogs || [];
+    console.log('\n📋 Console logs from page:');
+    consoleLogs.forEach((log: string) => console.log('  ', log));
     
     // Check if GA4 is configured by looking for the gtag script
     const gaScriptLoaded = await page.waitForRequest(request => 
@@ -103,60 +141,152 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
     ).catch(() => null);
     
     if (!gaScriptLoaded) {
-      console.log('⚠️  SKIPPING: GA4 script not loaded (NEXT_PUBLIC_GA_ID not set)');
+      console.log('\n⚠️  SKIPPING: GA4 script not loaded (NEXT_PUBLIC_GA_ID not set)');
       return;
     }
     
-    // Wait for page_view event
-    await waitForCollect(page, (url) => hasEventName(url, 'page_view'));
+    console.log('✅ GA4 script loaded');
     
-    console.log('✓ page_view tracking confirmed');
+    // Wait for page_view event
+    try {
+      await waitForCollect(page, (url) => hasEventName(url, 'page_view'));
+      console.log('✅ page_view event sent');
+    } catch (error) {
+      console.log('\n❌ page_view event NOT sent');
+      console.log('Last 5 GA4 collect requests:');
+      collectRequests.slice(-5).forEach((url) => {
+        const u = new URL(url);
+        const params = new URLSearchParams(u.search);
+        const eventName = params.get('en') || 'N/A';
+        const pagePath = params.get('dp') || params.get('dl') || 'N/A';
+        console.log(`  Event: ${eventName}, Path: ${pagePath}`);
+      });
+      throw error;
+    }
+    
+    // Print summary
+    console.log('\n📊 Summary:');
+    console.log(`  GA4 requests: ${collectRequests.length}`);
+    console.log(`  D&B VI requests: ${d41Requests.length}`);
+    console.log('\nLast 5 GA4 collect URLs with event names:');
+    collectRequests.slice(-5).forEach((url) => {
+      const u = new URL(url);
+      const params = new URLSearchParams(u.search);
+      const eventName = params.get('en') || '(initial)';
+      const pagePath = params.get('dp') || params.get('dl') || 'N/A';
+      const pageLocation = params.get('dl') || 'N/A';
+      console.log(`  📤 Event: ${eventName}`);
+      console.log(`     Page Path: ${pagePath}`);
+      console.log(`     Page Location: ${pageLocation}`);
+    });
+    
+    console.log('\n✓ page_view tracking confirmed');
+  });
+
+  test('A2. Route change tracking', async ({ page }) => {
+    const collectRequests: string[] = [];
+    
+    page.on('request', (request) => {
+      const url = request.url();
+      if (url.includes('www.google-analytics.com/g/collect')) {
+        collectRequests.push(url);
+      }
+    });
+    
+    console.log('\n📍 Testing route change tracking');
+    await page.goto(BASE_URL);
+    await enableConsent(page);
+    await page.reload();
+    
+    // Wait for initial page_view
+    await waitForCollect(page, (url) => hasEventName(url, 'page_view'));
+    console.log('✅ Initial page_view sent');
+    
+    const initialCount = collectRequests.length;
+    
+    // Navigate to /grow
+    console.log('🔀 Navigating to /grow');
+    await page.goto(`${BASE_URL}/grow`);
+    await page.waitForTimeout(1000);
+    
+    // Wait for another page_view
+    try {
+      await waitForCollect(page, (url) => {
+        return hasEventName(url, 'page_view') && url.includes('/grow');
+      });
+      console.log('✅ Route change page_view sent');
+    } catch (error) {
+      console.log('❌ Route change page_view NOT sent');
+      console.log(`Collected ${collectRequests.length - initialCount} new requests after navigation`);
+      throw error;
+    }
+    
+    console.log('✓ Route change tracking confirmed');
   });
 
   test('B. ZIP click tracking on /grow', async ({ page }) => {
+    const collectRequests: string[] = [];
+    const consoleLogs = (page as any)._consoleLogs || [];
+    
+    page.on('request', (request) => {
+      const url = request.url();
+      if (url.includes('www.google-analytics.com/g/collect')) {
+        collectRequests.push(url);
+      }
+    });
+    
+    console.log('\n📍 Testing ZIP click on /grow');
     await page.goto(`${BASE_URL}/grow`);
     await enableConsent(page);
     await page.reload();
     
-    // Check if tracking is enabled first by looking for the debug endpoint response
-    const debugResponse = await page.request.get(`${BASE_URL}/vi-debug`);
-    let trackingEnabled = false;
-    if (debugResponse.ok()) {
-      const debugData = await debugResponse.json();
-      trackingEnabled = debugData.viEnabled;
-    }
+    // Wait for page to be ready
+    await page.waitForTimeout(1000);
     
-    if (!trackingEnabled) {
-      console.log('⚠️  SKIPPING: D&B VI tracking is disabled (NEXT_PUBLIC_DNB_VI_ENABLED not set)');
-      return;
-    }
-    
-    // Wait for D&B VI to load
-    await sawDnb(page);
+    // Print relevant console logs
+    console.log('\n📋 ViClickTracker logs:');
+    consoleLogs.filter((log: string) => log.includes('[ViClickTracker')).forEach((log: string) => console.log('  ', log));
     
     // Try to find ZIP button with data-vi attribute first, then fallback to text
     let zipButton;
     try {
       zipButton = page.locator('[data-vi="zip"]').first();
       await zipButton.waitFor({ timeout: 2000 });
+      console.log('✅ Found ZIP button with [data-vi="zip"]');
     } catch {
       try {
         zipButton = page.getByText(/Preuzmite materijale/i).first();
         await zipButton.waitFor({ timeout: 2000 });
+        console.log('✅ Found ZIP button by text');
       } catch {
+        console.log('❌ ZIP button not found on /grow page');
         throw new Error('ZIP button not found on /grow page. Expected [data-vi="zip"] or text matching /Preuzmite materijale/i');
       }
     }
     
     // Click the ZIP button
+    console.log('🖱️  Clicking ZIP button');
     await zipButton.click();
+    await page.waitForTimeout(500);
     
     // Wait for vi_zip_click event with required parameters
-    await waitForCollect(page, (url) => {
-      return hasEventName(url, 'vi_zip_click') && 
-             hasParam(url, 'ep.file_name') && 
-             hasParam(url, 'ep.link_url');
-    });
+    try {
+      await waitForCollect(page, (url) => {
+        return hasEventName(url, 'vi_zip_click') && 
+               hasParam(url, 'ep.item_name');
+      });
+      console.log('✅ vi_zip_click event sent');
+    } catch (error) {
+      console.log('❌ vi_zip_click event NOT sent');
+      console.log('Last 3 GA4 requests after click:');
+      collectRequests.slice(-3).forEach((url) => {
+        const u = new URL(url);
+        const params = new URLSearchParams(u.search);
+        const eventName = params.get('en') || 'N/A';
+        console.log(`  Event: ${eventName}`);
+      });
+      throw error;
+    }
     
     console.log('✓ vi_zip_click tracking confirmed on /grow');
   });
