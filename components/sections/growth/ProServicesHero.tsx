@@ -107,6 +107,9 @@ export default function ProServicesHero({
               <a 
                 key={i} 
                 href={b.href}
+                data-vi={b.href.includes('.zip') ? 'zip' : undefined}
+                data-vi-label={b.href.includes('.zip') ? (title.includes('Professional Services') ? 'Professional Services Materials – ZIP' : 'Grow Materials – ZIP') : undefined}
+                data-vi-doc={b.href.includes('.zip') ? b.href.split('/').pop() || '' : undefined}
                 className={`rounded-xl px-8 py-4 text-base font-medium transition focus:outline-none focus:ring-2 focus:ring-white/40
                   ${b.primary 
                     ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 border border-yellow-400 hover:from-yellow-500 hover:to-yellow-600 backdrop-blur shadow-lg font-semibold' 

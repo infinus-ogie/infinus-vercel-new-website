@@ -5,6 +5,7 @@ import Script from "next/script";
 
 const DNB_ENABLED = process.env.NEXT_PUBLIC_DNB_VI_ENABLED === "true";
 const DNB_ACCOUNT = process.env.NEXT_PUBLIC_DNB_VI_ACCOUNT || "paapi1084";
+const DEBUG = process.env.NEXT_PUBLIC_DNB_VI_DEBUG === "true";
 
 /**
  * VendorScripts
@@ -72,6 +73,49 @@ export default function VendorScripts() {
           })();
         `}
       </Script>
+      
+      {/* Debug Test Hooks - Only in debug mode */}
+      {DEBUG && (
+        <Script id="vi-debug-hooks" strategy="afterInteractive">
+          {`
+            (function setupDebugHooks() {
+              if (typeof window === 'undefined') return;
+              
+              window.__viTest = {
+                consentOn: () => {
+                  localStorage.setItem('marketing_consent', 'true');
+                  console.log('[VI Debug] Consent enabled - reload page to activate tracking');
+                },
+                consentOff: () => {
+                  localStorage.removeItem('marketing_consent');
+                  console.log('[VI Debug] Consent disabled - reload page to deactivate tracking');
+                },
+                fireDownload: (label = 'Test PDF', href = '/dummy.pdf') => {
+                  console.log('[VI Debug] Firing test download event:', { label, href });
+                  window.dispatchEvent(new CustomEvent('vi_manual_click', {
+                    detail: { type: 'download', label, href, page: location.pathname }
+                  }));
+                },
+                fireZip: (label = 'Test ZIP', href = '/dummy.zip') => {
+                  console.log('[VI Debug] Firing test ZIP event:', { label, href });
+                  window.dispatchEvent(new CustomEvent('vi_manual_click', {
+                    detail: { type: 'zip', label, href, page: location.pathname }
+                  }));
+                },
+                status: () => {
+                  const consent = localStorage.getItem('marketing_consent') === 'true';
+                  const dnbvid = typeof window.dnbvid !== 'undefined';
+                  console.log('[VI Debug] Status:', { consent, dnbvid, account: '${DNB_ACCOUNT}' });
+                  return { consent, dnbvid, account: '${DNB_ACCOUNT}' };
+                }
+              };
+              
+              console.log('[VI Debug] Test hooks available at window.__viTest');
+              console.log('[VI Debug] Usage: __viTest.consentOn(); __viTest.fireDownload(); __viTest.fireZip();');
+            })();
+          `}
+        </Script>
+      )}
     </>
   );
 }

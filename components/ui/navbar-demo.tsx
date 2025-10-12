@@ -16,7 +16,7 @@ export function NavBarDemo() {
   const navItems = [
     { name: 'Home', url: '/', icon: <Home size={18} strokeWidth={2.5} /> },
     { name: 'About', url: '/#about', icon: <User size={18} strokeWidth={2.5} /> },
-    { name: 'Our Expertise', url: '/#domain-expertise', icon: <Briefcase size={18} strokeWidth={2.5} /> },
+    { name: 'Our Expertise', url: '/#our-expertise', icon: <Briefcase size={18} strokeWidth={2.5} /> },
     { name: 'Benefits', url: '/#partnership-benefits', icon: <Star size={18} strokeWidth={2.5} /> },
     { 
       name: 'Focus Topics', 

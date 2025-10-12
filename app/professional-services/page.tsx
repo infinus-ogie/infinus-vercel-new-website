@@ -5,7 +5,7 @@ import * as React from "react";
 // Extend Window interface for gtag
 declare global {
   interface Window {
-    gtag?: (command: string, action: string, parameters: Record<string, any>) => void;
+    gtag?: (command: string, action: string, parameters?: Record<string, any>) => void;
   }
 }
 import Script from "next/script";
@@ -221,7 +221,7 @@ export default function ProfessionalServicesPage() {
           description="Upravljajte projektima, resursima, procesima i profitabilnošću uz rešenje koje razume vaš biznis. Efikasan, skalabilan i agilan ERP za firme koje prodaju znanje, vreme i usluge."
           badge={{ label: "PROGRAM", text: "GROW with SAP" }}
           ctas={[
-            { text: "Preuzmite materijale", href: "#downloads", primary: true }
+            { text: "Preuzmite materijale", href: "/growth-professional-services-materials/Professional_Services_pack.zip", primary: true }
           ]}
           bgImage="/growth-professional-services-materials/professional-services-cover.jpg"
         />

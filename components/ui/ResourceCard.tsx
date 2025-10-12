@@ -41,6 +41,9 @@ export function ResourceCard({ item, onDownload }: { item: Resource; onDownload?
         <div className="mt-5">
           {onDownload ? (
             <button
+              data-vi="download"
+              data-vi-label={item.title}
+              data-vi-doc={item.url.split('/').pop() || ''}
               onClick={() => {
                 // Analytics tracking
                 if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -62,6 +65,9 @@ export function ResourceCard({ item, onDownload }: { item: Resource; onDownload?
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
+              data-vi="download"
+              data-vi-label={item.title}
+              data-vi-doc={item.url.split('/').pop() || ''}
               onClick={() => {
                 // Analytics tracking
                 if (typeof window !== 'undefined' && (window as any).gtag) {

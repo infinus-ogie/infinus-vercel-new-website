@@ -40,6 +40,9 @@ export function ResourceList({
           <a
             href={zipUrl}
             download
+            data-vi="download"
+            data-vi-label="Preuzmi ceo paket (ZIP)"
+            data-vi-doc={zipUrl.split('/').pop() || ''}
             className="hidden md:inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-600"
             aria-label="Preuzmi ceo paket (ZIP)"
           >
@@ -64,6 +67,9 @@ export function ResourceList({
           <a
             href={zipUrl}
             download
+            data-vi="download"
+            data-vi-label="Preuzmi ceo paket (ZIP)"
+            data-vi-doc={zipUrl.split('/').pop() || ''}
             className="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-600"
             aria-label="Preuzmi ceo paket (ZIP)"
           >

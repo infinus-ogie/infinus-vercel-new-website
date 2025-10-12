@@ -5,6 +5,8 @@ import { SITE_CONFIG } from "@/lib/jsonld"
 import { Toaster } from "sonner"
 import VendorScripts from "./_components/VendorScripts"
 import RouteChangeTracker from "./_components/RouteChangeTracker"
+import ViClickTracker from "./_components/ViClickTracker"
+import GoogleAnalytics from "./_components/GoogleAnalytics"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -46,9 +48,6 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL(SITE_CONFIG.url),
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -108,6 +107,8 @@ export default function RootLayout({
         {/* Vendor/marketing tags mount point */}
         <VendorScripts />
         <RouteChangeTracker />
+        <ViClickTracker />
+        <GoogleAnalytics />
       </body>
     </html>
   )

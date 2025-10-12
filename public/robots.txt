@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.infinus.co
+
+# Sitemaps
+Sitemap: https://www.infinus.co/sitemap.xml

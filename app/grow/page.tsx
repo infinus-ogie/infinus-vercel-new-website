@@ -5,7 +5,7 @@ import * as React from "react";
 // Extend Window interface for gtag
 declare global {
   interface Window {
-    gtag?: (command: string, action: string, parameters: Record<string, any>) => void;
+    gtag?: (command: string, action: string, parameters?: Record<string, any>) => void;
   }
 }
 import Script from "next/script";
@@ -206,7 +206,7 @@ export default function GrowPage() {
           description="Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija koje danas rade bez ERP-a ili sa zastarelim sistemima."
           badge={{ label: "PROGRAM", text: "GROW with SAP" }}
           ctas={[
-            { text: "Preuzmite materijale", href: "#downloads", primary: true }
+            { text: "Preuzmite materijale", href: "/downloads/CFO_pack.zip", primary: true }
           ]}
         />
 

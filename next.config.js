@@ -4,6 +4,21 @@ const nextConfig = {
     domains: ['images.unsplash.com'],
     formats: ['image/webp', 'image/avif'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'infinus.co',
+          },
+        ],
+        destination: 'https://www.infinus.co/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
