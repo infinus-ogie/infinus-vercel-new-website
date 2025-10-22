@@ -170,7 +170,7 @@ function HeroGeometric({
                             </span>
                             <br className="hidden lg:block" />
                             <span className="lg:inline bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-white/90 to-blue-400">
-                                into Business Advantage
+                                {" "}into Business Advantage
                             </span>
                         </h1>
                     </motion.div>

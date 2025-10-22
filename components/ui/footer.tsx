@@ -39,6 +39,7 @@ const footerConfig = {
         { label: "About Us", href: "/#about" },
         { label: "GROW with SAP: Finance", href: "/grow" },
         { label: "SAP for Professional Services", href: "/professional-services" },
+        { label: "Careers", href: "/#join-team" },
         { label: "FAQ", href: "/faq" },
         { label: "Contact", href: "/contact" },
       ],
@@ -71,13 +72,15 @@ export default function Footer() {
         <div className="mb-12">
           {/* Logo with dark/light mode support */}
           <div className="relative mb-6">
-            <Image
-              src={footerConfig.logo.dark}
-              alt="Infinus Logo"
-              width={250}
-              height={75}
-              className="h-20 w-auto"
-            />
+            <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
+              <Image
+                src={footerConfig.logo.dark}
+                alt="Infinus Logo"
+                width={250}
+                height={75}
+                className="h-20 w-auto"
+              />
+            </Link>
           </div>
           <p className="text-sm text-white/70 leading-relaxed max-w-2xl">
             {footerConfig.description}

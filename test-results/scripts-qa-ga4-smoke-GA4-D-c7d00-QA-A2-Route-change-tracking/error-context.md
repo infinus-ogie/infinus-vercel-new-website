@@ -26,347 +26,291 @@
         - /url: /faq
         - generic [ref=e30]: FAQ
     - main [ref=e31]:
-      - generic [ref=e52]:
-        - generic "Infinus" [ref=e54]:
-          - img "Infinus" [ref=e55]
-        - heading "Turning SAP Expertise into Business Advantage" [level=1] [ref=e57]:
-          - text: Turning SAP Expertise
-          - text: into Business Advantage
-        - paragraph [ref=e59]: Empowering companies to work smarter and grow faster
-        - generic [ref=e62]:
-          - generic [ref=e63]:
-            - img [ref=e65]
-            - generic [ref=e68]: SAP Gold Partner
-          - generic [ref=e69]:
-            - img [ref=e71]
-            - generic [ref=e75]: 30+ experienced consultants
-          - generic [ref=e76]:
-            - img [ref=e78]
-            - generic [ref=e83]: 20+ satisfied customers
-      - generic [ref=e86]:
-        - figure [ref=e87]:
-          - img "SAP Gold Partner" [ref=e89]
-        - generic [ref=e90]:
-          - heading "About Us" [level=2] [ref=e91]
-          - paragraph [ref=e92]: Infinus is an SAP Gold Partner specializing in SAP Cloud ERP (Public and Private) and SAP Business AI, delivering deep expertise across the SAP Business Suite portfolio.
-          - paragraph [ref=e93]: Our team of experienced consultants combines technology know-how with business process understanding to deliver best-in-class SAP consulting services and tailored solutions that drive measurable results.
-          - paragraph [ref=e94]: The majority of our experts are senior SAP consultants with over a decade of professional experience across various industries, technologies, and functional areas.
-          - list [ref=e95]:
-            - listitem [ref=e96]:
-              - img [ref=e97]
-              - generic [ref=e100]: SAP Cloud ERP (Public and Private)
-            - listitem [ref=e101]:
-              - img [ref=e102]
-              - generic [ref=e105]: SAP Business AI
-            - listitem [ref=e106]:
-              - img [ref=e107]
-              - generic [ref=e110]: SAP Business Technology Platform (BTP)
-            - listitem [ref=e111]:
-              - img [ref=e112]
-              - generic [ref=e115]: SAP Business Data Cloud
-          - link "Learn more" [ref=e117] [cursor=pointer]:
-            - /url: /contact
-            - text: Learn more
-            - img [ref=e118]
-      - generic [ref=e124]:
+      - generic [ref=e32]:
+        - img "Professional Services Growth Overview" [ref=e33]
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: PROGRAM
+            - generic [ref=e40]: GROW with SAP
+          - 'heading "GROW with SAP: Finansije kao pokretač rasta" [level=1] [ref=e41]':
+            - generic [ref=e42]: "GROW with SAP:"
+            - generic [ref=e43]: Finansije kao pokretač
+            - generic [ref=e44]: rasta
+          - paragraph [ref=e45]: Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija koje danas rade bez ERP-a ili sa zastarelim sistemima.
+          - link "Preuzmite materijale" [ref=e47] [cursor=pointer]:
+            - /url: /downloads/CFO_pack.zip
+      - generic [ref=e50]:
+        - heading "Zašto baš sada" [level=2] [ref=e52]
+        - paragraph [ref=e54]: Danas finansije nisu samo brojke. CFO i finansijski menadžeri preuzimaju ključnu ulogu u tehnologiji, bezbednosti, ESG zahtevima i usklađenosti. Problem? Ručni, nepovezani procesi i zastareli sistemi ne prate tempo rasta - ograničavaju tačnost, brzinu donošenja odluka i zadovoljstvo klijenata.
+        - generic [ref=e56]:
+          - article [ref=e57]:
+            - article "2 od 3 finansijskih direktora kažu da njihovi trenutni sistemi ne mogu da skaliraju uz rast poslovanja." [ref=e58]:
+              - img [ref=e60]
+              - heading "2 od 3" [level=3] [ref=e62]:
+                - generic [ref=e63]: 2 od 3
+              - paragraph [ref=e65]: finansijskih direktora kažu da njihovi trenutni sistemi ne mogu da skaliraju uz rast poslovanja.
+          - article [ref=e66]:
+            - article "70%+ CFO-a navodi da su globalni računovodstveni standardi, bezbednost podataka i usklađenost najveći izazovi." [ref=e67]:
+              - img [ref=e69]
+              - heading "70%+" [level=3] [ref=e71]:
+                - generic [ref=e72]: 70%+
+              - paragraph [ref=e74]: CFO-a navodi da su globalni računovodstveni standardi, bezbednost podataka i usklađenost najveći izazovi.
+          - article [ref=e75]:
+            - article "81% finansijskih lidera veruje da će veštačka inteligencija i Cloud ERP imati pozitivan uticaj na strategiju i korporativne finansije." [ref=e76]:
+              - img [ref=e78]
+              - heading "81%" [level=3] [ref=e81]:
+                - generic [ref=e82]: 81%
+              - paragraph [ref=e84]: finansijskih lidera veruje da će veštačka inteligencija i Cloud ERP imati pozitivan uticaj na strategiju i korporativne finansije.
+        - paragraph [ref=e85]:
+          - text: "Izvor:"
+          - link "Oxford Economics (CFO Insights), 2024" [ref=e86] [cursor=pointer]:
+            - /url: https://www.oxfordeconomics.com/resource/cfo-insights/
+      - generic [ref=e89]:
+        - heading "Kako SAP Cloud ERP pomaže vašem poslovanju da raste" [level=2] [ref=e91]:
+          - text: Kako SAP Cloud ERP pomaže
+          - text: vašem poslovanju da raste
+        - generic [ref=e92]:
+          - article "Pojednostavite rad – Automatizujte procese zatvaranja perioda, upravljanje potraživanjima i obavezama, konsolidaciju i izveštavanje." [ref=e93]:
+            - generic [ref=e94]:
+              - img [ref=e96]
+              - heading "Pojednostavite rad" [level=3] [ref=e98]
+              - paragraph [ref=e99]: Automatizujte procese zatvaranja perioda, upravljanje potraživanjima i obavezama, konsolidaciju i izveštavanje.
+          - article "Ubrzajte rast – Koristite industrijski specifične best practice šablone, podržite više entiteta, valuta i jezika i brže uđite na nova tržišta." [ref=e100]:
+            - generic [ref=e101]:
+              - img [ref=e103]
+              - heading "Ubrzajte rast" [level=3] [ref=e106]
+              - paragraph [ref=e107]: Koristite industrijski specifične best practice šablone, podržite više entiteta, valuta i jezika i brže uđite na nova tržišta.
+          - article "Osigurajte uspeh – Obezbedite jedinstveni izvor finansijske istine, tačne i pravovremene uvide i podršku za sve regulatorne zahteve." [ref=e108]:
+            - generic [ref=e109]:
+              - img [ref=e111]
+              - heading "Osigurajte uspeh" [level=3] [ref=e113]
+              - paragraph [ref=e114]: Obezbedite jedinstveni izvor finansijske istine, tačne i pravovremene uvide i podršku za sve regulatorne zahteve.
+          - article "Pripremite se za budućnost – Integrišite finansije, HR i druge funkcije, uz podršku AI i naprednih analitika za bolje donošenje odluka." [ref=e115]:
+            - generic [ref=e116]:
+              - img [ref=e118]
+              - heading "Pripremite se za budućnost" [level=3] [ref=e121]
+              - paragraph [ref=e122]: Integrišite finansije, HR i druge funkcije, uz podršku AI i naprednih analitika za bolje donošenje odluka.
+      - generic [ref=e125]:
         - generic [ref=e126]:
-          - heading "Our Expertise in Action" [level=2] [ref=e127]
-          - paragraph [ref=e128]: We combine business insight and SAP expertise to help companies operate smarter, faster, and with confidence. From strategy to support, we're your trusted partner throughout the entire SAP lifecycle.
-        - generic [ref=e129]:
-          - link "SAP Advisory & Consulting We define the right SAP strategy for your business - aligning technology with your goals and ensuring measurable outcomes." [ref=e130] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e132]:
-              - generic [ref=e133]:
-                - img [ref=e135]
-                - heading "SAP Advisory & Consulting" [level=3] [ref=e137]
-              - paragraph [ref=e138]: We define the right SAP strategy for your business - aligning technology with your goals and ensuring measurable outcomes.
-          - link "SAP Implementations Fast, transparent, and reliable deployments based on SAP Activate and proven best practices - tailored to your operations." [ref=e139] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e141]:
-              - generic [ref=e142]:
+          - generic [ref=e127]:
+            - heading "Preuzmite materijale za brzorastuće kompanije" [level=2] [ref=e128]
+            - paragraph [ref=e129]: Ovde možete preuzeti besplatne materijale koji objašnjavaju kako finansije mogu postati pokretač rasta – i saznajte na konkretnim primerima kako SAP Cloud ERP podržava skaliranje poslovanja.
+          - link "Preuzmi ceo paket (ZIP)" [ref=e130] [cursor=pointer]:
+            - /url: /downloads/CFO_pack.zip
+            - img [ref=e131]
+            - text: Preuzmi ceo paket (ZIP)
+        - generic [ref=e134]:
+          - 'article "Oxford Economics izveštaj: CFO Insights – Šta finansijski lideri planiraju i gde su prepreke: skaliranje, usklađenost i uloga AI/Cloud ERP-a." [ref=e135]':
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - generic [ref=e138]: PDF document
+                - generic [ref=e139]: Research
+              - 'heading "Oxford Economics izveštaj: CFO Insights" [level=3] [ref=e140]'
+              - paragraph [ref=e141]: "Šta finansijski lideri planiraju i gde su prepreke: skaliranje, usklađenost i uloga AI/Cloud ERP-a."
+              - 'link "Preuzmi Oxford Economics izveštaj: CFO Insights" [ref=e143] [cursor=pointer]':
+                - /url: /downloads/CFO_Insights_OxfordEconomics.pdf
                 - img [ref=e144]
-                - heading "SAP Implementations" [level=3] [ref=e147]
-              - paragraph [ref=e148]: Fast, transparent, and reliable deployments based on SAP Activate and proven best practices - tailored to your operations.
-          - link "SAP Application Management & Support Continuous monitoring, optimization, and expert guidance to keep your SAP system stable, secure, and up to date." [ref=e149] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e151]:
-              - generic [ref=e152]:
-                - img [ref=e154]
-                - heading "SAP Application Management & Support" [level=3] [ref=e156]
-              - paragraph [ref=e157]: Continuous monitoring, optimization, and expert guidance to keep your SAP system stable, secure, and up to date.
-          - link "SAP Integration & Process Optimization Connecting SAP with other systems to streamline workflows, improve visibility, and eliminate operational silos." [ref=e158] [cursor=pointer]:
-            - /url: /contact
+                - text: Preuzmi PDF
+          - article "Checklista za CFO i finansijske menadžere – Ključna pitanja prilikom izbora ERP rešenja - kako pojednostaviti rad, ubrzati rast i obezbediti usklađenost." [ref=e147]:
+            - generic [ref=e148]:
+              - generic [ref=e149]:
+                - generic [ref=e150]: PDF document
+                - generic [ref=e151]: Checklist
+              - heading "Checklista za CFO i finansijske menadžere" [level=3] [ref=e152]
+              - paragraph [ref=e153]: Ključna pitanja prilikom izbora ERP rešenja - kako pojednostaviti rad, ubrzati rast i obezbediti usklađenost.
+              - link "Preuzmi Checklista za CFO i finansijske menadžere" [ref=e155] [cursor=pointer]:
+                - /url: /downloads/Finance_Checklist.pdf
+                - img [ref=e156]
+                - text: Preuzmi PDF
+          - 'article "Infografik: 3 uvida o finansijama i rastu – Brzi uvidi o procesima koji usporavaju finansije i kako Cloud ERP pomaže u skaliranju." [ref=e159]':
             - generic [ref=e160]:
               - generic [ref=e161]:
-                - img [ref=e163]
-                - heading "SAP Integration & Process Optimization" [level=3] [ref=e165]
-              - paragraph [ref=e166]: Connecting SAP with other systems to streamline workflows, improve visibility, and eliminate operational silos.
-          - link "SAP Extensions & Innovation Enhancing standard SAP functionality through custom developments, analytics, and BTP innovations for your specific needs." [ref=e167] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e169]:
-              - generic [ref=e170]:
-                - img [ref=e172]
-                - heading "SAP Extensions & Innovation" [level=3] [ref=e174]
-              - paragraph [ref=e175]: Enhancing standard SAP functionality through custom developments, analytics, and BTP innovations for your specific needs.
-      - generic [ref=e180]:
-        - generic [ref=e182]:
-          - heading "Benefits working with us" [level=2] [ref=e183]
-          - paragraph [ref=e184]: Partnering with Infinus means working with experts who understand both SAP technology and real business challenges.
-        - generic [ref=e185]:
-          - link "Deep SAP Expertise 20+ years of combined consulting experience across SAP ECC, S/4HANA, ABAP, BTP, LoB solutions and platforms - proven knowledge, delivered with precision." [ref=e186] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e188]:
-              - generic [ref=e189]:
-                - img [ref=e191]
-                - heading "Deep SAP Expertise" [level=3] [ref=e195]
-              - paragraph [ref=e196]: 20+ years of combined consulting experience across SAP ECC, S/4HANA, ABAP, BTP, LoB solutions and platforms - proven knowledge, delivered with precision.
-          - link "Business Understanding We speak the language of CFOs, COOs, and CEOs - translating complex SAP concepts into clear business outcomes." [ref=e197] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e199]:
-              - generic [ref=e200]:
-                - img [ref=e202]
-                - heading "Business Understanding" [level=3] [ref=e207]
-              - paragraph [ref=e208]: We speak the language of CFOs, COOs, and CEOs - translating complex SAP concepts into clear business outcomes.
-          - link "Trusted Partnership We act as an extension of your team - transparent, accountable, and fully aligned with your success." [ref=e209] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e211]:
-              - generic [ref=e212]:
-                - img [ref=e214]
-                - heading "Trusted Partnership" [level=3] [ref=e217]
-              - paragraph [ref=e218]: We act as an extension of your team - transparent, accountable, and fully aligned with your success.
-          - link "End-to-End Capability From advisory and implementation to support and optimization - we cover the full SAP lifecycle with one team." [ref=e219] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e221]:
-              - generic [ref=e222]:
-                - img [ref=e224]
-                - heading "End-to-End Capability" [level=3] [ref=e234]
-              - paragraph [ref=e235]: From advisory and implementation to support and optimization - we cover the full SAP lifecycle with one team.
-          - link "Agility & Predictability Fast execution, minimal disruption, and results you can measure - powered by SAP Activate methodology and best practices." [ref=e236] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e238]:
-              - generic [ref=e239]:
-                - img [ref=e241]
-                - heading "Agility & Predictability" [level=3] [ref=e243]
-              - paragraph [ref=e244]: Fast execution, minimal disruption, and results you can measure - powered by SAP Activate methodology and best practices.
-          - link "Regional Presence, European Reach Headquartered in Serbia with clients across the EU - combining local dedication with international standards." [ref=e245] [cursor=pointer]:
-            - /url: /contact
-            - generic [ref=e247]:
-              - generic [ref=e248]:
-                - img [ref=e250]
-                - heading "Regional Presence, European Reach" [level=3] [ref=e252]
-              - paragraph [ref=e253]: Headquartered in Serbia with clients across the EU - combining local dedication with international standards.
-      - region "Domain Expertise" [ref=e254]:
-        - generic [ref=e255]:
-          - generic [ref=e256]:
-            - paragraph [ref=e257]: Industries
-            - heading "Domain Expertise" [level=2] [ref=e258]
-            - paragraph [ref=e259]: Industry-specific SAP solutions delivered with deep process knowledge.
-          - list [ref=e260]:
-            - listitem [ref=e261]:
-              - link "Retail domain" [ref=e262] [cursor=pointer]:
-                - /url: /services#retail
-                - figure "Retail" [ref=e263]:
-                  - img "Retail industry" [ref=e264]
-                  - generic:
-                    - generic: Retail
-            - listitem [ref=e266]:
-              - link "Pharmaceuticals domain" [ref=e267] [cursor=pointer]:
-                - /url: /services#pharma
-                - figure "Pharmaceuticals" [ref=e268]:
-                  - img "Pharmaceuticals industry" [ref=e269]
-                  - generic:
-                    - generic: Pharmaceuticals
-            - listitem [ref=e271]:
-              - link "Wholesale and Distribution domain" [ref=e272] [cursor=pointer]:
-                - /url: /services#wholesale
-                - figure "Wholesale and Distribution" [ref=e273]:
-                  - img "Wholesale and Distribution" [ref=e274]
-                  - generic:
-                    - generic: Wholesale and Distribution
-            - listitem [ref=e276]:
-              - link "Consumer Goods domain" [ref=e277] [cursor=pointer]:
-                - /url: /services#consumer-goods
-                - figure "Consumer Goods" [ref=e278]:
-                  - img "Consumer goods" [ref=e279]
-                  - generic:
-                    - generic: Consumer Goods
-            - listitem [ref=e281]:
-              - link "Industrial Manufacturing domain" [ref=e282] [cursor=pointer]:
-                - /url: /services#manufacturing
-                - figure "Industrial Manufacturing" [ref=e283]:
-                  - img "Industrial manufacturing" [ref=e284]
-                  - generic:
-                    - generic: Industrial Manufacturing
-            - listitem [ref=e286]:
-              - link "Professional Services domain" [ref=e287] [cursor=pointer]:
-                - /url: /services#professional
-                - figure "Professional Services" [ref=e288]:
-                  - img "Professional services" [ref=e289]
-                  - generic:
-                    - generic: Professional Services
-            - listitem [ref=e291]:
-              - link "Travel domain" [ref=e292] [cursor=pointer]:
-                - /url: /services#travel
-                - figure "Travel" [ref=e293]:
-                  - img "Travel industry" [ref=e294]
-                  - generic:
-                    - generic: Travel
-            - listitem [ref=e296]:
-              - link "Oil & Gas domain" [ref=e297] [cursor=pointer]:
-                - /url: /services#oilgas
-                - figure "Oil & Gas" [ref=e298]:
-                  - img "Oil and gas sector" [ref=e299]
-                  - generic:
-                    - generic: Oil & Gas
-            - listitem [ref=e301]:
-              - link "Telco domain" [ref=e302] [cursor=pointer]:
-                - /url: /services#telco
-                - figure "Telco" [ref=e303]:
-                  - img "Telecommunications" [ref=e304]
-                  - generic:
-                    - generic: Telco
-      - generic [ref=e310]:
-        - generic [ref=e311]:
-          - heading "Join Our Team" [level=2] [ref=e312]
-          - generic [ref=e313]:
-            - paragraph [ref=e314]: Due to continues business expansion, we are looking to expand our team.
-            - paragraph [ref=e315]: If you have experience in some of SAP S/4HANA or ECC modules and areas, industry solutions, and/or LOB solutions, and if you are interested to become a member of the agile team of dedicated SAP professionals, please contact us.
-            - paragraph [ref=e316]: We will be glad to talk with you!
-          - generic [ref=e318]:
-            - generic [ref=e319]:
-              - generic [ref=e320]:
-                - img [ref=e322]
-                - generic [ref=e325]: SAP Gold Partner
-              - generic [ref=e326]:
-                - img [ref=e328]
-                - generic [ref=e332]: 30+ experienced consultants
-            - generic [ref=e334]:
-              - img [ref=e336]
-              - generic [ref=e341]: 20+ satisfied customers
-        - generic [ref=e344]:
-          - generic [ref=e345]:
-            - generic [ref=e346]:
-              - generic [ref=e347]: Your Name *
-              - textbox "Your Name *" [ref=e348]:
-                - /placeholder: Nikola Trivic
-            - generic [ref=e349]:
-              - generic [ref=e350]: Phone Number
-              - textbox "Phone Number" [ref=e351]:
-                - /placeholder: +381 64 123 4567
-              - paragraph [ref=e352]: Include country code (E.164 format)
-          - generic [ref=e353]:
-            - generic [ref=e354]:
-              - generic [ref=e355]: Your Email *
-              - textbox "Your Email *" [ref=e356]:
-                - /placeholder: name@company.com
-            - generic [ref=e357]:
-              - generic [ref=e358]: LinkedIn URL
-              - textbox "LinkedIn URL" [ref=e359]:
-                - /placeholder: https://linkedin.com/in/yourprofile
-          - generic [ref=e360]:
-            - generic [ref=e361]: Subject *
-            - textbox "Subject *" [ref=e362]:
-              - /placeholder: SAP Consultant Position
-          - generic [ref=e363]:
-            - generic [ref=e364]: Message *
-            - textbox "Message *" [ref=e365]:
-              - /placeholder: Tell us about your SAP experience and why you'd like to join our team...
-          - generic [ref=e366]:
-            - generic [ref=e367]: Attach your resume (optional)
-            - generic [ref=e368]:
-              - button "Choose File" [ref=e369] [cursor=pointer]
-              - generic [ref=e370]:
-                - img [ref=e371]
-                - paragraph [ref=e374]: Click to upload or drag and drop
-                - paragraph [ref=e375]: PDF, DOC, DOCX (max 5MB)
+                - generic [ref=e162]: PDF document
+                - generic [ref=e163]: Infographic
+              - 'heading "Infografik: 3 uvida o finansijama i rastu" [level=3] [ref=e164]'
+              - paragraph [ref=e165]: Brzi uvidi o procesima koji usporavaju finansije i kako Cloud ERP pomaže u skaliranju.
+              - 'link "Preuzmi Infografik: 3 uvida o finansijama i rastu" [ref=e167] [cursor=pointer]':
+                - /url: /downloads/Finance_3_Insights.pdf
+                - img [ref=e168]
+                - text: Preuzmi PDF
+      - generic [ref=e173]:
+        - heading "O Infinusu" [level=2] [ref=e174]
+        - generic [ref=e175]:
+          - generic [ref=e176]:
+            - img [ref=e178]
+            - generic [ref=e181]: SAP Gold Partner
+          - generic [ref=e182]:
+            - img [ref=e184]
+            - generic [ref=e188]: 30+ experienced consultants
+          - generic [ref=e189]:
+            - img [ref=e191]
+            - generic [ref=e196]: 20+ satisfied customers
+        - generic [ref=e198]:
+          - paragraph [ref=e199]: Industrije
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - img [ref=e204]
+              - generic [ref=e207]: Retail
+            - generic [ref=e208]:
+              - img [ref=e210]
+              - generic [ref=e213]: Pharmaceuticals
+            - generic [ref=e214]:
+              - img [ref=e216]
+              - generic [ref=e221]: Wholesale & Distribution
+            - generic [ref=e222]:
+              - img [ref=e224]
+              - generic [ref=e228]: Consumer Goods
+            - generic [ref=e229]:
+              - img [ref=e231]
+              - generic [ref=e233]: Industrial Manufacturing
+            - generic [ref=e234]:
+              - img [ref=e236]
+              - generic [ref=e239]: Professional Services
+            - generic [ref=e240]:
+              - img [ref=e242]
+              - generic [ref=e244]: Travel
+            - generic [ref=e245]:
+              - img [ref=e247]
+              - generic [ref=e250]: Oil & Gas
+            - generic [ref=e251]:
+              - img [ref=e253]
+              - generic [ref=e257]: Telco
+            - generic [ref=e258]:
+              - img [ref=e260]
+              - generic [ref=e263]: Retail
+            - generic [ref=e264]:
+              - img [ref=e266]
+              - generic [ref=e269]: Pharmaceuticals
+            - generic [ref=e270]:
+              - img [ref=e272]
+              - generic [ref=e277]: Wholesale & Distribution
+            - generic [ref=e278]:
+              - img [ref=e280]
+              - generic [ref=e284]: Consumer Goods
+            - generic [ref=e285]:
+              - img [ref=e287]
+              - generic [ref=e289]: Industrial Manufacturing
+            - generic [ref=e290]:
+              - img [ref=e292]
+              - generic [ref=e295]: Professional Services
+            - generic [ref=e296]:
+              - img [ref=e298]
+              - generic [ref=e300]: Travel
+            - generic [ref=e301]:
+              - img [ref=e303]
+              - generic [ref=e306]: Oil & Gas
+            - generic [ref=e307]:
+              - img [ref=e309]
+              - generic [ref=e313]: Telco
+        - paragraph [ref=e314]: Infinus d.o.o. je SAP Gold Partner sa više od 30 sertifikovanih SAP konsultanata i brojnim regionalnim i međunarodnim referencama. Naš fokus je da pomognemo brzorastućim kompanijama da kroz SAP Cloud ERP dobiju strukturu, kontrolu i agilnost potrebnu za sledeću fazu rasta.
+      - generic [ref=e317]:
+        - heading "Spremni da razgovaramo?" [level=2] [ref=e318]
+        - paragraph [ref=e319]: Zakažite kratak poziv i proverite kako SAP Cloud ERP može da podrži vaš rast.
+        - link "Pošaljite upit" [ref=e321] [cursor=pointer]:
+          - /url: /contact
+          - img [ref=e322]
+          - text: Pošaljite upit
+        - paragraph [ref=e324]:
+          - img [ref=e325]
+          - text: Odgovaramo u roku jednog radnog dana
+      - generic [ref=e331]:
+        - heading "Često postavljana pitanja" [level=2] [ref=e333]
+        - generic [ref=e335]:
+          - heading "Da li je SAP Cloud ERP prevelik za srednje i brzorastuće firme bez ERP-a?" [level=3] [ref=e337]:
+            - button "Da li je SAP Cloud ERP prevelik za srednje i brzorastuće firme bez ERP-a?" [ref=e338] [cursor=pointer]:
+              - img [ref=e340]
+              - generic [ref=e343]: Da li je SAP Cloud ERP prevelik za srednje i brzorastuće firme bez ERP-a?
+              - img [ref=e344]
+          - heading "Kako SAP pomaže oko usklađenosti i standarda?" [level=3] [ref=e347]:
+            - button "Kako SAP pomaže oko usklađenosti i standarda?" [ref=e348] [cursor=pointer]:
+              - img [ref=e350]
+              - generic [ref=e353]: Kako SAP pomaže oko usklađenosti i standarda?
+              - img [ref=e354]
+          - heading "Koja je uloga AI u finansijama?" [level=3] [ref=e357]:
+            - button "Koja je uloga AI u finansijama?" [ref=e358] [cursor=pointer]:
+              - img [ref=e360]
+              - generic [ref=e363]: Koja je uloga AI u finansijama?
+              - img [ref=e364]
+    - contentinfo [ref=e366]:
+      - generic [ref=e368]:
+        - generic [ref=e369]:
+          - img "Infinus Logo" [ref=e371]
+          - paragraph [ref=e372]: Infinus d.o.o. is a SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.
+        - generic [ref=e374]:
           - generic [ref=e376]:
-            - button "Submit Application" [ref=e377] [cursor=pointer]
-            - paragraph [ref=e378]: We reply within 1 business day.
-            - paragraph [ref=e379]:
-              - text: By submitting this form you agree to our
-              - link "Privacy Policy" [ref=e380] [cursor=pointer]:
-                - /url: /privacy
-              - text: .
-    - contentinfo [ref=e381]:
-      - generic [ref=e383]:
-        - generic [ref=e384]:
-          - img "Infinus Logo" [ref=e386]
-          - paragraph [ref=e387]: Infinus d.o.o. is a SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.
-        - generic [ref=e389]:
-          - generic [ref=e391]:
-            - heading "Contact Information" [level=3] [ref=e392]
-            - list [ref=e393]:
-              - listitem [ref=e394]:
-                - link "Tresnjinog cveta 1, 11070 Belgrade, Serbia" [ref=e395] [cursor=pointer]:
+            - heading "Contact Information" [level=3] [ref=e377]
+            - list [ref=e378]:
+              - listitem [ref=e379]:
+                - link "Tresnjinog cveta 1, 11070 Belgrade, Serbia" [ref=e380] [cursor=pointer]:
                   - /url: "#"
-              - listitem [ref=e396]:
-                - link "office@infinus.rs" [ref=e397] [cursor=pointer]:
+              - listitem [ref=e381]:
+                - link "office@infinus.rs" [ref=e382] [cursor=pointer]:
                   - /url: mailto:office@infinus.rs
-              - listitem [ref=e398]:
-                - link "LinkedIn" [ref=e399] [cursor=pointer]:
+              - listitem [ref=e383]:
+                - link "LinkedIn" [ref=e384] [cursor=pointer]:
                   - /url: https://www.linkedin.com/company/infinus1/posts/?feedView=all
-                  - img [ref=e400]
+                  - img [ref=e385]
                   - text: LinkedIn
-          - generic [ref=e402]:
-            - heading "Our Expertise" [level=3] [ref=e403]
-            - list [ref=e404]:
-              - listitem [ref=e405]:
-                - link "SAP Advisory & Consulting" [ref=e406] [cursor=pointer]:
+          - generic [ref=e387]:
+            - heading "Our Expertise" [level=3] [ref=e388]
+            - list [ref=e389]:
+              - listitem [ref=e390]:
+                - link "SAP Advisory & Consulting" [ref=e391] [cursor=pointer]:
                   - /url: /#our-expertise
-              - listitem [ref=e407]:
-                - link "SAP Implementations" [ref=e408] [cursor=pointer]:
+              - listitem [ref=e392]:
+                - link "SAP Implementations" [ref=e393] [cursor=pointer]:
                   - /url: /#our-expertise
-              - listitem [ref=e409]:
-                - link "SAP Application Management & Support" [ref=e410] [cursor=pointer]:
+              - listitem [ref=e394]:
+                - link "SAP Application Management & Support" [ref=e395] [cursor=pointer]:
                   - /url: /#our-expertise
-              - listitem [ref=e411]:
-                - link "SAP Integration & Process Optimization" [ref=e412] [cursor=pointer]:
+              - listitem [ref=e396]:
+                - link "SAP Integration & Process Optimization" [ref=e397] [cursor=pointer]:
                   - /url: /#our-expertise
-              - listitem [ref=e413]:
-                - link "SAP Extensions & Innovation" [ref=e414] [cursor=pointer]:
+              - listitem [ref=e398]:
+                - link "SAP Extensions & Innovation" [ref=e399] [cursor=pointer]:
                   - /url: /#our-expertise
-          - generic [ref=e415]:
-            - heading "Company" [level=3] [ref=e416]
-            - list [ref=e417]:
-              - listitem [ref=e418]:
-                - link "About Us" [ref=e419] [cursor=pointer]:
+          - generic [ref=e400]:
+            - heading "Company" [level=3] [ref=e401]
+            - list [ref=e402]:
+              - listitem [ref=e403]:
+                - link "About Us" [ref=e404] [cursor=pointer]:
                   - /url: /#about
-              - listitem [ref=e420]:
-                - 'link "GROW with SAP: Finance" [ref=e421] [cursor=pointer]':
+              - listitem [ref=e405]:
+                - 'link "GROW with SAP: Finance" [ref=e406] [cursor=pointer]':
                   - /url: /grow
-              - listitem [ref=e422]:
-                - link "SAP for Professional Services" [ref=e423] [cursor=pointer]:
+              - listitem [ref=e407]:
+                - link "SAP for Professional Services" [ref=e408] [cursor=pointer]:
                   - /url: /professional-services
-              - listitem [ref=e424]:
-                - link "FAQ" [ref=e425] [cursor=pointer]:
+              - listitem [ref=e409]:
+                - link "FAQ" [ref=e410] [cursor=pointer]:
                   - /url: /faq
-              - listitem [ref=e426]:
-                - link "Contact" [ref=e427] [cursor=pointer]:
+              - listitem [ref=e411]:
+                - link "Contact" [ref=e412] [cursor=pointer]:
                   - /url: /contact
-          - generic [ref=e428]:
-            - heading "Resources" [level=3] [ref=e429]
-            - list [ref=e430]:
-              - listitem [ref=e431]:
-                - link "GROW Materials" [ref=e432] [cursor=pointer]:
+          - generic [ref=e413]:
+            - heading "Resources" [level=3] [ref=e414]
+            - list [ref=e415]:
+              - listitem [ref=e416]:
+                - link "GROW Materials" [ref=e417] [cursor=pointer]:
                   - /url: /grow#downloads
-              - listitem [ref=e433]:
-                - link "Professional Services Materials" [ref=e434] [cursor=pointer]:
+              - listitem [ref=e418]:
+                - link "Professional Services Materials" [ref=e419] [cursor=pointer]:
                   - /url: /professional-services#downloads
-          - generic [ref=e435]:
-            - heading "Legal" [level=3] [ref=e436]
-            - list [ref=e437]:
-              - listitem [ref=e438]:
-                - link "Privacy Policy" [ref=e439] [cursor=pointer]:
+          - generic [ref=e420]:
+            - heading "Legal" [level=3] [ref=e421]
+            - list [ref=e422]:
+              - listitem [ref=e423]:
+                - link "Privacy Policy" [ref=e424] [cursor=pointer]:
                   - /url: /privacy
-        - generic [ref=e440]:
-          - paragraph [ref=e441]: © 2025 Infinus. All rights reserved.
-          - generic [ref=e442]:
-            - link "Privacy" [ref=e444] [cursor=pointer]:
+        - generic [ref=e425]:
+          - paragraph [ref=e426]: © 2025 Infinus. All rights reserved.
+          - generic [ref=e427]:
+            - link "Privacy" [ref=e429] [cursor=pointer]:
               - /url: /privacy
-            - paragraph [ref=e445]:
+            - paragraph [ref=e430]:
               - text: Developed by
-              - link "Brivio" [ref=e446] [cursor=pointer]:
+              - link "Brivio" [ref=e431] [cursor=pointer]:
                 - /url: https://www.brivio.co/
   - region "Notifications alt+T"
-  - alert [ref=e447]
+  - alert [ref=e432]
 ```

@@ -24,7 +24,9 @@ export function NavBarDemo() {
       icon: <FileText size={18} strokeWidth={2.5} />,
       submenu: [
         { name: 'GROW with SAP: Finance', url: '/grow' },
-        { name: 'SAP for Professional Services', url: '/professional-services' }
+        { name: 'SAP for Professional Services', url: '/professional-services' },
+        { name: 'SAP for CFOs', url: '/grow/cfo' },
+        { name: 'SAP for CEOs', url: '/grow/ceo' }
       ]
     },
     { name: 'Contact', url: '/contact', icon: <MessageCircle size={18} strokeWidth={2.5} /> },

@@ -1,4 +1,6 @@
 /* Prose styles for content areas */
+@tailwind components;
+
 @layer components {
   .prose {
     @apply text-gray-700 leading-relaxed;

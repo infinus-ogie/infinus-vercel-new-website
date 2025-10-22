@@ -5,12 +5,13 @@ interface FeatureTileProps {
   icon: React.ElementType<{ className?: string }>;
   title: string;
   description: string;
+  className?: string;
 }
 
-export function FeatureTile({ icon: Icon, title, description }: FeatureTileProps) {
+export function FeatureTile({ icon: Icon, title, description, className }: FeatureTileProps) {
   return (
     <article
-      className="group h-full rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur p-6 transition duration-200 hover:shadow-sm hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2"
+      className={`group h-full rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur p-6 transition duration-200 hover:shadow-sm hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 ${className || ''}`}
       aria-label={`${title} – ${description}`}
       tabIndex={0}
     >

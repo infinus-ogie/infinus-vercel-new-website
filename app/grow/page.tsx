@@ -24,7 +24,9 @@ import {
   AlertTriangle,
   Brain,
   Calendar,
-  CheckCircle2
+  CheckCircle2,
+  Briefcase,
+  Crown
 } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
@@ -358,6 +360,89 @@ export default function GrowPage() {
               }
             ]}
           />
+        </motion.div>
+      </Section>
+
+      {/* CTA Cards Section */}
+      <Section surface="surface-1" id="cta-cards">
+        <motion.div
+          className="max-w-6xl mx-auto"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {/* Blue Container Box */}
+          <div className="rounded-3xl bg-gradient-to-br from-blue-50 via-slate-50 to-blue-50/50 border border-blue-100/60 p-8 md:p-12 shadow-sm">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold md:text-4xl lg:text-5xl text-slate-900">
+                Fokusirane perspektive
+              </h2>
+              <p className="text-lg text-slate-600 leading-relaxed mt-4">
+                Dublje uvide za različite uloge u organizaciji
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+            {/* CFO Card */}
+            <motion.div
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 shadow-sm hover:shadow-lg transition-all duration-300"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.18, delay: 0.1, ease: "easeOut" }}
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              <div className="p-8">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-[#0a6ed1]/10 text-[#0a6ed1]">
+                    <Briefcase className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900">SAP for CFOs</h3>
+                </div>
+                <p className="text-slate-600 mb-6 leading-relaxed">
+                  10 dugoročnih prednosti iz CFO perspektive
+                </p>
+                <a
+                  href="/grow/cfo"
+                  aria-label="Otvori SAP for CFOs stranicu"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#2F62D9] hover:bg-[#2857c7] active:translate-y-px px-6 py-3 text-white text-base font-semibold shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#2F62D9] min-h-[48px] transition-all duration-200"
+                >
+                  Otvori
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </motion.div>
+
+            {/* CEO Card */}
+            <motion.div
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 shadow-sm hover:shadow-lg transition-all duration-300"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.18, delay: 0.2, ease: "easeOut" }}
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              <div className="p-8">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-[#0a6ed1]/10 text-[#0a6ed1]">
+                    <Crown className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900">SAP for CEOs</h3>
+                </div>
+                <p className="text-slate-600 mb-6 leading-relaxed">
+                  12 dugoročnih prednosti iz CEO perspektive
+                </p>
+                <a
+                  href="/grow/ceo"
+                  aria-label="Otvori SAP for CEOs stranicu"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#2F62D9] hover:bg-[#2857c7] active:translate-y-px px-6 py-3 text-white text-base font-semibold shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#2F62D9] min-h-[48px] transition-all duration-200"
+                >
+                  Otvori
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </motion.div>
+            </div>
+          </div>
         </motion.div>
       </Section>
 

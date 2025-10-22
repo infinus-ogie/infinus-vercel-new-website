@@ -9,6 +9,7 @@ const navigation = {
     { name: "About", href: "/#about" },
     { name: "GROW", href: "/grow" },
     { name: "Professional Services", href: "/professional-services" },
+    { name: "Careers", href: "/#join-team" },
     { name: "FAQ", href: "/faq" },
     { name: "Contact", href: "/contact" },
     { name: "Privacy Policy", href: "/privacy" },

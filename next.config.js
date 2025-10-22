@@ -7,6 +7,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/cfo',
+        destination: '/grow/cfo',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [
           {

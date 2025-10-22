@@ -162,7 +162,7 @@ export default function HomePage() {
         <DomainExpertiseSection />
 
         {/* [G] Join Our Team Section */}
-        <Section surface="surface-1" topFade data-section="join-team">
+        <Section id="join-team" surface="surface-1" topFade data-section="join-team">
           <JoinSection />
         </Section>
       </main>

@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import '../styles/prose.css';
+
 @layer base {
   :root {
     /* Unified Infinus Design Tokens */
