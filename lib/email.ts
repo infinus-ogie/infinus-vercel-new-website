@@ -17,10 +17,8 @@ const PRODUCTION_EMAIL = 'office@infinus.rs'
 // Test email (for development)
 const TEST_EMAIL = 'ognjen.drinic31@gmail.com'
 
-// Temporarily send only to test email while debugging attachments
-const RECIPIENT_EMAILS = [TEST_EMAIL]
-// TODO: Add back PRODUCTION_EMAIL when attachment issues are resolved
-// const RECIPIENT_EMAILS = [PRODUCTION_EMAIL, TEST_EMAIL]
+// Send to both production and test emails
+const RECIPIENT_EMAILS = [PRODUCTION_EMAIL, TEST_EMAIL]
 
 // Create transporter
 const createTransporter = () => {
