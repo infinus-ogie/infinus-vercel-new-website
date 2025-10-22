@@ -11,12 +11,34 @@ const joinTeamFormSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters"),
   utm_source: z.string().optional(),
   utm_medium: z.string().optional(),
-  utm_campaign: z.string().optional()
+  utm_campaign: z.string().optional(),
+  file: z.any().optional()
 })
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const formData = await request.formData()
+    
+    // Extract form data
+    const file = formData.get('file') as File
+    console.log('Join team attachment received:', file ? {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    } : 'No attachment')
+    
+    const body = {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string || undefined,
+      linkedin: formData.get('linkedin') as string || undefined,
+      subject: formData.get('subject') as string,
+      message: formData.get('message') as string,
+      utm_source: formData.get('utm_source') as string || undefined,
+      utm_medium: formData.get('utm_medium') as string || undefined,
+      utm_campaign: formData.get('utm_campaign') as string || undefined,
+      file: file && file.size > 0 ? file : undefined
+    }
     
     // Validate the form data
     const validatedData = joinTeamFormSchema.parse(body)

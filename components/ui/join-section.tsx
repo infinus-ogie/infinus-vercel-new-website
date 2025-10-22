@@ -99,12 +99,34 @@ export function JoinSection() {
     setSuccess(null);
 
     try {
+      // Create FormData to handle file uploads
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', values.name);
+      formDataToSend.append('email', values.email);
+      formDataToSend.append('subject', values.subject);
+      formDataToSend.append('message', values.message);
+      if (values.phone) {
+        formDataToSend.append('phone', values.phone);
+      }
+      if (values.linkedin) {
+        formDataToSend.append('linkedin', values.linkedin);
+      }
+      if (values.utm_source) {
+        formDataToSend.append('utm_source', values.utm_source);
+      }
+      if (values.utm_medium) {
+        formDataToSend.append('utm_medium', values.utm_medium);
+      }
+      if (values.utm_campaign) {
+        formDataToSend.append('utm_campaign', values.utm_campaign);
+      }
+      if (values.file) {
+        formDataToSend.append('file', values.file);
+      }
+
       const response = await fetch("/api/join-team", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
+        body: formDataToSend,
       });
 
       const result = await response.json();

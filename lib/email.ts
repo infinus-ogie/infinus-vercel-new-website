@@ -109,6 +109,7 @@ Reply directly to this email to respond to ${data.name}.
     utm_source?: string
     utm_medium?: string
     utm_campaign?: string
+    file?: File
   }) => ({
     subject: `New Job Application: ${data.subject}`,
     html: `
@@ -130,6 +131,15 @@ Reply directly to this email to respond to ${data.name}.
           <div style="background-color: white; padding: 15px; border-radius: 4px; border-left: 4px solid #2563eb;">
             ${data.message.replace(/\n/g, '<br>')}
           </div>
+          ${data.file ? `
+          <div style="background-color: #fef3c7; padding: 15px; border-radius: 4px; border-left: 4px solid #f59e0b; margin-top: 15px;">
+            <h4 style="color: #92400e; margin-top: 0;">📎 Resume Attachment</h4>
+            <p><strong>File:</strong> ${data.file.name}</p>
+            <p><strong>Size:</strong> ${(data.file.size / 1024).toFixed(2)} KB</p>
+            <p><strong>Type:</strong> ${data.file.type}</p>
+            <p style="color: #92400e; font-size: 14px; margin-bottom: 0;"><em>This resume attachment should be visible in your email client.</em></p>
+          </div>
+          ` : ''}
         </div>
         
         ${(data.utm_source || data.utm_medium || data.utm_campaign) ? `
@@ -159,6 +169,12 @@ ${data.linkedin ? `- LinkedIn: ${data.linkedin}` : ''}
 Application Details:
 - Position: ${data.subject}
 - Message: ${data.message}
+${data.file ? `
+RESUME ATTACHMENT:
+- File: ${data.file.name}
+- Size: ${(data.file.size / 1024).toFixed(2)} KB
+- Type: ${data.file.type}
+- Note: This resume attachment should be visible in your email client.` : ''}
 
 ${(data.utm_source || data.utm_medium || data.utm_campaign) ? `
 UTM Tracking:
@@ -293,13 +309,40 @@ export async function sendJoinTeamEmail(data: {
   utm_source?: string
   utm_medium?: string
   utm_campaign?: string
+  file?: File
 }) {
   const template = emailTemplates.joinTeam(data)
+  
+  // Prepare attachments if any
+  let attachments: Array<{ filename: string; content: Buffer; contentType?: string }> = []
+  if (data.file && data.file.size > 0) {
+    console.log('Processing join team attachment:', {
+      name: data.file.name,
+      size: data.file.size,
+      type: data.file.type
+    })
+    
+    try {
+      const buffer = Buffer.from(await data.file.arrayBuffer())
+      attachments.push({
+        filename: data.file.name,
+        content: buffer,
+        contentType: data.file.type
+      })
+      console.log('Join team attachment processed successfully, size:', buffer.length)
+    } catch (error) {
+      console.error('Error processing join team attachment:', error)
+      // Don't fail the entire email if attachment processing fails
+      console.log('Continuing without attachment due to processing error')
+    }
+  }
+  
   return await sendEmail(
     RECIPIENT_EMAILS.join(', '),
     template.subject,
     template.html,
     template.text,
-    data.email
+    data.email,
+    attachments
   )
 }
