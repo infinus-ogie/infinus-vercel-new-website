@@ -45,7 +45,7 @@ if (!EMAIL_CONFIG.auth.pass) {
 async function testEmailConnection() {
   try {
     console.log('🔌 Testing SMTP connection...')
-    const transporter = nodemailer.createTransporter(EMAIL_CONFIG)
+    const transporter = nodemailer.createTransport(EMAIL_CONFIG)
     
     // Verify connection
     await transporter.verify()
