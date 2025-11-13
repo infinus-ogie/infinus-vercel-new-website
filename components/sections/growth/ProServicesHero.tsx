@@ -1,12 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import SplitType from 'split-type';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
-type CTA = { text: string; href: string; primary?: boolean };
+type CTA = { text: string; href: string; primary?: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void };
 
 interface ProServicesHeroProps {
   title?: string;
@@ -103,22 +103,29 @@ export default function ProServicesHero({
             {description}
           </p>
           <div ref={ctaRef} className="flex flex-wrap items-center gap-3 pt-1">
-            {ctas && ctas.length > 0 ? ctas.map((b, i) => (
-              <a 
-                key={i} 
-                href={b.href}
-                data-vi={b.href.includes('.zip') ? 'zip' : undefined}
-                data-vi-label={b.href.includes('.zip') ? (title.includes('Professional Services') ? 'Professional Services Materials – ZIP' : 'Grow Materials – ZIP') : undefined}
-                data-vi-doc={b.href.includes('.zip') ? b.href.split('/').pop() || '' : undefined}
-                className={`rounded-xl px-8 py-4 text-base font-medium transition focus:outline-none focus:ring-2 focus:ring-white/40
-                  ${b.primary 
-                    ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 border border-yellow-400 hover:from-yellow-500 hover:to-yellow-600 backdrop-blur shadow-lg font-semibold' 
-                    : 'text-white border border-white/30 hover:bg-white/10 hover:border-white/50'
-                  }`}
-              >
-                {b.text}
-              </a>
-            )) : (
+            {ctas && ctas.length > 0 ? ctas.map((b, i) => {
+              // Open in new tab if it's an external link or brochure page
+              const isExternal = b.href.startsWith('http') || b.href.startsWith('/projectpulse/brochure') || b.href.startsWith('/api/');
+              return (
+                <a 
+                  key={i} 
+                  href={b.href}
+                  onClick={b.onClick}
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                  data-vi={b.href.includes('.zip') ? 'zip' : undefined}
+                  data-vi-label={b.href.includes('.zip') ? (title.includes('Professional Services') ? 'Professional Services Materials – ZIP' : 'Grow Materials – ZIP') : undefined}
+                  data-vi-doc={b.href.includes('.zip') ? b.href.split('/').pop() || '' : undefined}
+                  className={`rounded-xl px-8 py-4 text-base font-medium transition focus:outline-none focus:ring-2 focus:ring-white/40
+                    ${b.primary 
+                      ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 border border-yellow-400 hover:from-yellow-500 hover:to-yellow-600 backdrop-blur shadow-lg font-semibold' 
+                      : 'text-white border border-white/30 hover:bg-white/10 hover:border-white/50'
+                    }`}
+                >
+                  {b.text}
+                </a>
+              );
+            }) : (
               <a 
                 href="/contact"
                 className="rounded-xl px-6 py-3 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-white/40 bg-white text-slate-900 border border-white hover:bg-white/90 backdrop-blur shadow-lg"
