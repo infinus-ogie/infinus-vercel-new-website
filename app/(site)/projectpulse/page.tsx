@@ -32,7 +32,7 @@ const faqItems = [
   },
   {
     question: "How long does implementation take and what is the expected outcome?",
-    answer: "A prescriptive 4 to 6 month implementation accelerates time to value. Net result: real-time projects, aligned resources and predictable margins on a single intelligent cloud platform.",
+    answer: "A prescriptive 3 to 6 month implementation accelerates time to value. Net result: real-time projects, aligned resources and predictable margins on a single intelligent cloud platform.",
   },
 ];
 

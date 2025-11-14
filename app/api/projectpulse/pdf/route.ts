@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'inline; filename="ProjectPulse-Brochure.pdf"',
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+        'Cache-Control': 'public, max-age=300, s-maxage=300',
       },
     });
   } catch (error) {

@@ -35,7 +35,7 @@ const ProjectPulseBrochurePage = () => {
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3 text-[11px] text-slate-300">
                 <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1">
-                  4–6 month implementation
+                  3–6 month implementation
                 </span>
                 <span className="rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1">
                   500+ prebuilt KPIs &amp; dashboards
@@ -307,13 +307,13 @@ const ProjectPulseBrochurePage = () => {
                 Time-to-value and commercial model
               </h2>
               <p className="mt-3 text-sm text-slate-300">
-                A prescriptive 4–6-month implementation accelerates time-to-value, with a clearly
+                A prescriptive 3–6-month implementation accelerates time-to-value, with a clearly
                 defined base scope and extensions.
               </p>
               <div className="mt-5 grid gap-3 text-xs text-slate-200">
                 <div className="flex items-center justify-between rounded-xl bg-slate-950/80 px-4 py-3">
                   <span className="text-slate-400">Project duration</span>
-                  <span className="font-semibold text-emerald-300">4–6 months</span>
+                  <span className="font-semibold text-emerald-300">3–6 months</span>
                 </div>
                 <div className="flex items-center justify-between rounded-xl bg-slate-950/80 px-4 py-3">
                   <span className="text-slate-400">Cloud subscriptions (from)</span>
@@ -321,7 +321,7 @@ const ProjectPulseBrochurePage = () => {
                 </div>
                 <div className="flex items-center justify-between rounded-xl bg-slate-950/80 px-4 py-3">
                   <span className="text-slate-400">Implementation services (from)</span>
-                  <span className="font-semibold text-emerald-300">€120,000</span>
+                  <span className="font-semibold text-emerald-300">from EUR 100,000</span>
                 </div>
               </div>
               <p className="mt-3 text-[11px] text-slate-500">

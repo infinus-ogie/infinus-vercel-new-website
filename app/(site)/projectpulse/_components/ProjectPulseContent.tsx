@@ -24,7 +24,7 @@ const faqItems = [
   },
   {
     question: "How long does implementation take and what is the expected outcome?",
-    answer: "A prescriptive 4 to 6 month implementation accelerates time to value. Net result: real-time projects, aligned resources and predictable margins on a single intelligent cloud platform."
+    answer: "A prescriptive 3 to 6 month implementation accelerates time to value. Net result: real-time projects, aligned resources and predictable margins on a single intelligent cloud platform."
   }
 ];
 
@@ -124,7 +124,7 @@ export function ProjectPulseContent() {
                 Base Scope Coverage
               </h3>
               <p>
-                The base scope covers Finance (AR/AP, closing, treasury, profitability, consolidation), Customer Projects & Billing, Sourcing & Procurement, Sales of Services, SuccessFactors Employee Central, Integration Suite, DRC localizations, and embedded analytics. A prescriptive 4–6-month implementation accelerates time-to-value, with optional extensions (e.g., Sales Cloud, additional SuccessFactors modules) for scale-up.
+                The base scope covers Finance (AR/AP, closing, treasury, profitability, consolidation), Customer Projects & Billing, Sourcing & Procurement, Sales of Services, SuccessFactors Employee Central, Integration Suite, DRC localizations, and embedded analytics. A prescriptive 3–6-month implementation accelerates time-to-value, with optional extensions (e.g., Sales Cloud, additional SuccessFactors modules) for scale-up.
               </p>
             </motion.div>
 
