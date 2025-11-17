@@ -39,7 +39,7 @@ export function ProjectPulseContent() {
         badge={{ label: "SOLUTION", text: "SAP Qualified Partner-Packaged Solution" }}
         ctas={[
           { text: "Open brochure (PDF)", href: "/Project Pulse/Project Pulse PDF/ProjectPulse brochure.pdf", primary: true },
-          { text: "Watch 2-minute overview video", href: "/projectpulse/video", primary: false }
+          { text: "Watch quick overview video", href: "/projectpulse/video", primary: false }
         ]}
         bgImage="/Project Pulse/project-pulse2.png"
       />

@@ -124,7 +124,7 @@ export default function ProjectPulseVideoPage() {
             ProjectPulse Overview Video
           </h1>
           <p className="text-sm text-white/60">
-            A 2-minute overview of ProjectPulse, a SAP Qualified Partner-Packaged Solution by Infinus
+            A quick overview of ProjectPulse, a SAP Qualified Partner-Packaged Solution by Infinus
           </p>
         </div>
       </div>
