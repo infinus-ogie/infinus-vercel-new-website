@@ -38,7 +38,7 @@ export function ProjectPulseContent() {
         description="ProjectPulse is a SAP Qualified Partner-Packaged Solution by Infinus designed for Professional Services companies."
         badge={{ label: "SOLUTION", text: "SAP Qualified Partner-Packaged Solution" }}
         ctas={[
-          { text: "Open brochure (PDF)", href: "/Project Pulse/Project Pulse PDF/ProjectPulse brochure.pdf", primary: true },
+          { text: "Open brochure (PDF)", href: "/Project Pulse/Project Pulse PDF/ProjectPulse brochure3.pdf", primary: true },
           { text: "Watch quick overview video", href: "/projectpulse/video", primary: false }
         ]}
         bgImage="/Project Pulse/project-pulse2.png"
