@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import SplitType from 'split-type';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -32,16 +32,55 @@ export default function ProServicesHero({
   const pRef = useRef<HTMLParagraphElement | null>(null);
   const ctaRef = useRef<HTMLDivElement | null>(null);
   const badgeRef = useRef<HTMLDivElement | null>(null);
+  const hasAnimatedRef = useRef(false);
+
+  // Check if animation has already been played in this session
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const storageKey = `proServicesHero_${title}_animated`;
+    const hasAnimated = sessionStorage.getItem(storageKey) === 'true';
+    if (hasAnimated) {
+      hasAnimatedRef.current = true;
+      // Set elements to final state immediately after a small delay to ensure refs are set
+      setTimeout(() => {
+        if (badgeRef.current) gsap.set(badgeRef.current, { y: 0, opacity: 1 });
+        if (pRef.current) gsap.set(pRef.current, { y: 0, opacity: 1 });
+        if (ctaRef.current) gsap.set(ctaRef.current, { y: 0, opacity: 1 });
+        if (hRef.current) {
+          try {
+            const split = new SplitType(hRef.current, { types: 'lines' });
+            gsap.set(split.lines, { yPercent: 0, opacity: 1, filter: 'blur(0px)' });
+          } catch (e) {
+            // If SplitType fails, just ensure opacity is 1
+            gsap.set(hRef.current, { opacity: 1 });
+          }
+        }
+      }, 0);
+    }
+  }, [title]);
 
   useGSAP(() => {
     if (!hRef.current) return;
+    
+    // Skip animation if already played
+    if (hasAnimatedRef.current) return;
+    
     const split = new SplitType(hRef.current, { types: 'lines' });
     gsap.set(split.lines, { yPercent: 20, opacity: 0, filter: 'blur(12px)' });
     if (badgeRef.current) gsap.set(badgeRef.current, { y: -8, opacity: 0 });
     if (pRef.current) gsap.set(pRef.current, { y: 8, opacity: 0 });
     if (ctaRef.current) gsap.set(ctaRef.current, { y: 8, opacity: 0 });
 
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    const tl = gsap.timeline({ 
+      defaults: { ease: 'power3.out' },
+      onComplete: () => {
+        // Mark animation as completed in session storage
+        const storageKey = `proServicesHero_${title}_animated`;
+        sessionStorage.setItem(storageKey, 'true');
+        hasAnimatedRef.current = true;
+      }
+    });
     if (badgeRef.current) tl.to(badgeRef.current, { y: 0, opacity: 1, duration: .45 }, 0);
     tl.to(split.lines, { yPercent: 0, opacity: 1, filter: 'blur(0px)', duration: .8, stagger: .12 }, .05);
     if (pRef.current) tl.to(pRef.current, { y: 0, opacity: 1, duration: .45 }, '-=.45');
@@ -104,8 +143,8 @@ export default function ProServicesHero({
           </p>
           <div ref={ctaRef} className="flex flex-wrap items-center gap-3 pt-1">
             {ctas && ctas.length > 0 ? ctas.map((b, i) => {
-              // Open in new tab if it's an external link or brochure page
-              const isExternal = b.href.startsWith('http') || b.href.startsWith('/projectpulse/brochure') || b.href.startsWith('/api/');
+              // Open in new tab if it's an external link, brochure page, PDF, or video file
+              const isExternal = b.href.startsWith('http') || b.href.startsWith('/projectpulse/brochure') || b.href.startsWith('/api/') || b.href.endsWith('.pdf');
               return (
                 <a 
                   key={i} 
