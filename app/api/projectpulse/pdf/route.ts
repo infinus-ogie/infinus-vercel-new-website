@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
     // Path to the Project Pulse PDF folder
     const pdfFolderPath = join(process.cwd(), 'public', 'Project Pulse', 'Project Pulse PDF');
     
-    // Array of image files to merge (1.png through 7.png)
-    const imageFiles = Array.from({ length: 7 }, (_, i) => `${i + 1}.png`);
+    // Array of image files to merge (1.png through 6.png)
+    const imageFiles = Array.from({ length: 6 }, (_, i) => `${i + 1}.png`);
     
     // Process each image and add it as a page to the PDF
     for (const imageFile of imageFiles) {

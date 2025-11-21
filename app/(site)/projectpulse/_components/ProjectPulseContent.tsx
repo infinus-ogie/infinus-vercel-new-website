@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Section } from "@/components/ui/section";
 import ProServicesHero from "@/components/sections/growth/ProServicesHero";
 import { StatPills } from "@/components/ui/StatPills";
@@ -32,17 +33,88 @@ export function ProjectPulseContent() {
   return (
     <>
       {/* Hero Section */}
-      <ProServicesHero
-        title="ProjectPulse"
-        subtitle=""
-        description="ProjectPulse is a SAP Qualified Partner-Packaged Solution by Infinus designed for Professional Services companies."
-        badge={{ label: "SOLUTION", text: "SAP Qualified Partner-Packaged Solution" }}
-        ctas={[
-          { text: "Open brochure (PDF)", href: "/Project Pulse/Project Pulse PDF/ProjectPulse brochure3.pdf", primary: true },
-          { text: "Watch quick overview video", href: "/projectpulse/video", primary: false }
-        ]}
-        bgImage="/Project Pulse/project-pulse2.png"
-      />
+      <section className="relative overflow-hidden h-[90vh] min-h-[700px]">
+        <Image
+          src="/Project Pulse/project-pulse2.png"
+          alt="ProjectPulse Background"
+          fill
+          priority
+          className="object-cover object-[center_top] -z-10"
+        />
+        
+        {/* Grain overlay */}
+        <div className="absolute inset-0 beam grain -z-10" aria-hidden />
+
+        {/* Global gradient overlay */}
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
+        </div>
+
+        {/* Local scrim behind text (left side) */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            WebkitMaskImage: "radial-gradient(120% 90% at 22% 40%, #000 60%, transparent 72%)",
+            maskImage: "radial-gradient(120% 90% at 22% 40%, #000 60%, transparent 72%)",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/55" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8 pt-24 pb-16 sm:pt-32">
+          <div className="flex flex-col items-start gap-6">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 backdrop-blur-sm text-white">
+              <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-white/80">SOLUTION</span>
+              <span className="h-1 w-1 rounded-full bg-white/40" />
+              <span className="text-xs tracking-tight text-white/85">For Professional Services companies</span>
+            </div>
+
+            {/* Title */}
+            <h1 className="max-w-3xl text-left text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white drop-shadow-[0_1px_1px_rgba(0,0,0,.45)]">
+              ProjectPulse
+            </h1>
+
+            {/* SAP Qualified Partner Logo - small badge below title */}
+            <div className="flex items-center">
+              <Image
+                src="/Project Pulse/SAP_Qualified_PartnerPackageSolution_C.png"
+                alt="SAP Qualified Partner-Packaged Solution"
+                width={353}
+                height={91}
+                className="h-6 w-auto md:h-8 lg:h-10 object-contain brightness-0 invert drop-shadow-[0_1px_1px_rgba(0,0,0,.35)]"
+                priority
+              />
+            </div>
+            
+            {/* Description */}
+            <p className="max-w-2xl text-left text-base sm:text-lg leading-relaxed text-white drop-shadow-[0_1px_1px_rgba(0,0,0,.35)]">
+              Run projects, people, and financials on one intelligent SAP platform.
+            </p>
+            
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <a 
+                href="/api/projectpulse/pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl px-8 py-4 text-base font-medium transition focus:outline-none focus:ring-2 focus:ring-white/40 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 border border-yellow-400 hover:from-yellow-500 hover:to-yellow-600 backdrop-blur shadow-lg font-semibold"
+              >
+                Open brochure (PDF)
+              </a>
+              <a 
+                href="/projectpulse/video"
+                className="rounded-xl px-8 py-4 text-base font-medium transition focus:outline-none focus:ring-2 focus:ring-white/40 text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
+              >
+                Watch quick overview video
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/30 to-transparent" />
+      </section>
 
       {/* Content Section */}
       <Section surface="surface-1">
