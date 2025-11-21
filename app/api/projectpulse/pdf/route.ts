@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PDFDocument } from 'pdf-lib';
 import sharp from 'sharp';
-import { readFile } from 'fs/promises';
+import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
 
 export async function GET(request: NextRequest) {
@@ -12,8 +12,23 @@ export async function GET(request: NextRequest) {
     // Path to the Project Pulse PDF folder
     const pdfFolderPath = join(process.cwd(), 'public', 'Project Pulse', 'Project Pulse PDF');
     
-    // Array of image files to merge (1.png through 6.png)
-    const imageFiles = Array.from({ length: 6 }, (_, i) => `${i + 1}.png`);
+    // Dynamically find all PNG image files in the directory
+    const files = await readdir(pdfFolderPath);
+    const imageFiles = files
+      .filter(file => file.toLowerCase().endsWith('.png'))
+      .sort((a, b) => {
+        // Sort naturally: 1.png, 2.png, ..., 10.png, etc.
+        const numA = parseInt(a.match(/\d+/)?.[0] || '0');
+        const numB = parseInt(b.match(/\d+/)?.[0] || '0');
+        return numA - numB;
+      });
+    
+    if (imageFiles.length === 0) {
+      return NextResponse.json(
+        { error: 'No PNG images found in the directory' },
+        { status: 404 }
+      );
+    }
     
     // Process each image and add it as a page to the PDF
     for (const imageFile of imageFiles) {

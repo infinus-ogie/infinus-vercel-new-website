@@ -83,7 +83,7 @@ export function ProjectPulseContent() {
                 alt="SAP Qualified Partner-Packaged Solution"
                 width={353}
                 height={91}
-                className="h-6 w-auto md:h-8 lg:h-10 object-contain brightness-0 invert drop-shadow-[0_1px_1px_rgba(0,0,0,.35)]"
+                className="h-10 w-auto md:h-14 lg:h-20 object-contain brightness-0 invert drop-shadow-[0_1px_1px_rgba(0,0,0,.35)]"
                 priority
               />
             </div>
