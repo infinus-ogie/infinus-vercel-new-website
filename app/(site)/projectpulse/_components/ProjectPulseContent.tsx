@@ -81,10 +81,12 @@ export function ProjectPulseContent() {
               <Image
                 src="/Project Pulse/SAP_Qualified_PartnerPackageSolution_C.png"
                 alt="SAP Qualified Partner-Packaged Solution"
-                width={353}
-                height={91}
+                width={706}
+                height={182}
                 className="h-10 w-auto md:h-14 lg:h-20 object-contain brightness-0 invert drop-shadow-[0_1px_1px_rgba(0,0,0,.35)]"
                 priority
+                quality={95}
+                sizes="(max-width: 768px) 160px, (max-width: 1024px) 224px, 320px"
               />
             </div>
             

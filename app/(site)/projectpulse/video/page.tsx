@@ -9,7 +9,7 @@ export default function ProjectPulseVideoPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   
   // Video path - exact filename from public folder
-  const videoPath = "/Project Pulse/Project Pulse -Video/ProjectPulse by Infinus - video.mp4";
+  const videoPath = "/Project Pulse/Project Pulse -Video/ProjectPulse by Infinus - video UPD2.mp4";
 
   // Prevent scroll but keep current scroll position visible in background
   useEffect(() => {
