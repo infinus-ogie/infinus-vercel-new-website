@@ -13,7 +13,7 @@ import { MessageCircle, CheckCircle2 } from "lucide-react";
 const faqItems = [
   {
     question: "What is ProjectPulse?",
-    answer: "ProjectPulse is a SAP Qualified Partner-Packaged Solution by Infinus designed for Professional Services companies. It unifies finance, project and resource management, sales, procurement and core HR, supported by SAP embedded analytics and SAP Business AI."
+    answer: "ProjectPulse is a SAP Qualified Partner-Packaged Solution designed for Professional Services companies. It unifies finance, project and resource management, sales, procurement and core HR, supported by SAP embedded analytics and SAP Business AI."
   },
   {
     question: "How does ProjectPulse help executives and project teams?",
@@ -149,7 +149,7 @@ export function ProjectPulseContent() {
               </h3>
               <p>
                 <strong>
-                  ProjectPulse is a SAP Qualified Partner-Packaged Solution by Infinus designed for Professional Services companies.
+                  ProjectPulse is a SAP Qualified Partner-Packaged Solution designed for Professional Services companies.
                 </strong>
               </p>
             </motion.div>

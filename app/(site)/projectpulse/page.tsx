@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 // SEO Metadata
 export const metadata: Metadata = generatePageMetadata(
   "ProjectPulse | SAP Qualified Partner-Packaged Solution | Infinus",
-  "ProjectPulse is a SAP Qualified Partner-Packaged Solution by Infinus for Professional Services firms, unifying finance, projects, sales, procurement, HR and analytics on a single intelligent cloud platform.",
+  "ProjectPulse is a SAP Qualified Partner-Packaged Solution for Professional Services firms, unifying finance, projects, sales, procurement, HR and analytics on a single intelligent cloud platform.",
   "/projectpulse"
 )
 
@@ -20,7 +20,7 @@ const breadcrumbItems = [
 const faqItems = [
   {
     question: "What is ProjectPulse?",
-    answer: "ProjectPulse is a SAP Qualified Partner-Packaged Solution by Infinus designed for Professional Services companies. It unifies finance, project and resource management, sales, procurement and core HR, supported by SAP embedded analytics and SAP Business AI.",
+    answer: "ProjectPulse is a SAP Qualified Partner-Packaged Solution designed for Professional Services companies. It unifies finance, project and resource management, sales, procurement and core HR, supported by SAP embedded analytics and SAP Business AI.",
   },
   {
     question: "How does ProjectPulse help executives and project teams?",
@@ -42,7 +42,7 @@ const jsonLdData = [
     name: "ProjectPulse | SAP Qualified Partner-Packaged Solution",
     inLanguage: "en-US",
     url: "/projectpulse",
-    description: "ProjectPulse is a SAP Qualified Partner-Packaged Solution by Infinus for Professional Services firms, unifying finance, projects, sales, procurement, HR and analytics on a single intelligent cloud platform.",
+    description: "ProjectPulse is a SAP Qualified Partner-Packaged Solution for Professional Services firms, unifying finance, projects, sales, procurement, HR and analytics on a single intelligent cloud platform.",
   },
   {
     "@type": "BreadcrumbList",
