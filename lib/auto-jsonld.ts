@@ -140,6 +140,7 @@ export function createSimplePageConfig(
     faqs?: Array<{ question: string; answer: string }>;
     articleAbout?: string[];
     ogImage?: string;
+    additionalSchemas?: any[];
   }
 ): PageConfig {
   return {
@@ -152,6 +153,7 @@ export function createSimplePageConfig(
     articleDescription: description,
     articleAbout: options?.articleAbout,
     ogImage: options?.ogImage,
+    additionalSchemas: options?.additionalSchemas,
   };
 }
 
