@@ -11,6 +11,7 @@ import ViClickTracker from "./_components/ViClickTracker"
 // TEMPORARY HOTFIX: Commented out for campaign launch
 // import GoogleAnalytics from "./_components/GoogleAnalytics"
 import GAFast from "./_components/GAFast"
+import AITrafficTracker from "./_components/AITrafficTracker"
 import DnbVisitorPixel from "@/components/analytics/DnbVisitorPixel"
 
 const inter = Inter({ 
@@ -134,6 +135,7 @@ export default function RootLayout({
         
         {/* TEMPORARY HOTFIX: Unconditional page_view tracking */}
         <GAFast />
+        <AITrafficTracker />
       </body>
     </html>
   )
