@@ -177,7 +177,74 @@ function ImplementationStepper() {
         />
 
         <div className="mt-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {/* Mobile: Vertical timeline */}
+          <div className="flex flex-col gap-4 sm:hidden">
+            {implementationPhases.map((phase, index) => {
+              const stepNumber = index + 1;
+              const isActive = stepNumber <= activeStep;
+              const showDescription = visibleDescriptions.includes(stepNumber);
+              
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0.4 }}
+                  animate={{ opacity: isActive ? 1 : 0.4 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="flex gap-3"
+                >
+                  {/* Timeline line */}
+                  <div className="flex flex-col items-center">
+                    <div 
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-sm font-bold transition-all duration-400 ${
+                        isActive 
+                          ? 'bg-[#0a6ed1] text-white shadow-md' 
+                          : 'bg-slate-200 text-slate-500'
+                      }`}
+                    >
+                      {stepNumber}
+                    </div>
+                    {index < implementationPhases.length - 1 && (
+                      <div className={`w-0.5 flex-1 mt-2 transition-colors duration-400 ${
+                        isActive ? 'bg-[#0a6ed1]/30' : 'bg-slate-200'
+                      }`} />
+                    )}
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1 pb-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className={`font-semibold text-base transition-colors duration-400 ${
+                        isActive ? 'text-slate-900' : 'text-slate-400'
+                      }`}>
+                        {phase.name}
+                      </h4>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full transition-colors duration-400 ${
+                        isActive ? 'bg-[#0a6ed1]/10 text-[#0a6ed1]' : 'bg-slate-100 text-slate-400'
+                      }`}>
+                        {phase.duration}
+                      </span>
+                    </div>
+                    
+                    <AnimatePresence>
+                      {showDescription && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="text-sm text-slate-600 leading-relaxed mt-2"
+                        >
+                          {phase.description}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+          
+          {/* Desktop: Horizontal grid */}
+          <div className="hidden sm:grid grid-cols-2 lg:grid-cols-5 gap-4">
             {implementationPhases.map((phase, index) => {
               const stepNumber = index + 1;
               const isActive = stepNumber <= activeStep;
@@ -372,16 +439,16 @@ export function ProjectPulseContent() {
                 title="Ideal for"
               />
               
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {industries.map((industry, index) => (
                   <div
                     key={index}
-                    className="group flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-[#0a6ed1]/35 transition-all"
+                    className="group flex items-center gap-2.5 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-[#0a6ed1]/35 transition-all"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-[#0a6ed1]/10 flex items-center justify-center group-hover:bg-[#0a6ed1]/15 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-[#0a6ed1]/10 flex items-center justify-center group-hover:bg-[#0a6ed1]/15 transition-colors flex-shrink-0">
                       <industry.icon className="h-4 w-4 text-[#0a6ed1]" />
                     </div>
-                    <span className="text-base font-medium text-slate-700">
+                    <span className="text-sm sm:text-base font-medium text-slate-700">
                       {industry.name}
                     </span>
                   </div>
@@ -505,8 +572,26 @@ export function ProjectPulseContent() {
               />
 
               {/* Stepper in inset panel */}
-              <div className="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-5">
-                <div className="flex flex-wrap justify-center items-center gap-2 md:gap-3">
+              <div className="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-5">
+                {/* Mobile: Vertical list */}
+                <div className="flex flex-col gap-2 sm:hidden">
+                  {steps.map((step, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-white border border-slate-200 flex-1">
+                        <span className="w-6 h-6 rounded-full bg-[#0a6ed1] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                          {step.number}
+                        </span>
+                        <span className="text-sm font-medium text-slate-700">{step.name}</span>
+                      </div>
+                      {index < steps.length - 1 && (
+                        <ArrowRight className="h-4 w-4 text-slate-400 rotate-90 flex-shrink-0" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Desktop: Horizontal flow */}
+                <div className="hidden sm:flex flex-wrap justify-center items-center gap-2 md:gap-3">
                   {steps.map((step, index) => (
                     <div key={index} className="flex items-center">
                       <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white border border-slate-200 hover:border-[#0a6ed1]/40 transition-all">
@@ -516,7 +601,7 @@ export function ProjectPulseContent() {
                         <span className="text-sm font-medium text-slate-700">{step.name}</span>
                       </div>
                       {index < steps.length - 1 && (
-                        <ArrowRight className="h-4 w-4 text-slate-400 mx-1 hidden sm:block" />
+                        <ArrowRight className="h-4 w-4 text-slate-400 mx-1" />
                       )}
                     </div>
                   ))}
