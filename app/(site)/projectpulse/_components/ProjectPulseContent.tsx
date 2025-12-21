@@ -71,8 +71,9 @@ const industryIconMap: Record<string, typeof Briefcase> = {
   "Outsourcing & Nearshoring": Users,
   "Creative & Digital Agencies": Palette,
   "Architecture & Design": Building2,
-  "Engineering": Settings,
-  "Legal": Scale,
+  "Engineering services": Settings,
+  "Legal services": Scale,
+  "Other project-based services": Briefcase,
 };
 
 // Industries data - auto-generated from config
@@ -436,7 +437,7 @@ export function ProjectPulseContent() {
             <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-8 md:p-10">
               <SectionHeader
                 kicker="Built for Professional Services"
-                title="Ideal for"
+                title="Ideal for companies in"
               />
               
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -687,7 +688,7 @@ export function ProjectPulseContent() {
           </motion.div>
 
           {/* Implementation */}
-          <ImplementationStepper />
+          {/* <ImplementationStepper /> */}
         </div>
       </div>
 

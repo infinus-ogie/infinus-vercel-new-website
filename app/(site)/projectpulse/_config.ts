@@ -34,8 +34,9 @@ export const projectPulseConfig = {
     "Outsourcing & Nearshoring",
     "Creative & Digital Agencies",
     "Architecture & Design",
-    "Engineering",
-    "Legal",
+    "Engineering services",
+    "Legal services",
+    "Other project-based services",
   ],
 
   // Problem section
