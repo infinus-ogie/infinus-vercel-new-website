@@ -5,7 +5,7 @@ import { ArrowUpRight, ArrowRight } from 'lucide-react';
 
 // Interface for individual process card props
 interface ProcessCardProps {
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
   className?: string;
@@ -91,7 +91,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({
                 <div className="group relative rounded-lg border border-slate-200 bg-white p-4 flex-1 transition-all duration-300 hover:border-[#0a6ed1]/60 hover:shadow-lg">
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[#0a6ed1] shadow-sm transition-colors group-hover:bg-[#0a6ed1] group-hover:text-white flex-shrink-0">
-                      <item.icon className="h-6 w-6" />
+                      {React.createElement(item.icon, { className: "h-6 w-6" })}
                     </div>
                     <div className="flex-1">
                       <h3 className="text-base font-semibold text-slate-900 mb-1">{item.title}</h3>
