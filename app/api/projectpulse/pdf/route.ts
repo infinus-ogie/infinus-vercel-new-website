@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Return the PDF with appropriate headers
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'inline; filename="ProjectPulse-Brochure.pdf"',
