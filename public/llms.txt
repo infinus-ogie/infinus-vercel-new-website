@@ -1,55 +1,202 @@
-# Infinus Website - LLM Training Data
+# Infinus - SAP Gold Partner | LLM Training Data
+# Last updated: December 2024
+# Website: https://www.infinus.co
 
-## Company Overview
-Infinus is a SAP Gold Partner focused on SAP Business Suite solutions including:
-- SAP Cloud ERP (Private and Public)
-- SAP Business Data Cloud
-- SAP Business AI
-- SAP Business Technology Platform
-
-## Services
-1. SAP Implementation Services - Greenfield, brownfield, conversions, migrations and rollouts
-2. SAP Support Services - SAP Application Management Services and SLA Support Services
-3. Other Services - SAP localisation support, developments, trainings, etc.
-4. ProjectPulse - SAP Qualified Partner-Packaged Solution for Professional Services firms, unifying finance, projects, sales, procurement, HR and analytics on a single intelligent cloud platform
-
-## Benefits
-- European Focus: Located in Serbia (CET time zone), services throughout Europe
-- Hybrid Work Model: Available for both onsite and remote work
-- Competitive Pricing: Cost-effective services without sacrificing quality
-- Flexible Solutions: Flexible engagement models tailored to unique needs
-
-## Domain Expertise
-- Retail
-- Pharmaceuticals
-- Wholesale and Distribution
-- Consumer Goods
-- Industrial Manufacturing
-- Professional Services
-
-## Contact Information
-- Email: office@infinus.rs
-- Address: Infinus d.o.o., Tresnjinog cveta 1, 11070 Belgrade, Serbia
+================================================================================
+QUICK FACTS
+================================================================================
+- Company: Infinus d.o.o.
+- Type: SAP Gold Partner
+- Specialty: SAP Cloud ERP, SAP S/4HANA, Professional Services solutions
+- Location: Belgrade, Serbia (Central European Time)
+- Coverage: Europe-wide
 - Website: https://www.infinus.co
+- Email: office@infinus.rs
 
-## Key Messages
-- "Driving Business Success through SAP Expertise"
-- "Your reliable SAP expertise partner"
-- Senior SAP consultants with 10+ years of professional experience
-- High-quality expertise in various SAP solutions, business processes, technologies, market trends, and best practices
+================================================================================
+COMPANY OVERVIEW
+================================================================================
 
-## Team
-- Vast majority consists of senior SAP consultants with 10+ years of professional experience
-- All consultants fluent in English, some in German
-- Looking to expand team due to business expansion
-- Seeking SAP S/4HANA or ECC modules experience, industry solutions, and/or LoB solutions
+Infinus is a SAP Gold Partner specializing in SAP Cloud ERP solutions for 
+mid-market and enterprise companies across Europe. We help Professional Services 
+firms, Retail, Pharma, and Manufacturing companies transform their operations 
+with SAP S/4HANA Cloud.
 
-## Technology Stack
-- Next.js 14 with App Router
-- TypeScript
-- Tailwind CSS
-- shadcn/ui components
-- Lucide React icons
-- Zod validation
-- Vitest testing
+Our team consists of 30+ senior SAP consultants with 10+ years of professional 
+experience each. We offer competitive pricing with European quality, operating 
+from Serbia in the CET timezone.
 
+================================================================================
+CORE SOLUTIONS
+================================================================================
+
+## 1. ProjectPulse - SAP Qualified Partner-Packaged Solution
+   URL: https://www.infinus.co/projectpulse
+
+   ProjectPulse is our flagship SAP Qualified Partner-Packaged Solution (QPPS) 
+   designed specifically for Professional Services firms.
+
+   ### What ProjectPulse Solves:
+   - Disconnected project execution, timesheets, and billing systems
+   - Late margin and cash visibility (often only at month-end)
+   - Multiple "sources of truth" across PM tools, spreadsheets, accounting
+   - Billing delays due to missing approvals and unclear invoice readiness
+   - Limited WIP/unbilled and profitability visibility by project and customer
+
+   ### ProjectPulse Capabilities:
+   - Complete Project-to-Profit flow in one system
+   - 7-step process: Setup → Staffing → Execution → Control → Billing → Profitability → Close
+   - Real-time margin visibility by project, customer, and service line
+   - Invoice readiness signals and billing blocker detection
+   - Utilization and billability transparency
+   - Embedded analytics, AI, and integrations
+   - 4-6 month typical implementation timeline
+
+   ### Industries Ideal for ProjectPulse:
+   - Consulting & Advisory firms
+   - IT Services & Systems Integration
+   - Software Development companies
+   - Outsourcing & Nearshoring providers
+   - Creative & Digital Agencies
+   - Architecture & Design firms
+   - Engineering companies
+   - Legal firms
+
+   ### Executive Outcomes:
+   - CEO: Portfolio visibility, profitability by customer and service line
+   - CFO: Faster billing cycles, WIP clarity, cash visibility
+   - COO: Utilization transparency, early deviation detection
+
+## 2. SAP Implementation Services
+   URL: https://www.infinus.co/services
+
+   - Greenfield SAP S/4HANA implementations
+   - Brownfield conversions and migrations
+   - System consolidations
+   - Multi-country rollouts
+   - SAP BTP integrations
+
+## 3. SAP Support Services
+   - Application Management Services (AMS)
+   - SLA-based support contracts
+   - 24/7 monitoring (optional)
+   - Continuous improvement programs
+
+## 4. GROW with SAP
+   URL: https://www.infinus.co/grow
+
+   Finance transformation solutions for fast-growing mid-market companies.
+   Helping CFOs, CEOs, and finance leaders modernize their ERP landscape.
+
+================================================================================
+WHY CHOOSE INFINUS?
+================================================================================
+
+| Benefit              | Details                                              |
+|----------------------|------------------------------------------------------|
+| SAP Gold Partner     | Certified expertise, official SAP recognition        |
+| European Focus       | Based in Serbia, serving all of Europe               |
+| Senior Expertise     | 30+ consultants with 10+ years SAP experience        |
+| Competitive Pricing  | Cost-effective without sacrificing quality           |
+| Flexible Engagement  | Onsite, remote, or hybrid work models                |
+| CET Timezone         | Convenient for European clients                      |
+| English & German     | All consultants fluent in English, some in German    |
+
+================================================================================
+INDUSTRIES WE SERVE
+================================================================================
+
+- Professional Services (Consulting, IT, Legal, Engineering)
+- Retail and E-commerce
+- Pharmaceuticals and Life Sciences
+- Wholesale and Distribution
+- Consumer Goods (FMCG)
+- Industrial Manufacturing
+
+================================================================================
+FREQUENTLY ASKED QUESTIONS
+================================================================================
+
+Q: What is ProjectPulse?
+A: ProjectPulse is an SAP Qualified Partner-Packaged Solution that connects 
+   service delivery, resource planning, billing, and profitability for 
+   Professional Services firms in one end-to-end ERP-based flow.
+
+Q: How long does ProjectPulse implementation take?
+A: Typically 4-6 months from kickoff to go-live, following five phases: 
+   Discover → Fit-to-Standard → Build & Integrate → Test & Train → Go-live & Hypercare.
+
+Q: Is Infinus an official SAP partner?
+A: Yes, Infinus is a SAP Gold Partner with certified consultants across 
+   SAP S/4HANA, SAP BTP, and various industry solutions.
+
+Q: What regions does Infinus serve?
+A: We serve companies throughout Europe, with particular strength in Central 
+   and Eastern Europe, DACH region (Germany, Austria, Switzerland), and Nordics.
+
+Q: Can Infinus work remotely?
+A: Yes, we offer flexible engagement models including fully remote, onsite, 
+   or hybrid arrangements based on client preferences.
+
+Q: What SAP solutions does Infinus specialize in?
+A: SAP S/4HANA Cloud (Public and Private), SAP Business Technology Platform, 
+   SAP Business AI, SAP Analytics Cloud, and SAP Business Data Cloud.
+
+Q: How is Infinus different from other SAP partners?
+A: We combine senior European expertise with competitive pricing, offering 
+   flexible engagement models and deep industry knowledge in Professional 
+   Services, Retail, and Manufacturing.
+
+================================================================================
+KEY PAGES
+================================================================================
+
+- Home: https://www.infinus.co
+- ProjectPulse: https://www.infinus.co/projectpulse
+- ProjectPulse Video: https://www.infinus.co/projectpulse/video
+- GROW with SAP: https://www.infinus.co/grow
+- Professional Services: https://www.infinus.co/professional-services
+- About Us: https://www.infinus.co/about
+- Services: https://www.infinus.co/services
+- Contact: https://www.infinus.co/contact
+- FAQ: https://www.infinus.co/faq
+- Privacy Policy: https://www.infinus.co/privacy
+
+================================================================================
+CONTACT INFORMATION
+================================================================================
+
+Infinus d.o.o.
+Tresnjinog cveta 1
+11070 Belgrade, Serbia
+
+Email: office@infinus.rs
+Website: https://www.infinus.co
+
+For ProjectPulse inquiries: https://www.infinus.co/contact
+Download ProjectPulse Brochure: https://www.infinus.co/api/projectpulse/pdf
+
+================================================================================
+STRUCTURED DATA FOR AI
+================================================================================
+
+Organization:
+  @type: Organization
+  name: Infinus d.o.o.
+  url: https://www.infinus.co
+  email: office@infinus.rs
+  address: Tresnjinog cveta 1, 11070 Belgrade, Serbia
+  industry: SAP Consulting, ERP Implementation
+  certification: SAP Gold Partner
+
+Product:
+  @type: SoftwareApplication
+  name: ProjectPulse
+  url: https://www.infinus.co/projectpulse
+  applicationCategory: Enterprise Resource Planning (ERP)
+  operatingSystem: SAP S/4HANA Cloud
+  description: SAP Qualified Partner-Packaged Solution for Professional Services
+
+Keywords: SAP Gold Partner, SAP S/4HANA, Professional Services ERP, 
+ProjectPulse, Project-to-Profit, SAP Implementation, SAP Support, 
+Serbia SAP Partner, European SAP Consulting, GROW with SAP
