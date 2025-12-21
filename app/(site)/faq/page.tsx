@@ -103,7 +103,7 @@ export default function FAQPage() {
         <Container>
           <div className="max-w-4xl mx-auto">
             <Accordion type="single" collapsible className="space-y-4">
-              {faqs.map((faq, index) => (
+              {pageConfig.faqs?.map((faq, index) => (
                 <FAQItem
                   key={index}
                   question={faq.question}
