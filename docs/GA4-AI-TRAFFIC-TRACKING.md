@@ -43,7 +43,23 @@ Zašto?
 
 ## 📈 Korak 2: Pregled AI Traffic-a
 
-### 2.1. Pregled Custom Event-a
+### 2.1. NAJLAKŠI NAČIN: Pregled preko UTM Parametara ⭐
+
+**ChatGPT i Perplexity automatski dodaju UTM parametre!**
+
+1. Idi na: **Reports** → **Acquisition** → **Traffic acquisition**
+2. Filtriraj po **Source/Medium:**
+   - `chatgpt.com` → ChatGPT traffic
+   - `perplexity.ai` → Perplexity traffic
+3. Vidiš tačno:
+   - Koliko korisnika je došlo sa ChatGPT-a
+   - Koliko sa Perplexity-ja
+   - Koje stranice su najposjećenije
+   - Conversion rate
+
+**Ovo je najlakši način jer ChatGPT automatski dodaje `utm_source=chatgpt.com`!**
+
+### 2.2. Pregled Custom Event-a
 
 1. Idi na: **Reports** → **Engagement** → **Events**
 2. Pronađi event: **`ai_traffic`**
@@ -52,6 +68,7 @@ Zašto?
    - Koliko puta se desio
    - Koji AI source (ChatGPT, Perplexity, itd.)
    - Koje stranice su posete
+   - UTM parametre u detaljima
 
 ### 2.2. Kreiranje Custom Report-a
 
@@ -139,17 +156,36 @@ Zašto?
 
 ---
 
-## 📝 Korak 6: UTM Parametri za AI Linkove
+## 📝 Korak 6: UTM Parametri - Automatski Dodati od AI Pretraživača
 
-**Za buduće kampanje, dodaj UTM parametre:**
+**✅ DOBRA VEST:** ChatGPT i Perplexity automatski dodaju UTM parametre kada korisnik klikne na link!
 
-```
-https://www.infinus.co/projectpulse?utm_source=chatgpt&utm_medium=ai&utm_campaign=projectpulse
-```
+### Automatski UTM Parametri:
 
-Onda u GA4:
+| AI Pretraživač | UTM Source | Primer URL-a |
+|----------------|------------|--------------|
+| **ChatGPT** | `utm_source=chatgpt.com` | `https://www.infinus.co/projectpulse?utm_source=chatgpt.com` |
+| **Perplexity** | `utm_source=perplexity.ai` | `https://www.infinus.co/projectpulse?utm_source=perplexity.ai` |
+| **Claude** | `utm_source=claude.ai` (retko) | `https://www.infinus.co/projectpulse?utm_source=claude.ai` |
+
+### Kako Naša Komponenta Detektuje:
+
+Naša `AITrafficTracker` komponenta automatski detektuje ove UTM parametre i šalje `ai_traffic` event sa:
+- `ai_source`: ChatGPT, Perplexity, Claude, itd.
+- `utm_source`: Originalni UTM parametar
+- `utm_medium`: UTM medium (ako postoji)
+
+### Pregled u GA4:
+
 1. Idi na: **Reports** → **Acquisition** → **Traffic acquisition**
-2. Filtriraj: `utm_source = chatgpt` ili `utm_medium = ai`
+2. Filtriraj: `utm_source = chatgpt.com` ili `utm_source = perplexity.ai`
+3. Vidiš tačno koliko korisnika je došlo sa ChatGPT-a ili Perplexity-ja!
+
+### Alternativno - Custom Event:
+
+1. Idi na: **Reports** → **Engagement** → **Events**
+2. Pronađi: `ai_traffic` event
+3. Klikni da vidiš detalje sa `utm_source` parametrom
 
 ---
 
@@ -157,12 +193,19 @@ Onda u GA4:
 
 ### Kako radi AITrafficTracker komponenta?
 
-1. **Detektuje referrer** - proverava `document.referrer` za AI domene
-2. **Šalje custom event** - `ai_traffic` event sa parametrima:
+1. **Detektuje UTM parametre** - proverava `utm_source` za AI vrednosti:
+   - `utm_source=chatgpt.com` → ChatGPT
+   - `utm_source=perplexity.ai` → Perplexity
+   - `utm_source=claude.ai` → Claude
+   - itd.
+2. **Detektuje referrer** - proverava `document.referrer` za AI domene (fallback)
+3. **Šalje custom event** - `ai_traffic` event sa parametrima:
    - `ai_source`: ChatGPT, Perplexity, itd.
    - `ai_domain`: chat.openai.com, www.perplexity.ai, itd.
+   - `utm_source`: Originalni UTM parametar (npr. `chatgpt.com`)
+   - `utm_medium`: UTM medium (ako postoji)
    - `referrer`: pun referrer URL
-3. **Postavlja custom dimension** - za sve AI traffic
+4. **Postavlja custom dimension** - za sve AI traffic
 
 ### AI Domene koje pratimo:
 

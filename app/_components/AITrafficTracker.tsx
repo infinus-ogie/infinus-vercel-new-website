@@ -54,10 +54,34 @@ export default function AITrafficTracker() {
         }
       }
 
-      // Check UTM parameters
-      if (!aiSource && (utmSource?.toLowerCase().includes("ai") || utmMedium === "ai")) {
-        aiSource = utmSource || "AI Search";
-        aiDomain = "unknown";
+      // Check UTM parameters for AI sources
+      // ChatGPT adds: utm_source=chatgpt.com
+      // Perplexity adds: utm_source=perplexity.ai
+      // Claude may add: utm_source=claude.ai
+      if (!aiSource) {
+        const utmSourceLower = utmSource?.toLowerCase() || "";
+        
+        // Map UTM sources to AI names
+        if (utmSourceLower.includes("chatgpt") || utmSourceLower === "chatgpt.com") {
+          aiSource = "ChatGPT";
+          aiDomain = "chat.openai.com";
+        } else if (utmSourceLower.includes("perplexity") || utmSourceLower === "perplexity.ai") {
+          aiSource = "Perplexity";
+          aiDomain = "www.perplexity.ai";
+        } else if (utmSourceLower.includes("claude") || utmSourceLower === "claude.ai") {
+          aiSource = "Claude";
+          aiDomain = "claude.ai";
+        } else if (utmSourceLower.includes("gemini") || utmSourceLower.includes("google")) {
+          aiSource = "Google Gemini";
+          aiDomain = "gemini.google.com";
+        } else if (utmSourceLower.includes("copilot") || utmSourceLower.includes("bing")) {
+          aiSource = "Microsoft Copilot";
+          aiDomain = "copilot.microsoft.com";
+        } else if (utmSourceLower.includes("ai") || utmMedium === "ai") {
+          // Generic AI source
+          aiSource = utmSource || "AI Search";
+          aiDomain = "unknown";
+        }
       }
 
       // If AI traffic detected, send custom event
@@ -66,6 +90,8 @@ export default function AITrafficTracker() {
           ai_source: aiSource,
           ai_domain: aiDomain,
           referrer: referrer || "(direct)",
+          utm_source: utmSource || "(none)",
+          utm_medium: utmMedium || "(none)",
           page_location: window.location.href,
           page_path: window.location.pathname,
         });
@@ -74,6 +100,8 @@ export default function AITrafficTracker() {
           source: aiSource,
           domain: aiDomain,
           referrer: referrer || "(direct)",
+          utm_source: utmSource || "(none)",
+          utm_medium: utmMedium || "(none)",
         });
       }
 
