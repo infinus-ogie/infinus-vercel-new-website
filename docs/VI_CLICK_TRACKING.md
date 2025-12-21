@@ -1,6 +1,26 @@
 # D&B Visitor Intelligence Click Tracking
 
-This document describes the implementation of click tracking for "Preuzmi PDF" CTAs and ZIP downloads on the /grow and /professional-services pages.
+This document describes the implementation of click tracking for "Preuzmi PDF" CTAs and ZIP downloads on the /grow, /professional-services, and /projectpulse pages.
+
+## ⚠️ IMPORTANT RULE FOR FUTURE DEVELOPMENT
+
+**ALWAYS add tracking attributes to download buttons/links when creating new pages!**
+
+When creating any new page with download buttons (PDF, ZIP, or any downloadable content), you MUST add these attributes:
+
+```tsx
+<a 
+  href="/path/to/download"
+  data-vi="download"  // Use "zip" for ZIP files
+  data-vi-label="Descriptive Name"  // Human-readable label for GA4
+  data-vi-doc="filename.pdf"  // Actual filename
+  // ... other attributes
+>
+  Download Button Text
+</a>
+```
+
+**This ensures all download clicks are tracked in Google Analytics, not just actual downloads.**
 
 ## Implementation Overview
 
@@ -95,4 +115,15 @@ Set `NEXT_PUBLIC_DNB_VI_DEBUG=true` in your environment variables.
 
 - `/grow` - Hero ZIP CTA and all PDF downloads in the downloads section
 - `/professional-services` - Hero ZIP CTA and all PDF downloads in the downloads section
-- ZIP package downloads on both pages
+- `/projectpulse` - "Open brochure (PDF)" CTA button
+- ZIP package downloads on all pages
+
+## Development Checklist
+
+When creating a new page with download buttons, ensure:
+
+- [ ] Add `data-vi="download"` for PDF files or `data-vi="zip"` for ZIP files
+- [ ] Add `data-vi-label` with a descriptive, human-readable name
+- [ ] Add `data-vi-doc` with the actual filename
+- [ ] Test in browser console that clicks fire `vi_download_click` or `vi_zip_click` events
+- [ ] Verify in GA4 DebugView that events are being sent

@@ -1,18 +1,11 @@
-import Script from "next/script"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { 
-  generatePageJsonLd, 
-  getCurrentDate, 
-  DEFAULT_AUTHOR, 
-  DEFAULT_PUBLISHER,
-  SITE_CONFIG 
-} from "@/lib/jsonld"
 import { generatePageMetadata } from "@/lib/seo"
-import { getBreadcrumbs } from "@/lib/breadcrumbs"
+import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
+import { createSimplePageConfig } from "@/lib/auto-jsonld"
 import { Mail, FileText } from "lucide-react"
 
 // SEO Metadata
@@ -22,43 +15,23 @@ export const metadata = generatePageMetadata(
   "/privacy"
 )
 
-// Generate JSON-LD
-const jsonLd = generatePageJsonLd({
-  pageData: {
-    name: "Privacy Policy - Infinus",
-    url: `${SITE_CONFIG.url}/privacy`,
-    inLanguage: SITE_CONFIG.language,
-    description: "Privacy policy and data protection information for Infinus website and services."
-  },
-  breadcrumbs: getBreadcrumbs("/privacy"),
-  articleData: {
-    headline: "Privacy Policy - Infinus",
-    description: "Privacy policy and data protection information for Infinus website and services.",
-    image: SITE_CONFIG.defaultImage,
-    authorName: DEFAULT_AUTHOR.name,
-    authorUrl: DEFAULT_AUTHOR.url,
-    datePublished: getCurrentDate(),
-    dateModified: getCurrentDate(),
-    inLanguage: SITE_CONFIG.language,
-    mainEntityOfPage: `${SITE_CONFIG.url}/privacy`,
-    publisher: DEFAULT_PUBLISHER
-  },
-  faqs: []
-})
+// Page Config - Single source of truth for content and JSON-LD
+const pageConfig = createSimplePageConfig(
+  "/privacy",
+  "Privacy Policy - Infinus",
+  "Privacy policy and data protection information for Infinus website and services.",
+  {
+    articleAbout: ["Privacy Policy", "Data Protection", "GDPR", "Privacy"],
+  }
+)
 
 export default function PrivacyPage() {
   const lastUpdated = new Date().toLocaleDateString()
   
   return (
     <>
-      {/* JSON-LD Script */}
-      <Script
-        id="json-ld"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd)
-        }}
-      />
+      {/* Auto-generated JSON-LD - updates automatically when pageConfig changes */}
+      <AutoJsonLd config={pageConfig} />
 
 
       {/* Content */}

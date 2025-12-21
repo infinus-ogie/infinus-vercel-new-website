@@ -40,122 +40,11 @@ import { StatCard } from "@/components/ui/StatCard";
 import { FeatureTile } from "@/components/ui/FeatureTile";
 import { StatPills } from "@/components/ui/StatPills";
 import { IndustriesScroll } from "@/components/ui/IndustriesScroll";
-import { 
-  generatePageJsonLd, 
-  getCurrentDate,
-  DEFAULT_AUTHOR,
-  DEFAULT_PUBLISHER 
-} from "@/lib/jsonld";
+import { generateGrowJsonLd } from "./_jsonld";
+import { growConfig } from "./_config";
 
-// JSON-LD data
-const pageData = {
-  name: "GROW with SAP: Finansije kao pokretač rasta",
-  url: "/grow",
-  inLanguage: "sr-Latn-RS",
-  description: "Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija."
-};
-
-const breadcrumbItems = [
-  { name: "Home", url: "/" },
-  { name: "GROW", url: "/grow" }
-];
-
-const articleData = {
-  headline: "GROW with SAP: Finansije kao pokretač rasta",
-  description: "Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija koje danas rade bez ERP-a ili sa zastarelim sistemima.",
-  image: "/og-default.png",
-  authorName: DEFAULT_AUTHOR.name,
-  authorUrl: DEFAULT_AUTHOR.url,
-  datePublished: getCurrentDate(),
-  dateModified: getCurrentDate(),
-  inLanguage: "sr-Latn-RS",
-  mainEntityOfPage: "/grow",
-  publisher: DEFAULT_PUBLISHER
-};
-
-const faqItems = [
-  {
-    question: "Da li je SAP Cloud ERP prevelik za srednje i brzorastuće firme bez ERP-a?",
-    answer: "Ne. Dizajniran je da brzo krene uz best-practice procese i da se kasnije širi po potrebi."
-  },
-  {
-    question: "Kako SAP pomaže oko usklađenosti i standarda?",
-    answer: "Gotove funkcije za lokalne standarde, e-fakturisanje, poreze i međunarodne standarde, uz centralizovane podatke za brže revizije."
-  },
-  {
-    question: "Koja je uloga AI u finansijama?",
-    answer: "AI automatizuje rutinske zadatke i ubrzava uvide, pa timovi donose bolje odluke brže."
-  }
-];
-
-// Generate JSON-LD
-const jsonLdData = [
-  // WebPage
-  {
-    "@type": "WebPage",
-    "name": "GROW with SAP: Finansije kao pokretač rasta",
-    "inLanguage": "sr-Latn-RS",
-    "datePublished": getCurrentDate(),
-    "dateModified": getCurrentDate(),
-    "url": "/grow"
-  },
-  // BreadcrumbList
-  {
-    "@type": "BreadcrumbList",
-    "itemListElement": breadcrumbItems.map((item, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": item.name,
-      "item": item.url
-    }))
-  },
-  // Article
-  {
-    "@type": "Article",
-    "headline": "GROW with SAP: Finansije kao pokretač rasta",
-    "about": ["SAP Cloud ERP", "Finance transformation", "Midmarket growth"],
-    "author": {
-      "@type": "Organization",
-      "name": "Infinus",
-      "url": "https://www.infinus.co/"
-    },
-    "image": "/og-default.png",
-    "inLanguage": "sr-Latn-RS"
-  },
-  // ItemList
-  {
-    "@type": "ItemList",
-    "itemListElement": [
-      {
-        "@type": "CreativeWork",
-        "name": "Oxford Economics izveštaj: CFO Insights",
-        "url": "/downloads/CFO_Insights_OxfordEconomics.pdf"
-      },
-      {
-        "@type": "CreativeWork",
-        "name": "Checklista za CFO i finansijske menadžere",
-        "url": "/downloads/Finance_Checklist.pdf"
-      },
-      {
-        "@type": "CreativeWork",
-        "name": "Infografik: 3 uvida o finansijama i rastu",
-        "url": "/downloads/Finance_3_Insights.pdf"
-      }
-    ]
-  },
-  // FAQPage
-  {
-    "@type": "FAQPage",
-    "mainEntity": faqItems.map(faq => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  }
-];
+// Auto-generated JSON-LD - updates automatically when growConfig changes
+const jsonLdData = generateGrowJsonLd();
 
 const valueCards = [
   {
@@ -192,7 +81,7 @@ export default function GrowPage() {
     <div className="min-h-screen flex flex-col">
       <NavBarDemo />
       <main className="flex-1">
-        {/* JSON-LD Script */}
+        {/* Auto-generated JSON-LD - updates automatically when growConfig changes */}
         <Script
           id="grow-page-jsonld"
           type="application/ld+json"
@@ -519,7 +408,7 @@ export default function GrowPage() {
           transition={{ duration: 0.18, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.2 }}
         >
-          <FaqSection id="faq-grow" items={faqItems} />
+          <FaqSection id="faq-grow" items={growConfig.faqs} />
         </motion.div>
       </Section>
 

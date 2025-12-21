@@ -11,39 +11,7 @@ Infinus is a SAP Gold Partner focused on SAP Business Suite solutions including:
 1. SAP Implementation Services - Greenfield, brownfield, conversions, migrations and rollouts
 2. SAP Support Services - SAP Application Management Services and SLA Support Services
 3. Other Services - SAP localisation support, developments, trainings, etc.
-4. ProjectPulse - SAP Qualified Partner-Packaged Solution (QPPS) for Professional Services firms
-
-## ProjectPulse Solution Details
-ProjectPulse is an ERP-based solution that connects service delivery, resource planning, invoice readiness, profitability, and cash visibility in one end-to-end flow. It standardizes the Project-to-Profit flow from project setup and staffing to execution, billing, profitability, and close.
-
-Key Features:
-- Structured delivery and staffing discipline
-- Invoice readiness and billing blockers visible early
-- Real-time margin and cash visibility by project and customer
-- Embedded analytics, AI, and integrations with existing tools
-- Pre-built integration patterns
-- Curated analytics
-
-Implementation Timeline: Typically 4-6 months from kickoff to go-live
-Implementation Phases:
-1. Discover (2-3 weeks) - Requirements & fit analysis
-2. Fit-to-Standard (4-6 weeks) - Configuration & customization
-3. Build & Integrate (6-8 weeks) - Development & integration
-4. Test & Train (3-4 weeks) - UAT & user enablement
-5. Go-live & Hypercare (2-4 weeks) - Launch & stabilization
-
-Ideal For:
-- Consulting & Advisory
-- IT Services
-- Systems Integration
-- Software Development
-- Outsourcing & Nearshoring
-- Creative & Digital Agencies
-- Architecture & Design
-- Engineering
-- Legal
-
-ProjectPulse URL: https://www.infinus.co/projectpulse
+4. ProjectPulse - SAP Qualified Partner-Packaged Solution for Professional Services firms, unifying finance, projects, sales, procurement, HR and analytics on a single intelligent cloud platform
 
 ## Benefits
 - European Focus: Located in Serbia (CET time zone), services throughout Europe
@@ -84,3 +52,4 @@ ProjectPulse URL: https://www.infinus.co/projectpulse
 - Lucide React icons
 - Zod validation
 - Vitest testing
+

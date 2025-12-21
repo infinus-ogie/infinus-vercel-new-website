@@ -1,4 +1,3 @@
-import Script from "next/script"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
@@ -12,15 +11,9 @@ import {
   MessageSquare,
   Users
 } from "lucide-react"
-import { 
-  generatePageJsonLd, 
-  getCurrentDate, 
-  DEFAULT_AUTHOR, 
-  DEFAULT_PUBLISHER,
-  SITE_CONFIG 
-} from "@/lib/jsonld"
 import { generatePageMetadata } from "@/lib/seo"
-import { getBreadcrumbs } from "@/lib/breadcrumbs"
+import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
+import { createSimplePageConfig } from "@/lib/auto-jsonld"
 
 // SEO Metadata
 export const metadata = generatePageMetadata(
@@ -29,25 +22,34 @@ export const metadata = generatePageMetadata(
   "/contact"
 )
 
-// FAQ data for JSON-LD
-const faqs = [
+// Page Config - Single source of truth for content and JSON-LD
+// Change text here and JSON-LD automatically updates
+const pageConfig = createSimplePageConfig(
+  "/contact",
+  "Contact Infinus - Get Expert SAP Support",
+  "Contact our SAP experts for implementation, support, and consulting services. Get in touch with Infinus, your trusted SAP Gold Partner.",
   {
-    question: "How can I contact Infinus for SAP services?",
-    answer: "You can contact us through our contact form, email us at contact@infinus.co, or call us at +1 (555) 123-4567. We're available Monday through Friday, 9 AM to 6 PM EST."
-  },
-  {
-    question: "What information should I include when contacting you?",
-    answer: "Please include your name, company, contact information, and a brief description of your SAP needs or project requirements. This helps us provide you with the most relevant information and next steps."
-  },
-  {
-    question: "How quickly do you respond to inquiries?",
-    answer: "We typically respond to all inquiries within 24 hours during business days. For urgent matters, please call us directly for immediate assistance."
-  },
-  {
-    question: "Do you offer free consultations?",
-    answer: "Yes, we offer free initial consultations to discuss your SAP needs and provide recommendations. Contact us to schedule a consultation with our SAP experts."
+    faqs: [
+      {
+        question: "How can I contact Infinus for SAP services?",
+        answer: "You can contact us through our contact form, email us at contact@infinus.co, or call us at +1 (555) 123-4567. We're available Monday through Friday, 9 AM to 6 PM EST."
+      },
+      {
+        question: "What information should I include when contacting you?",
+        answer: "Please include your name, company, contact information, and a brief description of your SAP needs or project requirements. This helps us provide you with the most relevant information and next steps."
+      },
+      {
+        question: "How quickly do you respond to inquiries?",
+        answer: "We typically respond to all inquiries within 24 hours during business days. For urgent matters, please call us directly for immediate assistance."
+      },
+      {
+        question: "Do you offer free consultations?",
+        answer: "Yes, we offer free initial consultations to discuss your SAP needs and provide recommendations. Contact us to schedule a consultation with our SAP experts."
+      }
+    ],
+    articleAbout: ["SAP Services", "SAP Consulting", "SAP Support", "Contact"],
   }
-]
+)
 
 // Contact information
 const contactInfo = [
@@ -67,41 +69,11 @@ const contactInfo = [
   }
 ]
 
-// Generate JSON-LD
-const jsonLd = generatePageJsonLd({
-  pageData: {
-    name: "Contact Infinus - Get Expert SAP Support",
-    url: `${SITE_CONFIG.url}/contact`,
-    inLanguage: SITE_CONFIG.language,
-    description: "Contact our SAP experts for implementation, support, and consulting services. Get in touch with Infinus, your trusted SAP Gold Partner."
-  },
-  breadcrumbs: getBreadcrumbs("/contact"),
-  articleData: {
-    headline: "Contact Infinus - Get Expert SAP Support",
-    description: "Contact our SAP experts for implementation, support, and consulting services. Get in touch with Infinus, your trusted SAP Gold Partner.",
-    image: SITE_CONFIG.defaultImage,
-    authorName: DEFAULT_AUTHOR.name,
-    authorUrl: DEFAULT_AUTHOR.url,
-    datePublished: getCurrentDate(),
-    dateModified: getCurrentDate(),
-    inLanguage: SITE_CONFIG.language,
-    mainEntityOfPage: `${SITE_CONFIG.url}/contact`,
-    publisher: DEFAULT_PUBLISHER
-  },
-  faqs
-})
-
 export default function ContactPage() {
   return (
     <>
-      {/* JSON-LD Script */}
-      <Script
-        id="json-ld"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd)
-        }}
-      />
+      {/* Auto-generated JSON-LD - updates automatically when pageConfig changes */}
+      <AutoJsonLd config={pageConfig} />
 
 
       {/* New Contact Design */}

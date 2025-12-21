@@ -4,15 +4,9 @@ import { Section } from "@/components/ui/section"
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { FAQItem } from "@/components/content/faq-item"
-import { 
-  generatePageJsonLd, 
-  getCurrentDate, 
-  DEFAULT_AUTHOR, 
-  DEFAULT_PUBLISHER,
-  SITE_CONFIG 
-} from "@/lib/jsonld"
 import { generatePageMetadata } from "@/lib/seo"
-import { getBreadcrumbs } from "@/lib/breadcrumbs"
+import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
+import { createSimplePageConfig } from "@/lib/auto-jsonld"
 
 // SEO Metadata
 export const metadata = generatePageMetadata(
@@ -21,8 +15,14 @@ export const metadata = generatePageMetadata(
   "/faq"
 )
 
-// FAQ data
-const faqs = [
+// Page Config - Single source of truth for content and JSON-LD
+// Change FAQ questions/answers here and JSON-LD automatically updates
+const pageConfig = createSimplePageConfig(
+  "/faq",
+  "Frequently Asked Questions - SAP Services",
+  "Find answers to common questions about SAP services, implementation, support, and our expertise as a SAP Gold Partner.",
+  {
+    faqs: [
   {
     question: "What services do you offer?",
     answer: "SAP implementation services - we are open for both T&M and fix-price types of engagement. SAP support services for customers' existing SAP system (for all modules and processes, including standard support and change requests). Other services related to SAP solutions, including upgrades, transformations, conversions, migrations, custom development training, and quality assurance services."
@@ -71,43 +71,16 @@ const faqs = [
     question: "How can I contact you if I have more questions?",
     answer: "You can contact us by phone or email."
   }
-]
-
-// Generate JSON-LD
-const jsonLd = generatePageJsonLd({
-  pageData: {
-    name: "Frequently Asked Questions - SAP Services",
-    url: `${SITE_CONFIG.url}/faq`,
-    inLanguage: SITE_CONFIG.language,
-    description: "Find answers to common questions about SAP services, implementation, support, and our expertise as a SAP Gold Partner."
-  },
-  breadcrumbs: getBreadcrumbs("/faq"),
-  articleData: {
-    headline: "Frequently Asked Questions - SAP Services",
-    description: "Find answers to common questions about SAP services, implementation, support, and our expertise as a SAP Gold Partner.",
-    image: SITE_CONFIG.defaultImage,
-    authorName: DEFAULT_AUTHOR.name,
-    authorUrl: DEFAULT_AUTHOR.url,
-    datePublished: getCurrentDate(),
-    dateModified: getCurrentDate(),
-    inLanguage: SITE_CONFIG.language,
-    mainEntityOfPage: `${SITE_CONFIG.url}/faq`,
-    publisher: DEFAULT_PUBLISHER
-  },
-  faqs
-})
+    ],
+    articleAbout: ["SAP Services", "SAP FAQ", "SAP Support", "SAP Implementation"],
+  }
+)
 
 export default function FAQPage() {
   return (
     <>
-      {/* JSON-LD Script */}
-      <Script
-        id="json-ld"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd)
-        }}
-      />
+      {/* Auto-generated JSON-LD - updates automatically when pageConfig changes */}
+      <AutoJsonLd config={pageConfig} />
 
 
       {/* Hero Section */}

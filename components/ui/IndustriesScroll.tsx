@@ -25,14 +25,14 @@ const industries = [
   { name: "Telco", icon: Wifi },
 ];
 
-export function IndustriesScroll() {
+export function IndustriesScroll({ label = "Industrije" }: { label?: string }) {
   // Duplicate the array to create seamless loop
   const duplicatedIndustries = [...industries, ...industries];
 
   return (
     <div className="mx-auto max-w-6xl">
       <p className="text-xs uppercase tracking-wide text-slate-500 text-center mb-4">
-        Industrije
+        {label}
       </p>
       <div className="overflow-hidden">
         <motion.div

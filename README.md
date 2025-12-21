@@ -90,6 +90,28 @@ npm run dev
 - **LLMs.txt**: AI tool accessibility information
 - **Breadcrumbs**: Structured navigation hierarchy
 
+## Analytics & Tracking
+
+### ⚠️ Important: Download Button Tracking
+
+**When creating new pages with download buttons, ALWAYS add tracking attributes:**
+
+```tsx
+<a 
+  href="/path/to/file.pdf"
+  data-vi="download"  // or "zip" for ZIP files
+  data-vi-label="Descriptive Name"
+  data-vi-doc="filename.pdf"
+>
+  Download Button
+</a>
+```
+
+This ensures all download clicks are tracked in Google Analytics as `vi_download_click` events.
+
+📖 **See [Tracking Guidelines](./docs/TRACKING_GUIDELINES.md) for quick reference**  
+📖 **See [VI Click Tracking](./docs/VI_CLICK_TRACKING.md) for full documentation**
+
 ## Testing
 
 The project includes comprehensive tests for:

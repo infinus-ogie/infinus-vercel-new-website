@@ -24,6 +24,18 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: '/.well-known/llms.txt',
+        destination: '/well-known/llms.txt',
+      },
+      {
+        source: '/llms.txt',
+        destination: '/llms.txt',
+      },
+    ];
+  },
   async headers() {
     return [
       {
