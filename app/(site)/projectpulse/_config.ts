@@ -17,7 +17,7 @@ export const projectPulseConfig = {
   hero: {
     title: "ProjectPulse",
     subtitle: "Project-to-Profit for Professional Services",
-    description: "An ERP-based solution that connects service delivery, resource planning, invoice readiness, profitability, and cash visibility in one end-to-end flow, supported by embedded analytics, AI, and integrations with your existing tools.",
+    description: "ProjectPulse is an SAP Qualified Partner Packaged Solution built for professional services companies that want full control over delivery, margins, and cash flow.",
     valueHighlights: [
       "Structured delivery and staffing discipline",
       "Invoice readiness and billing blockers visible early",
@@ -27,47 +27,67 @@ export const projectPulseConfig = {
 
   // Industries
   industries: [
-    "Consulting & Advisory",
+    "Business Consulting & Advisory",
     "IT Services",
-    "Systems Integration",
     "Software Development",
-    "Outsourcing & Nearshoring",
-    "Creative & Digital Agencies",
-    "Architecture & Design",
-    "Engineering services",
-    "Legal services",
-    "Other project-based services",
+    "Outsourcing & Managed Services",
+    "Creative & Digital Services",
+    "Architecture & Design Services",
+    "Engineering Services",
+    "Legal Services",
   ],
 
   // Problem section
   problem: {
-    title: "A common challenge",
-    description: "When execution, timesheets, costs, and billing are spread across tools, margin and cash visibility arrives late, often after the damage is done.",
-    symptoms: [
-      "Plan vs. actual becomes clear only at month-end",
-      "Billing delays due to missing approvals and unclear invoice readiness",
-      "Multiple sources of truth across PM, timesheets, spreadsheets, accounting",
-      "Limited WIP and profitability visibility by project and customer",
-    ],
-    outcome: "ProjectPulse standardizes the Project-to-Profit flow so you see risk early, not after month-end.",
+    title: "The challenge",
+    description: "When projects, timesheets, costs, and billing live in different tools, visibility comes too late.",
+    description2: "You only see problems when margins are already gone and invoices are already delayed.",
+    solution: {
+      title: "The solution",
+      description: "ProjectPulse standardizes your entire Project-to-Profit flow in SAP Cloud ERP - from project setup and staffing to billing, profitability, and cash flow.",
+      description2: "One system. One source of truth. One end-to-end process.",
+    },
   },
 
-  // What ProjectPulse is
+  // Why ProjectPulse
   valueProposition: {
-    title: "What ProjectPulse is",
-    subtitle: "From project setup to invoice readiness, profitability, and close in one disciplined flow.",
+    title: "Why ProjectPulse",
+    subtitle: "",
     items: [
       {
-        title: "What it is",
-        description: "SAP Qualified Partner Packaged Solution (QPPS), an ERP-based platform designed for project-based service organizations.",
+        title: "SAP Qualified Partner Packaged Solution (QPPS)",
+        description: "",
       },
       {
-        title: "What it standardizes",
-        description: "The complete Project-to-Profit flow from project setup and staffing to execution, billing, profitability, and close.",
+        title: "Pre-configured Best Practices for Professional Services",
+        description: "",
       },
       {
-        title: "What you get",
-        description: "Curated analytics, pre-built integration patterns, and embedded AI, ready to deploy in 4-6 months.",
+        title: "Embedded Analytics and AI",
+        description: "",
+      },
+      {
+        title: "Ready to deploy in 4-6 months",
+        description: "",
+      },
+    ],
+  },
+
+  // What you gain
+  whatYouGain: {
+    title: "What you gain",
+    items: [
+      {
+        title: "Structured delivery & staffing discipline",
+        description: "Right people on the right projects, with utilization visibility built in.",
+      },
+      {
+        title: "Invoice readiness without surprises",
+        description: "See billing blockers early, not at month-end.",
+      },
+      {
+        title: "Real-time margin & cash visibility",
+        description: "Profitability by project, customer, and service line.",
       },
     ],
   },
@@ -147,7 +167,7 @@ export const projectPulseConfig = {
   // CTA
   cta: {
     title: "Ready to see your Project-to-Profit flow?",
-    description: "Book a discovery call and see how ProjectPulse can bring structure, visibility, and control to your professional services operations.",
+    description: "Book a discovery call and see how ProjectPulse brings structure, visibility, and control to your operations.",
     primaryCta: "Book a discovery call",
     secondaryCta: "Download brochure",
     trustNote: "We respond within one business day",

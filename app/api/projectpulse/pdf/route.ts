@@ -5,7 +5,7 @@ import { join } from 'path';
 export async function GET(request: NextRequest) {
   try {
     // Path to the ProjectPulse Brochure PDF file
-    const pdfPath = join(process.cwd(), 'public', 'Project Pulse', 'Project Pulse PDF', 'ProjectPulse Brochure.pdf');
+    const pdfPath = join(process.cwd(), 'public', 'Project Pulse', 'Project Pulse PDF', 'Nova PP Infinus brosura 2.pdf');
     
     // Read the PDF file
     const pdfBuffer = await readFile(pdfPath);
