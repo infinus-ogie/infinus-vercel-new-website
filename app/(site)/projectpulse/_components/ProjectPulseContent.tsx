@@ -323,7 +323,7 @@ export function ProjectPulseContent() {
 
   return (
     <>
-      {/* Hero Section - SAP Premium */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden min-h-[75vh]">
         <Image
           src="/Project Pulse/project-pulse2.png"
@@ -333,65 +333,60 @@ export function ProjectPulseContent() {
           className="object-cover object-[center_top] -z-10"
         />
 
-        {/* Refined overlays */}
+        {/* Overlays */}
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-[6px]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8 pt-32 pb-16 sm:pt-40 sm:pb-20">
-          <div className="flex flex-col items-start gap-6">
-            {/* Premium glass card */}
-            <div className="rounded-2xl border border-white/15 bg-black/25 backdrop-blur-md shadow-2xl px-6 py-8 sm:px-8 sm:py-10 max-w-2xl">
-              {/* SAP Qualified Badge */}
-              <div className="flex items-center gap-4 mb-5">
-                <div className="inline-flex items-center rounded-xl border border-white/15 bg-white/10 px-4 py-2 sm:px-5 sm:py-2.5">
-                  <Image
-                    src="/Project Pulse/SAP_Qualified_PartnerPackageSolution_C.png"
-                    alt="SAP Qualified Partner-Packaged Solution"
-                    width={240}
-                    height={62}
-                    className="h-9 sm:h-11 w-auto brightness-0 invert opacity-90"
-                  />
-                </div>
-              </div>
+        <div className="relative z-10 mx-auto max-w-3xl px-6 lg:px-8 pt-48 pb-32 md:pt-56 md:pb-40 text-center">
+          <div className="flex flex-col items-center gap-5">
+            {/* SAP Qualified Badge */}
+            <div className="inline-flex items-center rounded-xl border border-white/15 bg-white/10 px-4 py-2 sm:px-5 sm:py-2.5">
+              <Image
+                src="/Project Pulse/SAP_Qualified_PartnerPackageSolution_C.png"
+                alt="SAP Qualified Partner-Packaged Solution"
+                width={240}
+                height={62}
+                className="h-9 sm:h-11 w-auto brightness-0 invert opacity-90"
+              />
+            </div>
 
-              {/* Title */}
-              <h1 className="text-left text-4xl sm:text-5xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.1] mb-3 drop-shadow-[0_1px_1px_rgba(0,0,0,.45)]">
-                {projectPulseConfig.hero.title}
-              </h1>
+            {/* Title */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
+              {projectPulseConfig.hero.title}
+            </h1>
 
-              {/* Headline line */}
-              <p className="text-left text-lg sm:text-xl md:text-2xl font-semibold text-white/95 mb-4 drop-shadow-[0_1px_1px_rgba(0,0,0,.35)]">
-                {projectPulseConfig.hero.subtitle}
-              </p>
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl font-medium text-white/95">
+              {projectPulseConfig.hero.subtitle}
+            </p>
 
-              {/* Subhead */}
-              <p className="text-left text-sm sm:text-base leading-relaxed text-white/85 font-light mb-6 drop-shadow-[0_1px_1px_rgba(0,0,0,.35)]">
-                {projectPulseConfig.hero.description}
-              </p>
+            {/* Description */}
+            <p className="text-base sm:text-lg text-white/85 font-light leading-relaxed max-w-2xl mx-auto">
+              {projectPulseConfig.hero.description}
+            </p>
 
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href="/contact"
-                  className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm sm:text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400/50 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                >
-                  Book a 60-min discovery call
-                </a>
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+              <a
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm sm:text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400/50 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              >
+                Book a 60-min discovery call
+              </a>
 
-                <a
-                  href="/api/projectpulse/pdf?v=2"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-vi="download"
-                  data-vi-label="ProjectPulse Brochure"
-                  data-vi-doc="ProjectPulse-Brochure.pdf"
-                  className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm sm:text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-white/40 text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
-                >
-                  Download brochure
-                </a>
-              </div>
+              <a
+                href="/api/projectpulse/pdf?v=2"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-vi="download"
+                data-vi-label="ProjectPulse Brochure"
+                data-vi-doc="ProjectPulse-Brochure.pdf"
+                className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm sm:text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-white/40 text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
+              >
+                Download brochure
+              </a>
             </div>
           </div>
         </div>

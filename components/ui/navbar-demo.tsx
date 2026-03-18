@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, User, Briefcase, FileText, MessageCircle, HelpCircle, ChevronDown, Zap, Users, Menu, X, Star } from 'lucide-react'
+import { Home, User, Briefcase, FileText, MessageCircle, HelpCircle, ChevronDown, Zap, Users, Menu, X, Star, BookOpen } from 'lucide-react'
 import { NavBar } from "@/components/ui/tubelight-navbar"
 import Link from "next/link"
 import Image from "next/image"
@@ -19,11 +19,24 @@ export function NavBarDemo() {
     { name: 'Our Expertise', url: '/#our-expertise', icon: <Briefcase size={18} strokeWidth={2.5} /> },
     { name: 'Benefits', url: '/#partnership-benefits', icon: <Star size={18} strokeWidth={2.5} /> },
     { 
-      name: 'Focus Topics', 
+      name: 'SAP Packaged Solutions', 
       url: '#', 
       icon: <FileText size={18} strokeWidth={2.5} />,
       submenu: [
-        { name: 'ProjectPulse', url: '/projectpulse' }
+        { name: 'ProjectPulse', url: '/projectpulse' },
+        { name: 'SAP Starter Package', url: '/sap-packaged-solutions/sap-starter-package' }
+      ]
+    },
+    {
+      name: 'Case Studies',
+      url: '#',
+      icon: <BookOpen size={18} strokeWidth={2.5} />,
+      submenu: [
+        { name: 'Retail', url: '/case-study/retail1' },
+        { name: 'Pharma 1', url: '/case-study/pharma1' },
+        { name: 'Pharma 2', url: '/case-study/pharma2' },
+        { name: 'Nearshoring', url: '/case-study/nearshoring1' },
+        { name: 'Manufacturing', url: '/case-study/manufacturing1' }
       ]
     },
     { name: 'Contact', url: '/contact', icon: <MessageCircle size={18} strokeWidth={2.5} /> },

@@ -89,7 +89,7 @@ export default function Footer() {
 
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
           {/* Links Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-12 flex-1">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 flex-1">
             {footerConfig.columns.map((col, idx) => (
               <div key={idx} className={col.title === "Contact Information" ? "relative" : ""}>
                 {col.title === "Contact Information" ? (
