@@ -1,4 +1,3 @@
-import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { generatePageMetadata } from "@/lib/seo"
 import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
@@ -61,7 +60,7 @@ export default function RetailCaseStudyPage() {
       <AutoJsonLd config={pageConfig} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden min-h-[75vh]">
+      <section className="relative overflow-hidden min-h-[60vh] sm:min-h-[75vh]">
         <Image
           src="/domain-expertise/retail.webp"
           alt="Retail Case Study"
@@ -73,7 +72,7 @@ export default function RetailCaseStudyPage() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-[6px]" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
         </div>
-        <div className="relative z-10 mx-auto max-w-3xl px-6 lg:px-8 pt-48 pb-32 md:pt-56 md:pb-40 text-center">
+        <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-36 pb-24 sm:pt-44 sm:pb-32 md:pt-56 md:pb-40 text-center">
           <div className="flex flex-col items-center gap-5">
             <span className="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80">
               {PAGE_CONTENT.badge}
@@ -86,60 +85,46 @@ export default function RetailCaseStudyPage() {
       </section>
 
       {/* Client Overview */}
-      <Section surface="surface-1" id="client-overview">
-        <Container>
-          <div className="max-w-3xl mx-auto text-center space-y-4">
+      <Section surface="surface-1" id="client-overview">          <div className="max-w-3xl mx-auto text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Client Overview</h2>
-            <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+            <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             <p className="text-lg text-slate-600 leading-relaxed">{PAGE_CONTENT.clientOverview}</p>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* Challenge */}
-      <Section surface="surface-0" id="challenge">
-        <Container>
-          <div className="max-w-3xl mx-auto space-y-4">
+      <Section surface="surface-0" id="challenge">          <div className="max-w-3xl mx-auto space-y-4">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Challenge</h2>
-              <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+              <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             </div>
             {PAGE_CONTENT.challenge.split("\n\n").map((p, i) => (
               <p key={i} className="text-lg text-slate-600 leading-relaxed">{p}</p>
             ))}
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* Solution */}
-      <Section surface="surface-1" id="solution">
-        <Container>
-          <div className="max-w-3xl mx-auto space-y-6">
+      <Section surface="surface-1" id="solution">          <div className="max-w-3xl mx-auto space-y-6">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Solution</h2>
-              <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+              <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             </div>
             <p className="text-lg text-slate-600 leading-relaxed">{PAGE_CONTENT.solutionIntro}</p>
             <p className="text-base font-medium text-slate-700">The engagement included:</p>
             <ul className="space-y-3">
               {PAGE_CONTENT.solutionItems.map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-slate-700">
-                  <CheckCircle2 className="h-5 w-5 text-[#0a6ed1] mt-0.5 shrink-0" />
+                  <CheckCircle2 className="h-5 w-5 text-brand-sap mt-0.5 shrink-0" />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* Results */}
-      <Section surface="surface-0" id="results">
-        <Container>
-          <div className="max-w-3xl mx-auto space-y-6">
+      <Section surface="surface-0" id="results">          <div className="max-w-3xl mx-auto space-y-6">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Results</h2>
-              <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+              <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             </div>
             <ul className="space-y-3">
               {PAGE_CONTENT.results.map((item, i) => (
@@ -149,27 +134,19 @@ export default function RetailCaseStudyPage() {
                 </li>
               ))}
             </ul>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* Engagement Model */}
-      <Section surface="surface-1" id="engagement-model">
-        <Container>
-          <div className="max-w-3xl mx-auto text-center space-y-4">
+      <Section surface="surface-1" id="engagement-model">          <div className="max-w-3xl mx-auto text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Engagement Model</h2>
-            <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+            <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             <p className="text-lg text-slate-600 leading-relaxed">{PAGE_CONTENT.engagementModel}</p>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* Technologies & Scope */}
-      <Section surface="surface-0" id="technologies">
-        <Container>
-          <div className="max-w-3xl mx-auto text-center space-y-4">
+      <Section surface="surface-0" id="technologies">          <div className="max-w-3xl mx-auto text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Technologies & Scope</h2>
-            <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+            <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             <div className="flex flex-wrap justify-center gap-2 pt-2">
               {PAGE_CONTENT.technologies.split(", ").map((tech, i) => (
                 <span key={i} className="inline-block rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700">
@@ -177,18 +154,16 @@ export default function RetailCaseStudyPage() {
                 </span>
               ))}
             </div>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* CTA */}
       <section className="relative bg-slate-50 py-24 border-t border-slate-200/60">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-6">
           <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-slate-50 to-slate-900/[0.03]" />
         </div>
-        <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="relative z-10 mx-auto max-w-5xl px-6">
-          <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-[#061A4D] px-8 py-12 md:px-12 md:py-14 backdrop-blur-[6px]">
+        <div className="absolute inset-0 opacity-[0.015] bg-pattern-cross" />
+        <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-brand-navy px-8 py-12 md:px-12 md:py-14 backdrop-blur-[6px]">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-5">
                 Interested in working with us?

@@ -68,6 +68,12 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Infinus brand palette — used across CTA cards, icons, footer
+        brand: {
+          sap:      '#0a6ed1', // SAP blue — icons, dividers, highlights
+          navy:     '#061A4D', // CTA card background
+          navyDeep: '#00144a', // footer background
+        },
         // Enhanced slate color scale for better contrast
         slate: {
           900: "hsl(var(--slate-900))",

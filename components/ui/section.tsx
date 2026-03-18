@@ -32,7 +32,7 @@ export function Section({
       data-topfade={topFade ? "true" : undefined}
       data-botfade={bottomFade ? "true" : undefined}
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         {children}
       </div>
     </section>

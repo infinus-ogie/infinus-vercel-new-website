@@ -17,10 +17,10 @@ const items: Item[] = [
 export default function SAPExpertiseSection() {
   return (
     <section id="sap-expertise" data-section="sap" className="section section--surface-1">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-medium tracking-wider text-slate-500 uppercase">Capabilities</p>
-          <h2 className="mt-2 text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Capabilities</p>
+          <h2 className="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
             SAP Expertise
           </h2>
           <p className="mt-3 text-slate-600">

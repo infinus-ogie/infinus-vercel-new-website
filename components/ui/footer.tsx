@@ -62,7 +62,7 @@ const footerConfig = {
 
 export default function Footer() {
   return (
-    <footer className="relative bg-[#00144a] text-white px-6 py-14 border-t border-blue-500/20 overflow-hidden">
+    <footer className="relative bg-[#00144a] text-white px-4 sm:px-6 lg:px-8 py-14 border-t border-blue-500/20 overflow-hidden">
       {/* Background gradient effects similar to hero */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.08] via-transparent to-blue-600/[0.06] blur-3xl" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#00144a] via-transparent to-[#00144a]/80 pointer-events-none" />

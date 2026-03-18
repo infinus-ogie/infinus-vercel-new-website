@@ -87,7 +87,7 @@ export default function ProjectPulseVideoPage() {
       />
 
       {/* Video container with padding from top for navbar */}
-      <div className="relative z-10 w-full max-w-6xl mx-4 pt-24 pb-8">
+      <div className="relative z-10 w-full max-w-6xl mx-4 sm:mx-6 pt-24 pb-8">
         {/* Close button */}
         <button
           onClick={() => router.back()}

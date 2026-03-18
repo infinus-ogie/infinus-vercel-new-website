@@ -1,4 +1,3 @@
-import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { generatePageMetadata } from "@/lib/seo"
 import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
@@ -148,7 +147,7 @@ export default function SapStarterPackagePage() {
       <AutoJsonLd config={pageConfig} />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden min-h-[75vh]">
+      <section className="relative overflow-hidden min-h-[60vh] sm:min-h-[75vh]">
         <Image
           src="/sap-starter-package/sap-starter-package-hero.png"
           alt="SAP Starter Package"
@@ -163,7 +162,7 @@ export default function SapStarterPackagePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-3xl px-6 lg:px-8 pt-48 pb-32 md:pt-56 md:pb-40 text-center">
+        <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-36 pb-24 sm:pt-44 sm:pb-32 md:pt-56 md:pb-40 text-center">
           <div className="flex flex-col items-center gap-5">
             <span className="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80">
               {PAGE_CONTENT.hero.badge}
@@ -180,7 +179,7 @@ export default function SapStarterPackagePage() {
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm sm:text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400/50 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400/50 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 {PAGE_CONTENT.hero.ctaDiscovery}
               </Link>
@@ -188,7 +187,7 @@ export default function SapStarterPackagePage() {
                 href={PAGE_CONTENT.brochure.downloadHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm sm:text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-white/40 text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
+                className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-white/40 text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
               >
                 {PAGE_CONTENT.hero.ctaBrochure}
               </a>
@@ -198,30 +197,24 @@ export default function SapStarterPackagePage() {
       </section>
 
       {/* ── The challenge ────────────────────────────────────────────── */}
-      <Section surface="surface-1" id="the-challenge">
-        <Container>
-          <div className="max-w-2xl mx-auto text-center space-y-4">
+      <Section surface="surface-1" id="the-challenge">          <div className="max-w-2xl mx-auto text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
               {PAGE_CONTENT.challenge.heading}
             </h2>
-            <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+            <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             <div className="space-y-3 text-lg text-slate-600 leading-relaxed">
               {PAGE_CONTENT.challenge.lines.map((line, i) => (
                 <p key={i}>{line}</p>
               ))}
             </div>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* ── The solution ─────────────────────────────────────────────── */}
-      <Section surface="surface-0" id="the-solution">
-        <Container>
-          <div className="max-w-2xl mx-auto text-center space-y-5">
+      <Section surface="surface-0" id="the-solution">          <div className="max-w-2xl mx-auto text-center space-y-5">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
               {PAGE_CONTENT.solution.heading}
             </h2>
-            <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+            <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             <p className="text-lg text-slate-600 leading-relaxed">
               {PAGE_CONTENT.solution.body}
             </p>
@@ -232,19 +225,15 @@ export default function SapStarterPackagePage() {
             <p className="text-lg text-slate-600 leading-relaxed">
               {PAGE_CONTENT.solution.sub}
             </p>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* ── What you gain ────────────────────────────────────────────── */}
-      <Section surface="surface-1" id="what-you-gain">
-        <Container>
-          <div className="space-y-10">
+      <Section surface="surface-1" id="what-you-gain">          <div className="space-y-10">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
                 {PAGE_CONTENT.whatYouGain.heading}
               </h2>
-              <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+              <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             </div>
             {/* Title-only cards — no descriptions added; DOCX provides titles only */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -255,49 +244,41 @@ export default function SapStarterPackagePage() {
                     key={i}
                     className="rounded-2xl border border-slate-200/60 bg-white/70 p-6 flex flex-col items-start gap-4 backdrop-blur"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0a6ed1]/10 shrink-0">
-                      <Icon className="h-5 w-5 text-[#0a6ed1]" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-sap/10 shrink-0">
+                      <Icon className="h-5 w-5 text-brand-sap" />
                     </div>
                     <p className="font-semibold text-slate-900 leading-snug">{item.title}</p>
                   </div>
                 )
               })}
             </div>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* ── Ideal for ────────────────────────────────────────────────── */}
-      <Section surface="surface-0" id="ideal-for">
-        <Container>
-          <div className="max-w-2xl mx-auto space-y-6">
+      <Section surface="surface-0" id="ideal-for">          <div className="max-w-2xl mx-auto space-y-6">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
                 {PAGE_CONTENT.idealFor.heading}
               </h2>
-              <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+              <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             </div>
             <ul className="space-y-3">
               {PAGE_CONTENT.idealFor.items.map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-lg text-slate-700">
-                  <CheckCircle2 className="h-5 w-5 text-[#0a6ed1] mt-0.5 shrink-0" />
+                  <CheckCircle2 className="h-5 w-5 text-brand-sap mt-0.5 shrink-0" />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* ── Why SAP Starter Package ──────────────────────────────────── */}
-      <Section surface="surface-1" id="why-sap-starter-package">
-        <Container>
-          <div className="space-y-10">
+      <Section surface="surface-1" id="why-sap-starter-package">          <div className="space-y-10">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
                 {PAGE_CONTENT.why.heading}
               </h2>
-              <div className="w-12 h-1 bg-[#0a6ed1] mx-auto rounded-full" />
+              <div className="w-12 h-1 bg-brand-sap mx-auto rounded-full" />
             </div>
             {/* Title-only cards — no descriptions added; DOCX provides titles only */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -308,17 +289,15 @@ export default function SapStarterPackagePage() {
                     key={i}
                     className="rounded-2xl border border-slate-200/60 bg-white/70 p-6 flex flex-col items-start gap-4 backdrop-blur"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0a6ed1]/10 shrink-0">
-                      <Icon className="h-5 w-5 text-[#0a6ed1]" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-sap/10 shrink-0">
+                      <Icon className="h-5 w-5 text-brand-sap" />
                     </div>
                     <p className="font-semibold text-slate-900 leading-snug">{item.title}</p>
                   </div>
                 )
               })}
             </div>
-          </div>
-        </Container>
-      </Section>
+          </div>      </Section>
 
       {/* ── Final CTA — matches ProjectPulse CTA design ──────────────── */}
       <section className="relative bg-slate-50 py-24 border-t border-slate-200/60">
@@ -328,15 +307,10 @@ export default function SapStarterPackagePage() {
         </div>
 
         {/* Subtle background pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.015]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
+        <div className="absolute inset-0 opacity-[0.015] bg-pattern-cross" />
 
-        <div className="relative z-10 mx-auto max-w-5xl px-6">
-          <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-[#061A4D] px-8 py-12 md:px-12 md:py-14 backdrop-blur-[6px]">
+        <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-brand-navy px-8 py-12 md:px-12 md:py-14 backdrop-blur-[6px]">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-5">
                 {PAGE_CONTENT.cta.heading}

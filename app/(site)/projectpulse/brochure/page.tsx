@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const ProjectPulseBrochurePage = () => {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
-      <div className="mx-auto max-w-5xl px-4 py-12 lg:py-16">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         {/* Top ribbon */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border border-slate-800 bg-slate-900/70 px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-slate-300">
           <span>Infinus · SAP Gold Partner</span>
