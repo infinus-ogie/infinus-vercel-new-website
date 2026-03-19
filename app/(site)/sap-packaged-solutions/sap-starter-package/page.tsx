@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { BrochureLanguageModal } from "@/components/ui/BrochureLanguageModal"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PAGE CONTENT
@@ -108,7 +109,8 @@ const PAGE_CONTENT = {
   brochure: {
     heading: "Brochure",
     downloadLabel: "Download brochure",
-    downloadHref: "/sap-starter-package/sap-starter-package-brochure.pdf",
+    downloadHrefEn: "/sap-starter-package/sap-starter-package-brochure-en.pdf",
+    downloadHrefSr: "/sap-starter-package/sap-starter-package-brochure.pdf",
   },
 }
 
@@ -183,14 +185,12 @@ export default function SapStarterPackagePage() {
               >
                 {PAGE_CONTENT.hero.ctaDiscovery}
               </Link>
-              <a
-                href={PAGE_CONTENT.brochure.downloadHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-white/40 text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
-              >
-                {PAGE_CONTENT.hero.ctaBrochure}
-              </a>
+              <BrochureLanguageModal
+                label={PAGE_CONTENT.hero.ctaBrochure}
+                hrefEn={PAGE_CONTENT.brochure.downloadHrefEn}
+                hrefSr={PAGE_CONTENT.brochure.downloadHrefSr}
+                variant="hero"
+              />
             </div>
           </div>
         </div>
@@ -325,14 +325,12 @@ export default function SapStarterPackagePage() {
                   {PAGE_CONTENT.cta.ctaDiscovery}
                 </Link>
 
-                <a
-                  href={PAGE_CONTENT.brochure.downloadHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 hover:border-white/40 hover:bg-white/[0.06] px-7 py-3.5 text-base font-semibold text-white transition-all"
-                >
-                  {PAGE_CONTENT.cta.ctaBrochure}
-                </a>
+                <BrochureLanguageModal
+                  label={PAGE_CONTENT.cta.ctaBrochure}
+                  hrefEn={PAGE_CONTENT.brochure.downloadHrefEn}
+                  hrefSr={PAGE_CONTENT.brochure.downloadHrefSr}
+                  variant="cta"
+                />
               </div>
 
               <p className="inline-flex items-center gap-2 text-sm text-white/65">

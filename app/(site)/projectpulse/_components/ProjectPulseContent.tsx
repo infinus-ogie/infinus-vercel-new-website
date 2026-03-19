@@ -376,17 +376,26 @@ export function ProjectPulseContent() {
                 Book a 60-min discovery call
               </a>
 
-              <a
-                href="/api/projectpulse/pdf?v=2"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
                 data-vi="download"
                 data-vi-label="ProjectPulse Brochure"
                 data-vi-doc="ProjectPulse-Brochure.pdf"
                 className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-white/40 text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
+                onClick={() => {
+                  const href = "/api/projectpulse/pdf?v=2";
+                  window.open(href, "_blank", "noopener,noreferrer");
+                  const a = document.createElement("a");
+                  a.href = href;
+                  a.download = "ProjectPulse-Brochure.pdf";
+                  a.style.display = "none";
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                }}
               >
                 Download brochure
-              </a>
+              </button>
             </div>
           </div>
         </div>
