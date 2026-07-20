@@ -29,7 +29,8 @@ export const metadata: Metadata = {
     images: ["/og-default.png"],
   },
   alternates: {
-    canonical: "/cfo",
+    // /cfo permanently redirects to /grow/cfo; canonical must point at the live URL.
+    canonical: "/grow/cfo",
   },
 };
 

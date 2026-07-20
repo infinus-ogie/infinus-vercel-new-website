@@ -1,81 +1,61 @@
 # Robots.txt for Infinus Website
 # Optimized for AI crawlers (ChatGPT, Perplexity, Gemini, Claude)
-# Last updated: December 2024
 
-# Default: Allow all crawlers
+# ============================================
+# Default group - applies to Googlebot, Bingbot and any crawler
+# without a more specific group below. Disallow rules MUST live here
+# to bind to Googlebot (robots.txt applies only the single most
+# specific matching user-agent group, not a merge of all groups).
+# ============================================
 User-agent: *
 Allow: /
 Crawl-delay: 1
 
+# System areas
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /test/
+Disallow: /debug/
+# Internal demo / utility routes (not for indexing)
+Disallow: /hero-demo
+Disallow: /combined-demo
+Disallow: /services-demo
+Disallow: /footer-demo
+Disallow: /env-test
+Disallow: /test-join
+Disallow: /vi-debug
+
 # ============================================
 # AI Crawlers - Explicitly allowed for AI training
 # ============================================
-
-# OpenAI (ChatGPT)
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-# Perplexity AI
 User-agent: PerplexityBot
 Allow: /
 
-# Google (Gemini / Bard)
 User-agent: Google-Extended
 Allow: /
 
-# Anthropic (Claude)
 User-agent: anthropic-ai
 Allow: /
 
 User-agent: Claude-Web
 Allow: /
 
-# Apple Intelligence
 User-agent: Applebot-Extended
 Allow: /
 
-# Microsoft / Bing AI
-User-agent: Bingbot
-Allow: /
-
-# Common Crawl (used by many AI models)
 User-agent: CCBot
 Allow: /
 
 # ============================================
-# System areas - Disallow
-# ============================================
-Disallow: /api/
-Disallow: /_next/
-Disallow: /admin/
-Disallow: /test/
-Disallow: /debug/
-
-# ============================================
-# Important pages - Explicitly allow
-# ============================================
-Allow: /
-Allow: /about
-Allow: /services
-Allow: /faq
-Allow: /contact
-Allow: /privacy
-Allow: /projectpulse
-Allow: /projectpulse/video
-Allow: /grow
-Allow: /professional-services
-
-# ============================================
-# Sitemap and LLMs.txt
+# Sitemap
 # ============================================
 Sitemap: https://www.infinus.co/sitemap.xml
 
-# LLMs.txt - AI training data file
-# Available at: https://www.infinus.co/llms.txt
-# Also at: https://www.infinus.co/.well-known/llms.txt
-
-# Host
-Host: https://www.infinus.co
+# LLMs.txt (AI data file): https://www.infinus.co/llms.txt

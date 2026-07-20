@@ -21,15 +21,15 @@ type TileProps = Domain & {
 };
 
 const domains: Domain[] = [
-  { label: "Retail",                     href: "/services#retail",         imgSrc: "/domain-expertise/retail.webp",          imgAlt: "Retail industry" },
-  { label: "Pharmaceuticals",           href: "/services#pharma",         imgSrc: "/domain-expertise/pharmaceuticals.webp",          imgAlt: "Pharmaceuticals industry" },
-  { label: "Wholesale and Distribution", href: "/services#wholesale",      imgSrc: "/domain-expertise/wholesale.jpeg",       imgAlt: "Wholesale and Distribution" },
-  { label: "Consumer Goods",            href: "/services#consumer-goods",  imgSrc: "/domain-expertise/consumer-goods.webp",        imgAlt: "Consumer goods" },
-  { label: "Industrial Manufacturing",  href: "/services#manufacturing",   imgSrc: "/domain-expertise/industrial-manufacturing.webp",   imgAlt: "Industrial manufacturing" },
-  { label: "Professional Services",     href: "/services#professional",    imgSrc: "/domain-expertise/professional-services.webp",   imgAlt: "Professional services" },
-  { label: "Travel",                    href: "/services#travel",          imgSrc: "/domain-expertise/travel.webp",          imgAlt: "Travel industry" },
-  { label: "Oil & Gas",                 href: "/services#oilgas",          imgSrc: "/domain-expertise/oil-and-gas.webp",          imgAlt: "Oil and gas sector" },
-  { label: "Telco",                     href: "/services#telco",           imgSrc: "/domain-expertise/telco.webp",           imgAlt: "Telecommunications" },
+  { label: "Retail",                     href: "/#domain-expertise",         imgSrc: "/domain-expertise/retail.webp",          imgAlt: "Retail industry" },
+  { label: "Pharmaceuticals",           href: "/#domain-expertise",         imgSrc: "/domain-expertise/pharmaceuticals.webp",          imgAlt: "Pharmaceuticals industry" },
+  { label: "Wholesale and Distribution", href: "/#domain-expertise",      imgSrc: "/domain-expertise/wholesale.jpeg",       imgAlt: "Wholesale and Distribution" },
+  { label: "Consumer Goods",            href: "/#domain-expertise",  imgSrc: "/domain-expertise/consumer-goods.webp",        imgAlt: "Consumer goods" },
+  { label: "Industrial Manufacturing",  href: "/#domain-expertise",   imgSrc: "/domain-expertise/industrial-manufacturing.webp",   imgAlt: "Industrial manufacturing" },
+  { label: "Professional Services",     href: "/#domain-expertise",    imgSrc: "/domain-expertise/professional-services.webp",   imgAlt: "Professional services" },
+  { label: "Travel",                    href: "/#domain-expertise",          imgSrc: "/domain-expertise/travel.webp",          imgAlt: "Travel industry" },
+  { label: "Oil & Gas",                 href: "/#domain-expertise",          imgSrc: "/domain-expertise/oil-and-gas.webp",          imgAlt: "Oil and gas sector" },
+  { label: "Telco",                     href: "/#domain-expertise",           imgSrc: "/domain-expertise/telco.webp",           imgAlt: "Telecommunications" },
 ];
 
 export default function DomainExpertiseSection() {

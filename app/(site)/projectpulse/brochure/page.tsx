@@ -4,6 +4,9 @@ export const metadata: Metadata = {
   title: "ProjectPulse Brochure | Infinus – SAP Qualified Partner-Packaged Solution",
   description:
     "ProjectPulse is a SAP Qualified Partner-Packaged Solution by Infinus for Professional Services firms, unifying finance, projects, sales, procurement, HR and analytics on a single intelligent cloud platform.",
+  alternates: {
+    canonical: "/projectpulse/brochure",
+  },
 };
 
 const ProjectPulseBrochurePage = () => {

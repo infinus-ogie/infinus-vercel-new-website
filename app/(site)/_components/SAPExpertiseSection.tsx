@@ -8,10 +8,10 @@ type Item = { label: string; href: string; Icon: React.ComponentType<any> };
 
 // KEEP THESE LABELS EXACTLY (copy 1:1)
 const items: Item[] = [
-  { label: "SAP Cloud ERP (Private and Public)", href: "/services#cloud-erp", Icon: Cloud },
-  { label: "SAP Business Data Cloud",            href: "/services#data-cloud", Icon: Database },
-  { label: "SAP Business AI",                    href: "/services#business-ai", Icon: Sparkles },
-  { label: "SAP Business Technology Platform",   href: "/services#btp", Icon: Boxes },
+  { label: "SAP Cloud ERP (Private and Public)", href: "/#sap-expertise", Icon: Cloud },
+  { label: "SAP Business Data Cloud",            href: "/#sap-expertise", Icon: Database },
+  { label: "SAP Business AI",                    href: "/#sap-expertise", Icon: Sparkles },
+  { label: "SAP Business Technology Platform",   href: "/#sap-expertise", Icon: Boxes },
 ];
 
 export default function SAPExpertiseSection() {
