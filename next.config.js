@@ -47,6 +47,18 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Third-party SAP / Oxford Economics partner PDF: keep it downloadable
+        // but out of the index (no verified publisher canonical available).
+        // Applies ONLY to this exact file path.
+        source: '/growth-professional-services-materials/34388_Oxford_ProServPartner_91961.pdf',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex',
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           {

@@ -41,6 +41,7 @@ module.exports = {
     '/.well-known',
     '/.well-known/*',
     '/llms.txt', // plaintext AI file, not an indexable page
+    '/privacy', // intentionally noindex,follow -> keep out of the sitemap
   ],
   transform: async (config, path) => {
     const keyRoutes = ['/', '/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/contact', '/faq'];

@@ -9,11 +9,15 @@ import { createSimplePageConfig } from "@/lib/auto-jsonld"
 import { Mail, FileText } from "lucide-react"
 
 // SEO Metadata
-export const metadata = generatePageMetadata(
-  "Privacy Policy - Infinus",
-  "Privacy policy and data protection information for Infinus website and services.",
-  "/privacy"
-)
+export const metadata = {
+  ...generatePageMetadata(
+    "Privacy Policy - Infinus",
+    "Privacy policy and data protection information for Infinus website and services.",
+    "/privacy"
+  ),
+  // Intentionally excluded from indexing, but links are still followed.
+  robots: { index: false, follow: true },
+}
 
 // Page Config - Single source of truth for content and JSON-LD
 const pageConfig = createSimplePageConfig(

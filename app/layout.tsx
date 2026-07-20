@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { Inter, IBM_Plex_Sans } from "next/font/google"
 import Script from "next/script"
 import "./globals.css"
@@ -134,7 +135,12 @@ export default function RootLayout({
         <DnbVisitorPixel />
         
         {/* TEMPORARY HOTFIX: Unconditional page_view tracking */}
-        <GAFast />
+        {/* GAFast uses useSearchParams(); a Suspense boundary keeps that hook from
+            forcing the entire page to bail to client-side rendering (which made
+            Next.js inject <meta name="robots" content="noindex"> into every page). */}
+        <Suspense fallback={null}>
+          <GAFast />
+        </Suspense>
         <AITrafficTracker />
       </body>
     </html>
