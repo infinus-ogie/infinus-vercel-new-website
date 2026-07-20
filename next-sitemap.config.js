@@ -15,6 +15,9 @@
 module.exports = {
   siteUrl: 'https://www.infinus.co',
   generateRobotsTxt: false,
+  // No genuine per-page modification dates exist; omit lastmod rather than
+  // stamp every URL with the build/deploy time on each deployment.
+  autoLastmod: false,
   changefreq: 'weekly',
   priority: 0.7,
   sitemapSize: 7000,
@@ -47,7 +50,6 @@ module.exports = {
       loc: path,
       changefreq: 'weekly',
       priority,
-      lastmod: new Date().toISOString(),
     };
   },
 };

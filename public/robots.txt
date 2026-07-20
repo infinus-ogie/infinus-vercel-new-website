@@ -1,22 +1,19 @@
 # Robots.txt for Infinus Website
-# Optimized for AI crawlers (ChatGPT, Perplexity, Gemini, Claude)
+#
+# A single User-agent: * group applies to every crawler (Googlebot, Bingbot,
+# AI crawlers, etc.). robots.txt applies only the single most specific matching
+# group, so keeping separate per-bot "Allow: /" groups would let those bots
+# bypass the internal-route restrictions below — hence one group for all.
 
-# ============================================
-# Default group - applies to Googlebot, Bingbot and any crawler
-# without a more specific group below. Disallow rules MUST live here
-# to bind to Googlebot (robots.txt applies only the single most
-# specific matching user-agent group, not a merge of all groups).
-# ============================================
 User-agent: *
 Allow: /
-Crawl-delay: 1
 
-# System areas
+# System / API areas
 Disallow: /api/
-Disallow: /_next/
 Disallow: /admin/
 Disallow: /test/
 Disallow: /debug/
+
 # Internal demo / utility routes (not for indexing)
 Disallow: /hero-demo
 Disallow: /combined-demo
@@ -26,36 +23,7 @@ Disallow: /env-test
 Disallow: /test-join
 Disallow: /vi-debug
 
-# ============================================
-# AI Crawlers - Explicitly allowed for AI training
-# ============================================
-User-agent: GPTBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: Applebot-Extended
-Allow: /
-
-User-agent: CCBot
-Allow: /
-
-# ============================================
 # Sitemap
-# ============================================
 Sitemap: https://www.infinus.co/sitemap.xml
 
 # LLMs.txt (AI data file): https://www.infinus.co/llms.txt
