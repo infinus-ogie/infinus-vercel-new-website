@@ -7,6 +7,14 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        // Legacy ProjectPulse brochure PDF (renamed in 7915bfa, later removed) -> current brochure page.
+        // Source must be percent-encoded: Next matches the redirect regex against the
+        // encoded request path, so spaces have to be written as %20 to match.
+        source: '/Project%20Pulse/Project%20Pulse%20PDF/ProjectPulse%20brochure3.pdf',
+        destination: 'https://www.infinus.co/projectpulse/brochure',
+        permanent: true,
+      },
+      {
         source: '/cfo',
         destination: '/grow/cfo',
         permanent: true,
