@@ -28,6 +28,17 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# Production/Vercel env snapshots — never commit these.
+# `vercel env pull` writes REAL values into these files (including short-lived
+# VERCEL_OIDC_TOKEN JWTs and every NEXT_PUBLIC_* value). They are machine-specific
+# build snapshots, not configuration: the source of truth is the Vercel dashboard.
+# .env.production and .env.production.tmp were tracked until this rule was added.
+.env
+.env.*
+# Value-free templates may still be committed deliberately.
+!.env.example
+!.env*.example
+
 # vercel
 .vercel
 
