@@ -7,13 +7,11 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ServiceCard } from "@/components/content/service-card"
 import { Cloud, Headphones, Settings, CheckCircle } from "lucide-react"
-import { NavBarDemo } from "@/components/ui/navbar-demo"
-import Footer from "@/components/ui/footer"
 import { HeroGeometric } from "@/components/ui/shape-landing-hero"
 import { Feature } from "@/components/ui/feature-section-with-grid"
 import { SapServicesSection } from "@/components/ui/sap-services-section"
 import { PartnershipBenefitsSection } from "@/components/ui/partnership-benefits-section"
-import DomainExpertiseSection from "./(site)/_components/DomainExpertiseSection"
+import DomainExpertiseSection from "./_components/DomainExpertiseSection"
 import AboutSection from "@/components/ui/about-section"
 import { JoinSection } from "@/components/ui/join-section"
 import { 
@@ -28,11 +26,21 @@ import { getBreadcrumbs } from "@/lib/breadcrumbs"
 import Link from "next/link"
 
 // SEO Metadata
-export const metadata = generatePageMetadata(
+const homeMetadata = generatePageMetadata(
   "Infinus - Driving Business Success through SAP Expertise",
   "Your reliable SAP expertise partner. SAP Gold Partner focused on SAP Business Suite solutions including SAP Cloud ERP, SAP Business Data Cloud, SAP Business AI, and SAP Business Technology Platform.",
   "/"
 )
+
+export const metadata = {
+  ...homeMetadata,
+  // `title.absolute` keeps the rendered <title> byte-identical to what this page emitted
+  // before Phase D. While it lived at app/page.tsx it was part of the ROOT segment, so
+  // the root layout's `%s | Infinus` template did not apply to it. Moving it into the
+  // (site) route group — needed to share the site chrome — makes it a child segment,
+  // which would otherwise append " | Infinus" and change the homepage title.
+  title: { absolute: "Infinus - Driving Business Success through SAP Expertise" },
+}
 
 // Services data for ServiceCard components
 const getServices = () => [
@@ -123,10 +131,8 @@ const jsonLd = generatePageJsonLd({
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavBarDemo />
-      <main className="flex-1">
-        {/* JSON-LD Script */}
+    <>
+      {/* JSON-LD Script */}
         <Script
           id="json-ld"
           type="application/ld+json"
@@ -165,8 +171,6 @@ export default function HomePage() {
         <Section id="join-team" surface="surface-1" topFade data-section="join-team">
           <JoinSection />
         </Section>
-      </main>
-      <Footer />
-    </div>
+    </>
   )
 }

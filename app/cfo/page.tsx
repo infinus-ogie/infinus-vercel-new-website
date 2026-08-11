@@ -6,8 +6,6 @@ import { motion } from "framer-motion";
 import ProServicesHero from "@/components/sections/growth/ProServicesHero";
 import { Section } from "@/components/ui/section";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { NavBarDemo } from "@/components/ui/navbar-demo";
-import Footer from "@/components/ui/footer";
 import { CheckCircle2, MessageCircle } from "lucide-react";
 import { FaqSection } from "@/components/ui/Faq";
 import { StatPills } from "@/components/ui/StatPills";
@@ -127,9 +125,7 @@ const cfoItems = [
 
 export default function CFOPage() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavBarDemo />
-      <main className="flex-1">
+    <>
         <Script
           id="cfo-page-jsonld"
           type="application/ld+json"
@@ -241,9 +237,7 @@ Excel“ pristup`}
             <FaqSection id="faq-cfo" items={faqItems} />
           </motion.div>
         </Section>
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { SiteChrome } from "@/components/shell/SiteChrome";
 
 export const metadata: Metadata = {
   title: "SAP for CFOs — Infinus",
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export default function CFOLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <SiteChrome>{children}</SiteChrome>;
 }
 
 

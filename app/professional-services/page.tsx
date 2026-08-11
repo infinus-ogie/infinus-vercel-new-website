@@ -37,8 +37,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/ui/Faq";
 import { ResourceList } from "@/components/ui/ResourceList";
 import ProServicesHero from "@/components/sections/growth/ProServicesHero";
-import { NavBarDemo } from "@/components/ui/navbar-demo";
-import Footer from "@/components/ui/footer";
 import { StatCard } from "@/components/ui/StatCard";
 import { FeatureTile } from "@/components/ui/FeatureTile";
 import { StatPills } from "@/components/ui/StatPills";
@@ -83,9 +81,7 @@ export default function ProfessionalServicesPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavBarDemo />
-      <main className="flex-1">
+    <>
         {/* JSON-LD Script */}
         <Script
           id="professional-services-page-jsonld"
@@ -361,8 +357,6 @@ export default function ProfessionalServicesPage() {
           </motion.div>
         </Section>
 
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 }

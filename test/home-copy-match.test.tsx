@@ -29,7 +29,8 @@
  */
 import { render, screen, within } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
-import HomePage from '../app/page'
+import HomePage from '../app/(site)/page'
+import { SiteChrome } from '@/components/shell/SiteChrome'
 
 describe('Homepage copy', () => {
   test('hero states the current positioning', () => {
@@ -173,7 +174,12 @@ describe('Homepage copy', () => {
   })
 
   test('footer carries the company details and the privacy policy link', () => {
-    const { container } = render(<HomePage />)
+    // Footer comes from the shared chrome since Phase D, so compose it as production does.
+    const { container } = render(
+      <SiteChrome>
+        <HomePage />
+      </SiteChrome>
+    )
     const footer = container.querySelector('footer') as HTMLElement
     expect(footer).not.toBeNull()
 
@@ -189,7 +195,11 @@ describe('Homepage copy', () => {
   })
 
   test('footer offers a Cookie settings control on every page', () => {
-    const { container } = render(<HomePage />)
+    const { container } = render(
+      <SiteChrome>
+        <HomePage />
+      </SiteChrome>
+    )
     const footer = container.querySelector('footer') as HTMLElement
 
     // A button, not a link to a page: it reopens the consent dialog so a decision can

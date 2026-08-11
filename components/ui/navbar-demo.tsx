@@ -75,7 +75,7 @@ export function NavBarDemo() {
   }, [])
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 pt-6">
+    <nav aria-label="Main" className="fixed top-0 left-0 right-0 z-50 pt-6">
       <div className="container-custom">
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center justify-center">
@@ -160,7 +160,7 @@ export function NavBarDemo() {
                   </button>
                 </div>
 
-                <nav className="space-y-2">
+                <div className="space-y-2">
                   {navItems.map((item) => {
                     const hasSubmenu = item.submenu && item.submenu.length > 0
 
@@ -238,12 +238,12 @@ export function NavBarDemo() {
                       </div>
                     )
                   })}
-                </nav>
+                </div>
               </div>
             </motion.div>
           </div>
         )}
       </div>
-    </div>
+    </nav>
   )
 }

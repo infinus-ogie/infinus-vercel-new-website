@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { SiteChrome } from "@/components/shell/SiteChrome";
 
 export const metadata: Metadata = {
   title: "GROW with SAP za Professional Services | Infinus",
@@ -35,5 +36,5 @@ export default function ProfessionalServicesLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <SiteChrome>{children}</SiteChrome>;
 }

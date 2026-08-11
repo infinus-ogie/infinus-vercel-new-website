@@ -1,6 +1,11 @@
 /**
  * Structural tests for the homepage section order.
  *
+ * Phase D note: the homepage moved to app/(site)/page.tsx and no longer renders its own
+ * navigation/footer — those come from the shared <SiteChrome> via app/(site)/layout.tsx.
+ * Tests that assert on chrome therefore compose the page the same way production does,
+ * rather than asserting against a page rendered without its layout.
+ *
  * The previous version of this file built a list of elements with
  * `screen.getByTestId ? screen.getByTestId(...) : null` and then `.filter(Boolean)`
  * — `screen.getByTestId` is always truthy, so the ternary always took the first
@@ -10,14 +15,15 @@
  * purpose (order) was never actually tested.
  *
  * This rewrite asserts the real thing: the document order of the `data-section`
- * attributes that app/page.tsx renders. Copy assertions live in
+ * attributes the homepage renders. Copy assertions live in
  * home-copy-match.test.tsx so the two files do not overlap.
  */
 import { render } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
-import HomePage from '../app/page'
+import HomePage from '../app/(site)/page'
+import { SiteChrome } from '@/components/shell/SiteChrome'
 
-/** The `data-section` values app/page.tsx renders, in the order it renders them. */
+/** The `data-section` values the homepage renders, in the order it renders them. */
 const EXPECTED_SECTION_ORDER = [
   'about',
   'sap-services',
@@ -75,16 +81,15 @@ describe('Homepage section structure', () => {
   })
 
   test('page content sits inside main, with the footer after it', () => {
-    // The homepage renders its own <NavBarDemo/> and <Footer/> rather than using the
-    // (site) layout. Phase D consolidates that; this test pins the current state so
-    // the consolidation is provably behaviour-preserving.
-    //
-    // NOTE: there is deliberately no assertion for a <nav> landmark. The desktop
-    // navigation is built from <div>/<a> elements, and the only <nav> element in
-    // navbar-demo.tsx lives inside the mobile overlay, which is not rendered until
-    // the hamburger is opened. So the page ships with no navigation landmark at all.
-    // Recorded as a finding rather than fixed — components/ are out of A1's scope.
-    const { container } = render(<HomePage />)
+    // Composed with the shared chrome, exactly as app/(site)/layout.tsx does.
+    // Phase D gave the shared navbar a real <nav aria-label="Main"> landmark, so the
+    // chrome now exposes exactly one navigation landmark (asserted in
+    // test/shell/chrome-ownership.test.tsx).
+    const { container } = render(
+      <SiteChrome>
+        <HomePage />
+      </SiteChrome>
+    )
 
     const main = container.querySelector('main')
     const footer = container.querySelector('footer')

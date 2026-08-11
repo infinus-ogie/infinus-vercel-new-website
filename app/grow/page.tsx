@@ -34,8 +34,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/ui/Faq";
 import { ResourceList } from "@/components/ui/ResourceList";
 import ProServicesHero from "@/components/sections/growth/ProServicesHero";
-import { NavBarDemo } from "@/components/ui/navbar-demo";
-import Footer from "@/components/ui/footer";
 import { StatCard } from "@/components/ui/StatCard";
 import { FeatureTile } from "@/components/ui/FeatureTile";
 import { StatPills } from "@/components/ui/StatPills";
@@ -78,9 +76,7 @@ export default function GrowPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavBarDemo />
-      <main className="flex-1">
+    <>
         {/* Auto-generated JSON-LD - updates automatically when growConfig changes */}
         <Script
           id="grow-page-jsonld"
@@ -412,8 +408,6 @@ export default function GrowPage() {
         </motion.div>
       </Section>
 
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 }

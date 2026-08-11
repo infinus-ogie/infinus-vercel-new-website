@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { SiteChrome } from "@/components/shell/SiteChrome";
 import { growConfig } from "./_config";
 
 export const metadata: Metadata = {
@@ -26,5 +27,5 @@ export const metadata: Metadata = {
 };
 
 export default function GrowLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <SiteChrome>{children}</SiteChrome>;
 }

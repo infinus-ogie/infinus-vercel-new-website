@@ -5,8 +5,6 @@ import Script from "next/script";
 import { motion } from "framer-motion";
 import ProServicesHero from "@/components/sections/growth/ProServicesHero";
 import { Section } from "@/components/ui/section";
-import { NavBarDemo } from "@/components/ui/navbar-demo";
-import Footer from "@/components/ui/footer";
 import { CheckCircle2, MessageCircle, Wallet, TrendingUp, Zap } from "lucide-react";
 import { FaqSection } from "@/components/ui/Faq";
 import { StatPills } from "@/components/ui/StatPills";
@@ -73,9 +71,7 @@ const jsonLdData = [
 
 export default function CEOPage() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavBarDemo />
-      <main className="flex-1">
+    <>
         <Script
           id="ceo-page-jsonld"
           type="application/ld+json"
@@ -193,8 +189,6 @@ export default function CEOPage() {
             <FaqSection id="faq-ceo" items={faqItems} />
           </motion.div>
         </Section>
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 }
