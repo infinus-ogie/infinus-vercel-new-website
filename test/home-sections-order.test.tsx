@@ -1,122 +1,97 @@
-import { render, screen } from '@testing-library/react'
+/**
+ * Structural tests for the homepage section order.
+ *
+ * The previous version of this file built a list of elements with
+ * `screen.getByTestId ? screen.getByTestId(...) : null` and then `.filter(Boolean)`
+ * — `screen.getByTestId` is always truthy, so the ternary always took the first
+ * branch, and no `data-testid` attributes exist on the homepage, so the call threw
+ * before any real assertion ran. Every "section appears Nth" test then asserted only
+ * that some copy existed *somewhere*, never its position, so the file's stated
+ * purpose (order) was never actually tested.
+ *
+ * This rewrite asserts the real thing: the document order of the `data-section`
+ * attributes that app/page.tsx renders. Copy assertions live in
+ * home-copy-match.test.tsx so the two files do not overlap.
+ */
+import { render } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
 import HomePage from '../app/page'
 
-describe('Home Page Section Order', () => {
-  test('renders sections in correct order', () => {
-    render(<HomePage />)
-    
-    const sections = [
-      'hero',
-      'about', 
-      'services',
-      'benefits',
-      'sap-expertise',
-      'domain-expertise',
-      'join-team'
-    ]
-    
-    // Get all section elements by data-section attribute
-    const sectionElements = sections.map(section => 
-      screen.getByTestId ? screen.getByTestId(`section-${section}`) : null
-    ).filter(Boolean)
-    
-    // Since we're using data-section attributes, let's check for the actual sections
-    // by looking for the section content instead
-    expect(screen.getByText(/Driving Business Success through SAP Expertise/i)).toBeInTheDocument()
-    expect(screen.getByText(/About Us/i)).toBeInTheDocument()
-    expect(screen.getByText(/Our Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/Benefits from working with us/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Expertise/i)).toBeInTheDocument()
-    expect(screen.getByText(/Domain Expertise/i)).toBeInTheDocument()
-    expect(screen.getByText(/Join Our Team/i)).toBeInTheDocument()
+/** The `data-section` values app/page.tsx renders, in the order it renders them. */
+const EXPECTED_SECTION_ORDER = [
+  'about',
+  'sap-services',
+  'partnership-benefits',
+  'domain',
+  'join-team',
+] as const
+
+function renderedSectionOrder(container: HTMLElement): string[] {
+  // querySelectorAll returns nodes in document order, which is what we assert on.
+  return Array.from(container.querySelectorAll('[data-section]')).map(
+    (el) => el.getAttribute('data-section') as string
+  )
+}
+
+describe('Homepage section structure', () => {
+  test('renders exactly the expected sections, in order', () => {
+    const { container } = render(<HomePage />)
+
+    expect(renderedSectionOrder(container)).toEqual([...EXPECTED_SECTION_ORDER])
   })
-  
-  test('hero section appears first', () => {
-    render(<HomePage />)
-    
-    const heroHeading = screen.getByText(/Driving Business Success through SAP Expertise/i)
-    expect(heroHeading).toBeInTheDocument()
-    
-    // Check that hero content is present
-    expect(screen.getByText(/Your reliable SAP expertise partner/i)).toBeInTheDocument()
+
+  test('renders each expected section exactly once', () => {
+    const { container } = render(<HomePage />)
+    const order = renderedSectionOrder(container)
+
+    for (const section of EXPECTED_SECTION_ORDER) {
+      expect(order.filter((s) => s === section)).toHaveLength(1)
+    }
   })
-  
-  test('about section appears second', () => {
-    render(<HomePage />)
-    
-    const aboutHeading = screen.getByText(/About Us/i)
-    expect(aboutHeading).toBeInTheDocument()
-    
-    // Check for key about content
-    expect(screen.getByText(/Infinus is SAP Gold Partner focused on SAP Business Suite solutions/i)).toBeInTheDocument()
+
+  test('the hero precedes every marked section', () => {
+    const { container } = render(<HomePage />)
+
+    const hero = container.querySelector('h1')
+    const firstSection = container.querySelector('[data-section]')
+
+    expect(hero).not.toBeNull()
+    expect(firstSection).not.toBeNull()
+    // Node.compareDocumentPosition: 4 = DOCUMENT_POSITION_FOLLOWING.
+    expect(hero!.compareDocumentPosition(firstSection!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
-  
-  test('services section appears third', () => {
-    render(<HomePage />)
-    
-    const servicesHeading = screen.getByText(/Our Services/i)
-    expect(servicesHeading).toBeInTheDocument()
-    
-    // Check for numbered services
-    expect(screen.getByText(/SAP Implementation Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Support Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/Other Services/i)).toBeInTheDocument()
+
+  test('has exactly one h1, and the section headings below it are h2', () => {
+    const { container } = render(<HomePage />)
+
+    expect(container.querySelectorAll('h1')).toHaveLength(1)
+
+    // Each marked section owns a heading; none of them may compete with the h1.
+    for (const section of EXPECTED_SECTION_ORDER) {
+      const el = container.querySelector(`[data-section="${section}"]`)
+      expect(el, `missing section: ${section}`).not.toBeNull()
+      expect(el!.querySelectorAll('h1')).toHaveLength(0)
+    }
   })
-  
-  test('benefits section appears fourth', () => {
-    render(<HomePage />)
-    
-    const benefitsHeading = screen.getByText(/Benefits from working with us/i)
-    expect(benefitsHeading).toBeInTheDocument()
-    
-    // Check for benefit cards
-    expect(screen.getByText(/European Focus/i)).toBeInTheDocument()
-    expect(screen.getByText(/Hybrid Work Model/i)).toBeInTheDocument()
-    expect(screen.getByText(/Competitive Pricing/i)).toBeInTheDocument()
-    expect(screen.getByText(/Flexible Solutions/i)).toBeInTheDocument()
-  })
-  
-  test('SAP expertise section appears fifth', () => {
-    render(<HomePage />)
-    
-    const sapHeading = screen.getByText(/SAP Expertise/i)
-    expect(sapHeading).toBeInTheDocument()
-    
-    // Check for SAP expertise badges
-    expect(screen.getByText(/SAP Cloud ERP \(Private and Public\)/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business Data Cloud/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business AI/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business Technology Platform/i)).toBeInTheDocument()
-  })
-  
-  test('domain expertise section appears sixth', () => {
-    render(<HomePage />)
-    
-    const domainHeading = screen.getByText(/Domain Expertise/i)
-    expect(domainHeading).toBeInTheDocument()
-    
-    // Check for new domain cards with images and descriptions
-    expect(screen.getByText(/Industry-Specific SAP Solutions/i)).toBeInTheDocument()
-    expect(screen.getByText(/Retail/i)).toBeInTheDocument()
-    expect(screen.getByText(/Pharmaceuticals/i)).toBeInTheDocument()
-    expect(screen.getByText(/Wholesale and Distribution/i)).toBeInTheDocument()
-    expect(screen.getByText(/Consumer Goods/i)).toBeInTheDocument()
-    expect(screen.getByText(/Industrial Manufacturing/i)).toBeInTheDocument()
-    expect(screen.getByText(/Professional Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/Travel/i)).toBeInTheDocument()
-    expect(screen.getByText(/Oil & Gas/i)).toBeInTheDocument()
-    expect(screen.getByText(/Telco/i)).toBeInTheDocument()
-  })
-  
-  test('join team section appears seventh', () => {
-    render(<HomePage />)
-    
-    const joinHeading = screen.getByText(/Join Our Team/i)
-    expect(joinHeading).toBeInTheDocument()
-    
-    // Check for join team content
-    expect(screen.getByText(/Due to continues business expansion/i)).toBeInTheDocument()
-    expect(screen.getByText(/We will be glad to talk with you/i)).toBeInTheDocument()
+
+  test('page content sits inside main, with the footer after it', () => {
+    // The homepage renders its own <NavBarDemo/> and <Footer/> rather than using the
+    // (site) layout. Phase D consolidates that; this test pins the current state so
+    // the consolidation is provably behaviour-preserving.
+    //
+    // NOTE: there is deliberately no assertion for a <nav> landmark. The desktop
+    // navigation is built from <div>/<a> elements, and the only <nav> element in
+    // navbar-demo.tsx lives inside the mobile overlay, which is not rendered until
+    // the hamburger is opened. So the page ships with no navigation landmark at all.
+    // Recorded as a finding rather than fixed — components/ are out of A1's scope.
+    const { container } = render(<HomePage />)
+
+    const main = container.querySelector('main')
+    const footer = container.querySelector('footer')
+
+    expect(main).not.toBeNull()
+    expect(footer).not.toBeNull()
+    expect(main!.querySelectorAll('[data-section]').length).toBe(EXPECTED_SECTION_ORDER.length)
+    expect(main!.compareDocumentPosition(footer!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })

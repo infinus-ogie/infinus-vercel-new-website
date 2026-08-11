@@ -1,107 +1,184 @@
-import { render, screen } from '@testing-library/react'
+/**
+ * Copy anchors for the homepage.
+ *
+ * Almost every assertion in the previous version of this file was stale — it was
+ * written against an earlier homepage and had been dead ever since the Vitest JSX
+ * transform broke. Examples of what it asserted versus what the page actually
+ * renders today:
+ *
+ *   "Driving Business Success through SAP Expertise"  → that string is the <title>
+ *                                                       metadata, not the hero; the
+ *                                                       hero h1 is "Turning SAP
+ *                                                       Expertise into Business
+ *                                                       Advantage"
+ *   "Our Services"                                   → now "Our Expertise in Action"
+ *   "Benefits from working with us"                  → now "Benefits working with us"
+ *   a standalone "SAP Expertise" section              → no longer exists
+ *   "European Focus" / "Hybrid Work Model" /
+ *   "Competitive Pricing" / "Flexible Solutions"      → replaced by six different
+ *                                                       benefit cards
+ *   getByLabelText('Your Name *') etc.                → the join-team form uses no
+ *                                                       <label> elements at all, so
+ *                                                       these could never resolve
+ *
+ * This rewrite keeps a deliberately small set of anchors: the hero, the section
+ * headings, the domain list, and the join-team form's fields and consent line. These
+ * are the strings whose accidental loss would be a real regression, and they are the
+ * ones Phase F must reproduce byte-identically when copy moves into dictionaries.
+ * Section ordering is covered by home-sections-order.test.tsx.
+ */
+import { render, screen, within } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
 import HomePage from '../app/page'
 
-describe('Home Page Content Match', () => {
-  test('contains exact hero text', () => {
+describe('Homepage copy', () => {
+  test('hero states the current positioning', () => {
     render(<HomePage />)
-    
-    expect(screen.getByText(/Driving Business Success through SAP Expertise/i)).toBeInTheDocument()
-    expect(screen.getByText(/Your reliable SAP expertise partner/i)).toBeInTheDocument()
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: /turning sap expertise into business advantage/i })
+    ).toBeInTheDocument()
+    expect(screen.getByText(/empowering companies to work smarter and grow faster/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/sap gold partner/i).length).toBeGreaterThan(0)
   })
-  
-  test('contains exact about us text', () => {
+
+  test('section headings are present and unchanged', () => {
     render(<HomePage />)
-    
-    expect(screen.getByText(/About Us/i)).toBeInTheDocument()
-    expect(screen.getByText(/Infinus is SAP Gold Partner focused on SAP Business Suite solutions/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Cloud ERP \(Private and Public\)/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business Data Cloud/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business AI/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business Technology Platform/i)).toBeInTheDocument()
-    expect(screen.getByText(/Our experienced SAP consultants can bring high-quality expertise/i)).toBeInTheDocument()
-    expect(screen.getByText(/The vast majority of our team consists of senior SAP consultants with 10\+ years of professional experience/i)).toBeInTheDocument()
+
+    for (const name of [
+      /^about us$/i,
+      /^our expertise in action$/i,
+      /^benefits working with us$/i,
+      /^domain expertise$/i,
+      /^join our team$/i,
+    ]) {
+      expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument()
+    }
   })
-  
-  test('contains exact services text', () => {
-    render(<HomePage />)
-    
-    expect(screen.getByText(/Our Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Implementation Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/Greenfield, brownfield, conversions, migrations and rollouts/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Support Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Application Management Services and SLA Support Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/Other Services/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP localisation support, developments, trainings, etc/i)).toBeInTheDocument()
+
+  test('about section names the four SAP product pillars', () => {
+    const { container } = render(<HomePage />)
+    const about = container.querySelector('[data-section="about"]') as HTMLElement
+    expect(about).not.toBeNull()
+
+    // Several pillars appear twice in this section — once in the prose and once as a
+    // badge — so assert "at least one occurrence" rather than uniqueness.
+    for (const pillar of [
+      /SAP Cloud ERP \(Public and Private\)/i,
+      /SAP Business AI/i,
+      /SAP Business Technology Platform \(BTP\)/i,
+      /SAP Business Data Cloud/i,
+    ]) {
+      expect(within(about).getAllByText(pillar).length).toBeGreaterThan(0)
+    }
   })
-  
-  test('contains exact benefits text', () => {
-    render(<HomePage />)
-    
-    expect(screen.getByText(/Benefits from working with us/i)).toBeInTheDocument()
-    expect(screen.getByText(/European Focus/i)).toBeInTheDocument()
-    expect(screen.getByText(/We are located in Serbia \(CET time zone\) and provide services throughout Europe/i)).toBeInTheDocument()
-    expect(screen.getByText(/All our consultants are fluent in English and some of them in German as well/i)).toBeInTheDocument()
-    expect(screen.getByText(/Hybrid Work Model/i)).toBeInTheDocument()
-    expect(screen.getByText(/Our consultants are available for both onsite and remote work/i)).toBeInTheDocument()
-    expect(screen.getByText(/Competitive Pricing/i)).toBeInTheDocument()
-    expect(screen.getByText(/By sourcing with us, you can take advantage of cost-effective services without sacrificing quality/i)).toBeInTheDocument()
-    expect(screen.getByText(/Flexible Solutions/i)).toBeInTheDocument()
-    expect(screen.getByText(/We offer flexible engagement models tailored to your unique needs and challenges/i)).toBeInTheDocument()
+
+  test('the five service lines are listed', () => {
+    const { container } = render(<HomePage />)
+    const services = container.querySelector('[data-section="sap-services"]') as HTMLElement
+    expect(services).not.toBeNull()
+
+    for (const service of [
+      'SAP Advisory & Consulting',
+      'SAP Implementations',
+      'SAP Application Management & Support',
+      'SAP Integration & Process Optimization',
+      'SAP Extensions & Innovation',
+    ]) {
+      expect(within(services).getByRole('heading', { name: service })).toBeInTheDocument()
+    }
   })
-  
-  test('contains SAP expertise items', () => {
-    render(<HomePage />)
-    
-    expect(screen.getByText(/SAP Expertise/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Cloud ERP \(Private and Public\)/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business Data Cloud/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business AI/i)).toBeInTheDocument()
-    expect(screen.getByText(/SAP Business Technology Platform/i)).toBeInTheDocument()
+
+  test('the six partnership benefits are listed', () => {
+    const { container } = render(<HomePage />)
+    const benefits = container.querySelector('[data-section="partnership-benefits"]') as HTMLElement
+    expect(benefits).not.toBeNull()
+
+    for (const benefit of [
+      'Deep SAP Expertise',
+      'Business Understanding',
+      'Trusted Partnership',
+      'End-to-End Capability',
+      'Agility & Predictability',
+      'Regional Presence, European Reach',
+    ]) {
+      expect(within(benefits).getByRole('heading', { name: benefit })).toBeInTheDocument()
+    }
   })
-  
-  test('contains domain expertise items', () => {
-    render(<HomePage />)
-    
-    expect(screen.getByText(/Domain Expertise/i)).toBeInTheDocument()
-    expect(screen.getByText(/Industry-Specific SAP Solutions/i)).toBeInTheDocument()
-    
-    const domains = [
+
+  test('all nine industry domains are listed', () => {
+    const { container } = render(<HomePage />)
+    const domain = container.querySelector('[data-section="domain"]') as HTMLElement
+    expect(domain).not.toBeNull()
+
+    for (const industry of [
       'Retail',
-      'Pharmaceuticals', 
+      'Pharmaceuticals',
       'Wholesale and Distribution',
       'Consumer Goods',
       'Industrial Manufacturing',
       'Professional Services',
       'Travel',
       'Oil & Gas',
-      'Telco'
-    ]
-    
-    domains.forEach(domain => {
-      expect(screen.getByText(new RegExp(domain, 'i'))).toBeInTheDocument()
-    })
+      'Telco',
+    ]) {
+      expect(within(domain).getByText(industry)).toBeInTheDocument()
+    }
   })
-  
-  test('contains join team section with exact text', () => {
-    render(<HomePage />)
-    
-    expect(screen.getByText(/Join Our Team/i)).toBeInTheDocument()
-    expect(screen.getByText(/Due to continues business expansion, we are looking to expand our team/i)).toBeInTheDocument()
-    expect(screen.getByText(/If you have experience in some of SAP S\/4HANA or ECC modules and areas/i)).toBeInTheDocument()
-    expect(screen.getByText(/We will be glad to talk with you/i)).toBeInTheDocument()
+
+  test('join-team section keeps its recruiting copy', () => {
+    const { container } = render(<HomePage />)
+    const join = container.querySelector('[data-section="join-team"]') as HTMLElement
+    expect(join).not.toBeNull()
+
+    expect(within(join).getByText(/due to continues business expansion/i)).toBeInTheDocument()
+    expect(within(join).getByText(/we will be glad to talk with you/i)).toBeInTheDocument()
   })
-  
-  test('contains contact form with exact fields', () => {
-    render(<HomePage />)
-    
-    // Check for form fields
-    expect(screen.getByLabelText(/Your Name \*/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Phone Number/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Your Email \*/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Subject \*/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Message \*/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Attach your Resume/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument()
+
+  test('join-team application form exposes its fields and submit control', () => {
+    const { container } = render(<HomePage />)
+    const join = container.querySelector('[data-section="join-team"]') as HTMLElement
+
+    // These field captions are plain text, not <label for=...>, which is why the old
+    // getByLabelText assertions could never pass. Recorded as-is; making them real
+    // labels is an accessibility improvement for a later phase, not for A1.
+    for (const field of [
+      /your name \*/i,
+      /phone number/i,
+      /your email \*/i,
+      /subject \*/i,
+      /message \*/i,
+      /attach your resume/i,
+    ]) {
+      expect(within(join).getByText(field)).toBeInTheDocument()
+    }
+
+    expect(within(join).getByRole('button', { name: /submit application/i })).toBeInTheDocument()
+  })
+
+  test('join-team form shows a privacy consent line linking to the policy', () => {
+    const { container } = render(<HomePage />)
+    const join = container.querySelector('[data-section="join-team"]') as HTMLElement
+
+    // Phase C replaces this wording with "By submitting your application, you confirm
+    // that you have read our Privacy Policy." and repoints the link to
+    // /politika-privatnosti. Pinned here so that change is explicit in the diff.
+    expect(
+      within(join).getByText(/by submitting this form you agree to our/i)
+    ).toBeInTheDocument()
+    expect(within(join).getByRole('link', { name: /privacy policy/i })).toHaveAttribute('href', '/privacy')
+  })
+
+  test('footer carries the company details and the privacy policy link', () => {
+    const { container } = render(<HomePage />)
+    const footer = container.querySelector('footer') as HTMLElement
+    expect(footer).not.toBeNull()
+
+    expect(within(footer).getByText(/Tresnjinog cveta 1, 11070 Belgrade, Serbia/i)).toBeInTheDocument()
+    expect(within(footer).getByRole('link', { name: 'office@infinus.rs' })).toHaveAttribute(
+      'href',
+      'mailto:office@infinus.rs'
+    )
+    expect(within(footer).getByRole('link', { name: /^privacy policy$/i })).toHaveAttribute('href', '/privacy')
   })
 })

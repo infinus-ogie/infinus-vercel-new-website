@@ -1,79 +1,82 @@
-import { render, screen } from '@testing-library/react'
+/**
+ * Minimal smoke coverage for the CURRENT /privacy page.
+ *
+ * ── Phase C will replace this file ──────────────────────────────────────────────
+ * The approved bilingual policy moves to /politika-privatnosti, /privacy becomes a
+ * 301, and privacy coverage is rebuilt there. This file is intentionally kept small
+ * and structural: just enough to notice if the page that is currently linked from
+ * the footer, the contact form and the job-application form stops rendering before
+ * that replacement lands.
+ * ───────────────────────────────────────────────────────────────────────────────
+ *
+ * The previous version asserted a policy that does not exist on this page. Every
+ * one of these was absent: "Information We Collect", "How We Use Your Information",
+ * "Information Sharing and Disclosure", "Cookies and Tracking Technologies",
+ * "Your Rights" phrased that way, "Third-Party Links", "Children's Privacy",
+ * "Personal Information", "Automatically Collected Information", and the opening
+ * line `Infinus ("we," "our," or "us") is committed to protecting your privacy`.
+ * The real page uses different section names (asserted below) and opens with
+ * "At Infinus, we are committed to protecting your privacy…".
+ */
+import { render, screen, within } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
 import PrivacyPage from '../app/(site)/privacy/page'
 
-describe('Privacy Policy Content Match', () => {
-  test('contains key privacy policy text', () => {
+/** Section headings the current page actually renders, in document order. */
+const CURRENT_SECTIONS = [
+  'Information Collection',
+  'Use of Information',
+  'Sharing of Information',
+  'Data Security',
+  'Your Rights',
+  'Changes to Privacy Policy',
+  'Contact Us',
+] as const
+
+describe('/privacy page (superseded in Phase C)', () => {
+  test('renders as a privacy policy document', () => {
     render(<PrivacyPage />)
-    
-    const privacyText = screen.getByTestId ? screen.getByTestId('privacy-content')?.textContent : document.body.textContent
-    
-    // Test for key phrases from privacy policy
-    expect(screen.getByText(/Privacy Policy/i)).toBeInTheDocument()
-    expect(screen.getByText(/Introduction/i)).toBeInTheDocument()
-    expect(screen.getByText(/Information We Collect/i)).toBeInTheDocument()
-    expect(screen.getByText(/How We Use Your Information/i)).toBeInTheDocument()
-    expect(screen.getByText(/Data Security/i)).toBeInTheDocument()
-    expect(screen.getByText(/Contact Us/i)).toBeInTheDocument()
+
+    expect(screen.getByRole('heading', { level: 1, name: /^privacy policy$/i })).toBeInTheDocument()
+    expect(screen.getByText(/at infinus, we are committed to protecting your privacy/i)).toBeInTheDocument()
   })
-  
-  test('contains specific privacy policy content', () => {
-    render(<PrivacyPage />)
-    
-    // Test for specific content sections
-    expect(screen.getByText(/Infinus \("we," "our," or "us"\) is committed to protecting your privacy/i)).toBeInTheDocument()
-    expect(screen.getByText(/Personal Information/i)).toBeInTheDocument()
-    expect(screen.getByText(/Automatically Collected Information/i)).toBeInTheDocument()
-    expect(screen.getByText(/Information Sharing and Disclosure/i)).toBeInTheDocument()
-    expect(screen.getByText(/Cookies and Tracking Technologies/i)).toBeInTheDocument()
-    expect(screen.getByText(/Your Rights/i)).toBeInTheDocument()
-    expect(screen.getByText(/Third-Party Links/i)).toBeInTheDocument()
-    expect(screen.getByText(/Children's Privacy/i)).toBeInTheDocument()
-    expect(screen.getByText(/Changes to This Privacy Policy/i)).toBeInTheDocument()
+
+  test('renders its section headings in the expected order', () => {
+    const { container } = render(<PrivacyPage />)
+
+    const headings = Array.from(container.querySelectorAll('h2')).map((h) => h.textContent?.trim())
+    expect(headings).toEqual([...CURRENT_SECTIONS])
   })
-  
-  test('contains correct contact information', () => {
-    render(<PrivacyPage />)
-    
-    // Test for correct contact information
-    expect(screen.getByText(/office@infinus\.rs/i)).toBeInTheDocument()
-    expect(screen.getByText(/Infinus d\.o\.o\., Tresnjinog cveta 1, 11070 Belgrade, Serbia/i)).toBeInTheDocument()
+
+  test('table of contents links to every section that exists', () => {
+    const { container } = render(<PrivacyPage />)
+
+    const toc = container.querySelector('.toc') as HTMLElement
+    expect(toc).not.toBeNull()
+
+    const targets = Array.from(toc.querySelectorAll('a'))
+      .map((a) => a.getAttribute('href'))
+      .filter((href): href is string => !!href && href.startsWith('#'))
+
+    expect(targets.length).toBeGreaterThan(0)
+    for (const href of targets) {
+      expect(container.querySelector(`[id="${href.slice(1)}"]`), `no anchor target for ${href}`).not.toBeNull()
+    }
   })
-  
-  test('contains privacy policy structure', () => {
+
+  test('publishes the controller contact details', () => {
     render(<PrivacyPage />)
-    
-    // Test for main headings
-    expect(screen.getByText(/Introduction/i)).toBeInTheDocument()
-    expect(screen.getByText(/Information We Collect/i)).toBeInTheDocument()
-    expect(screen.getByText(/How We Use Your Information/i)).toBeInTheDocument()
-    expect(screen.getByText(/Information Sharing and Disclosure/i)).toBeInTheDocument()
-    expect(screen.getByText(/Data Security/i)).toBeInTheDocument()
-    expect(screen.getByText(/Cookies and Tracking Technologies/i)).toBeInTheDocument()
-    expect(screen.getByText(/Your Rights/i)).toBeInTheDocument()
-    expect(screen.getByText(/Third-Party Links/i)).toBeInTheDocument()
-    expect(screen.getByText(/Children's Privacy/i)).toBeInTheDocument()
-    expect(screen.getByText(/Changes to This Privacy Policy/i)).toBeInTheDocument()
-    expect(screen.getByText(/Contact Us/i)).toBeInTheDocument()
+
+    expect(screen.getAllByText(/office@infinus\.rs/i).length).toBeGreaterThan(0)
   })
-  
-  test('contains privacy policy key phrases', () => {
-    render(<PrivacyPage />)
-    
-    // Test for key phrases that should be present
-    const keyPhrases = [
-      'privacy policy',
-      'data protection',
-      'personal information',
-      'information we collect',
-      'how we use',
-      'data security',
-      'your rights',
-      'contact us'
-    ]
-    
-    keyPhrases.forEach(phrase => {
-      expect(screen.getByText(new RegExp(phrase, 'i'))).toBeInTheDocument()
-    })
+
+  test('documents no cookie or tracking policy yet — Phase C must add one', () => {
+    // The site loads Google Analytics and a D&B Visitor Intelligence pixel, but this
+    // policy contains no cookie/tracking section at all. That is a compliance gap,
+    // not a test bug: this assertion records the gap so it fails (and this file gets
+    // replaced) the moment Phase C introduces the real policy.
+    const { container } = render(<PrivacyPage />)
+
+    expect(container.textContent).not.toMatch(/cookie/i)
   })
 })
