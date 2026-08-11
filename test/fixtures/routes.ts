@@ -35,6 +35,12 @@ export type RouteKind =
   | 'page-noindex'
   /** Page route that is still built but is redirected away by next.config.js. */
   | 'page-redirected'
+  /**
+   * Path served ONLY by a next.config.js redirect: no page component, no manifest
+   * entry, no prerendered HTML. Distinct from 'page-redirected', where a page is
+   * still built behind the redirect.
+   */
+  | 'redirect-only'
   /** Internal demo/debug page: robots.txt-blocked, not for indexing. */
   | 'page-internal'
   /** Next.js framework route. */
@@ -126,16 +132,32 @@ export const ROUTES: readonly RouteExpectation[] = [
 
   // ── 1 public noindex page ────────────────────────────────────────────────────
   {
-    path: '/privacy',
+    // The approved bilingual legal page. Replaced /privacy in Phase C.
+    // Deliberately noindex,follow and out of the sitemap: a publicly reachable legal
+    // document, not an SEO landing page. It holds BOTH approved language versions on
+    // one URL, so it has no hreflang and no /sr counterpart.
+    path: '/politika-privatnosti',
     kind: 'page-noindex',
     expectLang: 'en',
     expectRobots: 'noindex, follow',
-    expectCanonical: `${PRODUCTION_ORIGIN}/privacy`,
+    expectCanonical: `${PRODUCTION_ORIGIN}/politika-privatnosti`,
     inSitemap: false,
     expectStaticHtml: true,
   },
 
-  // ── 1 redirected page route ──────────────────────────────────────────────────
+  // ── redirect sources: 1 redirect-only + 1 still-built page ───────────────────
+  {
+    // Phase C: the page component was deleted, so next.config.js is the only thing
+    // serving this path — one direct hop to /politika-privatnosti, no chain, and no
+    // prerendered HTML.
+    path: '/privacy',
+    kind: 'redirect-only',
+    expectLang: null,
+    expectRobots: null,
+    expectCanonical: null,
+    inSitemap: false,
+    expectStaticHtml: false,
+  },
   {
     // Still built and prerendered even though next.config.js 301s it away, so the
     // HTML exists and its canonical correctly points at the redirect target.
@@ -203,9 +225,16 @@ export const PAGE_KINDS: readonly RouteKind[] = [
 
 export const HANDLER_KINDS: readonly RouteKind[] = ['handler-utility', 'handler-api']
 
+/** Kinds that exist only as a redirect and therefore have no manifest entry. */
+export const REDIRECT_ONLY_KINDS: readonly RouteKind[] = ['redirect-only']
+
 export const isPageRoute = (r: RouteExpectation): boolean => PAGE_KINDS.includes(r.kind)
 export const isHandlerRoute = (r: RouteExpectation): boolean => HANDLER_KINDS.includes(r.kind)
 export const isFrameworkRoute = (r: RouteExpectation): boolean => r.kind === 'page-framework'
+export const isRedirectOnlyRoute = (r: RouteExpectation): boolean => REDIRECT_ONLY_KINDS.includes(r.kind)
+/** Every path that next.config.js redirects away, whichever kind it is. */
+export const redirectSourceRoutes = (): RouteExpectation[] =>
+  ROUTES.filter((r) => r.kind === 'redirect-only' || r.kind === 'page-redirected')
 
 export const pageRoutes = (): RouteExpectation[] => ROUTES.filter(isPageRoute)
 export const handlerRoutes = (): RouteExpectation[] => ROUTES.filter(isHandlerRoute)
@@ -221,18 +250,28 @@ export const publicPages = (): RouteExpectation[] =>
 export const EXPECTED_COUNTS = {
   indexable: 16,
   noindex: 1,
+  /** /cfo — page still built behind its redirect */
   redirected: 1,
+  /** /privacy — redirect only, no page component and no HTML */
+  redirectOnly: 1,
   internal: 4,
   framework: 1,
   utilityHandlers: 4,
   apiHandlers: 4,
-  /** page routes in app-path-routes-manifest.json (excludes _not-found) */
+  /**
+   * Page routes in app-path-routes-manifest.json (excludes _not-found).
+   * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so
+   * the build still produces 22 page routes.
+   */
   manifestPages: 22,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
   /** total manifest entries: 22 pages + 8 handlers + 1 _not-found */
   manifestTotal: 31,
-  /** rendered .html files: 22 pages + _not-found */
+  /**
+   * Rendered .html files: 22 built pages + _not-found. /privacy is in the fixture as a
+   * redirect source but produces no HTML, so it is NOT counted here.
+   */
   renderedHtml: 23,
   sitemapUrls: 16,
   /** the 17 public pages whose <head> is snapshotted (16 indexable + /privacy) */

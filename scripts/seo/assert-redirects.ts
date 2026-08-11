@@ -137,9 +137,9 @@ main(async () => {
         `${label}: ${rule.source} is a redirect source but is marked inSitemap in the fixture`
       )
       report.check(
-        fixtureMatch.kind === 'page-redirected',
+        fixtureMatch.kind === 'page-redirected' || fixtureMatch.kind === 'redirect-only',
         `${label}: ${rule.source} is a redirect source but the fixture classifies it as "${fixtureMatch.kind}" ` +
-          `— it should be "page-redirected"`
+          `— it should be "page-redirected" (page still built) or "redirect-only" (no page component)`
       )
     }
   }
@@ -158,6 +158,10 @@ main(async () => {
         r.source.includes('ProjectPulse') &&
         r.destination === `${PRODUCTION_ORIGIN}/projectpulse/brochure` &&
         r.permanent === true,
+    },
+    {
+      description: '/privacy → /politika-privatnosti',
+      match: (r) => r.source === '/privacy' && r.destination === '/politika-privatnosti' && r.permanent === true,
     },
     {
       description: 'apex infinus.co/:path* → www.infinus.co/:path*',

@@ -19,6 +19,7 @@ import {
   htmlRoutes,
   isHandlerRoute,
   isPageRoute,
+  isRedirectOnlyRoute,
   pageRoutes,
   publicPages,
   sitemapRoutes,
@@ -41,9 +42,14 @@ describe('route fixture — shape', () => {
     expect(new Set(paths).size).toBe(paths.length)
   })
 
-  test('every route is classified as exactly one of page / handler / framework', () => {
+  test('every route is classified as exactly one of page / handler / framework / redirect-only', () => {
     for (const r of ROUTES) {
-      const classes = [isPageRoute(r), isHandlerRoute(r), r.kind === 'page-framework'].filter(Boolean)
+      const classes = [
+        isPageRoute(r),
+        isHandlerRoute(r),
+        isRedirectOnlyRoute(r),
+        r.kind === 'page-framework',
+      ].filter(Boolean)
       expect(classes.length, `${r.path} is classified ${classes.length} times`).toBe(1)
     }
   })
@@ -54,6 +60,7 @@ describe('route fixture — counts match the verified build', () => {
     expect(byKind('page-indexable')).toHaveLength(EXPECTED_COUNTS.indexable)
     expect(byKind('page-noindex')).toHaveLength(EXPECTED_COUNTS.noindex)
     expect(byKind('page-redirected')).toHaveLength(EXPECTED_COUNTS.redirected)
+    expect(byKind('redirect-only')).toHaveLength(EXPECTED_COUNTS.redirectOnly)
     expect(byKind('page-internal')).toHaveLength(EXPECTED_COUNTS.internal)
     expect(byKind('page-framework')).toHaveLength(EXPECTED_COUNTS.framework)
     expect(byKind('handler-utility')).toHaveLength(EXPECTED_COUNTS.utilityHandlers)
@@ -67,6 +74,8 @@ describe('route fixture — counts match the verified build', () => {
     expect(pageRoutes().length + handlerRoutes().length + byKind('page-framework').length).toBe(
       EXPECTED_COUNTS.manifestTotal
     )
+    // redirect-only paths are classified but must NOT count towards manifest entries.
+    expect(byKind('redirect-only').every((r) => r.expectStaticHtml === false)).toBe(true)
   })
 
   test('sitemap membership equals the indexable set', () => {
@@ -78,9 +87,9 @@ describe('route fixture — counts match the verified build', () => {
     )
   })
 
-  test('the snapshot set is the 16 indexable pages plus /privacy', () => {
+  test('the snapshot set is the 16 indexable pages plus the legal page', () => {
     expect(publicPages()).toHaveLength(EXPECTED_COUNTS.snapshotPages)
-    expect(publicPages().map((r) => r.path)).toContain('/privacy')
+    expect(publicPages().map((r) => r.path)).toContain('/politika-privatnosti')
   })
 })
 

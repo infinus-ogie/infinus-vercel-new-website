@@ -391,11 +391,14 @@ export function JoinSection() {
                   <p className="text-sm text-slate-600">
                     We reply within 1 business day.
                   </p>
+                  {/* Owner-approved wording for the job application form. Informational
+                      acknowledgement, NOT the cookie-consent mechanism. */}
                   <p className="text-xs text-slate-500">
-                    By submitting this form you agree to our{" "}
-                    <a className="underline underline-offset-4 hover:text-slate-700" href="/privacy">
+                    By submitting your application, you confirm that you have read our{" "}
+                    <a className="underline underline-offset-4 hover:text-slate-700" href="/politika-privatnosti">
                       Privacy Policy
-                    </a>.
+                    </a>
+                    .
                   </p>
                 </div>
 

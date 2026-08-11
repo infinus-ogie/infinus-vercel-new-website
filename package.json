@@ -18,7 +18,9 @@
     "seo:assert-sitemap": "tsx scripts/seo/assert-sitemap.ts",
     "seo:assert-redirects": "tsx scripts/seo/assert-redirects.ts",
     "seo:snapshot-head": "tsx scripts/seo/snapshot-head.ts",
-    "seo:check": "npm run seo:assert-build && npm run seo:assert-sitemap && npm run seo:assert-redirects && npm run seo:snapshot-head"
+    "seo:assert-consent": "tsx scripts/seo/assert-consent-safety.ts",
+    "seo:check": "npm run seo:assert-build && npm run seo:assert-sitemap && npm run seo:assert-redirects && npm run seo:assert-consent && npm run seo:snapshot-head",
+    "test:consent": "playwright test --config=playwright.consent.config.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

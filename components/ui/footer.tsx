@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/consent/CookieSettingsDialog";
 
 const footerConfig = {
   description:
@@ -54,7 +55,7 @@ const footerConfig = {
     {
       title: "Legal",
       links: [
-        { label: "Privacy Policy", href: "/privacy" },
+        { label: "Privacy Policy", href: "/politika-privatnosti" },
       ],
     },
   ],
@@ -146,7 +147,10 @@ export default function Footer() {
           <p>© {new Date().getFullYear()} Infinus. All rights reserved.</p>
           <div className="flex flex-col md:flex-row items-center gap-4">
             <div className="flex gap-6">
-              <Link href="/privacy" className="hover:text-white/80 transition">Privacy</Link>
+              <Link href="/politika-privatnosti" className="hover:text-white/80 transition">Privacy</Link>
+              {/* Reopens the consent dialog at any time — required so a decision can be
+                  changed or withdrawn. Deliberately a button, not a link to a page. */}
+              <CookieSettingsButton className="hover:text-white/80 transition underline-offset-4 hover:underline" />
             </div>
             <p className="text-xs text-white/60">
               Developed by{" "}

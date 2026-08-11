@@ -338,11 +338,14 @@ export const Contact2 = ({
                   Supported formats: PDF, DOC, DOCX, TXT (max 10MB)
                 </p>
               </div>
+              {/* Owner-approved wording. This is an informational acknowledgement,
+                  NOT the cookie-consent mechanism — do not reword to "agree"/"accept". */}
               <div className="text-xs text-gray-600">
-                By submitting, you agree to the{" "}
-                <a href="/privacy" className="text-primary hover:underline">
+                By submitting this form, you confirm that you have read our{" "}
+                <a href="/politika-privatnosti" className="text-primary hover:underline">
                   Privacy Policy
                 </a>
+                .
               </div>
               <Button 
                 type="submit" 

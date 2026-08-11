@@ -1,19 +1,13 @@
 import type { Metadata } from "next"
-import { Suspense } from "react"
 import { Inter, IBM_Plex_Sans } from "next/font/google"
-import Script from "next/script"
 import "./globals.css"
 import { SITE_CONFIG } from "@/lib/jsonld"
 import { Toaster } from "sonner"
-import VendorScripts from "./_components/VendorScripts"
-// TEMPORARY HOTFIX: Commented out for campaign launch
-// import RouteChangeTracker from "./_components/RouteChangeTracker"
-import ViClickTracker from "./_components/ViClickTracker"
-// TEMPORARY HOTFIX: Commented out for campaign launch
-// import GoogleAnalytics from "./_components/GoogleAnalytics"
-import GAFast from "./_components/GAFast"
-import AITrafficTracker from "./_components/AITrafficTracker"
-import DnbVisitorPixel from "@/components/analytics/DnbVisitorPixel"
+import { ConsentProvider } from "@/components/consent/ConsentProvider"
+import { CookieBanner } from "@/components/consent/CookieBanner"
+import { CookieSettingsDialog } from "@/components/consent/CookieSettingsDialog"
+import { AnalyticsGate } from "@/components/consent/AnalyticsGate"
+import { MarketingGate } from "@/components/consent/MarketingGate"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -106,42 +100,29 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1e40af" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        {/* TEMPORARY HOTFIX: Unconditional GA4 for campaign launch (no Consent Mode) */}
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-S0YZ6MZWK1"
-          strategy="afterInteractive"
-        />
-        <Script id="ga-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-S0YZ6MZWK1', { send_page_view: false });
-            console.log('[GA4] Initialized (hotfix mode)');
-          `}
-        </Script>
+
+        {/* No analytics or marketing vendor script is loaded here.
+            The previous unconditional GA4 <Script> tags were removed: because they
+            lived in this server component they ran for every visitor before any
+            consent decision. Analytics now loads only from <AnalyticsGate>, and only
+            after explicit consent — see components/consent/AnalyticsGate.tsx. */}
       </head>
       <body className={`${inter.variable} ${ibmPlexSans.variable} font-sans`}>
-        {children}
-        <Toaster position="top-right" richColors />
-        
-        {/* Vendor/marketing tags mount point */}
-        {/* TEMPORARY HOTFIX: Commented out consent-aware trackers */}
-        {/* <RouteChangeTracker /> */}
-        {/* <GoogleAnalytics /> */}
-        <ViClickTracker />
-        <DnbVisitorPixel />
-        
-        {/* TEMPORARY HOTFIX: Unconditional page_view tracking */}
-        {/* GAFast uses useSearchParams(); a Suspense boundary keeps that hook from
-            forcing the entire page to bail to client-side rendering (which made
-            Next.js inject <meta name="robots" content="noindex"> into every page). */}
-        <Suspense fallback={null}>
-          <GAFast />
-        </Suspense>
-        <AITrafficTracker />
+        <ConsentProvider>
+          {children}
+          <Toaster position="top-right" richColors />
+
+          {/* Consent UI. Mounted exactly once, at the root, so the banner and the
+              settings dialog are available on every page including the ones that
+              render their own header/footer. */}
+          <CookieBanner />
+          <CookieSettingsDialog />
+
+          {/* Vendor mount points. Both render null until the matching category is
+              explicitly allowed, so nothing reaches the prerendered HTML. */}
+          <AnalyticsGate />
+          <MarketingGate />
+        </ConsentProvider>
       </body>
     </html>
   )

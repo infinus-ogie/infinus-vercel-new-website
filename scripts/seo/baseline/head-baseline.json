@@ -1123,9 +1123,9 @@
       "types": []
     }
   },
-  "/privacy": {
+  "/politika-privatnosti": {
     "htmlLang": "en",
-    "title": "Privacy Policy - Infinus | Infinus",
+    "title": "Politika privatnosti | Privacy Policy | Infinus",
     "meta": {
       "name:author": [
         "Infinus Team"
@@ -1134,7 +1134,7 @@
         "Infinus"
       ],
       "name:description": [
-        "Privacy policy and data protection information for Infinus website and services."
+        "Politika privatnosti društva INFINUS d.o.o. — Privacy Policy of INFINUS d.o.o. Serbian and English versions."
       ],
       "name:format-detection": [
         "telephone=no, address=no, email=no"
@@ -1142,14 +1142,8 @@
       "name:google-site-verification": [
         "your-google-verification-code"
       ],
-      "name:og:image:alt": [
-        "Privacy Policy - Infinus"
-      ],
-      "name:og:image:height": [
-        "630"
-      ],
-      "name:og:image:width": [
-        "1200"
+      "name:keywords": [
+        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
       ],
       "name:publisher": [
         "Infinus"
@@ -1164,47 +1158,32 @@
         "summary_large_image"
       ],
       "name:twitter:description": [
-        "Privacy policy and data protection information for Infinus website and services."
+        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
       ],
       "name:twitter:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "name:twitter:title": [
-        "Privacy Policy - Infinus"
+        "Infinus"
       ],
       "name:viewport": [
         "width=device-width, initial-scale=1",
         "width=device-width, initial-scale=1"
       ],
       "property:og:description": [
-        "Privacy policy and data protection information for Infinus website and services."
-      ],
-      "property:og:image": [
-        "https://www.infinus.co/og-default.png"
-      ],
-      "property:og:image:alt": [
-        "Privacy Policy - Infinus"
-      ],
-      "property:og:image:height": [
-        "630"
-      ],
-      "property:og:image:width": [
-        "1200"
-      ],
-      "property:og:locale": [
-        "en_US"
+        "Politika privatnosti društva INFINUS d.o.o. — Privacy Policy of INFINUS d.o.o. Serbian and English versions."
       ],
       "property:og:site_name": [
         "Infinus"
       ],
       "property:og:title": [
-        "Privacy Policy - Infinus"
+        "Politika privatnosti | Privacy Policy"
       ],
       "property:og:type": [
         "website"
       ],
       "property:og:url": [
-        "https://www.infinus.co/privacy"
+        "https://www.infinus.co/politika-privatnosti"
       ]
     },
     "links": {
@@ -1212,7 +1191,7 @@
         "/apple-touch-icon.png"
       ],
       "canonical": [
-        "https://www.infinus.co/privacy"
+        "https://www.infinus.co/politika-privatnosti"
       ],
       "icon": [
         "/favicon.ico"

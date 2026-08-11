@@ -61,10 +61,28 @@ export function ResourceDownloadModal({
               onChange={e => setEmail(e.target.value)} 
             />
           </div>
-          
+
+          {/* Owner-approved Serbian wording — this modal is the only Serbian-language
+              form on the site (it appears on /grow and /professional-services).
+              Informational acknowledgement, NOT the cookie-consent mechanism.
+              NOTE: the modal is currently unreachable in production because
+              ResourceList only renders it when NEXT_PUBLIC_CAPTURE === "on", which is
+              not set in any environment. The disclaimer is added anyway so it is
+              correct whenever capture is enabled. */}
+          <p className="text-xs text-slate-500" lang="sr-Latn">
+            Slanjem forme potvrđujete da ste pročitali našu{" "}
+            <a
+              className="underline underline-offset-4 hover:text-slate-700"
+              href="/politika-privatnosti"
+            >
+              Politiku privatnosti
+            </a>
+            .
+          </p>
+
           <div className="flex justify-end gap-3 pt-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => onOpenChange(false)}
               className="border-slate-300"
             >

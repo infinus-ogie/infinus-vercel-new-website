@@ -20,6 +20,13 @@ const nextConfig = {
         permanent: true,
       },
       {
+        // The legal page moved to its approved public URL. One direct hop: /privacy
+        // no longer has a page component, so this is the only thing serving that path.
+        source: '/privacy',
+        destination: '/politika-privatnosti',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [
           {

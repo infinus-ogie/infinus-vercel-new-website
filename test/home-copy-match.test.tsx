@@ -156,17 +156,20 @@ describe('Homepage copy', () => {
     expect(within(join).getByRole('button', { name: /submit application/i })).toBeInTheDocument()
   })
 
-  test('join-team form shows a privacy consent line linking to the policy', () => {
+  test('job application form uses the owner-approved acknowledgement wording', () => {
     const { container } = render(<HomePage />)
     const join = container.querySelector('[data-section="join-team"]') as HTMLElement
 
-    // Phase C replaces this wording with "By submitting your application, you confirm
-    // that you have read our Privacy Policy." and repoints the link to
-    // /politika-privatnosti. Pinned here so that change is explicit in the diff.
+    // Exact owner-approved sentence. It is an informational acknowledgement, NOT the
+    // cookie-consent mechanism — "agree"/"consent"/"accept" phrasings are wrong here.
     expect(
-      within(join).getByText(/by submitting this form you agree to our/i)
+      within(join).getByText(/by submitting your application, you confirm that you have read our/i)
     ).toBeInTheDocument()
-    expect(within(join).getByRole('link', { name: /privacy policy/i })).toHaveAttribute('href', '/privacy')
+    expect(within(join).queryByText(/you agree to our/i)).not.toBeInTheDocument()
+    expect(within(join).getByRole('link', { name: /privacy policy/i })).toHaveAttribute(
+      'href',
+      '/politika-privatnosti'
+    )
   })
 
   test('footer carries the company details and the privacy policy link', () => {
@@ -179,6 +182,20 @@ describe('Homepage copy', () => {
       'href',
       'mailto:office@infinus.rs'
     )
-    expect(within(footer).getByRole('link', { name: /^privacy policy$/i })).toHaveAttribute('href', '/privacy')
+    expect(within(footer).getByRole('link', { name: /^privacy policy$/i })).toHaveAttribute(
+      'href',
+      '/politika-privatnosti'
+    )
+  })
+
+  test('footer offers a Cookie settings control on every page', () => {
+    const { container } = render(<HomePage />)
+    const footer = container.querySelector('footer') as HTMLElement
+
+    // A button, not a link to a page: it reopens the consent dialog so a decision can
+    // be changed or withdrawn at any time.
+    const control = within(footer).getByRole('button', { name: /cookie settings/i })
+    expect(control).toBeInTheDocument()
+    expect(control.tagName).toBe('BUTTON')
   })
 })

@@ -216,14 +216,18 @@ describe('Contact2 (live contact form)', () => {
     expect(screen.getByLabelText('Message *')).toHaveValue(VALID_INPUT.message)
   })
 
-  it('links to the privacy policy from the consent line', () => {
+  it('uses the owner-approved acknowledgement wording and links to the policy', () => {
     render(<Contact2 />)
 
-    // NOTE: Phase C replaces this destination with /politika-privatnosti and
-    // changes the wording. This assertion documents the CURRENT live state so the
-    // change is visible in that phase's diff.
-    const privacyLink = screen.getByRole('link', { name: /privacy policy/i })
-    expect(privacyLink).toHaveAttribute('href', '/privacy')
+    // Exact owner-approved sentence. Informational acknowledgement, NOT consent.
+    expect(
+      screen.getByText(/by submitting this form, you confirm that you have read our/i)
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/you agree to the/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /privacy policy/i })).toHaveAttribute(
+      'href',
+      '/politika-privatnosti'
+    )
   })
 
   it('shows the published contact details', () => {

@@ -41,7 +41,10 @@ module.exports = {
     '/.well-known',
     '/.well-known/*',
     '/llms.txt', // plaintext AI file, not an indexable page
-    '/privacy', // intentionally noindex,follow -> keep out of the sitemap
+    // The legal page is intentionally noindex,follow and stays out of the sitemap:
+    // it is a publicly reachable legal document, not an SEO landing page.
+    '/politika-privatnosti',
+    '/privacy', // permanent redirect -> /politika-privatnosti (no longer a page)
   ],
   transform: async (config, path) => {
     const keyRoutes = ['/', '/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/contact', '/faq'];

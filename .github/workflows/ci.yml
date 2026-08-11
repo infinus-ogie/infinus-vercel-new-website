@@ -79,4 +79,23 @@ jobs:
         # Compare-only. `seo:snapshot-head` without --write never rewrites
         # scripts/seo/baseline/head-baseline.json, so the committed baseline is the
         # authority and CI cannot silently re-baseline a regression away.
+        #
+        # Includes seo:assert-consent, which proves no vendor URL (Google Analytics or
+        # D&B) reaches any prerendered HTML, and that no page/layout reads next/headers.
         run: npm run seo:check
+
+      - name: Install Chromium for the consent E2E
+        # Playwright is already a devDependency; this only fetches its browser binary
+        # via Playwright's own mechanism. No npm dependency is added.
+        run: npx playwright install --with-deps chromium
+
+      - name: Consent E2E (network proof)
+        # The browser-level proof of strict no-load: a real Chromium makes NO request to
+        # googletagmanager.com before consent, one after Accept, and none again after
+        # withdrawal. Serves the production build from the previous step via
+        # `next start`, so it tests what visitors actually receive.
+        #
+        # Scoped to scripts/qa/consent.spec.ts only. The pre-existing
+        # scripts/qa/ga4-smoke.spec.ts waits for a gtag/js request on load, which Phase C
+        # intentionally makes false; rewriting it to grant consent first is a separate task.
+        run: npm run test:consent

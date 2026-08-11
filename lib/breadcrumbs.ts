@@ -25,7 +25,7 @@ export function generateBreadcrumbs(pathname: string): BreadcrumbItem[] {
     'professional-services': 'Professional Services',
     'faq': 'FAQ',
     'contact': 'Contact',
-    'privacy': 'Privacy Policy'
+    'politika-privatnosti': 'Privacy Policy'
   };
 
   let currentPath = '';
@@ -72,9 +72,9 @@ export const BREADCRUMB_DATA: Record<string, BreadcrumbItem[]> = {
     { name: 'Home', url: '/' },
     { name: 'Contact', url: '/contact' }
   ],
-  '/privacy': [
+  '/politika-privatnosti': [
     { name: 'Home', url: '/' },
-    { name: 'Privacy Policy', url: '/privacy' }
+    { name: 'Privacy Policy', url: '/politika-privatnosti' }
   ]
 };
 
