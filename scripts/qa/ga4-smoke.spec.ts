@@ -1,14 +1,64 @@
 import { test, expect, Page } from '@playwright/test';
 
+/**
+ * GA4 + D&B VI tracking smoke test.
+ *
+ * Runs against a deployed origin by default; override with BASE_URL, e.g.
+ *   BASE_URL=http://127.0.0.1:3100 npm run qa:ga
+ *
+ * ── Updated for consent gating ──────────────────────────────────────────────────
+ * Analytics no longer loads on page load. The site now requires explicit consent
+ * before any Google Analytics request is made, so this spec asserts BOTH halves of
+ * the new lifecycle: GA is absent before consent, and GA works after it.
+ *
+ * Consent is granted by clicking the REAL banner control rather than by writing
+ * storage directly, so the test exercises the same path a visitor does. The previous
+ * helper wrote localStorage['marketing_consent'], a mechanism that no longer exists —
+ * it was replaced by the versioned first-party `infinus_consent` cookie.
+ *
+ * Broader consent behaviour (reject, per-category choices, withdrawal, persistence)
+ * is covered by scripts/qa/consent.spec.ts and is deliberately not duplicated here;
+ * this file stays focused on GA/D&B functionality.
+ */
+
 // Base URL configuration
 const BASE_URL = process.env.BASE_URL || 'https://www.infinus.co';
 const GA4_MEASUREMENT_ID = 'G-S0YZ6MZWK1';
+const CONSENT_COOKIE = 'infinus_consent';
 
-// Helper function to enable consent
-async function enableConsent(page: Page) {
-  await page.evaluate(() => {
-    localStorage.setItem('marketing_consent', 'true');
-  });
+/** Hosts that must be silent until the visitor consents. */
+const GA_LOADER_HOST = 'googletagmanager.com';
+const GA_COLLECT_HOST = 'google-analytics.com';
+
+/**
+ * Grant consent through the visible banner (Accept = analytics + marketing).
+ *
+ * Waits for the banner to actually appear rather than checking whether it exists right
+ * now: the banner is rendered by a client component after hydration, so at
+ * `domcontentloaded` it is legitimately absent for a moment. Treating that moment as
+ * "already decided" would silently skip granting consent and leave the rest of the test
+ * asserting against a session that never consented — a test that passes for the wrong
+ * reason, or times out mysteriously.
+ *
+ * An already-decided session is detected from the stored record, not from the absence
+ * of a DOM node.
+ */
+async function grantConsentViaUi(page: Page) {
+  if (await storedConsent(page)) {
+    console.log('ℹ️  Consent decision already stored for this context');
+    return;
+  }
+  console.log('🔐 Granting consent via the banner Accept control');
+  const accept = page.getByTestId('cookie-accept');
+  await accept.waitFor({ state: 'visible', timeout: 15000 });
+  await accept.click();
+  await expect(page.getByTestId('cookie-banner')).toBeHidden();
+}
+
+/** The stored consent decision, or null when none exists. */
+async function storedConsent(page: Page) {
+  const cookie = (await page.context().cookies()).find((c) => c.name === CONSENT_COOKIE);
+  return cookie ? JSON.parse(decodeURIComponent(cookie.value)) : null;
 }
 
 // Utility to wait for GA4 collect requests
@@ -50,7 +100,78 @@ async function sawDnb(page: Page, timeout = 10000) {
   });
 }
 
-// Helper functions for GA4 parameter checking
+/**
+ * GA4 sends events over TWO transports:
+ *   · a GET whose query string carries `en`, `dp`, `dl` (single, unbatched hit), and
+ *   · a POST whose query string carries only the common fields, with one
+ *     newline-separated parameter block per event in the BODY.
+ *
+ * The original helpers only ever read the query string, so any batched event was
+ * invisible to them — which is why the route-change and click assertions could not
+ * match once consent gating changed when GA initialises. `collectEvents` normalises
+ * both transports into a list of events, so assertions describe behaviour rather than
+ * a particular wire format. This makes the checks stricter, not looser.
+ */
+interface Ga4Event {
+  en: string | null;
+  dp: string | null;
+  dl: string | null;
+  params: URLSearchParams;
+}
+
+function isCollectRequest(url: string) {
+  try {
+    const u = new URL(url);
+    return /(^|\.)google-analytics\.com$/.test(u.hostname) && u.pathname === '/g/collect';
+  } catch {
+    return false;
+  }
+}
+
+function collectEvents(request: { url(): string; postData(): string | null }): Ga4Event[] {
+  if (!isCollectRequest(request.url())) return [];
+  const common = new URLSearchParams(new URL(request.url()).search);
+  const toEvent = (params: URLSearchParams): Ga4Event => ({
+    en: params.get('en') ?? common.get('en'),
+    dp: params.get('dp') ?? common.get('dp'),
+    dl: params.get('dl') ?? common.get('dl'),
+    params,
+  });
+
+  const body = request.postData();
+  if (body && body.trim() !== '') {
+    return body
+      .split(/\r?\n/)
+      .filter((line) => line.trim() !== '')
+      .map((line) => toEvent(new URLSearchParams(line)));
+  }
+  return [toEvent(common)];
+}
+
+/** Does this request carry the named GA4 event, over either transport? */
+function sentEvent(request: { url(): string; postData(): string | null }, name: string) {
+  return collectEvents(request).some((e) => e.en === name);
+}
+
+/** Does this request carry the named event for the given page path? */
+function sentEventForPath(
+  request: { url(): string; postData(): string | null },
+  name: string,
+  pathname: string
+) {
+  return collectEvents(request).some((e) => {
+    if (e.en !== name) return false;
+    if (e.dp === pathname) return true;
+    if (!e.dl) return false;
+    try {
+      return new URL(e.dl).pathname === pathname;
+    } catch {
+      return false;
+    }
+  });
+}
+
+// Retained for the URL-only checks below.
 function hasEventName(url: string, name: string) {
   const u = new URL(url);
   return u.hostname === 'www.google-analytics.com'
@@ -63,6 +184,42 @@ function hasParam(url: string, key: string) {
   return new URLSearchParams(u.search).has(key);
 }
 
+/**
+ * Does a GA4 collect request describe the given page path?
+ *
+ * The path lives inside the `dp` (page path) or `dl` (page location) parameter and is
+ * percent-encoded, so a naive `url.includes('/grow')` can never match — the raw query
+ * string contains `%2Fgrow`. Decode the parameters and compare pathnames instead.
+ */
+function hasPagePath(url: string, pathname: string) {
+  const params = new URLSearchParams(new URL(url).search);
+  const dp = params.get('dp');
+  if (dp && dp === pathname) return true;
+  const dl = params.get('dl');
+  if (!dl) return false;
+  try {
+    return new URL(dl).pathname === pathname;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Wait until gtag is actually callable.
+ *
+ * Consent gating changed the timing here: GA used to be present from page load, so a
+ * click right after page load always found `window.gtag`. It now loads only once
+ * consent is granted, and asynchronously, so a click fired immediately after Accept can
+ * land before gtag exists — ViClickTracker would then log "gtag not available" and send
+ * nothing. Waiting for the real state (rather than sleeping) makes the test
+ * deterministic without weakening it.
+ */
+async function waitForGtagReady(page: Page) {
+  await page.waitForFunction(() => typeof (window as unknown as { gtag?: unknown }).gtag === 'function', {
+    timeout: 15000,
+  });
+}
+
 // Health check for debug endpoint
 async function checkDebugEndpoint(page: Page) {
   try {
@@ -73,8 +230,10 @@ async function checkDebugEndpoint(page: Page) {
     } else {
       console.log('Debug endpoint returned status:', response.status());
     }
-  } catch (error) {
-    console.log('Debug endpoint check failed (expected if 404):', error.message);
+  } catch (error: unknown) {
+    // `error` is typed `unknown` under strict mode; narrow before reading .message.
+    const message = error instanceof Error ? error.message : String(error);
+    console.log('Debug endpoint check failed (expected if 404):', message);
   }
 }
 
@@ -98,7 +257,7 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
     });
   });
 
-  test('A. page_view tracking with debug logs', async ({ page }) => {
+  test('A. GA stays silent before consent, then sends page_view after consent', async ({ page }) => {
     const collectRequests: string[] = [];
     const d41Requests: string[] = [];
     
@@ -113,43 +272,48 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
       }
     });
     
-    // Go to homepage
+    // Track every analytics request from the very first byte.
+    const gaLoaderRequests: string[] = [];
+    page.on('request', (request) => {
+      if (request.url().includes(GA_LOADER_HOST)) gaLoaderRequests.push(request.url());
+    });
+
+    // ── 1. BEFORE CONSENT: nothing analytics-related may be requested ──────────
     console.log('\n📍 Navigating to', BASE_URL);
-    await page.goto(BASE_URL);
-    
-    // Check debug endpoint first
+    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
+    await page.waitForLoadState('networkidle');
+
     await checkDebugEndpoint(page);
-    
-    // Enable consent BEFORE reload
-    console.log('🔐 Setting marketing_consent=true');
-    await enableConsent(page);
-    
-    console.log('🔄 Reloading page...');
-    await page.reload();
-    
-    // Wait a bit for scripts to initialize
-    await page.waitForTimeout(2000);
-    
+
+    expect(await storedConsent(page), 'a fresh context must have no consent decision').toBeNull();
+    expect(
+      gaLoaderRequests,
+      `GA loader requested BEFORE consent: ${gaLoaderRequests.join(', ')}`
+    ).toEqual([]);
+    expect(
+      collectRequests,
+      `GA collect requested BEFORE consent: ${collectRequests.join(', ')}`
+    ).toEqual([]);
+    console.log('✅ no GA loader or collect request before consent');
+
+    // ── 2. AFTER CONSENT: the loader and page_view must follow ─────────────────
+    // Arm the waiters before clicking so neither request can be missed.
+    const loaderRequest = page.waitForRequest((r) => r.url().includes('gtag/js'), { timeout: 15000 });
+    const pageViewRequest = page.waitForRequest((r) => sentEvent(r, 'page_view'), { timeout: 15000 });
+
+    await grantConsentViaUi(page);
+    expect(await storedConsent(page)).toMatchObject({ analytics: true });
+
+    await loaderRequest;
+    console.log('✅ GA4 script loaded after consent');
+
     // Print console logs from GA4 initialization
     const consoleLogs = (page as any)._consoleLogs || [];
     console.log('\n📋 Console logs from page:');
     consoleLogs.forEach((log: string) => console.log('  ', log));
-    
-    // Check if GA4 is configured by looking for the gtag script
-    const gaScriptLoaded = await page.waitForRequest(request => 
-      request.url().includes('gtag/js'), { timeout: 5000 }
-    ).catch(() => null);
-    
-    if (!gaScriptLoaded) {
-      console.log('\n⚠️  SKIPPING: GA4 script not loaded (NEXT_PUBLIC_GA_ID not set)');
-      return;
-    }
-    
-    console.log('✅ GA4 script loaded');
-    
-    // Wait for page_view event
+
     try {
-      await waitForCollect(page, (url) => hasEventName(url, 'page_view'));
+      await pageViewRequest;
       console.log('✅ page_view event sent');
     } catch (error) {
       console.log('\n❌ page_view event NOT sent');
@@ -194,26 +358,29 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
     });
     
     console.log('\n📍 Testing route change tracking');
-    await page.goto(BASE_URL);
-    await enableConsent(page);
-    await page.reload();
-    
+    await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
+    const initialPageView = page.waitForRequest((r) => sentEvent(r, 'page_view'), { timeout: 15000 });
+    await grantConsentViaUi(page);
+
     // Wait for initial page_view
-    await waitForCollect(page, (url) => hasEventName(url, 'page_view'));
+    await initialPageView;
     console.log('✅ Initial page_view sent');
     
     const initialCount = collectRequests.length;
     
-    // Navigate to /grow
+    await waitForGtagReady(page);
+
+    // Arm the waiter BEFORE navigating: the page_view for the new document can fire
+    // before a listener registered afterwards would ever see it.
+    const growPageView = page.waitForRequest((r) => sentEventForPath(r, 'page_view', '/grow'), {
+      timeout: 15000,
+    });
+
     console.log('🔀 Navigating to /grow');
     await page.goto(`${BASE_URL}/grow`);
-    await page.waitForTimeout(1000);
-    
-    // Wait for another page_view
+
     try {
-      await waitForCollect(page, (url) => {
-        return hasEventName(url, 'page_view') && url.includes('/grow');
-      });
+      await growPageView;
       console.log('✅ Route change page_view sent');
     } catch (error) {
       console.log('❌ Route change page_view NOT sent');
@@ -236,12 +403,12 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
     });
     
     console.log('\n📍 Testing ZIP click on /grow');
-    await page.goto(`${BASE_URL}/grow`);
-    await enableConsent(page);
-    await page.reload();
-    
-    // Wait for page to be ready
-    await page.waitForTimeout(1000);
+    await page.goto(`${BASE_URL}/grow`, { waitUntil: 'domcontentloaded' });
+    await grantConsentViaUi(page);
+
+    // ViClickTracker sends its events through gtag, which only exists after consent has
+    // loaded GA. Wait for that rather than guessing with a timeout.
+    await waitForGtagReady(page);
     
     // Print relevant console logs
     console.log('\n📋 ViClickTracker logs:');
@@ -264,17 +431,17 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
       }
     }
     
-    // Click the ZIP button
+    // Arm the waiter before the click so a fast event cannot be missed.
+    const zipEvent = page.waitForRequest(
+      (r) => collectEvents(r).some((e) => e.en === 'vi_zip_click' && e.params.has('ep.item_name')),
+      { timeout: 15000 }
+    );
+
     console.log('🖱️  Clicking ZIP button');
     await zipButton.click();
-    await page.waitForTimeout(500);
-    
-    // Wait for vi_zip_click event with required parameters
+
     try {
-      await waitForCollect(page, (url) => {
-        return hasEventName(url, 'vi_zip_click') && 
-               hasParam(url, 'ep.item_name');
-      });
+      await zipEvent;
       console.log('✅ vi_zip_click event sent');
     } catch (error) {
       console.log('❌ vi_zip_click event NOT sent');
@@ -293,8 +460,7 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
 
   test('C. PDF download tracking on /grow', async ({ page }) => {
     await page.goto(`${BASE_URL}/grow`);
-    await enableConsent(page);
-    await page.reload();
+    await grantConsentViaUi(page);
     
     // Check if tracking is enabled first by looking for the debug endpoint response
     const debugResponse = await page.request.get(`${BASE_URL}/vi-debug`);
@@ -338,8 +504,7 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
 
   test('D. ZIP click tracking on /professional-services', async ({ page }) => {
     await page.goto(`${BASE_URL}/professional-services`);
-    await enableConsent(page);
-    await page.reload();
+    await grantConsentViaUi(page);
     
     // Check if tracking is enabled first by looking for the debug endpoint response
     const debugResponse = await page.request.get(`${BASE_URL}/vi-debug`);
@@ -383,8 +548,7 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
 
   test('E. PDF download tracking on /professional-services', async ({ page }) => {
     await page.goto(`${BASE_URL}/professional-services`);
-    await enableConsent(page);
-    await page.reload();
+    await grantConsentViaUi(page);
     
     // Check if tracking is enabled first by looking for the debug endpoint response
     const debugResponse = await page.request.get(`${BASE_URL}/vi-debug`);
@@ -428,8 +592,7 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
 
   test('F. D&B VI script loading', async ({ page }) => {
     await page.goto(`${BASE_URL}/grow`);
-    await enableConsent(page);
-    await page.reload();
+    await grantConsentViaUi(page);
     
     // Check if tracking is enabled first by looking for the debug endpoint response
     const debugResponse = await page.request.get(`${BASE_URL}/vi-debug`);
@@ -481,11 +644,9 @@ test.describe('GA4 + D&B VI Tracking QA', () => {
       };
     }
     
-    // Check consent status
-    const hasConsent = await page.evaluate(() => {
-      return localStorage.getItem('marketing_consent') === 'true';
-    });
-    trackingStatus.hasConsent = hasConsent;
+    // Check consent status from the versioned first-party consent cookie.
+    const consent = await storedConsent(page);
+    trackingStatus.hasConsent = consent?.analytics === true;
     
     console.log('Environment variables status:', JSON.stringify(trackingStatus, null, 2));
     
