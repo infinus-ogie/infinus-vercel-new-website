@@ -13,7 +13,12 @@
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
     "type-check": "tsc --noEmit",
-    "qa:ga": "playwright test scripts/qa/ga4-smoke.spec.ts --reporter=list"
+    "qa:ga": "playwright test scripts/qa/ga4-smoke.spec.ts --reporter=list",
+    "seo:assert-build": "tsx scripts/seo/assert-build-output.ts",
+    "seo:assert-sitemap": "tsx scripts/seo/assert-sitemap.ts",
+    "seo:assert-redirects": "tsx scripts/seo/assert-redirects.ts",
+    "seo:snapshot-head": "tsx scripts/seo/snapshot-head.ts",
+    "seo:check": "npm run seo:assert-build && npm run seo:assert-sitemap && npm run seo:assert-redirects && npm run seo:snapshot-head"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
