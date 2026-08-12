@@ -70,8 +70,16 @@ interface HeadSnapshot {
 
 type Baseline = Record<string, HeadSnapshot>
 
+/**
+ * Read an attribute value from a tag.
+ *
+ * Case-INSENSITIVE: HTML attribute names are case-insensitive, and React serialises some JSX
+ * props in camelCase — notably `hrefLang` rather than `hreflang`. Every other attribute this
+ * file reads (rel, href, name, property, content) is already emitted lowercase, so the flag
+ * changes nothing for them.
+ */
 function attr(tag: string, name: string): string | null {
-  const m = new RegExp(`\\s${name}="([^"]*)"`).exec(tag)
+  const m = new RegExp(`\\s${name}="([^"]*)"`, 'i').exec(tag)
   return m ? decodeEntities(m[1]) : null
 }
 
@@ -99,6 +107,17 @@ function snapshotHead(html: string): HeadSnapshot {
     const href = attr(tag, 'href')
     if (rel === null || href === null) continue
     if (!LINK_REL_ALLOWLIST.has(rel)) continue
+    // rel="alternate" is recorded as "<hreflang> => <href>" so the LANGUAGE TOKEN is pinned,
+    // not just the URL. A swap from sr-Latn to sr-Latn-RS, or a lost x-default, would
+    // otherwise leave the baseline unchanged while changing what crawlers are told.
+    //
+    // `attr` is case-insensitive, which matters: React serialises the JSX `hrefLang` prop as
+    // the camelCase attribute `hrefLang="…"` rather than lowercase `hreflang="…"`.
+    if (rel === 'alternate') {
+      const hreflang = attr(tag, 'hreflang')
+      ;(links[rel] ??= []).push(`${hreflang ?? '(none)'} => ${normalizeSpace(href)}`)
+      continue
+    }
     ;(links[rel] ??= []).push(normalizeSpace(href))
   }
 

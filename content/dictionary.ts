@@ -40,6 +40,8 @@
 import { LOCALES, type Locale } from '@/lib/i18n'
 import { common as enCommon } from './en/common'
 import { common as srCommon } from './sr/common'
+import { contact as enContact } from './en/contact'
+import { contact as srContact } from './sr/contact'
 
 /**
  * Chrome strings that are not specific to any one page.
@@ -58,9 +60,111 @@ export interface CommonDictionary {
   readonly skipToContent: string
 }
 
+/**
+ * Every user-facing string on the Contact page, in ONE shape both locales satisfy.
+ *
+ * Extracted mechanically from the live English page and form
+ * (app/(en)/(site)/contact/page.tsx + components/ui/contact-2.tsx) — not from any earlier
+ * audit document. The English values are verbatim, so the refactor cannot change a single
+ * visible character on /contact.
+ */
+export interface ContactDictionary {
+  readonly metadata: {
+    readonly title: string
+    readonly description: string
+  }
+  /** The page's h1 and lede, passed into the form section. */
+  readonly hero: {
+    readonly heading: string
+    readonly description: string
+  }
+  /**
+   * The contact-details list beside the form.
+   *
+   * `email`, `web` and `address` are DATA, not copy: the mailbox and domain are identical
+   * in both locales. Only the address is locale-specific, because the approved Serbian
+   * legal text writes it in Serbian with correct diacritics.
+   */
+  readonly details: {
+    readonly heading: string
+    readonly emailLabel: string
+    readonly addressLabel: string
+    readonly webLabel: string
+    readonly email: string
+    readonly address: string
+    readonly web: { readonly label: string; readonly url: string }
+  }
+  readonly form: {
+    readonly nameLabel: string
+    readonly namePlaceholder: string
+    readonly phoneLabel: string
+    readonly phonePlaceholder: string
+    readonly emailLabel: string
+    readonly emailPlaceholder: string
+    readonly subjectLabel: string
+    readonly subjectPlaceholder: string
+    readonly messageLabel: string
+    readonly messagePlaceholder: string
+    readonly attachmentLabel: string
+    readonly attachmentHint: string
+    readonly submit: string
+    readonly submitting: string
+  }
+  /** Zod messages. The RULES (min lengths, email format) stay shared and unchanged. */
+  readonly validation: {
+    readonly name: string
+    readonly email: string
+    readonly subject: string
+    readonly message: string
+  }
+  readonly success: {
+    readonly heading: string
+    readonly body: string
+    readonly sendAnother: string
+    readonly attachmentNoticeHeading: string
+    readonly attachmentNoticeBody: string
+  }
+  /**
+   * Submission-failure copy.
+   *
+   * KNOWN BUG, deliberately NOT fixed here: the component sets `errors.general` but never
+   * renders it, so neither string reaches a user today. They are translated and wired
+   * through anyway so that fixing the bug later is a rendering change only, with no copy
+   * decision attached.
+   */
+  readonly errors: {
+    readonly submitFailed: string
+    readonly unexpected: string
+  }
+  /**
+   * The privacy acknowledgement, split so the link text is a separate string.
+   *
+   * OWNER-APPROVED in BOTH languages. Informational — it is NOT the cookie-consent
+   * mechanism, so "agree"/"accept"/"pristajete" phrasings are wrong here.
+   */
+  readonly privacy: {
+    readonly before: string
+    readonly linkText: string
+    readonly after: string
+    readonly href: string
+  }
+  readonly cta: {
+    readonly heading: string
+    readonly body: string
+    /** Exactly three cards, as the live page renders. The tuple type enforces that. */
+    readonly cards: readonly [ContactCtaCard, ContactCtaCard, ContactCtaCard]
+  }
+}
+
+export interface ContactCtaCard {
+  readonly title: string
+  readonly body: string
+}
+
 /** Every namespace a locale must provide. Add a namespace here and both locales break. */
 export interface Dictionary {
   readonly common: CommonDictionary
+  readonly contact: ContactDictionary
 }
 
 /**
@@ -68,8 +172,8 @@ export interface Dictionary {
  * error; `satisfies` keeps that check while preserving the literal types for callers.
  */
 export const dictionaries = {
-  en: { common: enCommon },
-  sr: { common: srCommon },
+  en: { common: enCommon, contact: enContact },
+  sr: { common: srCommon, contact: srContact },
 } as const satisfies Record<Locale, Dictionary>
 
 /**
@@ -82,18 +186,40 @@ export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale]
 }
 
+/** Namespaces every locale must provide, as literals for the runtime completeness test. */
+export const DICTIONARY_NAMESPACES = ['common', 'contact'] as const
+
+export type DictionaryNamespace = (typeof DICTIONARY_NAMESPACES)[number]
+
 /**
- * The namespace key sets, for the runtime completeness test.
+ * Every leaf key path in a namespace, sorted — e.g. `form.nameLabel`, `cta.cards.0.title`.
  *
- * The types already forbid a missing key, but `readonly x?: string` in the interface would
- * slip past them. test/i18n/dictionary.test.ts compares the actual key sets across locales
- * so an optional key cannot open that hole.
+ * The types already forbid a missing key, but `readonly x?: string` in an interface would
+ * slip past them. test/i18n/dictionary.test.ts compares these paths across locales so an
+ * optional key cannot open that hole.
  */
-export function dictionaryKeyReport(): Record<Locale, string[]> {
+export function dictionaryKeyReport(namespace: DictionaryNamespace = 'common'): Record<Locale, string[]> {
   const report = {} as Record<Locale, string[]>
   for (let i = 0; i < LOCALES.length; i += 1) {
     const locale = LOCALES[i]
-    report[locale] = Object.keys(dictionaries[locale].common).sort()
+    report[locale] = leafPaths(dictionaries[locale][namespace] as unknown as Record<string, unknown>).sort()
   }
   return report
+}
+
+/** Depth-first leaf paths of a plain nested object of strings. */
+function leafPaths(value: Record<string, unknown>, prefix = ''): string[] {
+  const out: string[] = []
+  const keys = Object.keys(value)
+  for (let i = 0; i < keys.length; i += 1) {
+    const key = keys[i]
+    const child = value[key]
+    const pathHere = prefix === '' ? key : `${prefix}.${key}`
+    if (child !== null && typeof child === 'object') {
+      out.push.apply(out, leafPaths(child as Record<string, unknown>, pathHere))
+    } else {
+      out.push(pathHere)
+    }
+  }
+  return out
 }

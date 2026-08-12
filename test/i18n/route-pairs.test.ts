@@ -3,12 +3,15 @@
  *
  * The point of this file is the NEGATIVE case. A pairing model is only useful if it refuses
  * to invent counterparts, so most of these tests assert that something is NOT produced:
- * no fake English GROW page, no live /sr/contact, no silent fallback to the locale home,
+ * no fake English GROW page, no live /sr/faq, no silent fallback to the locale home,
  * no alternate for a merely planned path.
  *
- * Synthetic maps are used for the "complete pair" behaviour, so the primitives can be
- * proven correct WITHOUT creating a real /sr route.
+ * Phase G created the first REAL pair (/contact <-> /sr/contact), so the reciprocal path is
+ * now asserted against the live map too. Synthetic maps are still used for the shapes the
+ * live map does not contain — a half-built pair, an excluded pair with two live sides — so
+ * those cases can be proven without creating more /sr routes.
  */
+
 import { describe, test, expect } from 'vitest'
 import {
   LEGACY_UNPREFIXED_SERBIAN_PATHS,
@@ -26,6 +29,9 @@ import {
   pairForPath,
   plannedPaths,
 } from '@/lib/locale-routes'
+
+/** The one genuinely complete pair in the live map. Everything else must stay unpaired. */
+const REAL_PAIR = { en: '/contact', sr: '/sr/contact' } as const
 
 /** A complete EN/SR pair, as a future rollout will produce. Not a real route. */
 const SYNTHETIC_COMPLETE: readonly RoutePair[] = [
@@ -155,9 +161,21 @@ describe('locale ownership of live paths', () => {
     }
   })
 
-  test('every live Serbian path is an explicitly allowlisted legacy unprefixed path', () => {
-    const srLive = livePathsFor('sr').slice().sort()
-    expect(srLive).toEqual([...LEGACY_UNPREFIXED_SERBIAN_PATHS].slice().sort())
+  test('/sr/contact is owned by sr, at a properly prefixed URL', () => {
+    expect(localeOfPath(REAL_PAIR.sr)).toBe('sr')
+  })
+
+  test('live Serbian paths are the legacy unprefixed set plus properly /sr-prefixed ones', () => {
+    // The legacy exception is closed: a NEW Serbian route must sit under /sr, and
+    // validateRoutePairs rejects any that does not.
+    const legacy: string[] = [...LEGACY_UNPREFIXED_SERBIAN_PATHS]
+    const srLive = livePathsFor('sr')
+    for (const path of srLive) {
+      const isLegacy = legacy.indexOf(path) !== -1
+      const isPrefixed = path === '/sr' || path.indexOf('/sr/') === 0
+      expect(isLegacy || isPrefixed, `${path} is neither legacy nor /sr-prefixed`).toBe(true)
+    }
+    expect(srLive.slice().sort()).toEqual(legacy.concat([REAL_PAIR.sr]).sort())
   })
 
   test('unclassified paths have NO locale — not a default of English', () => {
@@ -183,9 +201,27 @@ describe('locale ownership of live paths', () => {
 })
 
 describe('counterparts are never invented', () => {
-  test('NO live path on the site has a counterpart today', () => {
-    // The whole point of the phase: infrastructure exists, nothing is paired yet.
+  test('exactly two live paths have a counterpart: the real Contact pair', () => {
+    const withCounterpart = allLivePaths().filter((p) => counterpartFor(p) !== null)
+    expect(withCounterpart.slice().sort()).toEqual([REAL_PAIR.en, REAL_PAIR.sr].slice().sort())
+  })
+
+  test('the real pair resolves reciprocally', () => {
+    expect(counterpartFor(REAL_PAIR.en)).toEqual({
+      locale: 'sr',
+      path: REAL_PAIR.sr,
+      url: `https://www.infinus.co${REAL_PAIR.sr}`,
+    })
+    expect(counterpartFor(REAL_PAIR.sr)).toEqual({
+      locale: 'en',
+      path: REAL_PAIR.en,
+      url: `https://www.infinus.co${REAL_PAIR.en}`,
+    })
+  })
+
+  test('every OTHER live path still has no counterpart', () => {
     for (const path of allLivePaths()) {
+      if (path === REAL_PAIR.en || path === REAL_PAIR.sr) continue
       expect(counterpartFor(path), `${path} must have no counterpart`).toBeNull()
     }
   })
@@ -203,12 +239,22 @@ describe('counterparts are never invented', () => {
     }
   })
 
-  test('/contact has no Serbian counterpart yet, despite a planned URL', () => {
-    const pair = pairForPath('/contact')
+  test('/faq has no Serbian counterpart, despite a planned URL', () => {
+    const pair = pairForPath('/faq')
     expect(pair).not.toBeNull()
-    expect(pair!.sr).toEqual({ path: '/sr/contact', status: 'planned' })
+    expect(pair!.sr).toEqual({ path: '/sr/faq', status: 'planned' })
     // Declared, agreed, written down — and still not a destination.
-    expect(counterpartFor('/contact')).toBeNull()
+    expect(counterpartFor('/faq')).toBeNull()
+  })
+
+  test('flipping ONE side to live did not pair anything else', () => {
+    // Guards the specific Phase G risk: a status change that accidentally activates the
+    // whole planned set.
+    const stillPlanned = ['/sr', '/sr/faq', '/sr/projectpulse', '/sr/case-study/pharma2']
+    for (const path of stillPlanned) {
+      expect(plannedPaths(), `${path} must still be planned`).toContain(path)
+      expect(counterpartFor(path), `${path} must not resolve`).toBeNull()
+    }
   })
 
   test('excluded pages never produce a counterpart', () => {
@@ -249,10 +295,21 @@ describe('counterparts are never invented', () => {
 })
 
 describe('locale alternates', () => {
-  test('NO live path on the site produces alternates today', () => {
-    for (const path of allLivePaths()) {
-      expect(localeAlternatesFor(path), `${path} must produce no alternates`).toBeNull()
-    }
+  test('ONLY the real Contact pair produces alternates', () => {
+    const withAlternates = allLivePaths().filter((p) => localeAlternatesFor(p) !== null)
+    expect(withAlternates.slice().sort()).toEqual([REAL_PAIR.en, REAL_PAIR.sr].slice().sort())
+  })
+
+  test('the real pair emits the identical reciprocal set from both sides', () => {
+    const fromEn = localeAlternatesFor(REAL_PAIR.en)
+    const fromSr = localeAlternatesFor(REAL_PAIR.sr)
+    expect(fromEn).not.toBeNull()
+    expect(fromSr).toEqual(fromEn)
+    expect(fromEn!.languages).toEqual({
+      en: 'https://www.infinus.co/contact',
+      'sr-Latn': 'https://www.infinus.co/sr/contact',
+    })
+    expect(fromEn!.xDefault).toBe('https://www.infinus.co/contact')
   })
 
   test('a planned path produces no alternates', () => {
@@ -297,12 +354,13 @@ describe('locale alternates', () => {
 })
 
 describe('planned routes are inert', () => {
-  test('the planned set is exactly the /sr counterparts of the English pages', () => {
+  test('the planned set is /sr counterparts only, and no longer contains /sr/contact', () => {
     const planned = plannedPaths()
     expect(planned.length).toBeGreaterThan(0)
     for (const path of planned) {
       expect(path === '/sr' || path.indexOf('/sr/') === 0, `${path} must be under /sr`).toBe(true)
     }
+    expect(planned).not.toContain(REAL_PAIR.sr)
   })
 
   test('no planned path is also a live path', () => {

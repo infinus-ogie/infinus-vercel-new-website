@@ -87,7 +87,7 @@ describe('route fixture — counts match the verified build', () => {
     )
   })
 
-  test('the snapshot set is the 16 indexable pages plus the legal page', () => {
+  test('the snapshot set is the 17 indexable pages plus the legal page', () => {
     expect(publicPages()).toHaveLength(EXPECTED_COUNTS.snapshotPages)
     expect(publicPages().map((r) => r.path)).toContain('/politika-privatnosti')
   })
@@ -165,7 +165,9 @@ describe('route fixture — known issues are explicit', () => {
   test('the Serbian pages declare sr-Latn — the lang bug is fixed, not flagged', () => {
     // Phase E moved these under app/(sr)/, a second root layout emitting
     // <html lang="sr-Latn">. Before that they served Serbian copy under lang="en".
-    const serbian = ['/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/cfo']
+    // Phase G added /sr/contact, which is Serbian by construction: it sits under the
+    // Serbian root, so it inherits the same sr-Latn document root.
+    const serbian = ['/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/cfo', '/sr/contact']
     for (const path of serbian) {
       const route = ROUTES.find((r) => r.path === path)
       expect(route, `${path} must be in the fixture`).toBeDefined()

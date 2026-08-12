@@ -106,7 +106,15 @@ export const ROUTE_PAIRS: readonly RoutePair[] = [
   // Live in English. Serbian counterparts are PLANNED: no /sr/* route exists in the
   // build, so none of these pairs is complete and none produces an alternate today.
   { id: 'home', pairing: 'translatable', en: live('/'), sr: planned('/sr') },
-  { id: 'contact', pairing: 'translatable', en: live('/contact'), sr: planned('/sr/contact') },
+  {
+    // THE FIRST REAL PAIR (Phase G). Both sides are live, so this is the only entry in the
+    // map that produces a language-switcher destination and reciprocal hreflang. Every
+    // other Serbian side below is still `planned` and therefore still inert.
+    id: 'contact',
+    pairing: 'translatable',
+    en: live('/contact'),
+    sr: live('/sr/contact'),
+  },
   { id: 'faq', pairing: 'translatable', en: live('/faq'), sr: planned('/sr/faq') },
   {
     id: 'case-study-retail1',

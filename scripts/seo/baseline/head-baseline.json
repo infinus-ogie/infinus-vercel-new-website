@@ -702,6 +702,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/contact",
+        "sr-Latn => https://www.infinus.co/sr/contact",
+        "x-default => https://www.infinus.co/contact"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -1698,6 +1703,114 @@
       ],
       "canonical": [
         "https://www.infinus.co/sap-packaged-solutions/sap-starter-package"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/contact": {
+    "htmlLang": "sr-Latn",
+    "title": "Kontaktirajte Infinus - Stručna SAP podrška | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Kontaktirajte naše SAP stručnjake za implementaciju, podršku i konsultantske usluge. Obratite se kompaniji Infinus, vašem pouzdanom SAP Gold Partneru."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "Kontaktirajte Infinus - Stručna SAP podrška"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Kontaktirajte naše SAP stručnjake za implementaciju, podršku i konsultantske usluge. Obratite se kompaniji Infinus, vašem pouzdanom SAP Gold Partneru."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Kontaktirajte Infinus - Stručna SAP podrška"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Kontaktirajte naše SAP stručnjake za implementaciju, podršku i konsultantske usluge. Obratite se kompaniji Infinus, vašem pouzdanom SAP Gold Partneru."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "Kontaktirajte Infinus - Stručna SAP podrška"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "Kontaktirajte Infinus - Stručna SAP podrška"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/contact"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/contact",
+        "sr-Latn => https://www.infinus.co/sr/contact",
+        "x-default => https://www.infinus.co/contact"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/contact"
       ],
       "icon": [
         "/favicon.ico"

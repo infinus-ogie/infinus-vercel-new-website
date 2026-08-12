@@ -1,34 +1,46 @@
-import { Container } from "@/components/ui/container"
-import { Section } from "@/components/ui/section"
-import { Breadcrumbs } from "@/components/layout/breadcrumbs"
-import { Contact2 } from "@/components/ui/contact-2"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock,
-  MessageSquare,
-  Users
-} from "lucide-react"
+import { ContactPage } from "@/components/pages/ContactPage"
+import { getDictionary } from "@/content/dictionary"
 import { generatePageMetadata } from "@/lib/seo"
-import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
+import { localeAlternatesMetadata } from "@/lib/seo-i18n"
 import { createSimplePageConfig } from "@/lib/auto-jsonld"
+import { LOCALE_META } from "@/lib/i18n"
 
-// SEO Metadata
-export const metadata = generatePageMetadata(
-  "Contact Infinus - Get Expert SAP Support",
-  "Contact our SAP experts for implementation, support, and consulting services. Get in touch with Infinus, your trusted SAP Gold Partner.",
-  "/contact"
-)
+/**
+ * ENGLISH Contact page — the English half of the site's first real locale pair.
+ *
+ * Phase G changed how this file is assembled, not what it renders. The page body moved to
+ * components/pages/ContactPage.tsx (shared with /sr/contact) and every string moved to
+ * content/en/contact.ts verbatim, so the visible English copy is byte-for-byte what it was.
+ *
+ * The ONE intentional head change: `alternates` now carries real reciprocal hreflang,
+ * because /sr/contact exists. lib/seo-i18n.ts derives that from the route-pair map and
+ * would emit nothing if the Serbian side were missing or merely planned.
+ */
 
-// Page Config - Single source of truth for content and JSON-LD
-// Change text here and JSON-LD automatically updates
+const PATH = "/contact"
+const content = getDictionary("en").contact
+
+export const metadata = {
+  ...generatePageMetadata(content.metadata.title, content.metadata.description, PATH),
+  // Replaces the plain { canonical } the shared helper produces. Same canonical, plus
+  // en / sr-Latn / x-default — the first hreflang the site has ever emitted.
+  alternates: localeAlternatesMetadata(PATH),
+}
+
+/**
+ * Page config — single source of truth for JSON-LD.
+ *
+ * The FAQ entries are unchanged from before Phase G. NOTE: they contain placeholder contact
+ * data ("+1 (555) 123-4567", "9 AM to 6 PM EST", contact@infinus.co) that contradicts the
+ * real details on the page. Pre-existing and out of scope here — flagged rather than fixed,
+ * and deliberately NOT carried over into the Serbian page's structured data.
+ */
 const pageConfig = createSimplePageConfig(
-  "/contact",
-  "Contact Infinus - Get Expert SAP Support",
-  "Contact our SAP experts for implementation, support, and consulting services. Get in touch with Infinus, your trusted SAP Gold Partner.",
+  PATH,
+  content.metadata.title,
+  content.metadata.description,
   {
+    language: LOCALE_META.en.jsonLdLanguage,
     faqs: [
       {
         question: "How can I contact Infinus for SAP services?",
@@ -51,80 +63,6 @@ const pageConfig = createSimplePageConfig(
   }
 )
 
-// Contact information
-const contactInfo = [
-  {
-    icon: Mail,
-    title: "Email Us",
-    description: "Send us an email anytime",
-    details: "office@infinus.rs",
-    href: "mailto:office@infinus.rs"
-  },
-  {
-    icon: MapPin,
-    title: "Visit Us",
-    description: "Our office location",
-    details: "Infinus d.o.o.\nTresnjinog cveta 1\n11070 Belgrade, Serbia",
-    href: "#"
-  }
-]
-
-export default function ContactPage() {
-  return (
-    <>
-      {/* Auto-generated JSON-LD - updates automatically when pageConfig changes */}
-      <AutoJsonLd config={pageConfig} />
-
-
-      {/* New Contact Design */}
-      <Contact2 
-        title="Start your SAP transformation"
-        description="Ready to transform your business with SAP? Get in touch with our expert team for implementation, support, and consulting services. We're here to help you succeed."
-        email="office@infinus.rs"
-        address="Tresnjinog cveta 1, Belgrade, Serbia"
-        web={{ label: "infinus.co", url: "https://infinus.co" }}
-      />
-
-      {/* CTA Section */}
-      <Section>
-        <Container>
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to Get Started?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Join satisfied clients who have transformed their business 
-              with our SAP expertise. Contact us today for a free consultation.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-              <div className="flex flex-col items-center">
-                <Users className="h-8 w-8 text-primary mb-2" />
-                <h3 className="font-semibold mb-1">Expert Team</h3>
-                <p className="text-sm text-muted-foreground">
-                  Certified SAP professionals with deep industry expertise
-                </p>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <MessageSquare className="h-8 w-8 text-primary mb-2" />
-                <h3 className="font-semibold mb-1">Free Consultation</h3>
-                <p className="text-sm text-muted-foreground">
-                  Get expert advice on your SAP implementation needs
-                </p>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <Clock className="h-8 w-8 text-primary mb-2" />
-                <h3 className="font-semibold mb-1">Quick Response</h3>
-                <p className="text-sm text-muted-foreground">
-                  We respond to all inquiries within 24 hours
-                </p>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </Section>
-    </>
-  )
+export default function EnglishContactPage() {
+  return <ContactPage content={content} jsonLd={pageConfig} />
 }

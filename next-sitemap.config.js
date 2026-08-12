@@ -47,7 +47,9 @@ module.exports = {
     '/privacy', // permanent redirect -> /politika-privatnosti (no longer a page)
   ],
   transform: async (config, path) => {
-    const keyRoutes = ['/', '/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/contact', '/faq'];
+    // /sr/contact is the Serbian half of the same page as /contact, so it carries the same
+    // priority. Reciprocal hreflang lives in each page's <head>, not in the sitemap.
+    const keyRoutes = ['/', '/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/contact', '/sr/contact', '/faq'];
     const priority = keyRoutes.includes(path) ? 0.8 : 0.7;
 
     return {

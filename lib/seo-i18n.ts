@@ -38,11 +38,18 @@ type MetadataLanguages = NonNullable<MetadataAlternates['languages']>
  *
  * For everything else: exactly `{ canonical }`.
  *
- * OPEN DECISION for the rollout phase: the Serbian hreflang token is `sr-Latn`, matching
- * the `<html lang>` the Serbian root layout already emits. The alternative is the
- * region-specific `sr-Latn-RS` the existing JSON-LD uses. Both are valid BCP-47 and the
- * choice widens or narrows targeting, so it belongs to the owner rather than being baked
- * in silently while no hreflang is emitted at all.
+ * APPROVED LANGUAGE-TOKEN CONVENTION (owner decision, Phase G):
+ *
+ *   surface                     English   Serbian
+ *   <html lang>                 en        sr-Latn
+ *   hreflang / x-default        en        sr-Latn
+ *   schema.org inLanguage       en-US     sr-Latn-RS   (existing behaviour, unchanged)
+ *   og:locale                   en_US     sr_RS        (existing behaviour, unchanged)
+ *
+ * The Serbian site is a Serbian-Latin LANGUAGE version, not a Serbia-specific regional
+ * variant, so hreflang uses the script-only `sr-Latn` and deliberately not `sr-Latn-RS`.
+ * The two region-tagged values above are pre-existing output in JSON-LD and OpenGraph;
+ * changing either is out of scope and would alter live pages.
  */
 export function localeAlternatesMetadata(path: string, pairs?: readonly RoutePair[]): MetadataAlternates {
   const canonical = absoluteUrl(path)
@@ -53,8 +60,8 @@ export function localeAlternatesMetadata(path: string, pairs?: readonly RoutePai
   }
 
   // Next types `languages` as a closed union of language codes. It contains 'en' and
-  // 'sr-Latn-RS' but NOT the script-only 'sr-Latn' this site uses for <html lang>, so the
-  // key set needs one assertion. Scoped to this single boundary; values stay typed.
+  // 'sr-Latn-RS' but NOT the approved script-only 'sr-Latn', so the key set needs one
+  // assertion. Scoped to this single boundary; values stay typed.
   const languages = {
     ...alternates.languages,
     'x-default': alternates.xDefault,

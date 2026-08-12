@@ -7,37 +7,68 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 import { CheckCircle, Upload, Mail, MapPin, Globe } from "lucide-react";
+import type { ContactDictionary } from "@/content/dictionary";
 
-const contactFormSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  subject: z.string().min(5, "Subject must be at least 5 characters"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
-  attachment: z.any().optional()
-})
+/**
+ * The live contact form.
+ *
+ * Phase G made it LOCALE-AWARE by turning every hardcoded string into a lookup on a typed
+ * `content` object. What deliberately did NOT change:
+ *
+ *   · one behavioural implementation — validation rules, FormData construction, the
+ *     fetch to /api/contact, loading/success/error state machine. There is no Serbian
+ *     copy of any of it.
+ *   · the API contract. FormData keys stay `name`, `email`, `subject`, `message`,
+ *     `phone`, `attachment` regardless of the visitor's language, so /api/contact and
+ *     lib/email.ts need no change and no locale awareness.
+ *   · the validation RULES (min 2 / 5 / 10 characters, email format). Only the messages
+ *     are translated, via the schema factory below.
+ *
+ * KNOWN BUG, deliberately left alone: `errors.general` is set on failure but never
+ * rendered, so a submission error is invisible to the visitor. `content.errors` carries the
+ * copy in both languages so that fixing this later is a rendering change with no copy
+ * decision attached.
+ */
 
-type ContactFormData = z.infer<typeof contactFormSchema>
+/**
+ * Validation schema built from locale-specific messages.
+ *
+ * A factory rather than a module constant because the messages differ per locale while the
+ * rules must not. Called once per render — cheap, and it keeps the rules in exactly one place.
+ */
+function createContactFormSchema(messages: ContactDictionary["validation"]) {
+  return z.object({
+    name: z.string().min(2, messages.name),
+    email: z.string().email(messages.email),
+    phone: z.string().optional(),
+    subject: z.string().min(5, messages.subject),
+    message: z.string().min(10, messages.message),
+    attachment: z.any().optional()
+  })
+}
+
+type ContactFormData = {
+  name: string
+  email: string
+  phone?: string
+  subject: string
+  message: string
+  attachment?: unknown
+}
 
 interface FormErrors {
   [key: string]: string
 }
 
 interface Contact2Props {
-  title?: string;
-  description?: string;
-  email?: string;
-  address?: string;
-  web?: { label: string; url: string };
+  /** All user-facing copy for this locale. See content/{en,sr}/contact.ts. */
+  content: ContactDictionary;
 }
 
-export const Contact2 = ({
-  title = "Contact Our SAP Experts",
-  description = "Ready to transform your business with SAP? Get in touch with our expert team for implementation, support, and consulting services. We're here to help you succeed.",
-  email = "office@infinus.rs",
-  address = "Tresnjinog cveta 1, Belgrade, Serbia",
-  web = { label: "infinus.co", url: "https://infinus.co" },
-}: Contact2Props) => {
+export const Contact2 = ({ content }: Contact2Props) => {
+  const { details, form, success, privacy } = content
+  const contactFormSchema = createContactFormSchema(content.validation)
+
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -46,7 +77,7 @@ export const Contact2 = ({
     message: "",
     attachment: null
   })
-  
+
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -57,12 +88,15 @@ export const Contact2 = ({
   useEffect(() => {
     const result = contactFormSchema.safeParse(formData)
     setIsValid(result.success)
+    // contactFormSchema is rebuilt each render from immutable content; the rules it
+    // encodes never change, so formData is the only meaningful dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }))
@@ -82,8 +116,9 @@ export const Contact2 = ({
     try {
       // Validate form data
       const validatedData = contactFormSchema.parse(formData)
-      
-      // Create FormData to handle file uploads
+
+      // Create FormData to handle file uploads.
+      // These keys are the API contract and are NOT translated.
       const formDataToSend = new FormData()
       formDataToSend.append('name', validatedData.name)
       formDataToSend.append('email', validatedData.email)
@@ -93,9 +128,9 @@ export const Contact2 = ({
         formDataToSend.append('phone', validatedData.phone)
       }
       if (validatedData.attachment) {
-        formDataToSend.append('attachment', validatedData.attachment)
+        formDataToSend.append('attachment', validatedData.attachment as Blob)
       }
-      
+
       // Submit to API
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -115,7 +150,7 @@ export const Contact2 = ({
           message: "",
           attachment: null
         })
-        
+
         // Show warning if attachment couldn't be processed
         if (result.warning) {
           console.warn("Attachment warning:", result.warning)
@@ -123,7 +158,7 @@ export const Contact2 = ({
         }
       } else {
         console.error("Form submission failed:", result.message)
-        setErrors({ general: result.message || "Failed to send message. Please try again." })
+        setErrors({ general: result.message || content.errors.submitFailed })
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -136,7 +171,7 @@ export const Contact2 = ({
         setErrors(fieldErrors)
       } else {
         console.error("Error submitting form:", error)
-        setErrors({ general: "An error occurred. Please try again." })
+        setErrors({ general: content.errors.unexpected })
       }
     } finally {
       setIsSubmitting(false)
@@ -149,9 +184,9 @@ export const Contact2 = ({
         <div className="container">
           <div className="mx-auto max-w-2xl text-center">
             <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-green-600 mb-2">Thank You!</h2>
+            <h2 className="text-2xl font-bold text-green-600 mb-2">{success.heading}</h2>
             <p className="text-gray-600 mb-6">
-              Your message has been sent successfully. We'll get back to you soon.
+              {success.body}
             </p>
             {warning && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
@@ -162,9 +197,9 @@ export const Contact2 = ({
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-yellow-800">Attachment Notice</h3>
+                    <h3 className="text-sm font-medium text-yellow-800">{success.attachmentNoticeHeading}</h3>
                     <div className="mt-2 text-sm text-yellow-700">
-                      <p>Your message was sent successfully, but the attachment could not be processed. Please try sending the file separately or contact us directly.</p>
+                      <p>{success.attachmentNoticeBody}</p>
                     </div>
                   </div>
                 </div>
@@ -174,7 +209,7 @@ export const Contact2 = ({
               setIsSubmitted(false)
               setWarning(null)
             }} variant="outline">
-              Send Another Message
+              {success.sendAnother}
             </Button>
           </div>
         </div>
@@ -189,37 +224,37 @@ export const Contact2 = ({
           <div className="mx-auto flex max-w-sm flex-col justify-between gap-10">
             <div className="text-center lg:text-left">
               <h1 className="mb-2 text-5xl font-semibold lg:mb-1 lg:text-6xl">
-                {title}
+                {content.hero.heading}
               </h1>
-              <p className="text-muted-foreground">{description}</p>
+              <p className="text-muted-foreground">{content.hero.description}</p>
             </div>
             <div className="mx-auto w-fit lg:mx-0">
               <h3 className="mb-6 text-center text-2xl font-semibold lg:text-left">
-                Contact Details
+                {details.heading}
               </h3>
               <ul className="space-y-4">
                 <li className="flex items-center space-x-3">
                   <Mail className="h-5 w-5 text-primary" />
                   <div>
-                    <span className="font-bold">Email: </span>
-                    <a href={`mailto:${email}`} className="underline">
-                      {email}
+                    <span className="font-bold">{details.emailLabel}</span>
+                    <a href={`mailto:${details.email}`} className="underline">
+                      {details.email}
                     </a>
                   </div>
                 </li>
                 <li className="flex items-center space-x-3">
                   <MapPin className="h-5 w-5 text-primary" />
                   <div>
-                    <span className="font-bold">Address: </span>
-                    <span>{address}</span>
+                    <span className="font-bold">{details.addressLabel}</span>
+                    <span>{details.address}</span>
                   </div>
                 </li>
                 <li className="flex items-center space-x-3">
                   <Globe className="h-5 w-5 text-primary" />
                   <div>
-                    <span className="font-bold">Web: </span>
-                    <a href={web.url} target="_blank" rel="noopener noreferrer" className="underline">
-                      {web.label}
+                    <span className="font-bold">{details.webLabel}</span>
+                    <a href={details.web.url} target="_blank" rel="noopener noreferrer" className="underline">
+                      {details.web.label}
                     </a>
                   </div>
                 </li>
@@ -230,14 +265,14 @@ export const Contact2 = ({
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex gap-4">
                 <div className="grid w-full items-center gap-1.5">
-                  <Label htmlFor="name">Name *</Label>
-                  <Input 
-                    type="text" 
-                    id="name" 
+                  <Label htmlFor="name">{form.nameLabel}</Label>
+                  <Input
+                    type="text"
+                    id="name"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="Your full name" 
+                    placeholder={form.namePlaceholder}
                     className={errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
                     aria-invalid={errors.name ? "true" : "false"}
                     aria-describedby={errors.name ? "name-error" : undefined}
@@ -250,26 +285,26 @@ export const Contact2 = ({
                   )}
                 </div>
                 <div className="grid w-full items-center gap-1.5">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input 
-                    type="tel" 
-                    id="phone" 
+                  <Label htmlFor="phone">{form.phoneLabel}</Label>
+                  <Input
+                    type="tel"
+                    id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="Phone number" 
+                    placeholder={form.phonePlaceholder}
                   />
                 </div>
               </div>
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="email">Email *</Label>
-                <Input 
-                  type="email" 
-                  id="email" 
+                <Label htmlFor="email">{form.emailLabel}</Label>
+                <Input
+                  type="email"
+                  id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="your.email@example.com" 
+                  placeholder={form.emailPlaceholder}
                   className={errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
                   aria-invalid={errors.email ? "true" : "false"}
                   aria-describedby={errors.email ? "email-error" : undefined}
@@ -282,14 +317,14 @@ export const Contact2 = ({
                 )}
               </div>
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="subject">Subject *</Label>
-                <Input 
-                  type="text" 
-                  id="subject" 
+                <Label htmlFor="subject">{form.subjectLabel}</Label>
+                <Input
+                  type="text"
+                  id="subject"
                   name="subject"
                   value={formData.subject}
                   onChange={handleInputChange}
-                  placeholder="What's this about?" 
+                  placeholder={form.subjectPlaceholder}
                   className={errors.subject ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
                   aria-invalid={errors.subject ? "true" : "false"}
                   aria-describedby={errors.subject ? "subject-error" : undefined}
@@ -302,10 +337,10 @@ export const Contact2 = ({
                 )}
               </div>
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="message">Message *</Label>
-                <Textarea 
-                  placeholder="Tell us about your SAP needs or project requirements..." 
-                  id="message" 
+                <Label htmlFor="message">{form.messageLabel}</Label>
+                <Textarea
+                  placeholder={form.messagePlaceholder}
+                  id="message"
                   name="message"
                   value={formData.message}
                   onChange={handleInputChange}
@@ -322,7 +357,7 @@ export const Contact2 = ({
                 )}
               </div>
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="attachment">Attachment</Label>
+                <Label htmlFor="attachment">{form.attachmentLabel}</Label>
                 <div className="relative">
                   <Input
                     id="attachment"
@@ -335,24 +370,25 @@ export const Contact2 = ({
                   <Upload className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                 </div>
                 <p className="text-xs text-gray-500">
-                  Supported formats: PDF, DOC, DOCX, TXT (max 10MB)
+                  {form.attachmentHint}
                 </p>
               </div>
-              {/* Owner-approved wording. This is an informational acknowledgement,
-                  NOT the cookie-consent mechanism — do not reword to "agree"/"accept". */}
+              {/* Owner-approved wording in BOTH languages. This is an informational
+                  acknowledgement, NOT the cookie-consent mechanism — do not reword to
+                  "agree"/"accept" or "pristajete"/"prihvatate". */}
               <div className="text-xs text-gray-600">
-                By submitting this form, you confirm that you have read our{" "}
-                <a href="/politika-privatnosti" className="text-primary hover:underline">
-                  Privacy Policy
+                {privacy.before}
+                <a href={privacy.href} className="text-primary hover:underline">
+                  {privacy.linkText}
                 </a>
-                .
+                {privacy.after}
               </div>
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                type="submit"
+                className="w-full"
                 disabled={isSubmitting || !isValid}
               >
-                {isSubmitting ? "Sending..." : "Send Message"}
+                {isSubmitting ? form.submitting : form.submit}
               </Button>
             </form>
           </div>

@@ -2,6 +2,7 @@
 
 import { Home, User, Briefcase, FileText, MessageCircle, HelpCircle, ChevronDown, Zap, Users, Menu, X, Star, BookOpen } from 'lucide-react'
 import { NavBar } from "@/components/ui/tubelight-navbar"
+import { LocaleSwitcherNav } from "@/components/i18n/LocaleSwitcherNav"
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
@@ -78,8 +79,19 @@ export function NavBarDemo() {
     <nav aria-label="Main" className="fixed top-0 left-0 right-0 z-50 pt-6">
       <div className="container-custom">
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center justify-center">
+        {/* `relative` anchors the language switcher; it has no visual effect on its own.
+            LocaleSwitcherNav renders NOTHING unless the current page has a real locale
+            counterpart, so on every other page this row's DOM is unchanged. */}
+        <div className="hidden md:flex items-center justify-center relative">
           <NavBar items={navItems} />
+          <LocaleSwitcherNav
+            className={cn(
+              "absolute right-0 top-1/2 -translate-y-1/2 rounded-full border px-3 py-1.5 backdrop-blur-lg transition-colors",
+              textColor === 'text-white/90'
+                ? "bg-black/20 border-white/20 text-white/90"
+                : "bg-slate-200/80 border-slate-300 text-slate-700"
+            )}
+          />
         </div>
 
         {/* Mobile Navigation */}
@@ -102,6 +114,17 @@ export function NavBarDemo() {
                 <Home size={20} />
               </div>
             </Link>
+
+            {/* Language switcher — renders nothing on pages without a real counterpart,
+                leaving this row exactly as it was. */}
+            <LocaleSwitcherNav
+              className={cn(
+                "rounded-full border px-3 py-1.5 backdrop-blur-lg transition-colors",
+                textColor === 'text-white/90'
+                  ? "bg-black/20 border-white/20 text-white/90"
+                  : "bg-slate-200/80 border-slate-300 text-slate-700"
+              )}
+            />
 
             {/* Hamburger Menu - Right */}
             <button

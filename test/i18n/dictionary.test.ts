@@ -14,42 +14,93 @@
  */
 import { describe, test, expect } from 'vitest'
 import { LOCALES, type Locale } from '@/lib/i18n'
-import { dictionaries, dictionaryKeyReport, getDictionary, type CommonDictionary } from '@/content/dictionary'
+import {
+  DICTIONARY_NAMESPACES,
+  dictionaries,
+  dictionaryKeyReport,
+  getDictionary,
+  type CommonDictionary,
+} from '@/content/dictionary'
 
 describe('the registry covers every locale', () => {
   test('one dictionary per supported locale, and no extras', () => {
     expect(Object.keys(dictionaries).sort()).toEqual([...LOCALES].slice().sort())
   })
 
-  test('getDictionary is total over Locale', () => {
+  test('getDictionary is total over Locale, for every namespace', () => {
     for (const locale of LOCALES) {
       const dictionary = getDictionary(locale)
       expect(dictionary, locale).toBeDefined()
-      expect(dictionary.common, `${locale}.common`).toBeDefined()
+      for (const namespace of DICTIONARY_NAMESPACES) {
+        expect(dictionary[namespace], `${locale}.${namespace}`).toBeDefined()
+      }
+    }
+  })
+
+  test('every locale exposes exactly the declared namespaces', () => {
+    for (const locale of LOCALES) {
+      expect(Object.keys(getDictionary(locale)).sort()).toEqual([...DICTIONARY_NAMESPACES].slice().sort())
     }
   })
 })
 
 describe('shapes are identical across locales', () => {
-  test('both locales expose exactly the same key set', () => {
-    const report = dictionaryKeyReport()
-    expect(report.sr).toEqual(report.en)
+  test('both locales expose exactly the same key paths, in every namespace', () => {
+    for (const namespace of DICTIONARY_NAMESPACES) {
+      const report = dictionaryKeyReport(namespace)
+      expect(report.sr, namespace).toEqual(report.en)
+      expect(report.en.length, `${namespace} looks empty`).toBeGreaterThan(0)
+    }
   })
 
-  test('no key is optional, empty or non-string in any locale', () => {
-    // An optional key in CommonDictionary would let a locale omit it and still compile.
-    const keys = dictionaryKeyReport().en
-    expect(keys.length).toBeGreaterThan(0)
+  test('the contact namespace has the full set of leaf keys the page needs', () => {
+    // Spot-check the paths a missing translation would silently drop. `cta.cards.N.*` also
+    // proves the tuple type kept exactly three cards in both locales.
+    const keys = dictionaryKeyReport('contact').en
+    for (const key of [
+      'metadata.title',
+      'metadata.description',
+      'hero.heading',
+      'form.nameLabel',
+      'form.messagePlaceholder',
+      'form.submit',
+      'form.submitting',
+      'validation.email',
+      'success.heading',
+      'errors.submitFailed',
+      'privacy.before',
+      'privacy.linkText',
+      'cta.cards.0.title',
+      'cta.cards.2.body',
+    ]) {
+      expect(keys, `contact.${key} missing`).toContain(key)
+    }
+    expect(keys).not.toContain('cta.cards.3.title')
+  })
 
-    for (const locale of LOCALES) {
-      const common = getDictionary(locale).common as unknown as Record<string, unknown>
-      for (const key of keys) {
-        expect(typeof common[key], `${locale}.common.${key}`).toBe('string')
-        expect((common[key] as string).length, `${locale}.common.${key} is empty`).toBeGreaterThan(0)
+  test('no key is optional, empty or non-string in any locale or namespace', () => {
+    // An optional key in an interface would let a locale omit it and still compile.
+    for (const namespace of DICTIONARY_NAMESPACES) {
+      const paths = dictionaryKeyReport(namespace).en
+      for (const locale of LOCALES) {
+        for (const path of paths) {
+          const value = resolvePath(getDictionary(locale)[namespace] as unknown as Record<string, unknown>, path)
+          expect(typeof value, `${locale}.${namespace}.${path}`).toBe('string')
+          expect((value as string).length, `${locale}.${namespace}.${path} is empty`).toBeGreaterThan(0)
+        }
       }
     }
   })
 })
+
+function resolvePath(root: Record<string, unknown>, path: string): unknown {
+  const segments = path.split('.')
+  let node: unknown = root
+  for (let i = 0; i < segments.length; i += 1) {
+    node = (node as Record<string, unknown>)[segments[i]]
+  }
+  return node
+}
 
 describe('no silent English fallback', () => {
   test('the Serbian dictionary shares no value with the English one', () => {

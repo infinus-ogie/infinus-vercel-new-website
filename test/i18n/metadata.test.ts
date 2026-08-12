@@ -1,12 +1,9 @@
 /**
  * Metadata / hreflang primitive guards.
  *
- * The load-bearing assertion in this file is the boring one: for every real path on the
- * site, `localeAlternatesMetadata` returns a canonical and NOTHING ELSE. Zero hreflang is
- * the correct output today, because not one genuine EN/SR pair exists.
- *
- * The reciprocal-pair behaviour is proven against synthetic data, so the primitive can be
- * trusted before any /sr route is created.
+ * Phase G made exactly one pair real, so the load-bearing assertions are now two-sided:
+ * /contact and /sr/contact must produce the complete reciprocal set, and every other path on
+ * the site must still produce a canonical and NOTHING ELSE.
  */
 import { describe, test, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
@@ -15,9 +12,12 @@ import { localeAlternatesMetadata } from '@/lib/seo-i18n'
 import { allLivePaths, localeAlternatesFor, plannedPaths } from '@/lib/locale-routes'
 import { PRODUCTION_ORIGIN, publicPages } from '../fixtures/routes'
 
-describe('no hreflang is produced for anything that exists today', () => {
-  test('every live path yields a canonical and no languages', () => {
+const PAIR = ['/contact', '/sr/contact']
+
+describe('no hreflang is produced for anything outside the real pair', () => {
+  test('every live path except the pair yields a canonical and no languages', () => {
     for (const path of allLivePaths()) {
+      if (PAIR.indexOf(path) !== -1) continue
       const alternates = localeAlternatesMetadata(path)
       expect(Object.keys(alternates).sort(), path).toEqual(['canonical'])
       expect(alternates.languages, path).toBeUndefined()
@@ -47,7 +47,42 @@ describe('no hreflang is produced for anything that exists today', () => {
   })
 })
 
-describe('reciprocal alternates for a complete pair', () => {
+describe('the real Contact pair emits reciprocal alternates', () => {
+  test('both halves emit the identical complete set, including x-default', () => {
+    const expected = {
+      en: `${PRODUCTION_ORIGIN}/contact`,
+      'sr-Latn': `${PRODUCTION_ORIGIN}/sr/contact`,
+      'x-default': `${PRODUCTION_ORIGIN}/contact`,
+    }
+    for (const path of PAIR) {
+      expect(localeAlternatesMetadata(path).languages, path).toEqual(expected)
+    }
+  })
+
+  test('each half keeps its OWN self-canonical', () => {
+    expect(localeAlternatesMetadata('/contact').canonical).toBe(`${PRODUCTION_ORIGIN}/contact`)
+    expect(localeAlternatesMetadata('/sr/contact').canonical).toBe(`${PRODUCTION_ORIGIN}/sr/contact`)
+  })
+
+  test('x-default is the English URL on BOTH halves', () => {
+    for (const path of PAIR) {
+      const languages = localeAlternatesMetadata(path).languages as Record<string, string>
+      expect(languages['x-default'], path).toBe(`${PRODUCTION_ORIGIN}/contact`)
+      expect(languages['x-default'], path).toBe(languages.en)
+    }
+  })
+
+  test('each half lists itself among its alternates', () => {
+    for (const path of PAIR) {
+      const languages = localeAlternatesMetadata(path).languages as Record<string, string>
+      const self = `${PRODUCTION_ORIGIN}${path}`
+      const values = Object.keys(languages).map((k) => languages[k])
+      expect(values, `${path} must self-reference`).toContain(self)
+    }
+  })
+})
+
+describe('reciprocal alternates for a synthetic complete pair', () => {
   const synthetic = [
     {
       id: 'synthetic-faq',

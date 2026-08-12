@@ -4,28 +4,32 @@
  *   npm run seo:assert-i18n
  *
  * The unit tests in test/i18n/ prove the primitives behave correctly. This script proves
- * something they cannot: that the SHIPPED BUILD contains none of it. The i18n foundation is
- * only safe while it is inert, and "inert" is a property of the output, not of the model.
+ * something they cannot: what the SHIPPED BUILD actually contains.
  *
- * A. No /sr route exists — not in the route manifest, not as prerendered HTML, not in
- *    the sitemap. No Serbian URL launches in this phase.
+ * Phase F asserted the foundation was entirely inert. Phase G turned on ONE pair, so the
+ * claim under test changed shape: exactly the real pair may emit locale output, and
+ * everything else must still emit none. That distinction is the whole safety story, so it is
+ * asserted per-document rather than in aggregate.
+ *
+ * A. The /sr URL space contains ONLY the live Serbian paths the route map declares.
+ *    /sr itself, /sr/faq, /sr/grow and every other planned path must be absent.
  * B. No planned path from content/routes.ts exists as a real route.
- * C. Zero hreflang: no <link rel="alternate" hreflang> and no x-default in ANY prerendered
- *    document. There is no genuine EN/SR pair, so any hreflang would be a lie to crawlers.
- * D. No visible language switcher: the component's marker attribute appears in no document,
- *    and the shared chrome does not import it.
- * E. Every `live` path in the route-pair map is a real route in the manifest, and its
- *    document declares the <html lang> its locale implies. A pair map that points at a
- *    nonexistent page would produce a broken switcher the moment it is turned on.
- * F. The route-pair map is structurally sound (validateRoutePairs), checked here too so a
- *    broken map fails the build gate and not only the unit suite.
- * G. The foundation is INERT: no page, layout or shared SEO helper imports it, so it
- *    contributes nothing to any shipped bundle. Verified against source because a stray
- *    import breaks no behavioural assertion — it only moves bytes.
+ * C. Reciprocal hreflang, on the real pair and NOWHERE ELSE:
+ *      · each page of a complete pair emits one <link rel="alternate" hreflang> per locale
+ *        plus x-default, with the exact absolute URLs the map implies
+ *      · both halves emit the IDENTICAL set — a one-way annotation is ignored by crawlers
+ *      · x-default points at the default locale (English)
+ *      · every self-reference is present (a page must list itself)
+ *      · every other prerendered document emits zero hreflang and zero rel="alternate"
+ * D. The language switcher renders ONLY on pages with a real counterpart, and never links
+ *    to a path the map does not declare live.
+ * E. Every `live` path in the map is a real route in the manifest whose document declares
+ *    the <html lang> its locale implies, and whose canonical is self-referential.
+ * F. The route-pair map is structurally sound (validateRoutePairs).
  *
- * Assertion C scans the served <head> rather than the source: hreflang can be emitted by
- * Next from `alternates.languages` anywhere in the metadata chain, so the document is the
- * only trustworthy place to look.
+ * Assertion C scans the served <head>, not the source: Next can emit hreflang from
+ * `alternates.languages` anywhere in the metadata chain, so the document is the only
+ * trustworthy place to look.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -34,6 +38,7 @@ import {
   assertBuildExists,
   headOf,
   htmlLang,
+  linkByRel,
   listRenderedHtml,
   main,
   readManifest,
@@ -41,22 +46,34 @@ import {
   routePathForHtml,
 } from './lib/build-output'
 import { ROUTE_PAIRS, validateRoutePairs } from '../../content/routes'
-import { allLivePaths, localeOfPath, plannedPaths } from '../../lib/locale-routes'
-import { htmlLangFor } from '../../lib/i18n'
+import { allLivePaths, localeAlternatesFor, localeOfPath, plannedPaths } from '../../lib/locale-routes'
+import { DEFAULT_LOCALE, LOCALES, LOCALE_META, absoluteUrl, htmlLangFor } from '../../lib/i18n'
 
 const SITEMAP_URLSET = 'public/sitemap-0.xml'
 
-/** Chrome files that must not mount the switcher. */
-const CHROME_FILES = [
-  'components/shell/RootShell.tsx',
-  'components/shell/SiteChrome.tsx',
-  'components/ui/navbar-demo.tsx',
-  // The footer SiteChrome actually renders (components/layout/footer.tsx is unused).
-  'components/ui/footer.tsx',
-]
-
 function isSerbianPrefixed(routePath: string): boolean {
   return routePath === '/sr' || routePath.indexOf('/sr/') === 0
+}
+
+/**
+ * `hreflang` values of every <link rel="alternate"> in a head, in document order.
+ *
+ * Matched case-INSENSITIVELY on purpose: React serialises the JSX `hrefLang` prop as the
+ * camelCase attribute `hrefLang="…"`, not lowercase `hreflang="…"`. HTML attribute names are
+ * case-insensitive so browsers and crawlers read it identically, but a case-sensitive check
+ * here would silently find zero alternates and report a false PASS.
+ */
+function alternateHreflangs(head: string): string[] {
+  const re = /<link[^>]*\srel="alternate"[^>]*>/gi
+  const out: string[] = []
+  let m: RegExpExecArray | null
+  while ((m = re.exec(head)) !== null) {
+    const tag = m[0]
+    const lang = /\shreflang="([^"]*)"/i.exec(tag)
+    const href = /\shref="([^"]*)"/i.exec(tag)
+    out.push(`${lang ? lang[1] : '(none)'} => ${href ? href[1] : '(none)'}`)
+  }
+  return out
 }
 
 main(() => {
@@ -72,30 +89,77 @@ main(() => {
   // ── F: the map itself ──────────────────────────────────────────────────────────
   const problems = validateRoutePairs()
   report.check(problems.length === 0, `content/routes.ts is invalid: ${problems.join('; ')}`)
-  report.note(`${ROUTE_PAIRS.length} route pairs, ${allLivePaths().length} live paths, ${plannedPaths().length} planned`)
 
-  // ── A: no Serbian URL space exists yet ─────────────────────────────────────────
+  // Widened to string[] so they can be compared against plain manifest / sitemap /
+  // markup strings, which carry no template-literal path type.
+  const live: string[] = allLivePaths()
+  const planned: string[] = plannedPaths()
+  report.note(`${ROUTE_PAIRS.length} route pairs, ${live.length} live paths, ${planned.length} planned`)
+
+  /** Paths whose pair is complete on both sides — the only ones allowed locale output. */
+  const pairedPaths: string[] = []
+  for (let i = 0; i < live.length; i += 1) {
+    if (localeAlternatesFor(live[i]) !== null) pairedPaths.push(live[i])
+  }
+  report.note(
+    pairedPaths.length === 0
+      ? 'no complete locale pair yet — zero hreflang expected everywhere'
+      : `complete locale pair(s): ${pairedPaths.join(', ')}`
+  )
+  // A complete pair must have one member per locale, so the count is always a multiple of
+  // the locale count. An odd number means the map lost reciprocity.
+  report.check(
+    pairedPaths.length % LOCALES.length === 0,
+    `${pairedPaths.length} paired paths is not a whole number of ${LOCALES.length}-locale pairs — reciprocity is broken`
+  )
+
+  // ── A: the Serbian URL space holds exactly what the map declares ───────────────
   const allRoutes = manifest.pages.concat(manifest.handlers, manifest.framework)
+  const declaredSr: string[] = live.filter(isSerbianPrefixed)
   for (const routePath of allRoutes) {
-    report.check(!isSerbianPrefixed(routePath), `route ${routePath} launches the /sr URL space`)
+    if (!isSerbianPrefixed(routePath)) continue
+    report.check(
+      declaredSr.indexOf(routePath) !== -1,
+      `route ${routePath} exists under /sr but content/routes.ts does not declare it live`
+    )
   }
-  for (const file of htmlFiles) {
-    const routePath = routePathForHtml(paths, file)
-    report.check(!isSerbianPrefixed(routePath), `prerendered document ${routePath}.html is under /sr`)
+  for (const declared of declaredSr) {
+    report.check(manifest.pages.indexOf(declared) !== -1, `${declared} is declared live but is not a page route`)
   }
+  // /sr itself must never become a page while it is only a URL-space prefix.
+  report.check(allRoutes.indexOf('/sr') === -1, '/sr exists as a route; it should still 404')
 
   const sitemapFile = path.join(paths.projectRoot, SITEMAP_URLSET)
   if (fs.existsSync(sitemapFile)) {
     const sitemap = fs.readFileSync(sitemapFile, 'utf8')
-    report.check(!/<loc>[^<]*\/sr(\/|<)/.test(sitemap), `${SITEMAP_URLSET} contains a /sr URL`)
-    // next-sitemap can emit alternate refs; there is nothing to alternate to yet.
+    const locRe = /<loc>([^<]*)<\/loc>/g
+    const locs: string[] = []
+    let lm: RegExpExecArray | null
+    while ((lm = locRe.exec(sitemap)) !== null) locs.push(lm[1])
+
+    for (const declared of declaredSr) {
+      report.check(
+        locs.indexOf(absoluteUrl(declared)) !== -1,
+        `${declared} is a live indexable page but is missing from ${SITEMAP_URLSET}`
+      )
+    }
+    for (const loc of locs) {
+      const asPath = loc.slice('https://www.infinus.co'.length) || '/'
+      if (!isSerbianPrefixed(asPath)) continue
+      report.check(declaredSr.indexOf(asPath) !== -1, `${SITEMAP_URLSET} lists undeclared Serbian URL ${loc}`)
+    }
+    for (const plannedPath of planned) {
+      report.check(
+        locs.indexOf(absoluteUrl(plannedPath)) === -1,
+        `${SITEMAP_URLSET} lists planned (nonexistent) URL ${plannedPath}`
+      )
+    }
     report.check(!/hreflang/i.test(sitemap), `${SITEMAP_URLSET} contains hreflang alternates`)
   } else {
     report.note(`${SITEMAP_URLSET} not found — run npm run build first for the sitemap checks`)
   }
 
   // ── B: planned paths are not real ──────────────────────────────────────────────
-  const planned = plannedPaths()
   report.check(planned.length > 0, 'no planned paths declared — the pair map looks empty')
   for (const plannedPath of planned) {
     report.check(
@@ -104,66 +168,92 @@ main(() => {
     )
   }
 
-  // ── C + D: nothing i18n reaches any document ───────────────────────────────────
-  report.note(`scanning ${htmlFiles.length} documents for hreflang and language-switcher markup`)
+  // ── C + D + E: per-document locale output ──────────────────────────────────────
+  report.note(`checking hreflang and switcher markup in ${htmlFiles.length} documents`)
+  const emittedSets: Record<string, string> = {}
+
   for (const file of htmlFiles) {
     const routePath = routePathForHtml(paths, file)
     const html = fs.readFileSync(file, 'utf8')
     const head = headOf(html)
+    const alternates = alternateHreflangs(head)
+    const expected = localeAlternatesFor(routePath)
 
-    report.check(!/hreflang\s*=/i.test(head), `${routePath} emits an hreflang link`)
-    report.check(!/x-default/i.test(head), `${routePath} emits an x-default alternate`)
-    report.check(
-      !/<link[^>]*rel="alternate"/i.test(head),
-      `${routePath} emits a rel="alternate" link`
-    )
-    // The switcher's marker attribute. Anywhere in the document, not just the head.
-    report.check(!/data-language-switcher/.test(html), `${routePath} renders the language switcher`)
-  }
-
-  for (const chrome of CHROME_FILES) {
-    const full = path.join(paths.projectRoot, chrome)
-    if (!fs.existsSync(full)) {
-      report.note(`${chrome} not found — skipped`)
+    if (expected === null) {
+      // Every page that is NOT half of a complete pair: zero locale output, as before.
+      report.check(alternates.length === 0, `${routePath} emits hreflang but has no complete pair: ${alternates.join(', ')}`)
+      report.check(!/x-default/i.test(head), `${routePath} emits x-default but has no complete pair`)
+      report.check(
+        !/data-language-switcher/.test(html),
+        `${routePath} renders the language switcher but has no live counterpart`
+      )
       continue
     }
+
+    // Half of the real pair. Build the exact expected set from the map.
+    const wanted: string[] = []
+    for (let i = 0; i < LOCALES.length; i += 1) {
+      const tag = LOCALE_META[LOCALES[i]].bcp47
+      wanted.push(`${tag} => ${expected.languages[tag]}`)
+    }
+    wanted.push(`x-default => ${expected.xDefault}`)
+
+    const got = alternates.slice().sort()
     report.check(
-      !/LanguageSwitcher/.test(fs.readFileSync(full, 'utf8')),
-      `${chrome} imports LanguageSwitcher — the switcher must stay unmounted`
+      got.join(' | ') === wanted.slice().sort().join(' | '),
+      `${routePath} alternates mismatch.\n      expected: ${wanted.sort().join(', ')}\n      actual:   ${got.join(', ') || '(none)'}`
+    )
+
+    // Self-reference: a page must list its own URL among the alternates.
+    report.check(
+      alternates.some((a) => a.indexOf(`=> ${absoluteUrl(routePath)}`) !== -1),
+      `${routePath} does not list itself in its own alternates`
+    )
+
+    // x-default must be the default locale's URL, never the other language's.
+    const defaultEntry = ROUTE_PAIRS.filter((p) => {
+      for (let i = 0; i < LOCALES.length; i += 1) {
+        const e = p[LOCALES[i]]
+        if (e !== null && e.status === 'live' && e.path === routePath) return true
+      }
+      return false
+    })[0]
+    const defaultSide = defaultEntry ? defaultEntry[DEFAULT_LOCALE] : null
+    report.check(
+      defaultSide !== null && expected.xDefault === absoluteUrl(defaultSide.path),
+      `${routePath} x-default is ${expected.xDefault}, expected the ${DEFAULT_LOCALE} URL`
+    )
+
+    // The switcher must be rendered here, and must point only at the real counterpart.
+    report.check(/data-language-switcher/.test(html), `${routePath} has a live counterpart but renders no switcher`)
+    const switcherHrefs = Array.from(html.match(/href="\/sr\/[^"]*"|href="\/contact"/g) ?? [])
+    for (const href of switcherHrefs) {
+      const target = href.slice('href="'.length, -1)
+      report.check(
+        live.indexOf(target) !== -1,
+        `${routePath} links to ${target}, which content/routes.ts does not declare live`
+      )
+    }
+
+    emittedSets[routePath] = got.join(' | ')
+    report.note(`${routePath} alternates: ${got.join(', ')}`)
+  }
+
+  // Reciprocity: both halves of the pair must have emitted the same set.
+  const emittedPaths = Object.keys(emittedSets)
+  for (let i = 1; i < emittedPaths.length; i += 1) {
+    report.check(
+      emittedSets[emittedPaths[i]] === emittedSets[emittedPaths[0]],
+      `${emittedPaths[i]} and ${emittedPaths[0]} emit different alternate sets — hreflang is not reciprocal`
     )
   }
-
-  // ── G: the foundation ships in no bundle ───────────────────────────────────────
-  // Matches the import specifier, so the doc comments in these files (which name the
-  // modules in prose) cannot trigger a false failure.
-  const FOUNDATION = /from\s+['"](?:@\/)?(?:\.\.?\/)*(?:lib\/)?(?:i18n|locale-routes|seo-i18n)['"]|from\s+['"](?:@\/)?content\/(?:routes|dictionary)['"]/
-  const consumers: string[] = []
-  const walk = (dir: string): void => {
-    if (!fs.existsSync(dir)) return
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue
-      const full = path.join(dir, entry.name)
-      if (entry.isDirectory()) walk(full)
-      else if (/\.tsx?$/.test(entry.name) && FOUNDATION.test(fs.readFileSync(full, 'utf8'))) {
-        consumers.push(path.relative(paths.projectRoot, full))
-      }
-    }
-  }
-  walk(path.join(paths.projectRoot, 'app'))
   report.check(
-    consumers.length === 0,
-    `these route files import the i18n foundation, which is meant to be inert: ${consumers.join(', ')}`
+    emittedPaths.length === pairedPaths.length,
+    `${pairedPaths.length} paths should emit alternates but ${emittedPaths.length} documents did`
   )
 
-  const seoSource = path.join(paths.projectRoot, 'lib/seo.ts')
-  report.check(
-    !FOUNDATION.test(fs.readFileSync(seoSource, 'utf8')),
-    'lib/seo.ts imports the i18n foundation — 10 pages import lib/seo.ts, so that would ' +
-      'pull content/routes.ts into their bundles'
-  )
-
-  // ── E: every live pair-map path is a real route with the right document language ─
-  for (const livePath of allLivePaths()) {
+  // ── E: live paths are real, correctly-languaged, self-canonical documents ───────
+  for (const livePath of live) {
     const inManifest = manifest.pages.indexOf(livePath) !== -1
     report.check(inManifest, `${livePath} is "live" in content/routes.ts but is not a page route`)
     if (!inManifest) continue
@@ -173,16 +263,37 @@ main(() => {
     report.check(exists, `${livePath} is "live" but has no prerendered HTML`)
     if (!exists) continue
 
+    const html = fs.readFileSync(htmlFile, 'utf8')
     const locale = localeOfPath(livePath)
     report.check(locale !== null, `${livePath} has no locale owner`)
     if (locale === null) continue
 
-    const actual = htmlLang(fs.readFileSync(htmlFile, 'utf8'))
-    const expected = htmlLangFor(locale)
+    const actual = htmlLang(html)
+    const wantedLang = htmlLangFor(locale)
     report.check(
-      actual === expected,
-      `${livePath} is owned by locale "${locale}" but its document declares lang="${actual}", expected "${expected}"`
+      actual === wantedLang,
+      `${livePath} is owned by locale "${locale}" but its document declares lang="${actual}", expected "${wantedLang}"`
     )
+
+    // Every live page must declare exactly one canonical.
+    const canonicals = linkByRel(headOf(html), 'canonical')
+    report.check(
+      canonicals.length === 1,
+      `${livePath} declares ${canonicals.length} canonicals, expected exactly 1`
+    )
+
+    // A PAIRED page must additionally be SELF-canonical: adding alternates must never
+    // repoint a canonical at the other language, which would de-index one half of the pair.
+    //
+    // Scoped to paired pages on purpose. /cfo is live in the map but is redirect-backed and
+    // deliberately canonicalises to /grow/cfo; that expectation belongs to the A2 fixture,
+    // which assert-build-output already enforces, and must not be restated here.
+    if (localeAlternatesFor(livePath) !== null) {
+      report.check(
+        canonicals.length === 1 && canonicals[0] === absoluteUrl(livePath),
+        `${livePath} is half of a locale pair but its canonical is ${canonicals.join(', ') || '(none)'}, expected the self-canonical ${absoluteUrl(livePath)}`
+      )
+    }
   }
 
   return report.finish()

@@ -1,49 +1,61 @@
 /**
- * LANGUAGE SWITCHER — infrastructure only. NOT MOUNTED ANYWHERE.
+ * LANGUAGE SWITCHER — live since Phase G, on the one real pair only.
  *
- * Deliberately absent from components/ui/navbar-demo.tsx, components/layout/Footer and
- * components/shell/*. There is not one genuine EN/SR page pair on the site yet, so a
- * visible EN | SR control would either be dead or would send visitors to URLs that 404.
- * test/i18n/language-switcher.test.tsx asserts it stays unmounted; if it ever renders in
- * production chrome by accident, the head baseline and that test both fail.
+ * ── What it renders, and when ───────────────────────────────────────────────────
+ * `EN | SR`, with the current language marked as current and the other language as a link.
+ * Language CODES, never flags: a flag names a country, not a language, and Serbian is not
+ * "Serbia" any more than English is "the United Kingdom".
  *
- * ── Why it takes `currentPath` as a prop ────────────────────────────────────────
- * No `usePathname()`, no `'use client'`, no request-time anything. Every page is a static
- * file that knows its own URL as a literal, so the path is passed in. That keeps this a
- * pure function of its props — trivially unit-testable, and incapable of turning a page
- * dynamic. The whole site stays at 0 dynamic routes.
+ * It renders NOTHING unless the current page has a real live counterpart. Today that means
+ * it appears on exactly two URLs — /contact and /sr/contact — and nowhere else. On /grow it
+ * renders nothing rather than offering "/" as a fake English version; on /faq it renders
+ * nothing rather than linking a /sr/faq that does not exist.
  *
  * ── Why it never does string surgery on the path ────────────────────────────────
  * Counterpart resolution goes through lib/locale-routes.ts and therefore through the
  * declared route-pair map. `pathname.replace('/sr', '')` or `'/sr' + pathname` would
  * fabricate URLs — and would be actively wrong for the four Serbian pages that live at
- * UNPREFIXED paths (/grow, /professional-services, …). If the map says there is no
- * counterpart, this component renders nothing. It never guesses, and it never falls back
- * to the locale home page.
+ * UNPREFIXED paths (/grow, /professional-services, …). The map is the only source of
+ * counterpart truth, and "no counterpart" is a first-class answer.
  *
- * ── Current behaviour on every page of the live site ────────────────────────────
- * `resolveSwitchTarget` returns null for every path in the build today, so this renders
- * `null` everywhere. The UI for "counterpart unavailable" — disabled control, hidden, or a
- * link to a language index — is a design decision for the rollout phase.
+ * ── Static safety ───────────────────────────────────────────────────────────────
+ * This component is pure: path and locale come in as props, so it is server-renderable and
+ * cannot turn a route dynamic. The shared Navbar needs the current path at runtime, which
+ * LocaleSwitcherNav supplies via `usePathname()` — a client hook, not a request API. No
+ * middleware, no cookies(), no headers(), no Accept-Language. The site stays at 0 dynamic
+ * routes.
+ *
+ * The two-letter codes are derived from the Locale keys rather than stored as copy: `en` and
+ * `sr` ARE the language subtags, so there is nothing to translate and nothing to drift.
  */
 
 import Link from 'next/link'
-import { LOCALE_META, type Locale } from '@/lib/i18n'
+import { LOCALES, LOCALE_META, type Locale } from '@/lib/i18n'
 import { counterpartFor, type Counterpart } from '@/lib/locale-routes'
 import { ROUTE_PAIRS, type RoutePair } from '@/content/routes'
 import { getDictionary } from '@/content/dictionary'
+import { cn } from '@/lib/utils'
 
 export interface LanguageSwitcherProps {
   /** Root-relative path of the page rendering this control, e.g. `/contact`. */
   currentPath: string
   /** Locale of the page rendering this control — i.e. which root layout owns it. */
   currentLocale: Locale
+  /** Extra classes for the wrapper, so the Navbar can match its own light/dark treatment. */
+  className?: string
+  /** Classes for the active-language marker. */
+  activeClassName?: string
   /**
    * Route map to resolve against. Defaults to the real one; overridable for the same
-   * reason every helper in lib/locale-routes.ts takes this parameter — so the paired
-   * behaviour can be exercised without first creating a live /sr route.
+   * reason every helper in lib/locale-routes.ts takes this parameter — so paired behaviour
+   * can be exercised without depending on the live map.
    */
   routePairs?: readonly RoutePair[]
+}
+
+/** The display code for a locale: the language subtag, uppercased. */
+export function localeCode(locale: Locale): string {
+  return locale.toUpperCase()
 }
 
 /**
@@ -62,24 +74,54 @@ export function resolveSwitchTarget(
   return counterpartFor(currentPath, routePairs)
 }
 
-export function LanguageSwitcher({ currentPath, currentLocale, routePairs = ROUTE_PAIRS }: LanguageSwitcherProps) {
+export function LanguageSwitcher({
+  currentPath,
+  currentLocale,
+  className,
+  activeClassName,
+  routePairs = ROUTE_PAIRS,
+}: LanguageSwitcherProps) {
   const target = resolveSwitchTarget(currentPath, routePairs)
 
-  // No real counterpart ⇒ no control. Never a fabricated URL, never the locale home.
+  // No real counterpart ⇒ no control at all. Never a fabricated URL, never the locale home.
   if (target === null) return null
 
   const label = getDictionary(currentLocale).common.switchLanguage
   const targetName = getDictionary(target.locale).common.localeName
 
+  // Rendered in a stable order (LOCALES) rather than "current first", so the control does
+  // not visually reshuffle when a visitor switches language.
   return (
-    <Link
-      href={target.path}
-      hrefLang={LOCALE_META[target.locale].bcp47}
-      lang={LOCALE_META[target.locale].bcp47}
-      aria-label={`${label}: ${targetName}`}
+    <div
+      role="group"
+      aria-label={label}
       data-language-switcher={target.locale}
+      className={cn('flex items-center gap-1 text-sm font-medium', className)}
     >
-      {targetName}
-    </Link>
+      {LOCALES.map((locale, index) => (
+        <span key={locale} className="flex items-center gap-1">
+          {index > 0 && (
+            <span aria-hidden="true" className="opacity-40">
+              |
+            </span>
+          )}
+          {locale === currentLocale ? (
+            <span aria-current="true" className={cn('font-semibold', activeClassName)}>
+              {localeCode(locale)}
+            </span>
+          ) : (
+            <Link
+              href={target.path}
+              hrefLang={LOCALE_META[locale].bcp47}
+              lang={LOCALE_META[locale].bcp47}
+              aria-label={`${label}: ${targetName}`}
+              className="opacity-70 transition-opacity hover:opacity-100 hover:underline"
+            >
+              {localeCode(locale)}
+            </Link>
+          )}
+        </span>
+      ))}
+    </div>
   )
 }

@@ -1,26 +1,30 @@
 /**
  * Language switcher guards.
  *
- * Two jobs:
+ * Phase G turned this component on, so the test's job flipped: it must now prove the switcher
+ * appears on EXACTLY the one real pair and still refuses to invent a destination everywhere
+ * else. Three properties carry that:
  *
- *   1. Prove the component NEVER invents a destination. For every real path on the site it
- *      renders nothing, because no page has a live counterpart yet. It only renders for a
- *      complete pair, which today exists only as synthetic test data.
- *
- *   2. Prove it is NOT MOUNTED. Phase F ships no visible EN | SR control, so the site
- *      chrome must not reference it. That is asserted against the actual chrome source,
- *      because a stray import is exactly how "infrastructure only" quietly becomes a
- *      launch.
+ *   1. It renders a correct, reciprocal control on /contact and /sr/contact.
+ *   2. It renders NOTHING on every other page — including /grow (no English version) and
+ *      /faq (Serbian version only planned).
+ *   3. It resolves through the route-pair map, never by string surgery on the pathname.
+ *      Asserted against the source too, because a `pathname.replace('/sr','')` would pass
+ *      every behavioural test on today's URLs and then break on /grow.
  */
 import { render } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join, relative } from 'node:path'
-import { LanguageSwitcher, resolveSwitchTarget } from '@/components/i18n/LanguageSwitcher'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { LanguageSwitcher, localeCode, resolveSwitchTarget } from '@/components/i18n/LanguageSwitcher'
 import { allLivePaths, counterpartFor } from '@/lib/locale-routes'
 import type { RoutePair } from '@/content/routes'
 
 const ROOT = process.cwd()
+
+/** The one real pair. */
+const EN_PATH = '/contact'
+const SR_PATH = '/sr/contact'
 
 const SYNTHETIC_COMPLETE: readonly RoutePair[] = [
   {
@@ -31,23 +35,90 @@ const SYNTHETIC_COMPLETE: readonly RoutePair[] = [
   },
 ]
 
-describe('it never invents a destination', () => {
-  test('resolveSwitchTarget returns NO COUNTERPART for every live path on the site', () => {
-    for (const path of allLivePaths()) {
-      expect(resolveSwitchTarget(path), `${path} must have no switch target`).toBeNull()
+describe('the real pair renders a reciprocal EN | SR control', () => {
+  test('on /contact: EN is current, SR links to the Serbian page', () => {
+    const { container } = render(<LanguageSwitcher currentPath={EN_PATH} currentLocale="en" />)
+
+    const group = container.querySelector('[data-language-switcher]')
+    expect(group).not.toBeNull()
+    expect(group!.getAttribute('role')).toBe('group')
+    // Accessible label from the CURRENT locale's dictionary.
+    expect(group!.getAttribute('aria-label')).toBe('Change language')
+
+    const current = container.querySelector('[aria-current="true"]')
+    expect(current!.textContent).toBe('EN')
+
+    const link = container.querySelector('a')
+    expect(link!.getAttribute('href')).toBe(SR_PATH)
+    expect(link!.textContent).toBe('SR')
+    // hreflang/lang describe the TARGET document's language.
+    expect(link!.getAttribute('hreflang')).toBe('sr-Latn')
+    expect(link!.getAttribute('lang')).toBe('sr-Latn')
+    expect(link!.getAttribute('aria-label')).toBe('Change language: Srpski')
+  })
+
+  test('on /sr/contact: SR is current, EN links back, labelled in Serbian', () => {
+    const { container } = render(<LanguageSwitcher currentPath={SR_PATH} currentLocale="sr" />)
+
+    const group = container.querySelector('[data-language-switcher]')
+    expect(group!.getAttribute('aria-label')).toBe('Promeni jezik')
+
+    expect(container.querySelector('[aria-current="true"]')!.textContent).toBe('SR')
+
+    const link = container.querySelector('a')
+    expect(link!.getAttribute('href')).toBe(EN_PATH)
+    expect(link!.textContent).toBe('EN')
+    expect(link!.getAttribute('hreflang')).toBe('en')
+    expect(link!.getAttribute('aria-label')).toBe('Promeni jezik: English')
+  })
+
+  test('exactly one link and one current marker — never two links', () => {
+    for (const [path, locale] of [[EN_PATH, 'en'], [SR_PATH, 'sr']] as const) {
+      const { container } = render(<LanguageSwitcher currentPath={path} currentLocale={locale} />)
+      expect(container.querySelectorAll('a')).toHaveLength(1)
+      expect(container.querySelectorAll('[aria-current="true"]')).toHaveLength(1)
     }
   })
 
-  test('renders nothing on an English page with no Serbian version', () => {
-    const { container } = render(<LanguageSwitcher currentPath="/contact" currentLocale="en" />)
-    expect(container.innerHTML).toBe('')
+  test('the codes are language subtags, not country codes, and there are no flags', () => {
+    expect(localeCode('en')).toBe('EN')
+    expect(localeCode('sr')).toBe('SR')
+
+    const { container } = render(<LanguageSwitcher currentPath={EN_PATH} currentLocale="en" />)
+    expect(container.textContent).not.toMatch(/GB|US|RS/)
+    // No emoji flags, no <img>, no background-image.
+    expect(container.querySelectorAll('img')).toHaveLength(0)
+    expect(container.innerHTML).not.toMatch(/\uD83C[\uDDE6-\uDDFF]/)
+  })
+
+  test('the separator is hidden from assistive technology', () => {
+    const { container } = render(<LanguageSwitcher currentPath={EN_PATH} currentLocale="en" />)
+    const sep = container.querySelector('[aria-hidden="true"]')
+    expect(sep).not.toBeNull()
+    expect(sep!.textContent).toBe('|')
+  })
+})
+
+describe('it never invents a destination', () => {
+  test('resolveSwitchTarget returns a target for the real pair and null for everything else', () => {
+    const withTarget = allLivePaths().filter((p) => resolveSwitchTarget(p) !== null)
+    expect(withTarget.slice().sort()).toEqual([EN_PATH, SR_PATH].slice().sort())
   })
 
   test('renders nothing on a Serbian page with no English version', () => {
-    const { container } = render(<LanguageSwitcher currentPath="/grow" currentLocale="sr" />)
-    expect(container.innerHTML).toBe('')
-    // Specifically: it does NOT fall back to the English home page.
-    expect(container.querySelector('a')).toBeNull()
+    for (const path of ['/grow', '/grow/cfo', '/grow/ceo', '/professional-services']) {
+      const { container } = render(<LanguageSwitcher currentPath={path} currentLocale="sr" />)
+      expect(container.innerHTML, path).toBe('')
+      // Specifically: it does NOT fall back to the English home page.
+      expect(container.querySelector('a'), path).toBeNull()
+    }
+  })
+
+  test('renders nothing on an English page whose Serbian version is only planned', () => {
+    for (const path of ['/', '/faq', '/projectpulse', '/case-study/pharma2']) {
+      const { container } = render(<LanguageSwitcher currentPath={path} currentLocale="en" />)
+      expect(container.innerHTML, path).toBe('')
+    }
   })
 
   test('renders nothing on the excluded legal page or on /cfo', () => {
@@ -57,17 +128,17 @@ describe('it never invents a destination', () => {
     }
   })
 
-  test('renders nothing for an unknown path', () => {
-    for (const path of ['/does-not-exist', '/sr', '/sr/contact', '/hero-demo', '']) {
+  test('renders nothing for an unknown or planned path', () => {
+    for (const path of ['/does-not-exist', '/sr', '/sr/faq', '/hero-demo', '']) {
       const { container } = render(<LanguageSwitcher currentPath={path} currentLocale="en" />)
       expect(container.innerHTML, path).toBe('')
     }
   })
 
   test('it resolves through the route map, not through string surgery on the path', () => {
-    // If it prefixed or stripped "/sr", these would produce targets. They must not.
-    expect(resolveSwitchTarget('/contact')).toBeNull()
-    expect(resolveSwitchTarget('/sr/contact')).toBeNull()
+    // If it stripped or prefixed "/sr", these would produce targets. They must not.
+    expect(resolveSwitchTarget('/sr/faq')).toBeNull()
+    expect(resolveSwitchTarget('/faq')).toBeNull()
     expect(resolveSwitchTarget('/professional-services')).toBeNull()
 
     const source = readFileSync(join(ROOT, 'components/i18n/LanguageSwitcher.tsx'), 'utf8')
@@ -75,43 +146,6 @@ describe('it never invents a destination', () => {
     expect(code).not.toMatch(/\.replace\(/)
     expect(code).not.toMatch(/['"`]\/sr['"`]\s*\+/)
     expect(code).not.toMatch(/startsWith\(/)
-  })
-})
-
-describe('it renders correctly for a genuine complete pair', () => {
-  // Uses the primitives directly with synthetic data: proving the behaviour must not
-  // require creating a real /sr route.
-  test('the primitive resolves both directions of a synthetic pair', () => {
-    expect(counterpartFor('/synthetic-contact', SYNTHETIC_COMPLETE)!.path).toBe('/sr/synthetic-contact')
-    expect(counterpartFor('/sr/synthetic-contact', SYNTHETIC_COMPLETE)!.locale).toBe('en')
-  })
-
-  test('it renders a correctly annotated link to the Serbian counterpart', () => {
-    const { container } = render(
-      <LanguageSwitcher currentPath="/synthetic-contact" currentLocale="en" routePairs={SYNTHETIC_COMPLETE} />
-    )
-
-    const link = container.querySelector('a')
-    expect(link).not.toBeNull()
-    expect(link!.getAttribute('href')).toBe('/sr/synthetic-contact')
-    // hreflang/lang describe the TARGET document's language, not the current page's.
-    expect(link!.getAttribute('hreflang')).toBe('sr-Latn')
-    expect(link!.getAttribute('lang')).toBe('sr-Latn')
-    expect(link!.textContent).toBe('Srpski')
-    expect(link!.getAttribute('aria-label')).toBe('Change language: Srpski')
-  })
-
-  test('the reverse direction is labelled in Serbian', () => {
-    const { container } = render(
-      <LanguageSwitcher currentPath="/sr/synthetic-contact" currentLocale="sr" routePairs={SYNTHETIC_COMPLETE} />
-    )
-
-    const link = container.querySelector('a')
-    expect(link!.getAttribute('href')).toBe('/synthetic-contact')
-    expect(link!.getAttribute('hreflang')).toBe('en')
-    expect(link!.textContent).toBe('English')
-    // Control label comes from the CURRENT locale's dictionary.
-    expect(link!.getAttribute('aria-label')).toBe('Promeni jezik: English')
   })
 
   test('an excluded pair renders nothing even with both sides live', () => {
@@ -126,38 +160,63 @@ describe('it renders correctly for a genuine complete pair', () => {
     const { container } = render(<LanguageSwitcher currentPath="/x" currentLocale="en" routePairs={excluded} />)
     expect(container.innerHTML).toBe('')
   })
+
+  test('a half-built synthetic pair renders nothing on either side', () => {
+    const halfBuilt: readonly RoutePair[] = [
+      {
+        id: 'half',
+        pairing: 'translatable',
+        en: { path: '/half', status: 'live' },
+        sr: { path: '/sr/half', status: 'planned' },
+      },
+    ]
+    for (const path of ['/half', '/sr/half']) {
+      const { container } = render(<LanguageSwitcher currentPath={path} currentLocale="en" routePairs={halfBuilt} />)
+      expect(container.innerHTML, path).toBe('')
+    }
+  })
+
+  test('a complete synthetic pair works without any real route existing', () => {
+    const { container } = render(
+      <LanguageSwitcher currentPath="/synthetic-contact" currentLocale="en" routePairs={SYNTHETIC_COMPLETE} />
+    )
+    expect(container.querySelector('a')!.getAttribute('href')).toBe('/sr/synthetic-contact')
+    expect(counterpartFor('/sr/synthetic-contact', SYNTHETIC_COMPLETE)!.locale).toBe('en')
+  })
 })
 
-describe('it is NOT mounted anywhere', () => {
-  /** Every .ts/.tsx file under app/ and components/, except the switcher and its test. */
-  function sourceFiles(dir: string, out: string[] = []): string[] {
-    for (const entry of readdirSync(dir)) {
-      if (entry === 'node_modules' || entry.startsWith('.')) continue
-      const full = join(dir, entry)
-      if (statSync(full).isDirectory()) sourceFiles(full, out)
-      else if (/\.tsx?$/.test(entry)) out.push(relative(ROOT, full))
-    }
-    return out
-  }
-
-  const files = sourceFiles(join(ROOT, 'app'))
-    .concat(sourceFiles(join(ROOT, 'components')))
-    .filter((f) => f !== join('components', 'i18n', 'LanguageSwitcher.tsx'))
-
-  test('no page, layout or component imports it', () => {
-    const importers = files.filter((f) => /LanguageSwitcher/.test(readFileSync(join(ROOT, f), 'utf8')))
-    expect(importers, 'the switcher must stay unmounted until a real pair exists').toEqual([])
+describe('it is mounted in exactly one place, through the client adapter', () => {
+  test('the Navbar mounts the adapter, not the pure component', () => {
+    const navbar = readFileSync(join(ROOT, 'components/ui/navbar-demo.tsx'), 'utf8')
+    expect(navbar).toMatch(/LocaleSwitcherNav/)
+    // The pure component needs a path it cannot know; the Navbar must go through the adapter.
+    expect(navbar).not.toMatch(/<LanguageSwitcher\b/)
   })
 
-  test('the shared chrome renders no language control', () => {
-    for (const file of ['components/shell/RootShell.tsx', 'components/shell/SiteChrome.tsx', 'components/ui/navbar-demo.tsx']) {
+  test('the adapter reads the path with usePathname and NOT with a request API', () => {
+    const adapter = readFileSync(join(ROOT, 'components/i18n/LocaleSwitcherNav.tsx'), 'utf8')
+    expect(adapter).toMatch(/^"use client"/)
+    expect(adapter).toMatch(/usePathname/)
+    // These would opt every page out of static rendering.
+    const code = adapter.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+    expect(code).not.toMatch(/next\/headers|cookies\(|headers\(/)
+  })
+
+  test('the adapter derives locale from the route map, not from the /sr prefix', () => {
+    const code = readFileSync(join(ROOT, 'components/i18n/LocaleSwitcherNav.tsx'), 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*\/\/.*$/gm, '')
+    expect(code).toMatch(/localeOfPath/)
+    // The only slicing allowed is trailing-slash normalisation, never locale inference.
+    expect(code).not.toMatch(/['"`]\/sr['"`]/)
+  })
+
+  test('the document shell and the footer still render no language control', () => {
+    for (const file of ['components/shell/RootShell.tsx', 'components/shell/SiteChrome.tsx', 'components/ui/footer.tsx']) {
       const source = readFileSync(join(ROOT, file), 'utf8')
-      expect(source, `${file} must not reference the switcher`).not.toMatch(/LanguageSwitcher|data-language-switcher/)
+      expect(source, `${file} must not mount the switcher`).not.toMatch(
+        /LanguageSwitcher|LocaleSwitcherNav|data-language-switcher/
+      )
     }
-  })
-
-  test('the component itself is the only place the marker attribute exists', () => {
-    const markerFiles = files.filter((f) => /data-language-switcher/.test(readFileSync(join(ROOT, f), 'utf8')))
-    expect(markerFiles).toEqual([])
   })
 })

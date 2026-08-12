@@ -90,7 +90,9 @@ describe("exactly two root layouts, and no third", () => {
 })
 
 describe("route ownership by locale root", () => {
-  const SERBIAN_URLS = ["/grow", "/grow/cfo", "/grow/ceo", "/professional-services", "/cfo"]
+  // The four legacy campaign pages at unprefixed URLs, /cfo behind its redirect, and — new
+  // in Phase G — the first properly prefixed Serbian route.
+  const SERBIAN_URLS = ["/grow", "/grow/cfo", "/grow/ceo", "/professional-services", "/cfo", "/sr/contact"]
 
   test("every page lives under exactly one locale root", () => {
     const orphans = pages.filter((p) => !p.includes("(en)") && !p.includes("(sr)"))

@@ -19,11 +19,14 @@
  * A later phase changes the production code AND the expectation together, in one
  * reviewable diff.
  *
- * Verified against a fresh `next build` of commit a83e76f:
- *   31 manifest entries = 22 page routes + 8 route handlers + 1 framework route
- *   23 rendered .html files (22 pages + _not-found)
- *   26 prerendered routes, 0 dynamic routes
- *   16 sitemap URLs
+ * Verified against a fresh `next build` — Phase G, after adding /sr/contact:
+ *   32 manifest entries = 23 page routes + 8 route handlers + 1 framework route
+ *   24 rendered .html files (23 pages + _not-found)
+ *   27 prerendered routes, 0 dynamic routes
+ *   17 sitemap URLs
+ *
+ * The previous verified state (commit a83e76f, before /sr/contact) was 31 / 22 / 23 / 26 / 16.
+ * Phase G's delta is exactly +1 in each page-shaped count and 0 change to dynamic routes.
  */
 
 export const PRODUCTION_ORIGIN = 'https://www.infinus.co' as const
@@ -113,9 +116,25 @@ const handler = (path: string, kind: 'handler-utility' | 'handler-api'): RouteEx
 })
 
 export const ROUTES: readonly RouteExpectation[] = [
-  // ── 16 public indexable pages ────────────────────────────────────────────────
+  // ── 17 public indexable pages ────────────────────────────────────────────────
   indexable('/', '/'),
   indexable('/contact'),
+  {
+    // Phase G: the Serbian half of the site's FIRST real locale pair. A normal indexable
+    // page — self-canonical, in the sitemap, static HTML — that happens to sit under the
+    // Serbian root (app/(sr)/sr/contact/) and therefore declares sr-Latn.
+    //
+    // It is the ONLY route that emits hreflang. Its reciprocal alternates and /contact's
+    // are asserted by scripts/seo/assert-i18n-routes.ts, which also proves no other page
+    // emits any.
+    path: '/sr/contact',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/contact`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
   indexable('/faq'),
   indexable('/case-study/retail1'),
   indexable('/case-study/pharma1'),
@@ -267,7 +286,8 @@ export const publicPages = (): RouteExpectation[] =>
  * test/seo/route-fixture.test.ts so an edit to ROUTES cannot silently change them.
  */
 export const EXPECTED_COUNTS = {
-  indexable: 16,
+  /** 16 before Phase G; +1 for /sr/contact. */
+  indexable: 17,
   noindex: 1,
   /** /cfo — page still built behind its redirect */
   redirected: 1,
@@ -279,20 +299,20 @@ export const EXPECTED_COUNTS = {
   apiHandlers: 4,
   /**
    * Page routes in app-path-routes-manifest.json (excludes _not-found).
-   * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so
-   * the build still produces 22 page routes.
+   * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so the
+   * build produced 22. Phase G adds /sr/contact -> 23.
    */
-  manifestPages: 22,
+  manifestPages: 23,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
-  /** total manifest entries: 22 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 31,
+  /** total manifest entries: 23 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 32,
   /**
-   * Rendered .html files: 22 built pages + _not-found. /privacy is in the fixture as a
+   * Rendered .html files: 23 built pages + _not-found. /privacy is in the fixture as a
    * redirect source but produces no HTML, so it is NOT counted here.
    */
-  renderedHtml: 23,
-  sitemapUrls: 16,
-  /** the 17 public pages whose <head> is snapshotted (16 indexable + /privacy) */
-  snapshotPages: 17,
+  renderedHtml: 24,
+  sitemapUrls: 17,
+  /** the 18 public pages whose <head> is snapshotted (17 indexable + the legal page) */
+  snapshotPages: 18,
 } as const

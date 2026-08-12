@@ -1,18 +1,18 @@
 /**
  * Serbian chrome strings (Latin script, matching <html lang="sr-Latn">).
  *
- * ── Provenance, stated plainly ──────────────────────────────────────────────────
- * "Srpski" is the existing endonym already used in LOCALE_META.sr. The other three are
- * NEW interface micro-copy written for this phase — standard, unambiguous UI terms, not
- * marketing language and not translated from any approved document. They are UNREVIEWED
- * and flagged for owner sign-off before anything renders them.
+ * ── Provenance ──────────────────────────────────────────────────────────────────
+ * OWNER-APPROVED (Phase G). "Srpski" is the existing endonym from LOCALE_META.sr; the
+ * other three were drafted in Phase F as interface micro-copy and approved unchanged:
  *
- * They are safe to land now because nothing consumes them: no component that reads this
- * file is mounted, so these strings appear in zero bytes of output. If the owner prefers
- * different wording, changing it here is a one-line edit with no output consequences.
+ *   Promeni jezik · Početna · Pređi na sadržaj
  *
- * This file is NOT where the site's Serbian marketing copy will be written. Approved
- * campaign copy for /sr pages arrives in its own reviewed phase.
+ * Do not reword them. `switchLanguage` is now live — it is the accessible label on the
+ * language switcher rendered on /sr/contact.
+ *
+ * This file is chrome micro-copy only. Per-page Serbian copy lives beside it in its own
+ * namespace (see ./contact.ts), and the site's shared Navbar/Footer labels are still
+ * English pending the broader rollout.
  */
 
 import type { CommonDictionary } from '../dictionary'
