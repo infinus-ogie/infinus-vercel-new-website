@@ -29,7 +29,7 @@
  */
 import { render, screen, within } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
-import HomePage from '../app/(site)/page'
+import HomePage from '../app/(en)/(site)/page'
 import { SiteChrome } from '@/components/shell/SiteChrome'
 
 describe('Homepage copy', () => {

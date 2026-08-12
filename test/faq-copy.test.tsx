@@ -18,7 +18,7 @@
  */
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
-import FAQPage from '../app/(site)/faq/page'
+import FAQPage from '../app/(en)/(site)/faq/page'
 
 /** Every accordion question is rendered as a Radix trigger button. */
 const getQuestionTriggers = () =>

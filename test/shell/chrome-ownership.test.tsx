@@ -112,8 +112,13 @@ describe("no page or layout re-introduces its own chrome", () => {
   })
 })
 
-describe("root layout keeps sole ownership of html, body, fonts and consent", () => {
-  const rootLayout = readFileSync(join(ROOT, "app/layout.tsx"), "utf8")
+describe("the shared shell keeps sole ownership of html, body, fonts and consent", () => {
+  // Phase E: app/layout.tsx was replaced by two locale roots that both delegate to
+  // components/shell/RootShell.tsx, which is where these concerns now live. Comments in
+  // these files legitimately mention the tags, so structural checks run on code only.
+  const stripComments = (src: string) =>
+    src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "")
+  const rootLayout = stripComments(readFileSync(join(ROOT, "components/shell/RootShell.tsx"), "utf8"))
 
   test("exactly one <html> and one <body>, both in the root layout", () => {
     expect((rootLayout.match(/<html\b/g) ?? []).length).toBe(1)
@@ -121,8 +126,7 @@ describe("root layout keeps sole ownership of html, body, fonts and consent", ()
 
     const others = walk(join(ROOT, "app"))
       .filter(isRouteFile)
-      .filter((f) => f !== join(ROOT, "app/layout.tsx"))
-      .filter((f) => /<html\b|<body\b/.test(readFileSync(f, "utf8")))
+      .filter((f) => /<html\b|<body\b/.test(stripComments(readFileSync(f, "utf8"))))
     expect(others.map((f) => f.slice(ROOT.length + 1))).toEqual([])
   })
 
@@ -130,7 +134,6 @@ describe("root layout keeps sole ownership of html, body, fonts and consent", ()
     expect(rootLayout).toMatch(/from ["']next\/font\/google["']/)
     const others = walk(join(ROOT, "app"))
       .filter(isRouteFile)
-      .filter((f) => f !== join(ROOT, "app/layout.tsx"))
       .filter((f) => /next\/font/.test(readFileSync(f, "utf8")))
     expect(others.map((f) => f.slice(ROOT.length + 1))).toEqual([])
     // The chrome must not re-declare font variables either.
@@ -140,13 +143,12 @@ describe("root layout keeps sole ownership of html, body, fonts and consent", ()
   test("each consent component is mounted exactly once, and only in the root layout", () => {
     for (const tag of ["<ConsentProvider>", "<CookieBanner />", "<CookieSettingsDialog />", "<AnalyticsGate />", "<MarketingGate />"]) {
       const re = new RegExp(tag.replace(/[/\\^$*+?.()|[\]{}]/g, "\\$&"), "g")
-      expect((rootLayout.match(re) ?? []).length, `${tag} in app/layout.tsx`).toBe(1)
+      expect((rootLayout.match(re) ?? []).length, `${tag} in RootShell.tsx`).toBe(1)
     }
 
     const others = walk(join(ROOT, "app"))
       .filter(isRouteFile)
-      .filter((f) => f !== join(ROOT, "app/layout.tsx"))
-      .filter((f) => /<ConsentProvider>|<AnalyticsGate|<MarketingGate|<CookieBanner|<CookieSettingsDialog/.test(readFileSync(f, "utf8")))
+      .filter((f) => /<ConsentProvider>|<AnalyticsGate|<MarketingGate|<CookieBanner|<CookieSettingsDialog/.test(stripComments(readFileSync(f, "utf8"))))
     expect(others.map((f) => f.slice(ROOT.length + 1))).toEqual([])
   })
 

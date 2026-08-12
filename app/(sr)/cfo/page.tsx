@@ -10,7 +10,7 @@ import { CheckCircle2, MessageCircle } from "lucide-react";
 import { FaqSection } from "@/components/ui/Faq";
 import { StatPills } from "@/components/ui/StatPills";
 import { IndustriesScroll } from "@/components/ui/IndustriesScroll";
-import CfoBenefits from "../_components/CfoBenefits";
+import CfoBenefits from "@/app/_components/CfoBenefits";
 
 const breadcrumbItems = [
   { name: "Home", url: "/" },

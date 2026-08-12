@@ -120,11 +120,23 @@ describe('route fixture — expectation coherence', () => {
     }
   })
 
-  test('every route expecting HTML also declares a lang and robots expectation', () => {
+  test('every real page expecting HTML declares a lang and robots expectation', () => {
     for (const r of htmlRoutes()) {
+      // The framework 404 is the one document with neither: with two locale roots it
+      // inherits no root layout and therefore no lang and no root metadata. It carries a
+      // knownIssue explaining that, asserted separately below.
+      if (r.kind === 'page-framework') continue
       expect(r.expectLang, `${r.path} needs an expected lang`).not.toBeNull()
       expect(r.expectRobots, `${r.path} needs an expected robots value`).not.toBeNull()
     }
+  })
+
+  test('the framework 404 documents why it has no lang or robots expectation', () => {
+    const notFound = ROUTES.find((r) => r.kind === 'page-framework')
+    expect(notFound).toBeDefined()
+    expect(notFound?.expectLang).toBeNull()
+    expect(notFound?.expectRobots).toBeNull()
+    expect(notFound?.knownIssue).toMatch(/multiple-root-layout/)
   })
 
   test('every canonical is absolute on the production origin', () => {
@@ -150,15 +162,20 @@ describe('route fixture — expectation coherence', () => {
 })
 
 describe('route fixture — known issues are explicit', () => {
-  test('the four Serbian pages are flagged as serving Serbian under lang="en"', () => {
-    const serbian = ['/grow', '/grow/cfo', '/grow/ceo', '/professional-services']
+  test('the Serbian pages declare sr-Latn — the lang bug is fixed, not flagged', () => {
+    // Phase E moved these under app/(sr)/, a second root layout emitting
+    // <html lang="sr-Latn">. Before that they served Serbian copy under lang="en".
+    const serbian = ['/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/cfo']
     for (const path of serbian) {
       const route = ROUTES.find((r) => r.path === path)
       expect(route, `${path} must be in the fixture`).toBeDefined()
-      expect(route?.expectLang).toBe('en')
-      expect(route?.knownIssue, `${path} must carry a knownIssue note`).toBeTruthy()
-      expect(route?.knownIssue).toMatch(/lang="en"/)
+      expect(route?.expectLang, `${path} serves Serbian copy`).toBe('sr-Latn')
     }
+  })
+
+  test('no route still expects Serbian copy under lang="en"', () => {
+    const stale = ROUTES.filter((r) => r.knownIssue?.includes('lang="en"'))
+    expect(stale.map((r) => r.path)).toEqual([])
   })
 
   test('every knownIssue names the phase or action that will resolve it', () => {

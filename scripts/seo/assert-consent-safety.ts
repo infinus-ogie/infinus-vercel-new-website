@@ -37,6 +37,17 @@ const FORBIDDEN_HOSTS = [
   'google-analytics.com',
 ] as const
 
+/**
+ * Strip comments before structural matching.
+ *
+ * These files legitimately DISCUSS <html>, <body> and the consent components in their
+ * doc comments, and matching prose would report a false violation — the kind of failure
+ * that teaches people to ignore a check. Assertions below therefore run against code only.
+ */
+function codeOnly(src: string): string {
+  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+}
+
 /** Source files that must never read request-scoped APIs. */
 function collectRouteSources(projectRoot: string): string[] {
   const out: string[] = []
@@ -113,33 +124,68 @@ main(() => {
     }
   }
 
-  // ── D: the root layout itself must stay vendor-free ────────────────────────────
-  const rootLayout = path.join(paths.projectRoot, 'app', 'layout.tsx')
-  if (fs.existsSync(rootLayout)) {
-    const src = fs.readFileSync(rootLayout, 'utf8')
+  // ── D: every ROOT layout must stay vendor-free and mount consent exactly once ──
+  // Phase E replaced the single app/layout.tsx with two locale roots. Both delegate to
+  // components/shell/RootShell.tsx, which is where <html>/<body>, the fonts and the
+  // consent mounts now live — so the guarantee has to be asserted there, and the roots
+  // must be verified to add nothing of their own.
+  const shell = path.join(paths.projectRoot, 'components', 'shell', 'RootShell.tsx')
+  const roots = ['app/(en)/layout.tsx', 'app/(sr)/layout.tsx'].map((r) => path.join(paths.projectRoot, r))
+
+  report.check(fs.existsSync(shell), 'components/shell/RootShell.tsx not found — the shared document shell is missing')
+  for (const root of roots) {
+    report.check(fs.existsSync(root), `${path.relative(paths.projectRoot, root)} not found — a locale root layout is missing`)
+  }
+
+  const noOldRoot = !fs.existsSync(path.join(paths.projectRoot, 'app', 'layout.tsx'))
+  report.check(
+    noOldRoot,
+    'app/layout.tsx still exists. With two locale roots it would wrap them and nest <html>, ' +
+      'and Next.js only honours multiple root layouts when there is no top-level layout.'
+  )
+
+  if (fs.existsSync(shell)) {
+    const src = codeOnly(fs.readFileSync(shell, 'utf8'))
     for (const host of FORBIDDEN_HOSTS) {
       report.check(
         !src.includes(host),
-        `app/layout.tsx references ${host}. The root layout is a server component, so anything ` +
-          `it renders reaches every visitor before a consent decision exists.`
+        `RootShell.tsx references ${host}. It renders for every visitor before any consent ` +
+          `decision exists, so no vendor URL may appear there.`
       )
     }
     report.check(
-      src.includes('ConsentProvider'),
-      'app/layout.tsx no longer mounts <ConsentProvider> — the consent architecture is not active'
+      (src.match(/<html\b/g) ?? []).length === 1 && (src.match(/<body\b/g) ?? []).length === 1,
+      'RootShell.tsx must render exactly one <html> and one <body>'
     )
-    report.check(
-      (src.match(/<ConsentProvider>/g) ?? []).length === 1,
-      'app/layout.tsx mounts <ConsentProvider> more than once — consent state would fork'
-    )
-    for (const gate of ['<AnalyticsGate />', '<MarketingGate />', '<CookieBanner />', '<CookieSettingsDialog />']) {
+    report.check(!src.trimStart().startsWith('"use client"'), 'RootShell.tsx must stay a server component')
+    for (const tag of ['<ConsentProvider>', '<AnalyticsGate />', '<MarketingGate />', '<CookieBanner />', '<CookieSettingsDialog />']) {
       report.check(
-        (src.match(new RegExp(gate.replace(/[/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g')) ?? []).length === 1,
-        `app/layout.tsx must mount ${gate} exactly once`
+        (src.match(new RegExp(tag.replace(/[/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g')) ?? []).length === 1,
+        `RootShell.tsx must mount ${tag} exactly once`
       )
     }
-  } else {
-    report.check(false, 'app/layout.tsx not found')
+  }
+
+  // The locale roots themselves may only differ by `lang`: no vendor scripts, no second
+  // consent mount, no <html>/<body> of their own, no duplicate font declaration.
+  const langs: Record<string, string> = { 'app/(en)/layout.tsx': 'en', 'app/(sr)/layout.tsx': 'sr-Latn' }
+  for (const root of roots) {
+    if (!fs.existsSync(root)) continue
+    const rel = path.relative(paths.projectRoot, root)
+    const src = codeOnly(fs.readFileSync(root, 'utf8'))
+    for (const host of FORBIDDEN_HOSTS) {
+      report.check(!src.includes(host), `${rel} references ${host}`)
+    }
+    report.check(!/<html\b|<body\b/.test(src), `${rel} must not render its own <html>/<body> — that belongs to RootShell`)
+    report.check(!/next\/font/.test(src), `${rel} must not declare fonts — RootShell owns them, so the roots cannot drift`)
+    report.check(
+      !/<ConsentProvider>|<AnalyticsGate|<MarketingGate|<CookieBanner|<CookieSettingsDialog/.test(src),
+      `${rel} must not mount consent components — RootShell owns them`
+    )
+    report.check(
+      src.includes(`lang="${langs[rel]}"`),
+      `${rel} must pass lang="${langs[rel]}" to RootShell`
+    )
   }
 
   return report.finish()

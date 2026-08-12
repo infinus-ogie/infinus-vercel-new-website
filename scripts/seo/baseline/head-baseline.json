@@ -824,7 +824,7 @@
     }
   },
   "/grow": {
-    "htmlLang": "en",
+    "htmlLang": "sr-Latn",
     "title": "GROW with SAP: Finansije kao pokretač rasta | Infinus",
     "meta": {
       "name:author": [
@@ -924,7 +924,7 @@
     }
   },
   "/grow/ceo": {
-    "htmlLang": "en",
+    "htmlLang": "sr-Latn",
     "title": "SAP for CEOs | Infinus",
     "meta": {
       "name:author": [
@@ -1024,7 +1024,7 @@
     }
   },
   "/grow/cfo": {
-    "htmlLang": "en",
+    "htmlLang": "sr-Latn",
     "title": "SAP for CFOs | Infinus",
     "meta": {
       "name:author": [
@@ -1206,7 +1206,7 @@
     }
   },
   "/professional-services": {
-    "htmlLang": "en",
+    "htmlLang": "sr-Latn",
     "title": "GROW with SAP za Professional Services | Infinus | Infinus",
     "meta": {
       "name:author": [

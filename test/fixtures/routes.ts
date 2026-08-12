@@ -90,15 +90,16 @@ const indexable = (path: string, canonicalPath = path): RouteExpectation => ({
 })
 
 /**
- * The four Serbian-content campaign pages. Identical in every respect to the English
- * indexable pages EXCEPT that they serve Serbian copy under `lang="en"`, because
- * `<html lang>` lives in the single root layout and no child can override it.
+ * The four Serbian-content campaign pages.
+ *
+ * Phase E moved them under app/(sr)/, a second ROOT layout that emits
+ * <html lang="sr-Latn">. Their URLs are unchanged — route groups are URL-invisible — and
+ * so is every other head field. This corrects the long-standing bug where Serbian copy
+ * was served under lang="en" because <html lang> lived in a single shared root layout.
  */
 const serbianPage = (path: string): RouteExpectation => ({
   ...indexable(path),
-  knownIssue:
-    'Serves Serbian copy under <html lang="en">. Phase E introduces a second root ' +
-    'layout and this expectation becomes "sr-Latn". Do not change it before then.',
+  expectLang: 'sr-Latn',
 })
 
 const handler = (path: string, kind: 'handler-utility' | 'handler-api'): RouteExpectation => ({
@@ -163,7 +164,10 @@ export const ROUTES: readonly RouteExpectation[] = [
     // HTML exists and its canonical correctly points at the redirect target.
     path: '/cfo',
     kind: 'page-redirected',
-    expectLang: 'en',
+    // Genuinely Serbian content (verified by inspecting the built HTML), so it sits under
+    // the Serbian root and its prerendered document now declares sr-Latn too. Its
+    // redirect and canonical behaviour is untouched.
+    expectLang: 'sr-Latn',
     expectRobots: 'index, follow',
     expectCanonical: `${PRODUCTION_ORIGIN}/grow/cfo`,
     inSitemap: false,
@@ -195,11 +199,26 @@ export const ROUTES: readonly RouteExpectation[] = [
   {
     path: '/_not-found',
     kind: 'page-framework',
-    expectLang: 'en',
-    expectRobots: 'index, follow',
+    // NO lang attribute, and no fonts or consent UI.
+    //
+    // Not a choice: Next.js 14 renders the global not-found OUTSIDE every route group, so
+    // with two locale roots it inherits neither. A top-level app/not-found.tsx is rejected
+    // ("not-found.tsx doesn't have a root layout"), and multiple root layouts require
+    // app/layout.tsx to be absent, so there is nothing for it to inherit. Placing one
+    // inside (en) was tried and verified to change nothing for unmatched URLs.
+    //
+    // The 404 status code and copy are correct; only the document shell is bare.
+    expectLang: null,
+    // Also no robots meta: without a root layout the document inherits no root metadata
+    // either. The 404 HTTP status is what keeps it out of the index, not a meta tag.
+    expectRobots: null,
     expectCanonical: null,
     inSitemap: false,
     expectStaticHtml: true,
+    knownIssue:
+      'Global 404 renders without <html lang>, robots meta, fonts or consent UI — a ' +
+      'Next 14 multiple-root-layout limitation introduced in Phase E. Revisit on a ' +
+      'Next upgrade; the 404 status code and copy are correct.',
   },
 
   // ── 4 utility route handlers ─────────────────────────────────────────────────
