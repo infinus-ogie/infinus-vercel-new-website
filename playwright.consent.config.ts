@@ -1,15 +1,17 @@
 import { defineConfig, devices } from '@playwright/test'
 
 /**
- * Focused config for the consent network proof.
+ * Focused config for the browser assertions that must run against a real production build.
+ *
+ * Two specs, both needing a real layout/network engine that jsdom cannot provide:
+ *   · consent.spec.ts        — the "no vendor request before consent" network proof
+ *   · contact-layout.spec.ts — the narrow-viewport overflow guard for the Contact pair
  *
  * Separate from playwright.config.local.ts on purpose:
  *
- *  - It runs ONLY scripts/qa/consent.spec.ts. The pre-existing
- *    scripts/qa/ga4-smoke.spec.ts waits for a `gtag/js` request on page load, which is
- *    now correct behaviour to NOT have: analytics no longer loads without consent. That
- *    spec needs rewriting to grant consent first — deliberately left for a separate
- *    change so this diff stays reviewable.
+ *  - It deliberately EXCLUDES scripts/qa/ga4-smoke.spec.ts, which waits for a `gtag/js`
+ *    request on page load — now correct behaviour to NOT have, since analytics no longer
+ *    loads without consent. That spec is run separately via `npm run qa:ga`.
  *
  *  - It serves the PRODUCTION build (`npm run start`) rather than `npm run dev`. The
  *    claim under test is about what real visitors receive, and dev mode injects
@@ -17,7 +19,9 @@ import { defineConfig, devices } from '@playwright/test'
  */
 export default defineConfig({
   testDir: './scripts/qa',
-  testMatch: 'consent.spec.ts',
+  // Extending this list is what gives a new browser assertion CI coverage for free: the
+  // pipeline already runs `npm run test:consent` against the built site.
+  testMatch: /(consent|contact-layout)\.spec\.ts$/,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

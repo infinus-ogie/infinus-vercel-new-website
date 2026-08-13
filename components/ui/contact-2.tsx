@@ -221,9 +221,22 @@ export const Contact2 = ({ content }: Contact2Props) => {
     <section className="pt-40 pb-32">
       <div className="container">
         <div className="mx-auto flex max-w-screen-xl flex-col justify-between gap-10 lg:flex-row lg:gap-20">
-          <div className="mx-auto flex max-w-sm flex-col justify-between gap-10">
+          {/* MOBILE OVERFLOW FIX (below ~375px).
+              `mx-auto` makes this a shrink-to-fit flex item, and shrink-to-fit is floored at
+              the element's min-content width. That floor was 344px (en) / 338px (sr), set by
+              the single longest word in the h1 below at text-5xl — wider than the 312px the
+              container offers at 360px, so the document scrolled sideways.
+              `w-full` gives the column an explicit width instead of shrink-to-fit, so it
+              tracks the container; `lg:w-auto` restores the original sizing from lg up, where
+              the two-column row layout takes over. max-w-sm still caps it. */}
+          <div className="mx-auto flex w-full max-w-sm flex-col justify-between gap-10 lg:w-auto">
             <div className="text-center lg:text-left">
-              <h1 className="mb-2 text-5xl font-semibold lg:mb-1 lg:text-6xl">
+              {/* With the column now narrower than that longest word on small phones, the word
+                  itself has to be breakable or it would overflow its own box.
+                  `lg:break-normal` scopes this to the single-column layout only: from lg up,
+                  the two-column row lets that word overhang its 384px box exactly as it did
+                  before, so the desktop heading still wraps onto the same 3 lines. */}
+              <h1 className="mb-2 break-words text-5xl font-semibold lg:mb-1 lg:break-normal lg:text-6xl">
                 {content.hero.heading}
               </h1>
               <p className="text-muted-foreground">{content.hero.description}</p>
