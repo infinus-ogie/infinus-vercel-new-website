@@ -18,6 +18,7 @@ import { describe, test, expect } from "vitest"
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs"
 import { join, relative, sep } from "node:path"
 import { ROUTES } from "../fixtures/routes"
+import { LIVE_SERBIAN_PREFIXED_PATHS, SERBIAN_ONLY_PATHS } from "../fixtures/locale-pairs"
 
 const ROOT = process.cwd()
 const APP = join(ROOT, "app")
@@ -90,18 +91,9 @@ describe("exactly two root layouts, and no third", () => {
 })
 
 describe("route ownership by locale root", () => {
-  // The four legacy campaign pages at unprefixed URLs, /cfo behind its redirect, and the
-  // properly prefixed Serbian routes: /sr/contact (Phase G) plus /sr and /sr/faq (Phase H1).
-  const SERBIAN_URLS = [
-    "/grow",
-    "/grow/cfo",
-    "/grow/ceo",
-    "/professional-services",
-    "/cfo",
-    "/sr",
-    "/sr/faq",
-    "/sr/contact",
-  ]
+  // Everything the Serbian root owns: the legacy campaign pages at unprefixed URLs, /cfo
+  // behind its redirect, and every properly /sr-prefixed route that has gone live.
+  const SERBIAN_URLS = [...SERBIAN_ONLY_PATHS, ...LIVE_SERBIAN_PREFIXED_PATHS]
 
   test("every page lives under exactly one locale root", () => {
     const orphans = pages.filter((p) => !p.includes("(en)") && !p.includes("(sr)"))

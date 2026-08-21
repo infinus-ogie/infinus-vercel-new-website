@@ -29,19 +29,13 @@ import {
   pairForPath,
   plannedPaths,
 } from '@/lib/locale-routes'
+import {
+  COMPLETE_PAIRS as REAL_PAIRS,
+  PAIRED_PATHS,
+  PLANNED_SERBIAN_PATHS,
+  LIVE_SERBIAN_PREFIXED_PATHS,
+} from '../fixtures/locale-pairs'
 
-/**
- * The genuinely complete pairs in the live map. Everything else must stay unpaired.
- *
- * Phase G made contact real; Phase H1 added home and faq. Listed explicitly so activating a
- * fourth pair has to be a deliberate edit here, not a silent consequence.
- */
-const REAL_PAIRS = [
-  { en: '/', sr: '/sr' },
-  { en: '/faq', sr: '/sr/faq' },
-  { en: '/contact', sr: '/sr/contact' },
-] as const
-const PAIRED_PATHS: string[] = REAL_PAIRS.flatMap((p) => [p.en, p.sr])
 
 /** A complete EN/SR pair, as a future rollout will produce. Not a real route. */
 const SYNTHETIC_COMPLETE: readonly RoutePair[] = [
@@ -188,7 +182,7 @@ describe('locale ownership of live paths', () => {
       const isPrefixed = path === '/sr' || path.indexOf('/sr/') === 0
       expect(isLegacy || isPrefixed, `${path} is neither legacy nor /sr-prefixed`).toBe(true)
     }
-    expect(srLive.slice().sort()).toEqual(legacy.concat(REAL_PAIRS.map((p) => p.sr)).sort())
+    expect(srLive.slice().sort()).toEqual(legacy.concat([...LIVE_SERBIAN_PREFIXED_PATHS]).sort())
   })
 
   test('unclassified paths have NO locale — not a default of English', () => {
@@ -214,9 +208,9 @@ describe('locale ownership of live paths', () => {
 })
 
 describe('counterparts are never invented', () => {
-  test('exactly the six paths of the three real pairs have a counterpart', () => {
+  test('exactly the paths of the declared complete pairs have a counterpart', () => {
     const withCounterpart = allLivePaths().filter((p) => counterpartFor(p) !== null)
-    expect(withCounterpart.slice().sort()).toEqual(PAIRED_PATHS.slice().sort())
+    expect(withCounterpart.slice().sort()).toEqual([...PAIRED_PATHS].sort())
   })
 
   test('each real pair resolves reciprocally', () => {
@@ -262,18 +256,10 @@ describe('counterparts are never invented', () => {
     expect(counterpartFor('/projectpulse')).toBeNull()
   })
 
-  test('activating three pairs did not activate anything else', () => {
+  test('activating the translated pairs did not activate anything else', () => {
     // Guards the specific H1 risk: flipping two statuses and accidentally waking the whole
     // planned set.
-    const stillPlanned = [
-      '/sr/projectpulse',
-      '/sr/projectpulse/brochure',
-      '/sr/projectpulse/video',
-      '/sr/case-study/pharma2',
-      '/sr/case-study/retail1',
-      '/sr/sap-packaged-solutions/sap-starter-package',
-    ]
-    for (const path of stillPlanned) {
+    for (const path of PLANNED_SERBIAN_PATHS) {
       expect(plannedPaths(), `${path} must still be planned`).toContain(path)
       expect(counterpartFor(path), `${path} must not resolve`).toBeNull()
     }
@@ -317,9 +303,9 @@ describe('counterparts are never invented', () => {
 })
 
 describe('locale alternates', () => {
-  test('ONLY the three real pairs produce alternates', () => {
+  test('ONLY the declared complete pairs produce alternates', () => {
     const withAlternates = allLivePaths().filter((p) => localeAlternatesFor(p) !== null)
-    expect(withAlternates.slice().sort()).toEqual(PAIRED_PATHS.slice().sort())
+    expect(withAlternates.slice().sort()).toEqual([...PAIRED_PATHS].sort())
   })
 
   test('each real pair emits the identical reciprocal set from both sides', () => {

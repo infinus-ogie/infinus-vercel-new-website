@@ -51,6 +51,7 @@ module.exports = {
     // priority. Reciprocal hreflang lives in each page's <head>, not in the sitemap.
     // Serbian counterparts carry the same priority as their English half.
     const keyRoutes = ['/', '/sr', '/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/contact', '/sr/contact', '/faq', '/sr/faq'];
+    // Case studies are 0.7 in English, so their Serbian halves inherit 0.7 as well.
     const priority = keyRoutes.includes(path) ? 0.8 : 0.7;
 
     return {

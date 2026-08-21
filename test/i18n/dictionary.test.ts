@@ -85,7 +85,13 @@ describe('shapes are identical across locales', () => {
    * "Retail Expertise", so it has no prefix; Serbian reads "Ekspertiza: Maloprodaja", so it
    * has no suffix. Exactly one of the two is empty in each locale, by design.
    */
-  const MAY_BE_EMPTY = ['domains.modal.titlePrefix', 'domains.modal.titleSuffix']
+  const MAY_BE_EMPTY = [
+    'domains.modal.titlePrefix',
+    'domains.modal.titleSuffix',
+    // The pharma1 case study has no engagement-model section; the shared component omits a
+    // section whose content is empty rather than rendering a bare heading.
+    'items.pharma1.engagementModel',
+  ]
 
   test('no key is optional or non-string, and only fragment keys may be empty', () => {
     // An optional key in an interface would let a locale omit it and still compile.

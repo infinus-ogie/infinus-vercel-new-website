@@ -19,15 +19,16 @@
  * A later phase changes the production code AND the expectation together, in one
  * reviewable diff.
  *
- * Verified against a fresh `next build` — Phase H1, after adding /sr and /sr/faq:
- *   34 manifest entries = 25 page routes + 8 route handlers + 1 framework route
- *   26 rendered .html files (25 pages + _not-found)
- *   29 prerendered routes, 0 dynamic routes
- *   19 sitemap URLs
+ * Verified against a fresh `next build` — Phase H2, after adding the five Serbian case
+ * studies:
+ *   39 manifest entries = 30 page routes + 8 route handlers + 1 framework route
+ *   31 rendered .html files (30 pages + _not-found)
+ *   34 prerendered routes, 0 dynamic routes
+ *   24 sitemap URLs
  *
- * Preceding verified states: 31 / 22 / 23 / 26 / 16 before /sr/contact, then
- * 32 / 23 / 24 / 27 / 17 after Phase G. H1's delta is exactly +2 in each page-shaped count
- * and 0 change to dynamic routes.
+ * Preceding verified states: 31 / 22 / 23 / 26 / 16 before /sr/contact, 32 / 23 / 24 / 27 / 17
+ * after Phase G, 34 / 25 / 26 / 29 / 19 after H1. H2's delta is exactly +5 in each
+ * page-shaped count and 0 change to dynamic routes.
  */
 
 export const PRODUCTION_ORIGIN = 'https://www.infinus.co' as const
@@ -117,7 +118,7 @@ const handler = (path: string, kind: 'handler-utility' | 'handler-api'): RouteEx
 })
 
 export const ROUTES: readonly RouteExpectation[] = [
-  // ── 19 public indexable pages ────────────────────────────────────────────────
+  // ── 24 public indexable pages ────────────────────────────────────────────────
   indexable('/', '/'),
   indexable('/contact'),
   {
@@ -155,6 +156,56 @@ export const ROUTES: readonly RouteExpectation[] = [
     expectStaticHtml: true,
   },
   indexable('/faq'),
+  {
+    // Phase H2: the Serbian half of the retail1 case-study pair.
+    path: '/sr/case-study/retail1',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/case-study/retail1`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    // Phase H2: the Serbian half of the pharma1 case-study pair.
+    path: '/sr/case-study/pharma1',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/case-study/pharma1`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    // Phase H2: the Serbian half of the pharma2 case-study pair.
+    path: '/sr/case-study/pharma2',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/case-study/pharma2`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    // Phase H2: the Serbian half of the nearshoring1 case-study pair.
+    path: '/sr/case-study/nearshoring1',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/case-study/nearshoring1`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    // Phase H2: the Serbian half of the manufacturing1 case-study pair.
+    path: '/sr/case-study/manufacturing1',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/case-study/manufacturing1`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
   indexable('/case-study/retail1'),
   indexable('/case-study/pharma1'),
   indexable('/case-study/pharma2'),
@@ -305,8 +356,11 @@ export const publicPages = (): RouteExpectation[] =>
  * test/seo/route-fixture.test.ts so an edit to ROUTES cannot silently change them.
  */
 export const EXPECTED_COUNTS = {
-  /** 16 before Phase G; +1 for /sr/contact, then +2 for /sr and /sr/faq in Phase H1. */
-  indexable: 19,
+  /**
+   * 16 before Phase G; +1 for /sr/contact, +2 for /sr and /sr/faq in H1, +5 for the
+   * Serbian case studies in H2.
+   */
+  indexable: 24,
   noindex: 1,
   /** /cfo — page still built behind its redirect */
   redirected: 1,
@@ -319,19 +373,20 @@ export const EXPECTED_COUNTS = {
   /**
    * Page routes in app-path-routes-manifest.json (excludes _not-found).
    * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so the
-   * build produced 22. Phase G added /sr/contact -> 23; Phase H1 adds /sr and /sr/faq -> 25.
+   * build produced 22. Phase G added /sr/contact -> 23; H1 added /sr and /sr/faq -> 25;
+   * H2 adds the five Serbian case studies -> 30.
    */
-  manifestPages: 25,
+  manifestPages: 30,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
-  /** total manifest entries: 25 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 34,
+  /** total manifest entries: 30 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 39,
   /**
-   * Rendered .html files: 25 built pages + _not-found. /privacy is in the fixture as a
+   * Rendered .html files: 30 built pages + _not-found. /privacy is in the fixture as a
    * redirect source but produces no HTML, so it is NOT counted here.
    */
-  renderedHtml: 26,
-  sitemapUrls: 19,
-  /** the 20 public pages whose <head> is snapshotted (19 indexable + the legal page) */
-  snapshotPages: 20,
+  renderedHtml: 31,
+  sitemapUrls: 24,
+  /** the 25 public pages whose <head> is snapshotted (24 indexable + the legal page) */
+  snapshotPages: 25,
 } as const

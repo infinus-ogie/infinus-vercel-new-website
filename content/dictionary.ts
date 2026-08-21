@@ -50,6 +50,8 @@ import { nav as enNav } from './en/nav'
 import { nav as srNav } from './sr/nav'
 import { footer as enFooter } from './en/footer'
 import { footer as srFooter } from './sr/footer'
+import { caseStudies as enCaseStudies } from './en/case-studies'
+import { caseStudies as srCaseStudies } from './sr/case-studies'
 
 /**
  * Chrome strings that are not specific to any one page.
@@ -414,6 +416,65 @@ export interface FooterDictionary {
   }
 }
 
+// ════════════════════════════════════════════════════════════════════════════════
+// PHASE H2 — case studies.
+//
+// All five pages share one structure, so they share one entry type and one set of
+// section labels. `solutionItems` and `engagementModel` may legitimately be EMPTY:
+// the pharma1 page has neither section, and the shared component omits a section whose
+// content is empty rather than rendering an empty heading.
+// ════════════════════════════════════════════════════════════════════════════════
+
+export interface CaseStudyEntry {
+  /** `<title>` input. The English pages append " | Infinus" themselves. */
+  readonly metadataTitle: string
+  /** The h1, also used as the hero image's alt text, exactly as the pages do today. */
+  readonly title: string
+  readonly badge: string
+  readonly clientOverview: string
+  /** Paragraphs separated by a blank line, as the component already splits them. */
+  readonly challenge: string
+  readonly solutionIntro: string
+  /** Empty on pages that have no bullet list. */
+  readonly solutionItems: readonly string[]
+  readonly results: readonly string[]
+  /** Empty on pages that have no engagement-model section. */
+  readonly engagementModel: string
+  /** Comma-separated; the component splits on ", " into pills. */
+  readonly technologies: string
+  /** `about` topics for the page's Article schema. Not rendered. */
+  readonly structuredAbout: readonly string[]
+}
+
+export interface CaseStudiesDictionary {
+  /** Section headings and CTA copy, shared by all five pages. */
+  readonly labels: {
+    readonly clientOverview: string
+    readonly challenge: string
+    readonly solution: string
+    readonly engagementIncluded: string
+    readonly results: string
+    readonly engagementModel: string
+    readonly technologies: string
+    readonly ctaHeading: string
+    readonly ctaButton: string
+    readonly ctaNote: string
+  }
+  /** Where the CTA links. Locale-specific. */
+  readonly contactHref: string
+  readonly items: {
+    readonly retail1: CaseStudyEntry
+    readonly pharma1: CaseStudyEntry
+    readonly pharma2: CaseStudyEntry
+    readonly nearshoring1: CaseStudyEntry
+    readonly manufacturing1: CaseStudyEntry
+  }
+}
+
+/** The five case-study keys, for iteration and for the route files. */
+export const CASE_STUDY_KEYS = ['retail1', 'pharma1', 'pharma2', 'nearshoring1', 'manufacturing1'] as const
+export type CaseStudyKey = (typeof CASE_STUDY_KEYS)[number]
+
 /** Every namespace a locale must provide. Add a namespace here and both locales break. */
 export interface Dictionary {
   readonly common: CommonDictionary
@@ -422,6 +483,7 @@ export interface Dictionary {
   readonly faq: FaqDictionary
   readonly nav: NavDictionary
   readonly footer: FooterDictionary
+  readonly caseStudies: CaseStudiesDictionary
 }
 
 /**
@@ -429,8 +491,8 @@ export interface Dictionary {
  * error; `satisfies` keeps that check while preserving the literal types for callers.
  */
 export const dictionaries = {
-  en: { common: enCommon, contact: enContact, home: enHome, faq: enFaq, nav: enNav, footer: enFooter },
-  sr: { common: srCommon, contact: srContact, home: srHome, faq: srFaq, nav: srNav, footer: srFooter },
+  en: { common: enCommon, contact: enContact, home: enHome, faq: enFaq, nav: enNav, footer: enFooter, caseStudies: enCaseStudies },
+  sr: { common: srCommon, contact: srContact, home: srHome, faq: srFaq, nav: srNav, footer: srFooter, caseStudies: srCaseStudies },
 } as const satisfies Record<Locale, Dictionary>
 
 /**
@@ -444,7 +506,7 @@ export function getDictionary(locale: Locale): Dictionary {
 }
 
 /** Namespaces every locale must provide, as literals for the runtime completeness test. */
-export const DICTIONARY_NAMESPACES = ['common', 'contact', 'home', 'faq', 'nav', 'footer'] as const
+export const DICTIONARY_NAMESPACES = ['common', 'contact', 'home', 'faq', 'nav', 'footer', 'caseStudies'] as const
 
 export type DictionaryNamespace = (typeof DICTIONARY_NAMESPACES)[number]
 

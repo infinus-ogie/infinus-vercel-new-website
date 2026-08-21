@@ -57,6 +57,12 @@ const DARK_HERO_PATHS = [
   '/case-study/pharma2',
   '/case-study/nearshoring1',
   '/case-study/manufacturing1',
+  // Phase H2: the Serbian case studies render the same dark photographic hero.
+  '/sr/case-study/retail1',
+  '/sr/case-study/pharma1',
+  '/sr/case-study/pharma2',
+  '/sr/case-study/nearshoring1',
+  '/sr/case-study/manufacturing1',
 ]
 
 describe('the light-background pages are classified light', () => {

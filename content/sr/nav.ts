@@ -5,8 +5,8 @@
  * ║  OWNER-APPROVED. Reviewed and signed off after the Phase H1 translation report. ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
- * Approved unchanged, including the deliberate Serbian labels on the two groups whose
- * destinations are still English pages (see the note below).
+ * Labels approved at H1 review. Phase H2 repointed the case-study submenu at the real
+ * Serbian pages; the labels themselves are unchanged.
  *
  * ── Labels and destinations are separate decisions ──────────────────────────────
  * A translated label NEVER invents a URL. Each entry below points at a destination that
@@ -16,13 +16,13 @@
  *                                            homepage renders those same sections.
  *   faq                                   -> /sr/faq        (live in H1)
  *   contact                               -> /sr/contact    (live since Phase G)
- *   packagedSolutions.*  caseStudies.*    -> the ENGLISH pages, unchanged. Their Serbian
+ *   caseStudies.*                         -> /sr/case-study/... (live since Phase H2)
+ *   packagedSolutions.*                   -> the ENGLISH pages, unchanged. Their Serbian
  *                                            counterparts are still only planned, so
  *                                            linking to /sr/... would 404.
  *
  * That last group is the deliberate compromise of a partial rollout: a Serbian label on a
- * control that leads to an English page. Flagged for review — the alternative is keeping
- * those two group labels in English until their pages are translated.
+ * control that leads to an English page. It resolves as those pages are translated.
  *
  * test/shell/chrome-locale.test.ts asserts every href here is either a live path in the
  * route map or an anchor on one, so a planned URL cannot slip in.
@@ -48,12 +48,13 @@ export const nav: NavDictionary = {
   caseStudies: {
     label: 'Studije slučaja',
     items: [
-      { label: 'Maloprodaja', href: '/case-study/retail1' },
-      { label: 'Farmacija 1', href: '/case-study/pharma1' },
-      { label: 'Farmacija 2', href: '/case-study/pharma2' },
+      // Phase H2: these now point at the REAL Serbian case studies.
+      { label: 'Maloprodaja', href: '/sr/case-study/retail1' },
+      { label: 'Farmacija 1', href: '/sr/case-study/pharma1' },
+      { label: 'Farmacija 2', href: '/sr/case-study/pharma2' },
       // Established loanword in Serbian IT usage; left as-is deliberately.
-      { label: 'Nearshoring', href: '/case-study/nearshoring1' },
-      { label: 'Proizvodnja', href: '/case-study/manufacturing1' },
+      { label: 'Nearshoring', href: '/sr/case-study/nearshoring1' },
+      { label: 'Proizvodnja', href: '/sr/case-study/manufacturing1' },
     ],
   },
 

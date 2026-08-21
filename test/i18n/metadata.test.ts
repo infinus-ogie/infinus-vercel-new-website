@@ -1,9 +1,9 @@
 /**
  * Metadata / hreflang primitive guards.
  *
- * Three pairs are real — home, faq and contact. The load-bearing assertions are two-sided:
- * each half of each pair must produce the complete reciprocal set, and every other path on
- * the site must still produce a canonical and NOTHING ELSE.
+ * The complete pairs are declared in test/fixtures/locale-pairs.ts. The load-bearing
+ * assertions are two-sided: each half of each pair must produce the complete reciprocal set,
+ * and every other path on the site must still produce a canonical and NOTHING ELSE.
  */
 import { describe, test, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
@@ -12,16 +12,10 @@ import { localeAlternatesMetadata } from '@/lib/seo-i18n'
 import { allLivePaths, localeAlternatesFor, plannedPaths } from '@/lib/locale-routes'
 import { PRODUCTION_ORIGIN, publicPages } from '../fixtures/routes'
 
-/** The three complete pairs, as flat path pairs. */
-const PAIRS = [
-  { en: '/', sr: '/sr' },
-  { en: '/faq', sr: '/sr/faq' },
-  { en: '/contact', sr: '/sr/contact' },
-] as const
-const PAIR: string[] = PAIRS.flatMap((p) => [p.en, p.sr])
+import { COMPLETE_PAIRS as PAIRS, PAIRED_PATHS as PAIR } from '../fixtures/locale-pairs'
 
-describe('no hreflang is produced for anything outside the three real pairs', () => {
-  test('every live path except the six paired ones yields a canonical and no languages', () => {
+describe('no hreflang is produced for anything outside the declared pairs', () => {
+  test('every live path outside the pairs yields a canonical and no languages', () => {
     for (const path of allLivePaths()) {
       if (PAIR.indexOf(path) !== -1) continue
       const alternates = localeAlternatesMetadata(path)
@@ -53,7 +47,7 @@ describe('no hreflang is produced for anything outside the three real pairs', ()
   })
 })
 
-describe('the three real pairs emit reciprocal alternates', () => {
+describe('every declared pair emits reciprocal alternates', () => {
   test('both halves of each pair emit the identical complete set, including x-default', () => {
     for (const pair of PAIRS) {
       const expected = {

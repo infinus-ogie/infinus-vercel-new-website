@@ -9,8 +9,8 @@
  *   · which locale the shared Navbar and Footer render in
  *   · the navbar's light/dark surface classification (lib/navbar-surface.ts)
  *
- * Three pairs are complete today — home, faq and contact — and ONLY those reach rendered
- * HTML. Everything still marked `planned` is inert.
+ * Eight pairs are complete today — home, faq, contact and the five case studies — and ONLY
+ * those reach rendered HTML. Everything still marked `planned` is inert.
  *
  * ── The one rule that makes this safe ───────────────────────────────────────────
  *
@@ -105,9 +105,9 @@ export const LEGACY_UNPREFIXED_SERBIAN_PATHS: readonly RoutePath[] = [
 
 export const ROUTE_PAIRS: readonly RoutePair[] = [
   // ── Marketing pages ─────────────────────────────────────────────────────────
-  // The first three are COMPLETE pairs and are the only entries that produce a switcher
-  // destination, hreflang and a Serbian sitemap URL. The rest are English-only: their
-  // Serbian side is `planned`, so no /sr route exists for them and nothing is emitted.
+  // Complete pairs produce a switcher destination, hreflang and a Serbian sitemap URL.
+  // Entries still marked `planned` are English-only: no /sr route exists for them and
+  // nothing is emitted.
   {
     // Phase H1: the Serbian homepage went live, so this is now a complete pair.
     id: 'home',
@@ -135,31 +135,31 @@ export const ROUTE_PAIRS: readonly RoutePair[] = [
     id: 'case-study-retail1',
     pairing: 'translatable',
     en: live('/case-study/retail1'),
-    sr: planned('/sr/case-study/retail1'),
+    sr: live('/sr/case-study/retail1'),
   },
   {
     id: 'case-study-pharma1',
     pairing: 'translatable',
     en: live('/case-study/pharma1'),
-    sr: planned('/sr/case-study/pharma1'),
+    sr: live('/sr/case-study/pharma1'),
   },
   {
     id: 'case-study-pharma2',
     pairing: 'translatable',
     en: live('/case-study/pharma2'),
-    sr: planned('/sr/case-study/pharma2'),
+    sr: live('/sr/case-study/pharma2'),
   },
   {
     id: 'case-study-nearshoring1',
     pairing: 'translatable',
     en: live('/case-study/nearshoring1'),
-    sr: planned('/sr/case-study/nearshoring1'),
+    sr: live('/sr/case-study/nearshoring1'),
   },
   {
     id: 'case-study-manufacturing1',
     pairing: 'translatable',
     en: live('/case-study/manufacturing1'),
-    sr: planned('/sr/case-study/manufacturing1'),
+    sr: live('/sr/case-study/manufacturing1'),
   },
   { id: 'projectpulse', pairing: 'translatable', en: live('/projectpulse'), sr: planned('/sr/projectpulse') },
   {

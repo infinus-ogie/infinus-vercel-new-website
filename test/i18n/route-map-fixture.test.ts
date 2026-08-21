@@ -23,6 +23,11 @@ import { join, relative, sep } from 'node:path'
 import { ROUTE_PAIRS } from '@/content/routes'
 import { allLivePaths, livePathsFor, localeAlternatesFor, localeOfPath, plannedPaths } from '@/lib/locale-routes'
 import { ROUTES, publicPages, type RouteExpectation } from '../fixtures/routes'
+import {
+  COMPLETE_PAIRS as REAL_PAIRS,
+  PAIRED_PATHS,
+  LIVE_SERBIAN_PREFIXED_PATHS,
+} from '../fixtures/locale-pairs'
 
 const ROOT = process.cwd()
 const APP = join(ROOT, 'app')
@@ -96,7 +101,7 @@ describe('planned routes still do not exist', () => {
     // The strongest guard for "H1 launched exactly two more Serbian URLs". Every other
     // planned Serbian path must still have no page and no fixture entry.
     const declaredSr: string[] = livePathsFor('sr').filter((p) => p === '/sr' || p.indexOf('/sr/') === 0)
-    expect(declaredSr.slice().sort()).toEqual(['/sr', '/sr/contact', '/sr/faq'])
+    expect(declaredSr.slice().sort()).toEqual([...LIVE_SERBIAN_PREFIXED_PATHS].sort())
 
     for (const page of pages) {
       const url = urlFor(page)
@@ -141,7 +146,7 @@ describe('locale ownership agrees with the filesystem root layout', () => {
 })
 
 describe('coverage: every public page has a known locale ownership', () => {
-  test('all 20 public pages appear exactly once in the pair map', () => {
+  test('every public page appears exactly once in the pair map', () => {
     const live = allLivePaths()
     for (const route of publicPages()) {
       const occurrences = live.filter((p) => p === route.path).length
@@ -196,15 +201,7 @@ describe('/cfo stays a redirect, never a language-switch destination', () => {
   })
 })
 
-/** The three complete pairs after Phase H1. */
-const REAL_PAIRS = [
-  { en: '/', sr: '/sr' },
-  { en: '/faq', sr: '/sr/faq' },
-  { en: '/contact', sr: '/sr/contact' },
-] as const
-const PAIRED_PATHS: string[] = REAL_PAIRS.flatMap((p) => [p.en, p.sr])
-
-describe('the three real pairs agree with the independent fixture', () => {
+describe('every declared pair agrees with the independent fixture', () => {
   test('both halves are classified as indexable pages', () => {
     for (const path of PAIRED_PATHS) {
       const route = fixtureByPath[path]
