@@ -28,6 +28,9 @@ const base = generatePageMetadata(content.metadata.title, content.metadata.descr
 
 export const metadata: Metadata = {
   ...base,
+  // See the English half: the <title> uses the brand-free `documentTitle` and lets the root
+  // template add the brand once; the social tags and the JSON-LD keep `metadata.title`.
+  title: content.metadata.documentTitle,
   alternates: localeAlternatesMetadata(PATH),
   openGraph: {
     ...base.openGraph,

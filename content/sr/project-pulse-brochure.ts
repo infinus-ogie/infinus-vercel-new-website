@@ -78,7 +78,7 @@ import type { ProjectPulseBrochureDictionary } from '../dictionary'
 
 export const projectPulseBrochure: ProjectPulseBrochureDictionary = {
   metadata: {
-    title: 'ProjectPulse brošura | Infinus – SAP Qualified Partner-Packaged Solution',
+    title: 'ProjectPulse brošura – SAP Qualified Partner-Packaged Solution',
     description:
       'ProjectPulse je SAP Qualified Partner-Packaged Solution kompanije Infinus za kompanije iz oblasti profesionalnih usluga, koji na jednoj inteligentnoj cloud platformi objedinjuje finansije, projekte, prodaju, nabavku, HR i analitiku.',
   },

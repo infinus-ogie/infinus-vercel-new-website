@@ -210,6 +210,29 @@ main(() => {
         !/\|\s*Infinus\s*\|\s*Infinus\s*$/i.test(title),
         `${route.path} <title> ends in a doubled brand suffix: ${JSON.stringify(title)}`
       )
+
+      // ── the brand appears at most ONCE in the whole title ────────────────────
+      // The suffix checks above catch "X | Infinus | Infinus". They do not catch a title
+      // that carries the brand mid-string AND takes the template suffix, e.g.
+      // "SAP Starter Package | Infinus – SAP Packaged Solutions | Infinus" — one suffix, but
+      // visibly branded twice. Four pages read that way and were normalised.
+      //
+      // Three pages are ALLOWLISTED, and the reason differs:
+      //   /contact, /sr/contact — the brand is the grammatical object of the page's own
+      //       sentence ("Contact Infinus - …", "Kontaktirajte Infinus - …"). Removing it
+      //       breaks the sentence, and the wording is owner-approved.
+      //   /cfo — "SAP for CFOs — Infinus | Infinus" is the same redundancy as the four, but
+      //       it is a redirect-backed legacy page outside this pass's scope. Logged for a
+      //       decision rather than changed unilaterally.
+      // Anything NOT on this list must brand itself once.
+      const BRAND_TWICE_ALLOWED = ['/contact', '/sr/contact', '/cfo']
+      if (BRAND_TWICE_ALLOWED.indexOf(route.path) === -1) {
+        const brandCount = title.split('Infinus').length - 1
+        report.check(
+          brandCount <= 1,
+          `${route.path} <title> names the brand ${brandCount} times: ${JSON.stringify(title)}`
+        )
+      }
     }
 
     ssrJsonLdTotal += ssrJsonLdBlocks(html).length

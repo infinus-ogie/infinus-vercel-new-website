@@ -770,7 +770,25 @@ export interface ProjectPulseVideoDictionary {
  * ─────────────────────────────────────────────────────────────────────────── */
 
 export interface SapStarterPackageDictionary {
-  readonly metadata: { readonly title: string; readonly description: string }
+  /**
+   * `title` feeds the SOCIAL tags and the JSON-LD; `documentTitle` feeds the <title>.
+   *
+   * They differ by one thing: the brand. `title` carries it mid-string — "SAP Starter
+   * Package | Infinus – SAP Packaged Solutions" — which is correct for og:title, where the
+   * value stands alone and needs to name the company. In the <title> the root layout
+   * already appends "| Infinus", so the mid-string copy made the tab read
+   * "…| Infinus – SAP Packaged Solutions | Infinus": branded twice.
+   *
+   * Splitting the field is what lets the <title> lose the redundancy while og:title,
+   * twitter:title, the JSON-LD name/headline and the Serbian breadcrumb keep the exact
+   * value they have always had. The brochure namespace needs no equivalent: its title feeds
+   * nothing but the <title>, so it was corrected in place.
+   */
+  readonly metadata: {
+    readonly title: string
+    readonly documentTitle: string
+    readonly description: string
+  }
   readonly hero: {
     readonly badge: string
     readonly imageAlt: string

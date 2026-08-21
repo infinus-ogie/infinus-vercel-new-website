@@ -23,6 +23,14 @@ const content = getDictionary("en").sapStarterPackage
 
 export const metadata = {
   ...generatePageMetadata(content.metadata.title, content.metadata.description, PATH),
+  // `documentTitle` is the brand-free page title; the root layout's "%s | Infinus" template
+  // supplies the brand once. A plain string (not `absolute`) is what lets the template apply,
+  // and it is the same mechanism the brochure pages use.
+  //
+  // This deliberately overrides the `title` that generatePageMetadata put in the spread
+  // above. That helper normalises `metadata.title`, which still carries the brand mid-string
+  // because og:title, twitter:title and the JSON-LD need it there — and those keep it.
+  title: content.metadata.documentTitle,
   alternates: localeAlternatesMetadata(PATH),
 }
 

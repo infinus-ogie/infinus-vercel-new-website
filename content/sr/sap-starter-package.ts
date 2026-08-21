@@ -56,6 +56,8 @@ import type { SapStarterPackageDictionary } from '../dictionary'
 export const sapStarterPackage: SapStarterPackageDictionary = {
   metadata: {
     title: 'SAP Starter Package | Infinus – SAP Packaged Solutions',
+    // The brand is dropped here only: the root layout's template supplies it once.
+    documentTitle: 'SAP Starter Package – SAP Packaged Solutions',
     description:
       'Brz i strukturisan način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast.',
   },
