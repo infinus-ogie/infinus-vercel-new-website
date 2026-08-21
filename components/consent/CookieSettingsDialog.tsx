@@ -239,7 +239,21 @@ export function CookieSettingsDialog() {
  * (existing unit tests mount pages directly). Without a provider the control still
  * renders — keeping footer markup identical everywhere — but does nothing.
  */
-export function CookieSettingsButton({ className }: { className?: string }) {
+/**
+ * The control that reopens the consent dialog.
+ *
+ * Phase H1 added an optional `label` so the shared Footer can render it in the page's
+ * locale. It DEFAULTS to `consentCopy.settings.title`, so every existing call site and the
+ * English footer are unchanged, and nothing about consent behaviour, storage, the dialog or
+ * the banner is touched — the dialog itself deliberately stays as Phase C left it.
+ */
+export function CookieSettingsButton({
+  className,
+  label = consentCopy.settings.title,
+}: {
+  className?: string
+  label?: string
+}) {
   const consent = useConsentOptional()
   return (
     <button
@@ -248,7 +262,7 @@ export function CookieSettingsButton({ className }: { className?: string }) {
       className={className}
       data-testid="cookie-settings-reopen"
     >
-      {consentCopy.settings.title}
+      {label}
     </button>
   )
 }

@@ -1,6 +1,6 @@
 'use client';
 
-export function HeroPartnerBadge() {
+export function HeroPartnerBadge({ logoAlt = "Infinus" }: { logoAlt?: string }) {
   return (
     <div
       className="
@@ -11,12 +11,12 @@ export function HeroPartnerBadge() {
         backdrop-blur-md ring-1 ring-white/20 hover:ring-white/30
         transition
       "
-      aria-label="Infinus"
+      aria-label={logoAlt}
     >
       {/* Infinus logo in original colors */}
       <img
         src="/infinus-logo-pack/infinus-logo-05.png"
-        alt="Infinus"
+        alt={logoAlt}
         className="h-20 w-auto sm:h-24 shrink-0"
       />
     </div>

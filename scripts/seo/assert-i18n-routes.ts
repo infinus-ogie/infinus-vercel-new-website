@@ -6,18 +6,19 @@
  * The unit tests in test/i18n/ prove the primitives behave correctly. This script proves
  * something they cannot: what the SHIPPED BUILD actually contains.
  *
- * Phase F asserted the foundation was entirely inert. Phase G turned on ONE pair, so the
- * claim under test changed shape: exactly the real pair may emit locale output, and
- * everything else must still emit none. That distinction is the whole safety story, so it is
- * asserted per-document rather than in aggregate.
+ * Phase F asserted the foundation was entirely inert. Phase G turned on one pair and Phase H1
+ * two more, so the claim under test is: exactly the COMPLETE pairs may emit locale output,
+ * each pair internally consistent, and every other document must emit none. That distinction
+ * is the whole safety story, so it is asserted per-document rather than in aggregate.
  *
- * A. The /sr URL space contains ONLY the live Serbian paths the route map declares.
- *    /sr itself, /sr/faq, /sr/grow and every other planned path must be absent.
+ * A. The /sr URL space contains ONLY the live Serbian paths the route map declares — no
+ *    undeclared Serbian URL in the manifest, the prerendered output or the sitemap.
  * B. No planned path from content/routes.ts exists as a real route.
  * C. Reciprocal hreflang, on the real pair and NOWHERE ELSE:
  *      · each page of a complete pair emits one <link rel="alternate" hreflang> per locale
  *        plus x-default, with the exact absolute URLs the map implies
- *      · both halves emit the IDENTICAL set — a one-way annotation is ignored by crawlers
+ *      · both halves of the SAME pair emit the IDENTICAL set — a one-way annotation is
+ *        ignored by crawlers, and different pairs must not be conflated
  *      · x-default points at the default locale (English)
  *      · every self-reference is present (a page must list itself)
  *      · every other prerendered document emits zero hreflang and zero rel="alternate"
@@ -126,8 +127,8 @@ main(() => {
   for (const declared of declaredSr) {
     report.check(manifest.pages.indexOf(declared) !== -1, `${declared} is declared live but is not a page route`)
   }
-  // /sr itself must never become a page while it is only a URL-space prefix.
-  report.check(allRoutes.indexOf('/sr') === -1, '/sr exists as a route; it should still 404')
+  // Every /sr route in the build must be declared; the loop above already proves that. What
+  // this adds is the reverse for the PLANNED set, checked explicitly below in section B.
 
   const sitemapFile = path.join(paths.projectRoot, SITEMAP_URLSET)
   if (fs.existsSync(sitemapFile)) {
@@ -239,17 +240,39 @@ main(() => {
     report.note(`${routePath} alternates: ${got.join(', ')}`)
   }
 
-  // Reciprocity: both halves of the pair must have emitted the same set.
-  const emittedPaths = Object.keys(emittedSets)
-  for (let i = 1; i < emittedPaths.length; i += 1) {
+  // Reciprocity, checked WITHIN each pair. Comparing every document against one arbitrary
+  // document would be wrong as soon as a second pair exists: different pairs legitimately
+  // advertise different URLs. What must match is the two halves of the SAME pair.
+  for (let i = 0; i < ROUTE_PAIRS.length; i += 1) {
+    const pair = ROUTE_PAIRS[i]
+    const halves: string[] = []
+    for (let j = 0; j < LOCALES.length; j += 1) {
+      const entry = pair[LOCALES[j]]
+      if (entry !== null && entry.status === 'live') halves.push(entry.path)
+    }
+    const emitted = halves.filter((path) => emittedSets[path] !== undefined)
+    if (emitted.length === 0) continue
+
     report.check(
-      emittedSets[emittedPaths[i]] === emittedSets[emittedPaths[0]],
-      `${emittedPaths[i]} and ${emittedPaths[0]} emit different alternate sets — hreflang is not reciprocal`
+      emitted.length === halves.length,
+      `pair "${pair.id}": only ${emitted.join(', ')} emitted alternates — a one-way annotation is ignored by crawlers`
     )
+    for (let j = 1; j < emitted.length; j += 1) {
+      report.check(
+        emittedSets[emitted[j]] === emittedSets[emitted[0]],
+        `pair "${pair.id}": ${emitted[j]} and ${emitted[0]} emit different alternate sets — hreflang is not reciprocal`
+      )
+    }
   }
+
+  const emittedPaths = Object.keys(emittedSets)
   report.check(
     emittedPaths.length === pairedPaths.length,
     `${pairedPaths.length} paths should emit alternates but ${emittedPaths.length} documents did`
+  )
+  report.check(
+    emittedPaths.slice().sort().join(', ') === pairedPaths.slice().sort().join(', '),
+    `documents that emitted alternates (${emittedPaths.sort().join(', ')}) do not match the complete pairs (${pairedPaths.sort().join(', ')})`
   )
 
   // ── E: live paths are real, correctly-languaged, self-canonical documents ───────

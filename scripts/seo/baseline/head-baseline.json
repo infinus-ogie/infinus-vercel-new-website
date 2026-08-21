@@ -84,6 +84,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/",
+        "sr-Latn => https://www.infinus.co/sr",
+        "x-default => https://www.infinus.co/"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -810,6 +815,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/faq",
+        "sr-Latn => https://www.infinus.co/sr/faq",
+        "x-default => https://www.infinus.co/faq"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -1716,6 +1726,114 @@
       "types": []
     }
   },
+  "/sr": {
+    "htmlLang": "sr-Latn",
+    "title": "Infinus - SAP ekspertiza za poslovni uspeh",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Vaš pouzdan partner za SAP ekspertizu. SAP Gold Partner fokusiran na rešenja iz SAP Business Suite portfolija, uključujući SAP Cloud ERP, SAP Business Data Cloud, SAP Business AI i SAP Business Technology Platform."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "Infinus - SAP ekspertiza za poslovni uspeh"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Vaš pouzdan partner za SAP ekspertizu. SAP Gold Partner fokusiran na rešenja iz SAP Business Suite portfolija, uključujući SAP Cloud ERP, SAP Business Data Cloud, SAP Business AI i SAP Business Technology Platform."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Infinus - SAP ekspertiza za poslovni uspeh"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Vaš pouzdan partner za SAP ekspertizu. SAP Gold Partner fokusiran na rešenja iz SAP Business Suite portfolija, uključujući SAP Cloud ERP, SAP Business Data Cloud, SAP Business AI i SAP Business Technology Platform."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "Infinus - SAP ekspertiza za poslovni uspeh"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "Infinus - SAP ekspertiza za poslovni uspeh"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/",
+        "sr-Latn => https://www.infinus.co/sr",
+        "x-default => https://www.infinus.co/"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
   "/sr/contact": {
     "htmlLang": "sr-Latn",
     "title": "Kontaktirajte Infinus - Stručna SAP podrška | Infinus",
@@ -1811,6 +1929,114 @@
       ],
       "canonical": [
         "https://www.infinus.co/sr/contact"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/faq": {
+    "htmlLang": "sr-Latn",
+    "title": "Česta pitanja - SAP usluge | Infinus | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Pronađite odgovore na najčešća pitanja o SAP uslugama, implementaciji, podršci i našoj ekspertizi kao SAP Gold Partnera."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "Česta pitanja - SAP usluge | Infinus"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Pronađite odgovore na najčešća pitanja o SAP uslugama, implementaciji, podršci i našoj ekspertizi kao SAP Gold Partnera."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Česta pitanja - SAP usluge | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Pronađite odgovore na najčešća pitanja o SAP uslugama, implementaciji, podršci i našoj ekspertizi kao SAP Gold Partnera."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "Česta pitanja - SAP usluge | Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "Česta pitanja - SAP usluge | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/faq"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/faq",
+        "sr-Latn => https://www.infinus.co/sr/faq",
+        "x-default => https://www.infinus.co/faq"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/faq"
       ],
       "icon": [
         "/favicon.ico"

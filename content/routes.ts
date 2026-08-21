@@ -1,14 +1,16 @@
 /**
  * ROUTE PAIR MAP — the single source of truth for locale route ownership.
  *
- * This is the file future code asks "does this page have a real counterpart in the other
- * language, and what is its URL?". It will eventually drive:
+ * This is the file code asks "does this page have a real counterpart in the other language,
+ * and what is its URL?". It drives:
  *
  *   · the global language switcher's destination
  *   · reciprocal hreflang / x-default
- *   · sitemap locale alternates
+ *   · which locale the shared Navbar and Footer render in
+ *   · the navbar's light/dark surface classification (lib/navbar-surface.ts)
  *
- * Today it drives NONE of those. Nothing in this map reaches rendered HTML in this phase.
+ * Three pairs are complete today — home, faq and contact — and ONLY those reach rendered
+ * HTML. Everything still marked `planned` is inert.
  *
  * ── The one rule that makes this safe ───────────────────────────────────────────
  *
@@ -102,20 +104,33 @@ export const LEGACY_UNPREFIXED_SERBIAN_PATHS: readonly RoutePath[] = [
 ]
 
 export const ROUTE_PAIRS: readonly RoutePair[] = [
-  // ── English marketing pages ──────────────────────────────────────────────────
-  // Live in English. Serbian counterparts are PLANNED: no /sr/* route exists in the
-  // build, so none of these pairs is complete and none produces an alternate today.
-  { id: 'home', pairing: 'translatable', en: live('/'), sr: planned('/sr') },
+  // ── Marketing pages ─────────────────────────────────────────────────────────
+  // The first three are COMPLETE pairs and are the only entries that produce a switcher
+  // destination, hreflang and a Serbian sitemap URL. The rest are English-only: their
+  // Serbian side is `planned`, so no /sr route exists for them and nothing is emitted.
   {
-    // THE FIRST REAL PAIR (Phase G). Both sides are live, so this is the only entry in the
-    // map that produces a language-switcher destination and reciprocal hreflang. Every
-    // other Serbian side below is still `planned` and therefore still inert.
+    // Phase H1: the Serbian homepage went live, so this is now a complete pair.
+    id: 'home',
+    pairing: 'translatable',
+    en: live('/'),
+    sr: live('/sr'),
+  },
+  {
+    // The first real pair (Phase G). Phase H1 added `home` and `faq` alongside it, so
+    // three pairs are now complete; every other Serbian side below is still `planned` and
+    // therefore still inert — no switcher destination, no hreflang, no sitemap entry.
     id: 'contact',
     pairing: 'translatable',
     en: live('/contact'),
     sr: live('/sr/contact'),
   },
-  { id: 'faq', pairing: 'translatable', en: live('/faq'), sr: planned('/sr/faq') },
+  {
+    // Phase H1: the Serbian FAQ went live, so this is now a complete pair.
+    id: 'faq',
+    pairing: 'translatable',
+    en: live('/faq'),
+    sr: live('/sr/faq'),
+  },
   {
     id: 'case-study-retail1',
     pairing: 'translatable',

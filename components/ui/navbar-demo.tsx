@@ -10,45 +10,43 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { navbarSurfaceFor, navbarTextColorFor } from "@/lib/navbar-surface"
+import { chromeLocaleFor } from "@/lib/chrome-locale"
+import { getDictionary } from "@/content/dictionary"
 
 export function NavBarDemo() {
   const pathname = usePathname()
   // usePathname is a CLIENT hook, not a request API: it reads router state and is inlined
   // into the prerendered output, so every route stays statically rendered.
   const surface = navbarSurfaceFor(pathname)
+  // Phase H1: the shared Navbar renders in the locale of the page it is on. Labels and
+  // destinations both come from the dictionary, so a translated label never invents a URL.
+  const nav = getDictionary(chromeLocaleFor(pathname)).nav
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [textColor, setTextColor] = useState(() => navbarTextColorFor(surface))
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
 
+  // Same eight entries in the same order as before; only the source of the labels and URLs
+  // changed. Icons stay here — they are presentation, not copy.
   const navItems = [
-    { name: 'Home', url: '/', icon: <Home size={18} strokeWidth={2.5} /> },
-    { name: 'About', url: '/#about', icon: <User size={18} strokeWidth={2.5} /> },
-    { name: 'Our Expertise', url: '/#our-expertise', icon: <Briefcase size={18} strokeWidth={2.5} /> },
-    { name: 'Benefits', url: '/#partnership-benefits', icon: <Star size={18} strokeWidth={2.5} /> },
-    { 
-      name: 'SAP Packaged Solutions', 
-      url: '#', 
+    { name: nav.home.label, url: nav.home.href, icon: <Home size={18} strokeWidth={2.5} /> },
+    { name: nav.about.label, url: nav.about.href, icon: <User size={18} strokeWidth={2.5} /> },
+    { name: nav.expertise.label, url: nav.expertise.href, icon: <Briefcase size={18} strokeWidth={2.5} /> },
+    { name: nav.benefits.label, url: nav.benefits.href, icon: <Star size={18} strokeWidth={2.5} /> },
+    {
+      name: nav.packagedSolutions.label,
+      url: '#',
       icon: <FileText size={18} strokeWidth={2.5} />,
-      submenu: [
-        { name: 'ProjectPulse', url: '/projectpulse' },
-        { name: 'SAP Starter Package', url: '/sap-packaged-solutions/sap-starter-package' }
-      ]
+      submenu: nav.packagedSolutions.items.map((item) => ({ name: item.label, url: item.href })),
     },
     {
-      name: 'Case Studies',
+      name: nav.caseStudies.label,
       url: '#',
       icon: <BookOpen size={18} strokeWidth={2.5} />,
-      submenu: [
-        { name: 'Retail', url: '/case-study/retail1' },
-        { name: 'Pharma 1', url: '/case-study/pharma1' },
-        { name: 'Pharma 2', url: '/case-study/pharma2' },
-        { name: 'Nearshoring', url: '/case-study/nearshoring1' },
-        { name: 'Manufacturing', url: '/case-study/manufacturing1' }
-      ]
+      submenu: nav.caseStudies.items.map((item) => ({ name: item.label, url: item.href })),
     },
-    { name: 'Contact', url: '/contact', icon: <MessageCircle size={18} strokeWidth={2.5} /> },
-    { name: 'FAQ', url: '/faq', icon: <HelpCircle size={18} strokeWidth={2.5} /> }
+    { name: nav.contact.label, url: nav.contact.href, icon: <MessageCircle size={18} strokeWidth={2.5} /> },
+    { name: nav.faq.label, url: nav.faq.href, icon: <HelpCircle size={18} strokeWidth={2.5} /> }
   ]
 
   const toggleMobileMenu = () => {
@@ -119,7 +117,7 @@ export function NavBarDemo() {
               : "bg-white/90 shadow-sm border-b border-black/5"
           )}>
             {/* Home Logo - Left */}
-            <Link href="/" className="flex items-center">
+            <Link href={nav.home.href} className="flex items-center">
               <div className={cn(
                 "flex items-center justify-center w-12 h-12 rounded-full backdrop-blur-lg border transition-colors",
                 textColor === 'text-white/90' 
@@ -183,7 +181,7 @@ export function NavBarDemo() {
                     "text-lg font-semibold",
                     textColor === 'text-white/90' ? "text-white" : "text-slate-900"
                   )}>
-                    Menu
+                    {nav.menuLabel}
                   </h2>
                   <button
                     onClick={closeMobileMenu}

@@ -8,36 +8,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getDictionary } from "@/content/dictionary";
+import type { HomeDictionary } from "@/content/dictionary";
 
-type Copy = {
-  title: string;
-  intro: string;
-  paragraphs: string[];
-  bullets: string[];
-  ctaLabel: string;
-  ctaHref: string;
-};
-
-// Replace these with your exact About copy (1:1). Strings are placeholders.
-const defaultCopy: Copy = {
-  title: "About Us",
-  intro:
-    "Infinus is an SAP Gold Partner specializing in SAP Cloud ERP (Public and Private) and SAP Business AI, delivering deep expertise across the SAP Business Suite portfolio.",
-  paragraphs: [
-    "Our team of experienced consultants combines technology know-how with business process understanding to deliver best-in-class SAP consulting services and tailored solutions that drive measurable results.",
-    "The majority of our experts are senior SAP consultants with over a decade of professional experience across various industries, technologies, and functional areas.",
-  ],
-  bullets: [
-    "SAP Cloud ERP (Public and Private)",
-    "SAP Business AI",
-    "SAP Business Technology Platform (BTP)",
-    "SAP Business Data Cloud",
-  ],
-  ctaLabel: "Learn more",
-  ctaHref: "/contact",
-};
-
-export default function AboutSection({ copy = defaultCopy }: { copy?: Copy }) {
+/**
+ * Phase H1: the inline `defaultCopy` moved to content/en/home.ts VERBATIM, and the type is
+ * now the shared `HomeDictionary["about"]` so both locales satisfy one shape. The default
+ * is the English dictionary, so any existing caller renders exactly what it did before.
+ */
+export default function AboutSection({
+  copy = getDictionary("en").home.about,
+}: {
+  copy?: HomeDictionary["about"];
+}) {
   return (
     <section id="about" data-section="about" className="section section--surface-0">
       <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-32 pb-16 md:pt-40 md:pb-24">
@@ -47,7 +30,7 @@ export default function AboutSection({ copy = defaultCopy }: { copy?: Copy }) {
             <div className="card p-4 sm:p-6 rounded-2xl">
               <Image
                 src="/sap-gold-partner-logo-about-us.webp" // swap to your asset path
-                alt="SAP Gold Partner"
+                alt={copy.imageAlt}
                 width={640}
                 height={480}
                 className="mx-auto h-auto w-full max-w-sm object-contain"

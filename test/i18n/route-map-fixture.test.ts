@@ -92,11 +92,11 @@ describe('planned routes still do not exist', () => {
     }
   })
 
-  test('the ONLY /sr route that exists is the one the map declares live', () => {
-    // The strongest guard for "Phase G launched exactly one Serbian URL". /sr itself, and
-    // every other planned Serbian path, must still have no page and no fixture entry.
+  test('the ONLY /sr routes that exist are the ones the map declares live', () => {
+    // The strongest guard for "H1 launched exactly two more Serbian URLs". Every other
+    // planned Serbian path must still have no page and no fixture entry.
     const declaredSr: string[] = livePathsFor('sr').filter((p) => p === '/sr' || p.indexOf('/sr/') === 0)
-    expect(declaredSr).toEqual(['/sr/contact'])
+    expect(declaredSr.slice().sort()).toEqual(['/sr', '/sr/contact', '/sr/faq'])
 
     for (const page of pages) {
       const url = urlFor(page)
@@ -109,9 +109,9 @@ describe('planned routes still do not exist', () => {
     }
   })
 
-  test('/sr itself is not a route', () => {
-    expect(pages.map(urlFor)).not.toContain('/sr')
-    expect(ROUTES.map((r) => r.path)).not.toContain('/sr')
+  test('/sr is now a real route with a page file and a fixture entry', () => {
+    expect(pages.map(urlFor)).toContain('/sr')
+    expect(ROUTES.map((r) => r.path)).toContain('/sr')
   })
 })
 
@@ -141,7 +141,7 @@ describe('locale ownership agrees with the filesystem root layout', () => {
 })
 
 describe('coverage: every public page has a known locale ownership', () => {
-  test('all 18 public pages appear exactly once in the pair map', () => {
+  test('all 20 public pages appear exactly once in the pair map', () => {
     const live = allLivePaths()
     for (const route of publicPages()) {
       const occurrences = live.filter((p) => p === route.path).length
@@ -196,9 +196,17 @@ describe('/cfo stays a redirect, never a language-switch destination', () => {
   })
 })
 
-describe('the real Contact pair agrees with the independent fixture', () => {
+/** The three complete pairs after Phase H1. */
+const REAL_PAIRS = [
+  { en: '/', sr: '/sr' },
+  { en: '/faq', sr: '/sr/faq' },
+  { en: '/contact', sr: '/sr/contact' },
+] as const
+const PAIRED_PATHS: string[] = REAL_PAIRS.flatMap((p) => [p.en, p.sr])
+
+describe('the three real pairs agree with the independent fixture', () => {
   test('both halves are classified as indexable pages', () => {
-    for (const path of ['/contact', '/sr/contact']) {
+    for (const path of PAIRED_PATHS) {
       const route = fixtureByPath[path]
       expect(route, `${path} must be classified`).toBeDefined()
       expect(route.kind).toBe('page-indexable')
@@ -209,28 +217,33 @@ describe('the real Contact pair agrees with the independent fixture', () => {
   })
 
   test('each half is self-canonical, on the production origin', () => {
-    expect(fixtureByPath['/contact'].expectCanonical).toBe('https://www.infinus.co/contact')
-    expect(fixtureByPath['/sr/contact'].expectCanonical).toBe('https://www.infinus.co/sr/contact')
+    for (const path of PAIRED_PATHS) {
+      expect(fixtureByPath[path].expectCanonical, path).toBe(`https://www.infinus.co${path}`)
+    }
   })
 
   test('the fixture langs match the locales the map assigns', () => {
-    expect(fixtureByPath['/contact'].expectLang).toBe('en')
-    expect(fixtureByPath['/sr/contact'].expectLang).toBe('sr-Latn')
-    expect(localeOfPath('/contact')).toBe('en')
-    expect(localeOfPath('/sr/contact')).toBe('sr')
+    for (const pair of REAL_PAIRS) {
+      expect(fixtureByPath[pair.en].expectLang, pair.en).toBe('en')
+      expect(fixtureByPath[pair.sr].expectLang, pair.sr).toBe('sr-Latn')
+      expect(localeOfPath(pair.en), pair.en).toBe('en')
+      expect(localeOfPath(pair.sr), pair.sr).toBe('sr')
+    }
   })
 
-  test('the alternate URLs the map produces are exactly the two fixture canonicals', () => {
-    const alternates = localeAlternatesFor('/contact')
-    expect(alternates).not.toBeNull()
-    expect(alternates!.languages.en).toBe(fixtureByPath['/contact'].expectCanonical)
-    expect(alternates!.languages['sr-Latn']).toBe(fixtureByPath['/sr/contact'].expectCanonical)
-    expect(alternates!.xDefault).toBe(fixtureByPath['/contact'].expectCanonical)
+  test('the alternate URLs the map produces are exactly the fixture canonicals', () => {
+    for (const pair of REAL_PAIRS) {
+      const alternates = localeAlternatesFor(pair.en)
+      expect(alternates, pair.en).not.toBeNull()
+      expect(alternates!.languages.en).toBe(fixtureByPath[pair.en].expectCanonical)
+      expect(alternates!.languages['sr-Latn']).toBe(fixtureByPath[pair.sr].expectCanonical)
+      expect(alternates!.xDefault).toBe(fixtureByPath[pair.en].expectCanonical)
+    }
   })
 
   test('no OTHER fixture page is half of a complete pair', () => {
     for (const route of ROUTES) {
-      if (route.path === '/contact' || route.path === '/sr/contact') continue
+      if (PAIRED_PATHS.indexOf(route.path) !== -1) continue
       expect(localeAlternatesFor(route.path), `${route.path} must emit no alternates`).toBeNull()
     }
   })

@@ -7,12 +7,12 @@
  * simply unreadable. That is what happened on four pages before this classification existed.
  *
  * The luminance behind the navbar was measured on every page that renders the shared chrome:
- * the four listed here came out at 1.0 (pure white), and the fifteen dark-hero pages at
- * 0.011–0.097. Those measurements are the reason for each expectation below.
+ * the light ones came out at 1.0 (pure white), and the dark-hero ones at 0.011–0.097. Those
+ * measurements are the reason for each expectation below.
  *
  * Two directions matter equally, so both are asserted:
- *   · the four light pages must stay light — a removal would silently restore white-on-white
- *   · the dark-hero pages must stay dark — a careless addition would wreck fifteen approved
+ *   · the light pages must stay light — a removal would silently restore white-on-white
+ *   · the dark-hero pages must stay dark — a careless addition would wreck sixteen approved
  *     pages at once
  */
 import { describe, test, expect } from 'vitest'
@@ -29,12 +29,20 @@ import {
 import { ROUTE_PAIRS } from '@/content/routes'
 import { allLivePaths } from '@/lib/locale-routes'
 
-/** Measured backdrop luminance 1.0 — white text here is invisible. */
-const LIGHT_PATHS = ['/contact', '/sr/contact', '/faq', '/politika-privatnosti']
+/**
+ * Measured backdrop luminance 1.0 — white text here is invisible.
+ *
+ * /sr/faq joined the set in Phase H1 WITHOUT a new entry in LIGHT_SURFACE_PAGE_IDS: it
+ * inherits the existing `faq` page id, which is the whole point of classifying by identity
+ * rather than by path.
+ */
+const LIGHT_PATHS = ['/contact', '/sr/contact', '/faq', '/sr/faq', '/politika-privatnosti']
 
 /** Measured backdrop luminance 0.011–0.097 — the approved white-text treatment is correct. */
 const DARK_HERO_PATHS = [
   '/',
+  // The Serbian homepage renders the same dark hero as `/`.
+  '/sr',
   '/grow',
   '/grow/cfo',
   '/grow/ceo',
@@ -51,18 +59,27 @@ const DARK_HERO_PATHS = [
   '/case-study/manufacturing1',
 ]
 
-describe('the four light-background pages are classified light', () => {
+describe('the light-background pages are classified light', () => {
   test('each one resolves to the light surface', () => {
     for (const path of LIGHT_PATHS) {
       expect(navbarSurfaceFor(path), `${path} opens on a white background`).toBe('light')
     }
   })
 
-  test('the Contact pair is classified by ONE page id, so the halves cannot drift', () => {
-    // /contact and /sr/contact share the id `contact`. Classifying by id rather than by path
-    // is what guarantees the English and Serbian halves always match.
+  test('each pair is classified by ONE page id, so the halves cannot drift', () => {
+    // /contact and /sr/contact share the id `contact`; /faq and /sr/faq share `faq`.
+    // Classifying by id rather than by path is what guarantees the halves always match —
+    // /sr/faq needed no new entry when it went live in Phase H1.
     expect(navbarSurfaceFor('/contact')).toBe(navbarSurfaceFor('/sr/contact'))
+    expect(navbarSurfaceFor('/faq')).toBe(navbarSurfaceFor('/sr/faq'))
     expect(LIGHT_SURFACE_PAGE_IDS).toContain('contact')
+    expect(LIGHT_SURFACE_PAGE_IDS).toContain('faq')
+  })
+
+  test('a Serbian counterpart inherits its surface with no new entry', () => {
+    // The regression this guards: someone adding '/sr/faq' as a path-specific exception.
+    expect([...LIGHT_SURFACE_PAGE_IDS]).not.toContain('/sr/faq')
+    expect(navbarSurfaceFor('/sr/faq')).toBe('light')
   })
 
   test('each light id names a real page in the route map', () => {
@@ -110,8 +127,8 @@ describe('unclassified paths fall back to the existing behaviour', () => {
       '/services-demo',
       '/debug/visitor-intelligence',
       '/does-not-exist',
-      '/sr',
-      '/sr/faq',
+      '/sr/projectpulse',
+      '/sr/case-study/pharma2',
       '/_not-found',
     ]) {
       expect(navbarSurfaceFor(path), path).toBe('dark')

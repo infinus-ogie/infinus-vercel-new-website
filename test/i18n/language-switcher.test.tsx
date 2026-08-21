@@ -1,13 +1,14 @@
 /**
  * Language switcher guards.
  *
- * Phase G turned this component on, so the test's job flipped: it must now prove the switcher
- * appears on EXACTLY the one real pair and still refuses to invent a destination everywhere
- * else. Three properties carry that:
+ * Phase G turned this component on and Phase H1 widened it to three pairs, so the test must
+ * prove the switcher appears on EXACTLY those six paths and still refuses to invent a
+ * destination everywhere else. Three properties carry that:
  *
- *   1. It renders a correct, reciprocal control on /contact and /sr/contact.
+ *   1. It renders a correct, reciprocal control on each of / <-> /sr, /faq <-> /sr/faq and
+ *      /contact <-> /sr/contact.
  *   2. It renders NOTHING on every other page — including /grow (no English version) and
- *      /faq (Serbian version only planned).
+ *      /projectpulse (Serbian version only planned).
  *   3. It resolves through the route-pair map, never by string surgery on the pathname.
  *      Asserted against the source too, because a `pathname.replace('/sr','')` would pass
  *      every behavioural test on today's URLs and then break on /grow.
@@ -22,9 +23,17 @@ import type { RoutePair } from '@/content/routes'
 
 const ROOT = process.cwd()
 
-/** The one real pair. */
+/** The Contact pair, used for the detailed markup assertions. */
 const EN_PATH = '/contact'
 const SR_PATH = '/sr/contact'
+
+/** All three complete pairs after Phase H1. */
+const REAL_PAIRS = [
+  { en: '/', sr: '/sr' },
+  { en: '/faq', sr: '/sr/faq' },
+  { en: '/contact', sr: '/sr/contact' },
+] as const
+const PAIRED_PATHS: string[] = REAL_PAIRS.flatMap((p) => [p.en, p.sr])
 
 const SYNTHETIC_COMPLETE: readonly RoutePair[] = [
   {
@@ -100,9 +109,16 @@ describe('the real pair renders a reciprocal EN | SR control', () => {
 })
 
 describe('it never invents a destination', () => {
-  test('resolveSwitchTarget returns a target for the real pair and null for everything else', () => {
+  test('resolveSwitchTarget returns a target for the three real pairs and null elsewhere', () => {
     const withTarget = allLivePaths().filter((p) => resolveSwitchTarget(p) !== null)
-    expect(withTarget.slice().sort()).toEqual([EN_PATH, SR_PATH].slice().sort())
+    expect(withTarget.slice().sort()).toEqual(PAIRED_PATHS.slice().sort())
+  })
+
+  test('every pair resolves to its own counterpart, never to another pair', () => {
+    for (const pair of REAL_PAIRS) {
+      expect(resolveSwitchTarget(pair.en)!.path, pair.en).toBe(pair.sr)
+      expect(resolveSwitchTarget(pair.sr)!.path, pair.sr).toBe(pair.en)
+    }
   })
 
   test('renders nothing on a Serbian page with no English version', () => {
@@ -115,9 +131,20 @@ describe('it never invents a destination', () => {
   })
 
   test('renders nothing on an English page whose Serbian version is only planned', () => {
-    for (const path of ['/', '/faq', '/projectpulse', '/case-study/pharma2']) {
+    for (const path of ['/projectpulse', '/projectpulse/brochure', '/case-study/pharma2', '/sap-packaged-solutions/sap-starter-package']) {
       const { container } = render(<LanguageSwitcher currentPath={path} currentLocale="en" />)
       expect(container.innerHTML, path).toBe('')
+    }
+  })
+
+  test('renders a control on all three real pairs', () => {
+    for (const pair of REAL_PAIRS) {
+      const en = render(<LanguageSwitcher currentPath={pair.en} currentLocale="en" />)
+      expect(en.container.querySelector('a')!.getAttribute('href'), pair.en).toBe(pair.sr)
+      en.unmount()
+      const sr = render(<LanguageSwitcher currentPath={pair.sr} currentLocale="sr" />)
+      expect(sr.container.querySelector('a')!.getAttribute('href'), pair.sr).toBe(pair.en)
+      sr.unmount()
     }
   })
 
@@ -129,7 +156,7 @@ describe('it never invents a destination', () => {
   })
 
   test('renders nothing for an unknown or planned path', () => {
-    for (const path of ['/does-not-exist', '/sr', '/sr/faq', '/hero-demo', '']) {
+    for (const path of ['/does-not-exist', '/sr/projectpulse', '/sr/case-study/pharma2', '/hero-demo', '']) {
       const { container } = render(<LanguageSwitcher currentPath={path} currentLocale="en" />)
       expect(container.innerHTML, path).toBe('')
     }
@@ -137,8 +164,8 @@ describe('it never invents a destination', () => {
 
   test('it resolves through the route map, not through string surgery on the path', () => {
     // If it stripped or prefixed "/sr", these would produce targets. They must not.
-    expect(resolveSwitchTarget('/sr/faq')).toBeNull()
-    expect(resolveSwitchTarget('/faq')).toBeNull()
+    expect(resolveSwitchTarget('/sr/projectpulse')).toBeNull()
+    expect(resolveSwitchTarget('/projectpulse')).toBeNull()
     expect(resolveSwitchTarget('/professional-services')).toBeNull()
 
     const source = readFileSync(join(ROOT, 'components/i18n/LanguageSwitcher.tsx'), 'utf8')

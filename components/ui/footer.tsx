@@ -2,66 +2,36 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { CookieSettingsButton } from "@/components/consent/CookieSettingsDialog";
+import { chromeLocaleFor } from "@/lib/chrome-locale";
+import { getDictionary } from "@/content/dictionary";
 
-const footerConfig = {
-  description:
-    "Infinus d.o.o. is a SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.",
-  logo: {
-    dark: "/infinus-new-logo.webp",
-    light: "/infinus-new-logo.webp",
-  },
-  contact: {
-    email: "office@infinus.rs",
-    address: "Tresnjinog cveta 1, 11070 Belgrade, Serbia",
-  },
-  columns: [
-    {
-      title: "Contact Information",
-      links: [
-        { label: "Tresnjinog cveta 1, 11070 Belgrade, Serbia", href: "#" },
-        { label: "office@infinus.rs", href: "mailto:office@infinus.rs" },
-        { label: "LinkedIn", href: "https://www.linkedin.com/company/infinus1/posts/?feedView=all", isExternal: true, isLinkedIn: true },
-      ],
-    },
-    {
-      title: "Our Expertise",
-      links: [
-        { label: "SAP Advisory & Consulting", href: "/#our-expertise" },
-        { label: "SAP Implementations", href: "/#our-expertise" },
-        { label: "SAP Application Management & Support", href: "/#our-expertise" },
-        { label: "SAP Integration & Process Optimization", href: "/#our-expertise" },
-        { label: "SAP Extensions & Innovation", href: "/#our-expertise" },
-      ],
-    },
-    {
-      title: "Company",
-      links: [
-        { label: "About Us", href: "/#about" },
-        { label: "GROW with SAP: Finance", href: "/grow" },
-        { label: "SAP for Professional Services", href: "/professional-services" },
-        { label: "Careers", href: "/#join-team" },
-        { label: "FAQ", href: "/faq" },
-        { label: "Contact", href: "/contact" },
-      ],
-    },
-    {
-      title: "Resources",
-      links: [
-        { label: "GROW Materials", href: "/grow#downloads" },
-        { label: "Professional Services Materials", href: "/professional-services#downloads" },
-      ],
-    },
-    {
-      title: "Legal",
-      links: [
-        { label: "Privacy Policy", href: "/politika-privatnosti" },
-      ],
-    },
-  ],
-};
+/**
+ * Phase H1: the copy and destinations moved to content/{en,sr}/footer.ts VERBATIM, and the
+ * shared Footer now renders in the locale of the page it is on — resolved through the
+ * route-pair map, never by sniffing the path.
+ *
+ * The logo asset stays here: it is the same image in both locales.
+ */
+const LOGO_SRC = "/infinus-new-logo.webp";
 
 export default function Footer() {
+  const pathname = usePathname();
+  const dictionary = getDictionary(chromeLocaleFor(pathname));
+  const copy = dictionary.footer;
+
+  // Same five columns in the same order as before; only the source changed. The Contact
+  // column keeps its distinct card treatment, now keyed on identity rather than on the
+  // English title string.
+  const columns = [
+    { key: "contact", isContact: true, group: copy.columns.contact },
+    { key: "expertise", isContact: false, group: copy.columns.expertise },
+    { key: "company", isContact: false, group: copy.columns.company },
+    { key: "resources", isContact: false, group: copy.columns.resources },
+    { key: "legal", isContact: false, group: copy.columns.legal },
+  ];
+
   return (
     <footer className="relative bg-[#00144a] text-white px-4 sm:px-6 lg:px-8 py-14 border-t border-blue-500/20 overflow-hidden">
       {/* Background gradient effects similar to hero */}
@@ -73,10 +43,10 @@ export default function Footer() {
         <div className="mb-12">
           {/* Logo with dark/light mode support */}
           <div className="relative mb-6">
-            <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
+            <Link href={dictionary.nav.home.href} className="inline-block hover:opacity-80 transition-opacity">
               <Image
-                src={footerConfig.logo.dark}
-                alt="Infinus Logo"
+                src={LOGO_SRC}
+                alt={copy.logoAlt}
                 width={250}
                 height={75}
                 className="h-20 w-auto"
@@ -84,27 +54,27 @@ export default function Footer() {
             </Link>
           </div>
           <p className="text-sm text-white/70 leading-relaxed max-w-2xl">
-            {footerConfig.description}
+            {copy.description}
           </p>
         </div>
 
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
           {/* Links Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 flex-1">
-            {footerConfig.columns.map((col, idx) => (
-              <div key={idx} className={col.title === "Contact Information" ? "relative" : ""}>
-                {col.title === "Contact Information" ? (
+            {columns.map((col) => (
+              <div key={col.key} className={col.isContact ? "relative" : ""}>
+                {col.isContact ? (
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4">
-                    <h3 className="text-sm font-medium mb-3 text-white">{col.title}</h3>
+                    <h3 className="text-sm font-medium mb-3 text-white">{col.group.label}</h3>
                     <ul className="space-y-2">
-                      {col.links.map((link, i) => (
+                      {col.group.items.map((link, i) => (
                         <li key={i}>
                           <Link
                             href={link.href}
                             className="text-[0.85rem] text-white/80 hover:text-blue-300 transition flex items-center gap-2"
-                            {...(link.isExternal && { target: "_blank", rel: "noopener noreferrer" })}
+                            {...(link.href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer" })}
                           >
-                            {link.isLinkedIn ? (
+                            {link.href.includes("linkedin.com") ? (
                               <>
                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                   <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -121,14 +91,14 @@ export default function Footer() {
                   </div>
                 ) : (
                   <>
-                    <h3 className="text-sm font-medium mb-3 text-white">{col.title}</h3>
+                    <h3 className="text-sm font-medium mb-3 text-white">{col.group.label}</h3>
                     <ul className="space-y-2">
-                      {col.links.map((link, i) => (
+                      {col.group.items.map((link, i) => (
                         <li key={i}>
                           <Link
                             href={link.href}
                             className="text-[0.85rem] text-white/70 hover:text-blue-300 transition"
-                            {...(link.isExternal && { target: "_blank", rel: "noopener noreferrer" })}
+                            {...(link.href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer" })}
                           >
                             {link.label}
                           </Link>
@@ -144,16 +114,19 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="mt-12 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-white/60 gap-4">
-          <p>© {new Date().getFullYear()} Infinus. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Infinus. {copy.bottom.rights}</p>
           <div className="flex flex-col md:flex-row items-center gap-4">
             <div className="flex gap-6">
-              <Link href="/politika-privatnosti" className="hover:text-white/80 transition">Privacy</Link>
+              <Link href={copy.bottom.privacyHref} className="hover:text-white/80 transition">{copy.bottom.privacyLabel}</Link>
               {/* Reopens the consent dialog at any time — required so a decision can be
                   changed or withdrawn. Deliberately a button, not a link to a page. */}
-              <CookieSettingsButton className="hover:text-white/80 transition underline-offset-4 hover:underline" />
+              <CookieSettingsButton
+                label={copy.bottom.cookieSettings}
+                className="hover:text-white/80 transition underline-offset-4 hover:underline"
+              />
             </div>
             <p className="text-xs text-white/60">
-              Developed by{" "}
+              {copy.bottom.developedBy}{" "}
               <a
                 href="https://www.brivio.co/"
                 target="_blank"

@@ -1,8 +1,8 @@
 /**
  * Metadata / hreflang primitive guards.
  *
- * Phase G made exactly one pair real, so the load-bearing assertions are now two-sided:
- * /contact and /sr/contact must produce the complete reciprocal set, and every other path on
+ * Three pairs are real — home, faq and contact. The load-bearing assertions are two-sided:
+ * each half of each pair must produce the complete reciprocal set, and every other path on
  * the site must still produce a canonical and NOTHING ELSE.
  */
 import { describe, test, expect } from 'vitest'
@@ -12,10 +12,16 @@ import { localeAlternatesMetadata } from '@/lib/seo-i18n'
 import { allLivePaths, localeAlternatesFor, plannedPaths } from '@/lib/locale-routes'
 import { PRODUCTION_ORIGIN, publicPages } from '../fixtures/routes'
 
-const PAIR = ['/contact', '/sr/contact']
+/** The three complete pairs, as flat path pairs. */
+const PAIRS = [
+  { en: '/', sr: '/sr' },
+  { en: '/faq', sr: '/sr/faq' },
+  { en: '/contact', sr: '/sr/contact' },
+] as const
+const PAIR: string[] = PAIRS.flatMap((p) => [p.en, p.sr])
 
-describe('no hreflang is produced for anything outside the real pair', () => {
-  test('every live path except the pair yields a canonical and no languages', () => {
+describe('no hreflang is produced for anything outside the three real pairs', () => {
+  test('every live path except the six paired ones yields a canonical and no languages', () => {
     for (const path of allLivePaths()) {
       if (PAIR.indexOf(path) !== -1) continue
       const alternates = localeAlternatesMetadata(path)
@@ -47,28 +53,33 @@ describe('no hreflang is produced for anything outside the real pair', () => {
   })
 })
 
-describe('the real Contact pair emits reciprocal alternates', () => {
-  test('both halves emit the identical complete set, including x-default', () => {
-    const expected = {
-      en: `${PRODUCTION_ORIGIN}/contact`,
-      'sr-Latn': `${PRODUCTION_ORIGIN}/sr/contact`,
-      'x-default': `${PRODUCTION_ORIGIN}/contact`,
-    }
-    for (const path of PAIR) {
-      expect(localeAlternatesMetadata(path).languages, path).toEqual(expected)
+describe('the three real pairs emit reciprocal alternates', () => {
+  test('both halves of each pair emit the identical complete set, including x-default', () => {
+    for (const pair of PAIRS) {
+      const expected = {
+        en: `${PRODUCTION_ORIGIN}${pair.en}`,
+        'sr-Latn': `${PRODUCTION_ORIGIN}${pair.sr}`,
+        'x-default': `${PRODUCTION_ORIGIN}${pair.en}`,
+      }
+      expect(localeAlternatesMetadata(pair.en).languages, pair.en).toEqual(expected)
+      expect(localeAlternatesMetadata(pair.sr).languages, pair.sr).toEqual(expected)
     }
   })
 
   test('each half keeps its OWN self-canonical', () => {
-    expect(localeAlternatesMetadata('/contact').canonical).toBe(`${PRODUCTION_ORIGIN}/contact`)
-    expect(localeAlternatesMetadata('/sr/contact').canonical).toBe(`${PRODUCTION_ORIGIN}/sr/contact`)
+    for (const pair of PAIRS) {
+      expect(localeAlternatesMetadata(pair.en).canonical).toBe(`${PRODUCTION_ORIGIN}${pair.en}`)
+      expect(localeAlternatesMetadata(pair.sr).canonical).toBe(`${PRODUCTION_ORIGIN}${pair.sr}`)
+    }
   })
 
-  test('x-default is the English URL on BOTH halves', () => {
-    for (const path of PAIR) {
-      const languages = localeAlternatesMetadata(path).languages as Record<string, string>
-      expect(languages['x-default'], path).toBe(`${PRODUCTION_ORIGIN}/contact`)
-      expect(languages['x-default'], path).toBe(languages.en)
+  test('x-default is the English URL on BOTH halves of every pair', () => {
+    for (const pair of PAIRS) {
+      for (const path of [pair.en, pair.sr]) {
+        const languages = localeAlternatesMetadata(path).languages as Record<string, string>
+        expect(languages['x-default'], path).toBe(`${PRODUCTION_ORIGIN}${pair.en}`)
+        expect(languages['x-default'], path).toBe(languages.en)
+      }
     }
   })
 

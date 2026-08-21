@@ -19,14 +19,15 @@
  * A later phase changes the production code AND the expectation together, in one
  * reviewable diff.
  *
- * Verified against a fresh `next build` — Phase G, after adding /sr/contact:
- *   32 manifest entries = 23 page routes + 8 route handlers + 1 framework route
- *   24 rendered .html files (23 pages + _not-found)
- *   27 prerendered routes, 0 dynamic routes
- *   17 sitemap URLs
+ * Verified against a fresh `next build` — Phase H1, after adding /sr and /sr/faq:
+ *   34 manifest entries = 25 page routes + 8 route handlers + 1 framework route
+ *   26 rendered .html files (25 pages + _not-found)
+ *   29 prerendered routes, 0 dynamic routes
+ *   19 sitemap URLs
  *
- * The previous verified state (commit a83e76f, before /sr/contact) was 31 / 22 / 23 / 26 / 16.
- * Phase G's delta is exactly +1 in each page-shaped count and 0 change to dynamic routes.
+ * Preceding verified states: 31 / 22 / 23 / 26 / 16 before /sr/contact, then
+ * 32 / 23 / 24 / 27 / 17 after Phase G. H1's delta is exactly +2 in each page-shaped count
+ * and 0 change to dynamic routes.
  */
 
 export const PRODUCTION_ORIGIN = 'https://www.infinus.co' as const
@@ -116,22 +117,40 @@ const handler = (path: string, kind: 'handler-utility' | 'handler-api'): RouteEx
 })
 
 export const ROUTES: readonly RouteExpectation[] = [
-  // ── 17 public indexable pages ────────────────────────────────────────────────
+  // ── 19 public indexable pages ────────────────────────────────────────────────
   indexable('/', '/'),
   indexable('/contact'),
   {
-    // Phase G: the Serbian half of the site's FIRST real locale pair. A normal indexable
-    // page — self-canonical, in the sitemap, static HTML — that happens to sit under the
-    // Serbian root (app/(sr)/sr/contact/) and therefore declares sr-Latn.
-    //
-    // It is the ONLY route that emits hreflang. Its reciprocal alternates and /contact's
-    // are asserted by scripts/seo/assert-i18n-routes.ts, which also proves no other page
-    // emits any.
+    // Phase G: the Serbian half of the site's first real locale pair.
     path: '/sr/contact',
     kind: 'page-indexable',
     expectLang: 'sr-Latn',
     expectRobots: 'index, follow',
     expectCanonical: `${PRODUCTION_ORIGIN}/sr/contact`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    // Phase H1: the Serbian homepage. Under app/(sr)/sr/, so it declares sr-Latn.
+    path: '/sr',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    // Phase H1: the Serbian FAQ. Under app/(sr)/sr/faq/, so it declares sr-Latn.
+    //
+    // /sr, /sr/faq and /sr/contact are the ONLY routes that emit hreflang, together with
+    // their three English halves. scripts/seo/assert-i18n-routes.ts asserts the reciprocal
+    // sets and proves no other page emits any.
+    path: '/sr/faq',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/faq`,
     inSitemap: true,
     expectStaticHtml: true,
   },
@@ -286,8 +305,8 @@ export const publicPages = (): RouteExpectation[] =>
  * test/seo/route-fixture.test.ts so an edit to ROUTES cannot silently change them.
  */
 export const EXPECTED_COUNTS = {
-  /** 16 before Phase G; +1 for /sr/contact. */
-  indexable: 17,
+  /** 16 before Phase G; +1 for /sr/contact, then +2 for /sr and /sr/faq in Phase H1. */
+  indexable: 19,
   noindex: 1,
   /** /cfo — page still built behind its redirect */
   redirected: 1,
@@ -300,19 +319,19 @@ export const EXPECTED_COUNTS = {
   /**
    * Page routes in app-path-routes-manifest.json (excludes _not-found).
    * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so the
-   * build produced 22. Phase G adds /sr/contact -> 23.
+   * build produced 22. Phase G added /sr/contact -> 23; Phase H1 adds /sr and /sr/faq -> 25.
    */
-  manifestPages: 23,
+  manifestPages: 25,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
-  /** total manifest entries: 23 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 32,
+  /** total manifest entries: 25 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 34,
   /**
-   * Rendered .html files: 23 built pages + _not-found. /privacy is in the fixture as a
+   * Rendered .html files: 25 built pages + _not-found. /privacy is in the fixture as a
    * redirect source but produces no HTML, so it is NOT counted here.
    */
-  renderedHtml: 24,
-  sitemapUrls: 17,
-  /** the 18 public pages whose <head> is snapshotted (17 indexable + the legal page) */
-  snapshotPages: 18,
+  renderedHtml: 26,
+  sitemapUrls: 19,
+  /** the 20 public pages whose <head> is snapshotted (19 indexable + the legal page) */
+  snapshotPages: 20,
 } as const

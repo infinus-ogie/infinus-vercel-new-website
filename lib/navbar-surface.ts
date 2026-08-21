@@ -5,9 +5,10 @@
  * The navbar is fixed and transparent at the top of the page, and it chose its
  * light-text/dark-text treatment from SCROLL POSITION ALONE (`scrollY > 100` in
  * tubelight-navbar, `scrollY > 600` in navbar-demo). That assumes every page opens behind a
- * tall dark hero. Four pages do not, and on them white text landed on a white background:
+ * tall dark hero. Several pages do not, and on them white text landed on a white background:
  * measured contrast 1.00 on /contact, /sr/contact, /faq and /politika-privatnosti, against
- * 7.15–17.31 on the fifteen dark-hero pages.
+ * 7.15–17.31 on the dark-hero pages. /sr/faq joined the light set in Phase H1 by inheriting
+ * the `faq` page id, with no new entry needed here.
  *
  * ── Why classification is EXPLICIT and keyed on page identity ───────────────────
  * Not runtime DOM sampling: reading the backdrop during render is fragile, depends on image

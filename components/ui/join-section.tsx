@@ -15,43 +15,54 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getDictionary } from "@/content/dictionary";
+import type { HomeDictionary } from "@/content/dictionary";
 
 // ---------- schema ----------
-const FormSchema = z.object({
-  name: z.string().min(2, "Please enter your name."),
-  phone: z.string().optional(),
-  email: z.string().email("Enter a valid email address."),
-  linkedin: z.string().url("Please enter a valid LinkedIn URL.").optional().or(z.literal("")),
-  subject: z.string().min(2, "Subject is required."),
-  message: z.string().min(10, "Message should be at least 10 characters."),
-  file: z
-    .any()
-    .refine(
-      (f) => !f || (f instanceof File && ["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(f.type)),
-      "Allowed files: PDF, DOC, DOCX."
-    )
-    .refine((f) => !f || (f instanceof File && f.size <= 5 * 1024 * 1024), "Max file size is 5MB."),
-  utm_source: z.string().optional(),
-  utm_medium: z.string().optional(),
-  utm_campaign: z.string().optional(),
-});
-type FormValues = z.infer<typeof FormSchema>;
+/**
+ * Built from locale-specific messages. A factory rather than a module constant because the
+ * WORDING differs per locale while the RULES must not: min 2 / min 10 characters, email
+ * format, valid URL, the three accepted MIME types and the 5MB ceiling are all unchanged.
+ */
+function createFormSchema(messages: HomeDictionary["join"]["validation"]) {
+  return z.object({
+    name: z.string().min(2, messages.name),
+    phone: z.string().optional(),
+    email: z.string().email(messages.email),
+    linkedin: z.string().url(messages.linkedin).optional().or(z.literal("")),
+    subject: z.string().min(2, messages.subject),
+    message: z.string().min(10, messages.message),
+    file: z
+      .any()
+      .refine(
+        (f) => !f || (f instanceof File && ["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(f.type)),
+        messages.fileType
+      )
+      .refine((f) => !f || (f instanceof File && f.size <= 5 * 1024 * 1024), messages.fileSize),
+    utm_source: z.string().optional(),
+    utm_medium: z.string().optional(),
+    utm_campaign: z.string().optional(),
+  });
+}
+type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
-// ---------- tiny local FAQ for JSON-LD on Home (optional) ----------
-export const joinSectionFAQ: { question: string; answer: string }[] = [
-  {
-    question: "How do I apply?",
-    answer:
-      "Fill in your name, email, phone, subject and message, attach your resume if you have one, and click Submit Application. We will review and get back to you.",
-  },
-  {
-    question: "What happens after I submit?",
-    answer:
-      "Our team reviews your application and replies by email. If there is a fit, we will schedule an introductory call.",
-  },
-];
+// The two JSON-LD-only Q&A moved to content/{en,sr}/home.ts (`join.faq`) in Phase H1.
 
-export function JoinSection() {
+/**
+ * Phase H1: every string became a lookup on a typed dictionary, defaulting to ENGLISH so
+ * existing callers render byte-identical output. What deliberately did NOT change: one
+ * behavioural implementation, the same POST to /api/join-team, and the same untranslated
+ * FormData keys — translating a label must never rename an API field.
+ */
+export function JoinSection({
+  copy = getDictionary("en").home.join,
+  trust = getDictionary("en").home.trust,
+}: {
+  copy?: HomeDictionary["join"];
+  trust?: HomeDictionary["trust"];
+}) {
+  const { form: f, validation } = copy;
+  const FormSchema = createFormSchema(validation);
   const [success, setSuccess] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [fileSize, setFileSize] = useState<string>("");
@@ -132,7 +143,7 @@ export function JoinSection() {
       const result = await response.json();
 
       if (result.success) {
-        setSuccess("Thanks for your application. We'll get back to you!");
+        setSuccess(copy.success);
         reset({ name: "", phone: "", email: "", linkedin: "", subject: "", message: "", utm_source: "", utm_medium: "", utm_campaign: "" });
         setFileName("");
         setFileSize("");
@@ -185,28 +196,28 @@ export function JoinSection() {
           {/* LEFT: heading + explainer (KEEP YOUR TEXT) */}
           <div className="space-y-4">
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
-              Join Our Team
+              {copy.heading}
             </h2>
             <div className="space-y-4">
               <p className="max-w-[65ch] text-slate-600 leading-relaxed">
-                Due to continues business expansion, we are looking to expand our team.
+                {copy.paragraphs[0]}
               </p>
               <p className="max-w-[65ch] text-slate-600 leading-relaxed">
-                If you have experience in some of SAP S/4HANA or ECC modules and areas, industry solutions, and/or LOB solutions, and if you are interested to become a member of the agile team of dedicated SAP professionals, please contact us.
+                {copy.paragraphs[1]}
               </p>
-              <p className="max-w-[65ch] text-slate-600 leading-relaxed">We will be glad to talk with you!</p>
+              <p className="max-w-[65ch] text-slate-600 leading-relaxed">{copy.paragraphs[2]}</p>
             </div>
             {/* Trust badges */}
             <div className="mt-6">
               <div className="flex flex-col gap-3 max-w-md">
                 {/* First row: two badges */}
                 <div className="flex gap-3">
-                  <TrustPill icon={ShieldCheck} tone="gold" variant="light">SAP Gold Partner</TrustPill>
-                  <TrustPill icon={Users2} tone="blue" variant="light">30+ experienced consultants</TrustPill>
+                  <TrustPill icon={ShieldCheck} tone="gold" variant="light">{trust.goldPartner}</TrustPill>
+                  <TrustPill icon={Users2} tone="blue" variant="light">{trust.consultants}</TrustPill>
                 </div>
                 {/* Second row: third badge aligned to the left */}
                 <div className="flex">
-                  <TrustPill icon={Globe2} tone="blue" variant="light">20+ satisfied customers</TrustPill>
+                  <TrustPill icon={Globe2} tone="blue" variant="light">{trust.customers}</TrustPill>
                 </div>
               </div>
             </div>
@@ -219,12 +230,12 @@ export function JoinSection() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <Label htmlFor="name" className="text-sm font-medium text-slate-700 mb-2 block">
-                      Your Name *
+                      {f.nameLabel}
                     </Label>
                     <Input
                       id="name"
                       type="text"
-                      placeholder="Nikola Trivic"
+                      placeholder={f.namePlaceholder}
                       autoComplete="name"
                       className="h-11 min-h-[44px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       aria-invalid={!!errors.name}
@@ -237,29 +248,29 @@ export function JoinSection() {
                   </div>
                   <div>
                     <Label htmlFor="phone" className="text-sm font-medium text-slate-700 mb-2 block">
-                      Phone Number
+                      {f.phoneLabel}
                     </Label>
                     <Input 
                       id="phone" 
                       type="tel"
-                      placeholder="+381 64 123 4567"
+                      placeholder={f.phonePlaceholder}
                       autoComplete="tel"
                       className="h-11 min-h-[44px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       {...register("phone")} 
                     />
-                    <p className="mt-1 text-xs text-slate-500">Include country code (E.164 format)</p>
+                    <p className="mt-1 text-xs text-slate-500">{f.phoneHint}</p>
                   </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <Label htmlFor="email" className="text-sm font-medium text-slate-700 mb-2 block">
-                      Your Email *
+                      {f.emailLabel}
                     </Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="name@company.com"
+                      placeholder={f.emailPlaceholder}
                       autoComplete="email"
                       className="h-11 min-h-[44px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       aria-invalid={!!errors.email}
@@ -272,12 +283,12 @@ export function JoinSection() {
                   </div>
                   <div>
                     <Label htmlFor="linkedin" className="text-sm font-medium text-slate-700 mb-2 block">
-                      LinkedIn URL
+                      {f.linkedinLabel}
                     </Label>
                     <Input
                       id="linkedin"
                       type="url"
-                      placeholder="https://linkedin.com/in/yourprofile"
+                      placeholder={f.linkedinPlaceholder}
                       className="h-11 min-h-[44px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       aria-invalid={!!errors.linkedin}
                       aria-describedby={errors.linkedin ? "linkedin-error" : undefined}
@@ -291,12 +302,12 @@ export function JoinSection() {
 
                 <div>
                   <Label htmlFor="subject" className="text-sm font-medium text-slate-700 mb-2 block">
-                    Subject *
+                    {f.subjectLabel}
                   </Label>
                   <Input
                     id="subject"
                     type="text"
-                    placeholder="SAP Consultant Position"
+                    placeholder={f.subjectPlaceholder}
                     className="h-11 min-h-[44px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     aria-invalid={!!errors.subject}
                     aria-describedby={errors.subject ? "subject-error" : undefined}
@@ -309,12 +320,12 @@ export function JoinSection() {
 
                 <div>
                   <Label htmlFor="message" className="text-sm font-medium text-slate-700 mb-2 block">
-                    Message *
+                    {f.messageLabel}
                   </Label>
                   <Textarea
                     id="message"
                     rows={5}
-                    placeholder="Tell us about your SAP experience and why you'd like to join our team..."
+                    placeholder={f.messagePlaceholder}
                     className="min-h-[44px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     aria-invalid={!!errors.message}
                     aria-describedby={errors.message ? "message-error" : undefined}
@@ -327,7 +338,7 @@ export function JoinSection() {
 
                 <div>
                   <Label className="text-sm font-medium text-slate-700 mb-2 block">
-                    Attach your resume (optional)
+                    {f.fileLabel}
                   </Label>
                   <div
                     className={cn(
@@ -366,9 +377,9 @@ export function JoinSection() {
                       <div>
                         <Upload className="h-8 w-8 text-slate-400 mx-auto mb-2" />
                         <p className="text-sm text-slate-600">
-                          <span className="font-medium text-blue-600">Click to upload</span> or drag and drop
+                          <span className="font-medium text-blue-600">{f.fileClickToUpload}</span>{f.fileOrDragAndDrop}
                         </p>
-                        <p className="text-xs text-slate-500 mt-1">PDF, DOC, DOCX (max 5MB)</p>
+                        <p className="text-xs text-slate-500 mt-1">{f.fileHint}</p>
                       </div>
                     )}
                   </div>
@@ -386,17 +397,17 @@ export function JoinSection() {
                     className="btn-primary h-12 w-full md:w-auto px-6 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Application"}
+                    {isSubmitting ? f.submitting : f.submit}
                   </Button>
                   <p className="text-sm text-slate-600">
-                    We reply within 1 business day.
+                    {f.replyPromise}
                   </p>
                   {/* Owner-approved wording for the job application form. Informational
                       acknowledgement, NOT the cookie-consent mechanism. */}
                   <p className="text-xs text-slate-500">
-                    By submitting your application, you confirm that you have read our{" "}
-                    <a className="underline underline-offset-4 hover:text-slate-700" href="/politika-privatnosti">
-                      Privacy Policy
+                    {copy.privacy.before}
+                    <a className="underline underline-offset-4 hover:text-slate-700" href={copy.privacy.href}>
+                      {copy.privacy.linkText}
                     </a>
                     .
                   </p>

@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { HeroPartnerBadge } from "./HeroPartnerBadge";
 import { TrustStrip } from "./TrustStrip";
+import { getDictionary } from "@/content/dictionary";
+import type { HomeDictionary } from "@/content/dictionary";
 
 
 function ElegantShape({
@@ -74,14 +76,23 @@ function ElegantShape({
     );
 }
 
+/**
+ * The homepage hero.
+ *
+ * Phase H1 made its copy content-driven. `hero` and `trust` default to the ENGLISH
+ * dictionary, so the rendered output is byte-identical to before for any existing caller.
+ *
+ * NOTE: before H1 the `title1`/`title2`/`badge` props were declared but IGNORED — the h1
+ * text was hardcoded in the JSX below and the badge is a logo image, not text. Those dead
+ * props are gone; the two h1 halves are separate strings because they carry different
+ * gradients, and Serbian needs both halves independently translatable.
+ */
 function HeroGeometric({
-    badge = "Design Collective",
-    title1 = "Elevate Your Digital Vision",
-    title2 = "Crafting Exceptional Websites",
+    hero = getDictionary("en").home.hero,
+    trust,
 }: {
-    badge?: string;
-    title1?: string;
-    title2?: string;
+    hero?: HomeDictionary["hero"];
+    trust?: HomeDictionary["trust"];
 }) {
     const fadeUpVariants: Variants = {
         hidden: { opacity: 0, y: 30 },
@@ -155,7 +166,7 @@ function HeroGeometric({
                         animate="visible"
                         className="mb-8 md:mb-12 mt-2 md:mt-4 lg:mt-6"
                     >
-                        <HeroPartnerBadge />
+                        <HeroPartnerBadge logoAlt={hero.logoAlt} />
                     </motion.div>
 
                     <motion.div
@@ -166,11 +177,11 @@ function HeroGeometric({
                     >
                         <h1 className="text-center font-light leading-tight tracking-tight text-[42px] md:text-[56px] lg:text-[64px] xl:text-[72px] mb-6 md:mb-8">
                             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
-                                Turning SAP Expertise
+                                {hero.titleLine1}
                             </span>
                             <br className="hidden lg:block" />
                             <span className="lg:inline bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-white/90 to-blue-400">
-                                {" "}into Business Advantage
+                                {" "}{hero.titleLine2}
                             </span>
                         </h1>
                     </motion.div>
@@ -182,7 +193,7 @@ function HeroGeometric({
                         animate="visible"
                     >
                         <p className="mx-auto text-center text-slate-300 text-base md:text-lg lg:text-xl max-w-none lg:max-w-4xl md:whitespace-nowrap lg:whitespace-nowrap mb-8 px-4">
-                            Empowering companies to work smarter and grow faster
+                            {hero.lede}
                         </p>
                     </motion.div>
 
@@ -192,7 +203,7 @@ function HeroGeometric({
                         initial="hidden"
                         animate="visible"
                     >
-                        <TrustStrip />
+                        <TrustStrip trust={trust} />
                     </motion.div>
                 </div>
             </div>

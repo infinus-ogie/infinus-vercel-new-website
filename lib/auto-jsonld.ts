@@ -141,6 +141,12 @@ export function createSimplePageConfig(
     articleAbout?: string[];
     ogImage?: string;
     additionalSchemas?: any[];
+    /**
+     * Phase H1: lets a caller supply breadcrumbs instead of taking the English-only
+     * `getDefaultBreadcrumbs` label. Omitting it keeps the previous behaviour exactly, so
+     * every existing call site is unaffected.
+     */
+    breadcrumbs?: Array<{ name: string; url: string }>;
   }
 ): PageConfig {
   return {
@@ -148,6 +154,7 @@ export function createSimplePageConfig(
     title,
     description,
     language: options?.language,
+    breadcrumbs: options?.breadcrumbs,
     faqs: options?.faqs,
     articleHeadline: title,
     articleDescription: description,

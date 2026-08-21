@@ -78,7 +78,16 @@ describe('shapes are identical across locales', () => {
     expect(keys).not.toContain('cta.cards.3.title')
   })
 
-  test('no key is optional, empty or non-string in any locale or namespace', () => {
+  /**
+   * Paths where an EMPTY string is the correct value, not a missing translation.
+   *
+   * The industry-modal title is assembled as prefix + label + suffix. English reads
+   * "Retail Expertise", so it has no prefix; Serbian reads "Ekspertiza: Maloprodaja", so it
+   * has no suffix. Exactly one of the two is empty in each locale, by design.
+   */
+  const MAY_BE_EMPTY = ['domains.modal.titlePrefix', 'domains.modal.titleSuffix']
+
+  test('no key is optional or non-string, and only fragment keys may be empty', () => {
     // An optional key in an interface would let a locale omit it and still compile.
     for (const namespace of DICTIONARY_NAMESPACES) {
       const paths = dictionaryKeyReport(namespace).en
@@ -86,9 +95,21 @@ describe('shapes are identical across locales', () => {
         for (const path of paths) {
           const value = resolvePath(getDictionary(locale)[namespace] as unknown as Record<string, unknown>, path)
           expect(typeof value, `${locale}.${namespace}.${path}`).toBe('string')
+          if (MAY_BE_EMPTY.indexOf(path) !== -1) continue
           expect((value as string).length, `${locale}.${namespace}.${path} is empty`).toBeGreaterThan(0)
         }
       }
+    }
+  })
+
+  test('the modal title fragments compose to a non-empty title in both locales', () => {
+    // Since one fragment is legitimately empty per locale, assert what actually matters:
+    // prefix + label + suffix must produce real text on both sides.
+    for (const locale of LOCALES) {
+      const modal = getDictionary(locale).home.domains.modal
+      const label = getDictionary(locale).home.domains.items[0].label
+      const composed = `${modal.titlePrefix}${label}${modal.titleSuffix}`
+      expect(composed.length, `${locale} modal title`).toBeGreaterThan(label.length)
     }
   })
 })

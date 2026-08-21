@@ -49,7 +49,8 @@ module.exports = {
   transform: async (config, path) => {
     // /sr/contact is the Serbian half of the same page as /contact, so it carries the same
     // priority. Reciprocal hreflang lives in each page's <head>, not in the sitemap.
-    const keyRoutes = ['/', '/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/contact', '/sr/contact', '/faq'];
+    // Serbian counterparts carry the same priority as their English half.
+    const keyRoutes = ['/', '/sr', '/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/contact', '/sr/contact', '/faq', '/sr/faq'];
     const priority = keyRoutes.includes(path) ? 0.8 : 0.7;
 
     return {

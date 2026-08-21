@@ -3,13 +3,13 @@
  *
  * The point of this file is the NEGATIVE case. A pairing model is only useful if it refuses
  * to invent counterparts, so most of these tests assert that something is NOT produced:
- * no fake English GROW page, no live /sr/faq, no silent fallback to the locale home,
- * no alternate for a merely planned path.
+ * no fake English GROW page, no live /sr/projectpulse, no silent fallback to the locale
+ * home, no alternate for a merely planned path.
  *
- * Phase G created the first REAL pair (/contact <-> /sr/contact), so the reciprocal path is
- * now asserted against the live map too. Synthetic maps are still used for the shapes the
- * live map does not contain — a half-built pair, an excluded pair with two live sides — so
- * those cases can be proven without creating more /sr routes.
+ * Phase G created the first real pair and Phase H1 added two more, so the reciprocal path is
+ * asserted against the live map for all three. Synthetic maps are still used for the shapes
+ * the live map does not contain — a half-built pair, an excluded pair with two live sides —
+ * so those cases can be proven without creating more /sr routes.
  */
 
 import { describe, test, expect } from 'vitest'
@@ -30,8 +30,18 @@ import {
   plannedPaths,
 } from '@/lib/locale-routes'
 
-/** The one genuinely complete pair in the live map. Everything else must stay unpaired. */
-const REAL_PAIR = { en: '/contact', sr: '/sr/contact' } as const
+/**
+ * The genuinely complete pairs in the live map. Everything else must stay unpaired.
+ *
+ * Phase G made contact real; Phase H1 added home and faq. Listed explicitly so activating a
+ * fourth pair has to be a deliberate edit here, not a silent consequence.
+ */
+const REAL_PAIRS = [
+  { en: '/', sr: '/sr' },
+  { en: '/faq', sr: '/sr/faq' },
+  { en: '/contact', sr: '/sr/contact' },
+] as const
+const PAIRED_PATHS: string[] = REAL_PAIRS.flatMap((p) => [p.en, p.sr])
 
 /** A complete EN/SR pair, as a future rollout will produce. Not a real route. */
 const SYNTHETIC_COMPLETE: readonly RoutePair[] = [
@@ -161,8 +171,11 @@ describe('locale ownership of live paths', () => {
     }
   })
 
-  test('/sr/contact is owned by sr, at a properly prefixed URL', () => {
-    expect(localeOfPath(REAL_PAIR.sr)).toBe('sr')
+  test('every Serbian half is owned by sr, at a properly prefixed URL', () => {
+    for (const pair of REAL_PAIRS) {
+      expect(localeOfPath(pair.sr), pair.sr).toBe('sr')
+      expect(pair.sr === '/sr' || pair.sr.indexOf('/sr/') === 0, pair.sr).toBe(true)
+    }
   })
 
   test('live Serbian paths are the legacy unprefixed set plus properly /sr-prefixed ones', () => {
@@ -175,7 +188,7 @@ describe('locale ownership of live paths', () => {
       const isPrefixed = path === '/sr' || path.indexOf('/sr/') === 0
       expect(isLegacy || isPrefixed, `${path} is neither legacy nor /sr-prefixed`).toBe(true)
     }
-    expect(srLive.slice().sort()).toEqual(legacy.concat([REAL_PAIR.sr]).sort())
+    expect(srLive.slice().sort()).toEqual(legacy.concat(REAL_PAIRS.map((p) => p.sr)).sort())
   })
 
   test('unclassified paths have NO locale — not a default of English', () => {
@@ -201,27 +214,29 @@ describe('locale ownership of live paths', () => {
 })
 
 describe('counterparts are never invented', () => {
-  test('exactly two live paths have a counterpart: the real Contact pair', () => {
+  test('exactly the six paths of the three real pairs have a counterpart', () => {
     const withCounterpart = allLivePaths().filter((p) => counterpartFor(p) !== null)
-    expect(withCounterpart.slice().sort()).toEqual([REAL_PAIR.en, REAL_PAIR.sr].slice().sort())
+    expect(withCounterpart.slice().sort()).toEqual(PAIRED_PATHS.slice().sort())
   })
 
-  test('the real pair resolves reciprocally', () => {
-    expect(counterpartFor(REAL_PAIR.en)).toEqual({
-      locale: 'sr',
-      path: REAL_PAIR.sr,
-      url: `https://www.infinus.co${REAL_PAIR.sr}`,
-    })
-    expect(counterpartFor(REAL_PAIR.sr)).toEqual({
-      locale: 'en',
-      path: REAL_PAIR.en,
-      url: `https://www.infinus.co${REAL_PAIR.en}`,
-    })
+  test('each real pair resolves reciprocally', () => {
+    for (const pair of REAL_PAIRS) {
+      expect(counterpartFor(pair.en), pair.en).toEqual({
+        locale: 'sr',
+        path: pair.sr,
+        url: `https://www.infinus.co${pair.sr}`,
+      })
+      expect(counterpartFor(pair.sr), pair.sr).toEqual({
+        locale: 'en',
+        path: pair.en,
+        url: `https://www.infinus.co${pair.en}`,
+      })
+    }
   })
 
   test('every OTHER live path still has no counterpart', () => {
     for (const path of allLivePaths()) {
-      if (path === REAL_PAIR.en || path === REAL_PAIR.sr) continue
+      if (PAIRED_PATHS.indexOf(path) !== -1) continue
       expect(counterpartFor(path), `${path} must have no counterpart`).toBeNull()
     }
   })
@@ -239,18 +254,25 @@ describe('counterparts are never invented', () => {
     }
   })
 
-  test('/faq has no Serbian counterpart, despite a planned URL', () => {
-    const pair = pairForPath('/faq')
+  test('/projectpulse has no Serbian counterpart, despite a planned URL', () => {
+    const pair = pairForPath('/projectpulse')
     expect(pair).not.toBeNull()
-    expect(pair!.sr).toEqual({ path: '/sr/faq', status: 'planned' })
+    expect(pair!.sr).toEqual({ path: '/sr/projectpulse', status: 'planned' })
     // Declared, agreed, written down — and still not a destination.
-    expect(counterpartFor('/faq')).toBeNull()
+    expect(counterpartFor('/projectpulse')).toBeNull()
   })
 
-  test('flipping ONE side to live did not pair anything else', () => {
-    // Guards the specific Phase G risk: a status change that accidentally activates the
-    // whole planned set.
-    const stillPlanned = ['/sr', '/sr/faq', '/sr/projectpulse', '/sr/case-study/pharma2']
+  test('activating three pairs did not activate anything else', () => {
+    // Guards the specific H1 risk: flipping two statuses and accidentally waking the whole
+    // planned set.
+    const stillPlanned = [
+      '/sr/projectpulse',
+      '/sr/projectpulse/brochure',
+      '/sr/projectpulse/video',
+      '/sr/case-study/pharma2',
+      '/sr/case-study/retail1',
+      '/sr/sap-packaged-solutions/sap-starter-package',
+    ]
     for (const path of stillPlanned) {
       expect(plannedPaths(), `${path} must still be planned`).toContain(path)
       expect(counterpartFor(path), `${path} must not resolve`).toBeNull()
@@ -295,21 +317,24 @@ describe('counterparts are never invented', () => {
 })
 
 describe('locale alternates', () => {
-  test('ONLY the real Contact pair produces alternates', () => {
+  test('ONLY the three real pairs produce alternates', () => {
     const withAlternates = allLivePaths().filter((p) => localeAlternatesFor(p) !== null)
-    expect(withAlternates.slice().sort()).toEqual([REAL_PAIR.en, REAL_PAIR.sr].slice().sort())
+    expect(withAlternates.slice().sort()).toEqual(PAIRED_PATHS.slice().sort())
   })
 
-  test('the real pair emits the identical reciprocal set from both sides', () => {
-    const fromEn = localeAlternatesFor(REAL_PAIR.en)
-    const fromSr = localeAlternatesFor(REAL_PAIR.sr)
-    expect(fromEn).not.toBeNull()
-    expect(fromSr).toEqual(fromEn)
-    expect(fromEn!.languages).toEqual({
-      en: 'https://www.infinus.co/contact',
-      'sr-Latn': 'https://www.infinus.co/sr/contact',
-    })
-    expect(fromEn!.xDefault).toBe('https://www.infinus.co/contact')
+  test('each real pair emits the identical reciprocal set from both sides', () => {
+    for (const pair of REAL_PAIRS) {
+      const fromEn = localeAlternatesFor(pair.en)
+      const fromSr = localeAlternatesFor(pair.sr)
+      expect(fromEn, pair.en).not.toBeNull()
+      expect(fromSr, pair.sr).toEqual(fromEn)
+      expect(fromEn!.languages).toEqual({
+        en: `https://www.infinus.co${pair.en}`,
+        'sr-Latn': `https://www.infinus.co${pair.sr}`,
+      })
+      // x-default is always the English half.
+      expect(fromEn!.xDefault).toBe(`https://www.infinus.co${pair.en}`)
+    }
   })
 
   test('a planned path produces no alternates', () => {
@@ -360,7 +385,7 @@ describe('planned routes are inert', () => {
     for (const path of planned) {
       expect(path === '/sr' || path.indexOf('/sr/') === 0, `${path} must be under /sr`).toBe(true)
     }
-    expect(planned).not.toContain(REAL_PAIR.sr)
+    for (const pair of REAL_PAIRS) expect(planned, pair.sr).not.toContain(pair.sr)
   })
 
   test('no planned path is also a live path', () => {

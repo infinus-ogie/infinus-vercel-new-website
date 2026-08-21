@@ -1,4 +1,4 @@
-// app/(site)/_components/DomainExpertiseSection.tsx
+// components/ui/domain-expertise-section.tsx
 // DOMAIN EXPERTISE - uniform 4:3 tiles with image overlay labels.
 // KEEP YOUR EXACT COPY: replace labels below 1:1. Swap image paths to your assets.
 
@@ -8,31 +8,50 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { X } from "lucide-react";
+import { getDictionary } from "@/content/dictionary";
+import type { HomeDictionary } from "@/content/dictionary";
 
 type Domain = {
-  label: string;      // e.g., "Retail"
-  href?: string;      // optional deep link or anchor (e.g., "/services#retail")
-  imgSrc: string;     // /public path
-  imgAlt: string;     // accessible alt
+  label: string;
+  href?: string;
+  imgSrc: string;
+  imgAlt: string;
+  /** Appended to the label for the tile's accessible name. Locale-specific. */
+  ariaSuffix: string;
 };
 
 type TileProps = Domain & {
   onClick?: () => void;
 };
 
-const domains: Domain[] = [
-  { label: "Retail",                     href: "/#domain-expertise",         imgSrc: "/domain-expertise/retail.webp",          imgAlt: "Retail industry" },
-  { label: "Pharmaceuticals",           href: "/#domain-expertise",         imgSrc: "/domain-expertise/pharmaceuticals.webp",          imgAlt: "Pharmaceuticals industry" },
-  { label: "Wholesale and Distribution", href: "/#domain-expertise",      imgSrc: "/domain-expertise/wholesale.jpeg",       imgAlt: "Wholesale and Distribution" },
-  { label: "Consumer Goods",            href: "/#domain-expertise",  imgSrc: "/domain-expertise/consumer-goods.webp",        imgAlt: "Consumer goods" },
-  { label: "Industrial Manufacturing",  href: "/#domain-expertise",   imgSrc: "/domain-expertise/industrial-manufacturing.webp",   imgAlt: "Industrial manufacturing" },
-  { label: "Professional Services",     href: "/#domain-expertise",    imgSrc: "/domain-expertise/professional-services.webp",   imgAlt: "Professional services" },
-  { label: "Travel",                    href: "/#domain-expertise",          imgSrc: "/domain-expertise/travel.webp",          imgAlt: "Travel industry" },
-  { label: "Oil & Gas",                 href: "/#domain-expertise",          imgSrc: "/domain-expertise/oil-and-gas.webp",          imgAlt: "Oil and gas sector" },
-  { label: "Telco",                     href: "/#domain-expertise",           imgSrc: "/domain-expertise/telco.webp",           imgAlt: "Telecommunications" },
+/**
+ * Image paths only. Labels and alt text moved to content/{en,sr}/home.ts in Phase H1 and are
+ * paired with these by position — the 9-tuple in HomeDictionary keeps the two lists in step.
+ */
+const domainImages: readonly string[] = [
+  "/domain-expertise/retail.webp",
+  "/domain-expertise/pharmaceuticals.webp",
+  "/domain-expertise/wholesale.jpeg",
+  "/domain-expertise/consumer-goods.webp",
+  "/domain-expertise/industrial-manufacturing.webp",
+  "/domain-expertise/professional-services.webp",
+  "/domain-expertise/travel.webp",
+  "/domain-expertise/oil-and-gas.webp",
+  "/domain-expertise/telco.webp",
 ];
 
-export default function DomainExpertiseSection() {
+/**
+ * Phase H1: copy moved to content/{en,sr}/home.ts. `copy` defaults to the ENGLISH
+ * dictionary, so existing callers render byte-identical output. The anchor every tile links
+ * to is derived from the section's own page so the Serbian tiles stay on /sr.
+ */
+export default function DomainExpertiseSection({
+  copy = getDictionary("en").home.domains,
+  sectionHref = "/#domain-expertise",
+}: {
+  copy?: HomeDictionary["domains"];
+  sectionHref?: string;
+}) {
   const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
 
   const handleDomainClick = (label: string) => {
@@ -47,24 +66,25 @@ export default function DomainExpertiseSection() {
     <section id="domain-expertise" data-section="domain" className="section section--surface-0" aria-labelledby="domains-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <header className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Industries</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">{copy.eyebrow}</p>
           <h2 id="domains-title" className="mt-2 text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-            Domain Expertise
+            {copy.heading}
           </h2>
           <p className="mt-3 text-slate-600">
-            Industry-specific SAP solutions delivered with deep process knowledge.
+            {copy.lede}
           </p>
         </header>
 
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {domains.map(({ label, href, imgSrc, imgAlt }) => (
-            <li key={label}>
-              <Tile 
-                label={label} 
-                href={href} 
-                imgSrc={imgSrc} 
-                imgAlt={imgAlt} 
-                onClick={() => handleDomainClick(label)}
+          {copy.items.map((item, index) => (
+            <li key={item.label}>
+              <Tile
+                label={item.label}
+                href={sectionHref}
+                imgSrc={domainImages[index]}
+                imgAlt={item.imageAlt}
+                ariaSuffix={copy.modal.tileAriaSuffix}
+                onClick={() => handleDomainClick(item.label)}
               />
             </li>
           ))}
@@ -84,32 +104,31 @@ export default function DomainExpertiseSection() {
               <button
                 onClick={closeModal}
                 className="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-full transition-colors"
-                aria-label="Close modal"
+                aria-label={copy.modal.closeAria}
               >
                 <X className="h-5 w-5 text-slate-500" />
               </button>
               
               <div className="text-center">
                 <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                  {selectedDomain} Expertise
+                  {copy.modal.titlePrefix}{selectedDomain}{copy.modal.titleSuffix}
                 </h3>
                 <p className="text-slate-600 mb-6">
-                  Detailed information about our {selectedDomain.toLowerCase()} expertise and SAP solutions is coming soon. 
-                  We're working on comprehensive content to help you understand how we can support your industry-specific needs.
+                  {copy.modal.bodyBefore}{selectedDomain.toLowerCase()}{copy.modal.bodyAfter}
                 </p>
                 <div className="flex gap-3 justify-center">
                   <button
                     onClick={closeModal}
                     className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
                   >
-                    Close
+                    {copy.modal.close}
                   </button>
                   <Link
-                    href="/contact"
+                    href={copy.contactHref}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     onClick={closeModal}
                   >
-                    Contact Us
+                    {copy.modal.contact}
                   </Link>
                 </div>
               </div>
@@ -121,7 +140,7 @@ export default function DomainExpertiseSection() {
   );
 }
 
-function Tile({ label, href, imgSrc, imgAlt, onClick }: TileProps) {
+function Tile({ label, href, imgSrc, imgAlt, ariaSuffix, onClick }: TileProps) {
   const content = (
     <figure className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card transition hover:shadow-cardHover cursor-pointer">
       {/* Image */}
@@ -154,7 +173,7 @@ function Tile({ label, href, imgSrc, imgAlt, onClick }: TileProps) {
   return href ? (
     <Link
       href={href}
-      aria-label={`${label} domain`}
+      aria-label={`${label}${ariaSuffix}`}
       className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 focus-visible:ring-offset-2 rounded-xl"
       onClick={handleClick}
     >
@@ -172,7 +191,7 @@ function Tile({ label, href, imgSrc, imgAlt, onClick }: TileProps) {
           onClick?.();
         }
       }}
-      aria-label={`${label} domain`}
+      aria-label={`${label}${ariaSuffix}`}
     >
       {content}
     </div>
