@@ -19,6 +19,33 @@ import type { ProjectPulseVideoDictionary } from "@/content/dictionary";
  *
  * `content.videoSrc` is identical in both locales: there is one recording. See
  * content/sr/project-pulse-video.ts.
+ *
+ * ── Why the overlay sits at z-[45] and not z-[100] ──────────────────────────────
+ * It used to be z-[100], which made it the single highest layer on the site and meant it
+ * covered the FIXED NAVBAR (z-50) entirely. The language switcher rendered with a correct
+ * href and was simply unclickable, and so was every other navigation control — plus the
+ * cookie banner (z-[60]) and the consent dialog (z-[70]), which a first-time visitor
+ * landing straight on this route could not reach at all.
+ *
+ * The site's stacking tiers:
+ *     z-10 / z-20 / z-40   page content, sticky rails
+ *     z-50                 the navbar, modals, the mobile menu, the sticky bar
+ *     z-[60]               cookie banner
+ *     z-[70]               cookie settings dialog
+ *
+ * z-[45] puts this overlay above all page content and below every one of those, which is
+ * where it belongs: it is a page-level overlay, not a system dialog. Two details confirm
+ * this was the original intent — the content container already carries `pt-24`, which
+ * exists only to leave room for the navbar, and the backdrop is `absolute inset-0` inside a
+ * `fixed inset-0` parent, so it still dims the whole viewport including the strip behind
+ * the navbar.
+ *
+ * Behaviour that is deliberately unchanged: Escape closes, a backdrop click closes, the
+ * close button closes, and clicks on the video itself do not propagate. Because the navbar
+ * now paints ABOVE the backdrop, a click on the navbar hits the navbar and a click on the
+ * dimmed area still hits the backdrop — the two do not compete.
+ *
+ * No other page is affected: this overlay exists only on the video route.
  */
 export interface ProjectPulseVideoPageProps {
   content: ProjectPulseVideoDictionary;
@@ -98,7 +125,7 @@ export function ProjectPulseVideoPage({ content }: ProjectPulseVideoPageProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+    <div className="fixed inset-0 z-[45] flex items-center justify-center">
       {/* Transparent overlay with backdrop blur - click to close */}
       <div
         onClick={() => router.back()}
