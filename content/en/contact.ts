@@ -61,6 +61,8 @@ export const contact: ContactDictionary = {
     messagePlaceholder: 'Tell us about your SAP needs or project requirements...',
     attachmentLabel: 'Attachment',
     attachmentHint: 'Supported formats: PDF, DOC, DOCX, TXT (max 10MB)',
+    attachmentButton: 'Choose file',
+    attachmentEmpty: 'No file selected',
     submit: 'Send Message',
     submitting: 'Sending...',
   },

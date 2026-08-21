@@ -133,6 +133,17 @@ export interface ContactDictionary {
     readonly messagePlaceholder: string
     readonly attachmentLabel: string
     readonly attachmentHint: string
+    /**
+     * The file picker's own two strings.
+     *
+     * A native `<input type="file">` renders its button and its "no file" text from the
+     * BROWSER's locale, not the page's — so a Serbian page on an English-configured browser
+     * said "Choose file / No file chosen" next to Serbian labels, and the site had no way to
+     * influence it. These two strings are what the custom presentation shows instead. The
+     * input itself is untouched; only its chrome is ours.
+     */
+    readonly attachmentButton: string
+    readonly attachmentEmpty: string
     readonly submit: string
     readonly submitting: string
   }

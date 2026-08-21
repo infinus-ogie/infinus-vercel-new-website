@@ -46,7 +46,7 @@ export const contact: ContactDictionary = {
   hero: {
     heading: 'Započnite svoju SAP transformaciju',
     description:
-      'Da li ste spremni da transformišete svoje poslovanje uz SAP? Obratite se našem timu stručnjaka za implementaciju, podršku i konsultantske usluge. Tu smo da vam pomognemo da uspete.',
+      'Da li ste spremni da transformišete svoje poslovanje uz SAP? Obratite se našem timu stručnjaka za implementaciju, podršku i konsultantske usluge. Tu smo da vam pomognemo da ostvarite svoje poslovne ciljeve.',
   },
 
   details: {
@@ -69,11 +69,13 @@ export const contact: ContactDictionary = {
     // A technical example address, not copy — deliberately identical in both locales.
     emailPlaceholder: 'your.email@example.com',
     subjectLabel: 'Predmet *',
-    subjectPlaceholder: 'O čemu se radi?',
+    subjectPlaceholder: 'Ukratko opišite temu upita',
     messageLabel: 'Poruka *',
     messagePlaceholder: 'Opišite nam svoje SAP potrebe ili zahteve u vezi sa projektom...',
     attachmentLabel: 'Prilog',
     attachmentHint: 'Podržani formati: PDF, DOC, DOCX, TXT (najviše 10 MB)',
+    attachmentButton: 'Izaberi fajl',
+    attachmentEmpty: 'Nijedan fajl nije izabran',
     submit: 'Pošaljite poruku',
     submitting: 'Šalje se...',
   },
@@ -102,7 +104,7 @@ export const contact: ContactDictionary = {
 
   // Approved before this file existed, and used verbatim. Do not reword.
   privacy: {
-    before: 'Slanjem forme potvrđujete da ste pročitali našu ',
+    before: 'Slanjem obrasca potvrđujete da ste pročitali našu ',
     linkText: 'Politiku privatnosti',
     after: '.',
     href: '/sr/politika-privatnosti',

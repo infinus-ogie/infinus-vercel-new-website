@@ -108,6 +108,20 @@ export const Contact2 = ({ content }: Contact2Props) => {
     setFormData(prev => ({ ...prev, attachment: file }))
   }
 
+  /** Lets the visible pill forward its click to the real input. */
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+
+  /**
+   * The filename the custom picker displays.
+   *
+   * DERIVED from form state rather than held in its own useState, so it cannot disagree with
+   * what will actually be submitted — and so it clears with the rest of the form after a
+   * successful send without a second reset to remember. `attachment` is typed `unknown`
+   * because the Zod schema treats it as `z.any()`, hence the instanceof narrowing.
+   */
+  const selectedFileName =
+    formData.attachment instanceof File ? formData.attachment.name : null
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -369,20 +383,78 @@ export const Contact2 = ({ content }: Contact2Props) => {
                   </p>
                 )}
               </div>
-              <div className="grid w-full gap-1.5">
+              {/* ── The attachment field ──────────────────────────────────────────────
+                  A native file input paints its own button and its own "no file" text, and it
+                  takes that copy from the BROWSER's locale rather than the page's. So
+                  /sr/contact showed "Choose file / No file chosen" between Serbian labels on
+                  any English-configured browser, and no amount of page-level localisation
+                  could reach it.
+
+                  The fix is presentation only. The real <input type="file"> is still here with
+                  the same id, name, `accept` list and onChange handler, and it is still what
+                  the browser opens and what FormData reads. It is `sr-only` rather than
+                  `hidden`, which is the whole trick: it stays in the accessibility tree and
+                  stays focusable, so keyboard and screen-reader behaviour is the native one.
+
+                  ── Why the pill is a <button> and not a second <label> ────────────────
+                  A second `<label htmlFor="attachment">` would have been fewer lines and it
+                  is what the obvious version of this looks like. It is wrong twice over: the
+                  input would have TWO labelling elements, so its accessible name becomes
+                  "Attachment Choose file", and "the label of this field" stops having a single
+                  answer. The pill is therefore a `type="button"` that forwards its click to the
+                  input, marked `aria-hidden` with `tabIndex={-1}` because it is pure mouse
+                  affordance: a keyboard user focuses the real input (the ring below shows it)
+                  and presses Enter or Space, which is the native way to open a file picker.
+                  One label, one tab stop, one accessible name.
+
+                  Nothing about validation moved. The accepted types are still `accept` here
+                  and the 10 MB limit is still the size check in app/api/contact/route.ts. This
+                  adds no client-side gate, pre-screens nothing and fakes no part of the
+                  upload. */}
+              <div className="grid w-full min-w-0 gap-1.5">
                 <Label htmlFor="attachment">{form.attachmentLabel}</Label>
-                <div className="relative">
-                  <Input
+                <div className="min-w-0">
+                  <input
+                    ref={fileInputRef}
                     id="attachment"
                     name="attachment"
                     type="file"
                     accept=".pdf,.doc,.docx,.txt"
                     onChange={handleFileChange}
-                    className="focus:border-blue-500 focus:ring-blue-500"
+                    className="peer sr-only"
+                    aria-describedby="attachment-hint attachment-state"
                   />
-                  <Upload className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  {/* The focus ring lands HERE, on the visible half, because the input it
+                      belongs to is off-screen. Without `peer-focus-visible` a keyboard user
+                      would tab into the field and see nothing at all happen. */}
+                  <div className="flex w-full min-w-0 items-center gap-3 rounded-md border border-input bg-background p-1 pr-3 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+                    >
+                      <Upload className="h-4 w-4" aria-hidden="true" />
+                      {form.attachmentButton}
+                    </button>
+                    {/* aria-live so the choice is ANNOUNCED, not just visible. `truncate` needs
+                        `min-w-0` on every ancestor up to the grid, or the flex row is sized by
+                        its longest word and a long filename pushes the document sideways —
+                        which it did, by 342px at 320px wide, before those were added. */}
+                    <span
+                      id="attachment-state"
+                      aria-live="polite"
+                      title={selectedFileName ?? undefined}
+                      className={`min-w-0 flex-1 truncate text-sm ${
+                        selectedFileName ? "text-foreground" : "text-muted-foreground"
+                      }`}
+                    >
+                      {selectedFileName ?? form.attachmentEmpty}
+                    </span>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p id="attachment-hint" className="text-xs text-gray-500">
                   {form.attachmentHint}
                 </p>
               </div>

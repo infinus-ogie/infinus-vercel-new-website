@@ -381,7 +381,7 @@ describe('the two locales render the SAME structure with DIFFERENT copy', () => 
   it('the Serbian acknowledgement is the approved Serbian sentence, with diacritics', () => {
     const { container, unmount } = render(<Contact2 content={sr} />)
     expect(container.textContent).toContain(
-      'Slanjem forme potvrđujete da ste pročitali našu Politiku privatnosti.'
+      'Slanjem obrasca potvrđujete da ste pročitali našu Politiku privatnosti.'
     )
     // Not the cookie-consent mechanism: "pristajete"/"prihvatate" would be wrong.
     expect(container.textContent).not.toMatch(/pristajete|prihvatate/i)

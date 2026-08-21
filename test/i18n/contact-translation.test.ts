@@ -186,10 +186,68 @@ describe('proper names and technical values survive translation', () => {
   })
 })
 
+/**
+ * The exact sentence is pinned, and it has been re-approved once.
+ *
+ * It read "Slanjem forme ..." until the owner replaced "forme" with "obrasca" — the more
+ * formal Serbian word for a form — in the Contact localisation polish. The assertion is still
+ * byte-exact rather than a loose match, because this is a legal acknowledgement: a paraphrase
+ * that drifts in unnoticed is the failure mode worth failing on.
+ */
+describe('the file picker gets its copy from the dictionary, not the browser', () => {
+  test('both locales declare their own button and empty-state strings', () => {
+    // A native <input type="file"> renders its button and "no file" text from the BROWSER's
+    // locale, so a Serbian page on an English browser showed English chrome and the site had
+    // no say in it. These four strings are what the custom presentation shows instead.
+    expect(en.form.attachmentButton).toBe('Choose file')
+    expect(en.form.attachmentEmpty).toBe('No file selected')
+    expect(sr.form.attachmentButton).toBe('Izaberi fajl')
+    expect(sr.form.attachmentEmpty).toBe('Nijedan fajl nije izabran')
+  })
+
+  test('the two locales actually differ, and the accepted types do not', () => {
+    // If these were ever made identical, every "no English on the Serbian page" assertion in
+    // scripts/qa/contact-file-picker.spec.ts would pass while the page was wrong.
+    expect(sr.form.attachmentButton).not.toBe(en.form.attachmentButton)
+    expect(sr.form.attachmentEmpty).not.toBe(en.form.attachmentEmpty)
+    // The hint still states the same limit and formats in both — those are facts, not copy.
+    for (const hint of [en.form.attachmentHint, sr.form.attachmentHint]) {
+      expect(hint).toContain('PDF')
+      expect(hint).toContain('DOCX')
+      expect(hint).toContain('10')
+    }
+  })
+})
+
+describe('the owner corrections to the Serbian Contact copy', () => {
+  test('the three approved strings are in place and the old ones are gone', () => {
+    expect(sr.hero.description).toContain(
+      'Tu smo da vam pomognemo da ostvarite svoje poslovne ciljeve.'
+    )
+    expect(sr.hero.description).not.toContain('Tu smo da vam pomognemo da uspete.')
+    expect(sr.form.subjectPlaceholder).toBe('Ukratko opišite temu upita')
+    expect(sr.privacy.before).toBe('Slanjem obrasca potvrđujete da ste pročitali našu ')
+  })
+
+  test('the privacy destination did NOT move', () => {
+    // The copy around the link changed; the link did not. Serbian readers must still land on
+    // the Serbian policy, and English on the English one.
+    expect(sr.privacy.href).toBe('/sr/politika-privatnosti')
+    expect(en.privacy.href).toBe('/privacy')
+  })
+
+  test('the English Contact copy is untouched apart from the picker', () => {
+    // Named explicitly, because "we only changed Serbian" is the sort of claim that quietly
+    // stops being true.
+    expect(en.form.subjectPlaceholder).toBe("What's this about?")
+    expect(en.privacy.before).toBe('By submitting this form, you confirm that you have read our ')
+  })
+})
+
 describe('the approved Serbian acknowledgement is used verbatim', () => {
   test('it composes to the exact approved sentence', () => {
     expect(`${sr.privacy.before}${sr.privacy.linkText}${sr.privacy.after}`).toBe(
-      'Slanjem forme potvrđujete da ste pročitali našu Politiku privatnosti.'
+      'Slanjem obrasca potvrđujete da ste pročitali našu Politiku privatnosti.'
     )
   })
 
