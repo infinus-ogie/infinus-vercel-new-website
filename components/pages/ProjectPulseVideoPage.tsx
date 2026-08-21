@@ -170,6 +170,7 @@ export function ProjectPulseVideoPage({ content }: ProjectPulseVideoPageProps) {
       {/* Close control — pinned to the OVERLAY, see the note above the component. */}
       <button
         type="button"
+        data-testid="video-close"
         onClick={() => router.back()}
         className="absolute right-4 top-24 z-20 flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-black/60 px-4 py-2 text-white/90 backdrop-blur-md transition-colors hover:bg-black/80 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-6"
         aria-label={content.closeAriaLabel}

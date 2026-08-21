@@ -74,7 +74,27 @@ async function waitForPath(page: Page, expected: string, tries = 60): Promise<st
   return at
 }
 
-const CLOSE = 'button[aria-label]'
+// A dedicated hook, NOT `button[aria-label]`. That broader selector also matches the cookie
+// settings dialog's close button, which earlier tests in this suite open — so the geometry
+// assertions could measure the wrong control depending on what ran before them. Two runs
+// failed under full-suite load and passed in isolation before this was pinned down.
+/**
+ * Stop the page fetching the 7.5MB recording over and over.
+ *
+ * These specs test overlay geometry and navigation, never playback. But headless Chromium has
+ * no H.264 decoder, so <video> errors — and `handleVideoError` reassigns `src` on every error
+ * with no attempt limit, so the route re-downloads the file forever. Run across a whole suite
+ * that saturates the server and makes unrelated assertions time out; two runs failed under
+ * load and passed in isolation before this was traced.
+ *
+ * Aborting the request keeps the retry loop (that defect is logged, not fixed here) but makes
+ * each attempt free. Nothing under test depends on the bytes arriving.
+ */
+test.beforeEach(async ({ page }) => {
+  await page.route(/\.mp4(\?|$)/, (route) => route.abort())
+})
+
+const CLOSE = '[data-testid="video-close"]'
 
 test.describe('video close control geometry', () => {
   for (const { path } of ROUTES) {

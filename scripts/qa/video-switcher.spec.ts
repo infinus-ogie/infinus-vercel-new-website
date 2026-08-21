@@ -25,6 +25,22 @@ import { test, expect, type Page } from '@playwright/test'
  * would loop indefinitely. Pre-existing, logged, out of scope here.
  */
 
+/**
+ * Stop the page fetching the 7.5MB recording over and over.
+ *
+ * These specs test overlay geometry and navigation, never playback. But headless Chromium has
+ * no H.264 decoder, so <video> errors — and `handleVideoError` reassigns `src` on every error
+ * with no attempt limit, so the route re-downloads the file forever. Run across a whole suite
+ * that saturates the server and makes unrelated assertions time out; two runs failed under
+ * load and passed in isolation before this was traced.
+ *
+ * Aborting the request keeps the retry loop (that defect is logged, not fixed here) but makes
+ * each attempt free. Nothing under test depends on the bytes arriving.
+ */
+test.beforeEach(async ({ page }) => {
+  await page.route(/\.mp4(\?|$)/, (route) => route.abort())
+})
+
 const PAIR = [
   { from: '/projectpulse/video', to: '/sr/projectpulse/video', hreflang: 'sr-Latn', lang: 'sr-Latn' },
   { from: '/sr/projectpulse/video', to: '/projectpulse/video', hreflang: 'en', lang: 'en' },
