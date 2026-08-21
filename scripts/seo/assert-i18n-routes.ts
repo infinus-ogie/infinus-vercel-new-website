@@ -40,6 +40,7 @@ import {
   Report,
   assertBuildExists,
   headOf,
+  metaByProperty,
   htmlLang,
   linkByRel,
   listRenderedHtml,
@@ -186,6 +187,35 @@ main(() => {
     const head = headOf(html)
     const alternates = alternateHreflangs(head)
     const expected = localeAlternatesFor(routePath)
+
+    // ── og:locale must match the document's language ────────────────────────────
+    // Checked for EVERY document, not just paired ones, because this is a property of the
+    // page's language rather than of its pairing.
+    //
+    // The bug this caught: /sr/projectpulse/brochure and /sr/projectpulse/video hand-write
+    // their metadata objects and set no `openGraph`, so they inherited the ROOT block and
+    // told crawlers `og:locale: en_US` — Serbian documents claiming to be American English.
+    // Pages built through generatePageMetadata were fine because they spread `base.openGraph`
+    // and override `locale`, which is exactly why a per-page convention was not enough and
+    // the default now lives in app/(sr)/sr/layout.tsx.
+    //
+    // Only pages that emit og:locale at all are checked. /cfo and /politika-privatnosti emit
+    // none, which is pre-existing and separate from this assertion.
+    const ogLocales = metaByProperty(head, 'og:locale')
+    if (ogLocales.length > 0) {
+      const docLocale = localeOfPath(routePath)
+      report.check(
+        ogLocales.length === 1,
+        `${routePath} emits ${ogLocales.length} og:locale tags; at most one is allowed`
+      )
+      if (docLocale !== null) {
+        const wantOg = LOCALE_META[docLocale].ogLocale
+        report.check(
+          ogLocales[0] === wantOg,
+          `${routePath} is a ${docLocale} document but advertises og:locale ${ogLocales[0]}, expected ${wantOg}`
+        )
+      }
+    }
 
     if (expected === null) {
       // Every page that is NOT half of a complete pair: zero locale output, as before.

@@ -156,6 +156,12 @@ export function metaByName(head: string, name: string): string[] {
   return (head.match(re) ?? []).map(contentAttr).filter((v): v is string => v !== null)
 }
 
+/** All `content` values of `<meta property="...">` — the OpenGraph flavour of the above. */
+export function metaByProperty(head: string, property: string): string[] {
+  const re = new RegExp(`<meta[^>]*\\sproperty="${escapeRe(property)}"[^>]*>`, 'gi')
+  return (head.match(re) ?? []).map(contentAttr).filter((v): v is string => v !== null)
+}
+
 /** All `href` values of `<link rel="...">` for the given rel. */
 export function linkByRel(head: string, rel: string): string[] {
   const re = new RegExp(`<link[^>]*\\srel="${escapeRe(rel)}"[^>]*>`, 'gi')
