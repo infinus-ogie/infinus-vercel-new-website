@@ -5,13 +5,20 @@ import { NavBar } from "@/components/ui/tubelight-navbar"
 import { LocaleSwitcherNav } from "@/components/i18n/LocaleSwitcherNav"
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { navbarSurfaceFor, navbarTextColorFor } from "@/lib/navbar-surface"
 
 export function NavBarDemo() {
+  const pathname = usePathname()
+  // usePathname is a CLIENT hook, not a request API: it reads router state and is inlined
+  // into the prerendered output, so every route stays statically rendered.
+  const surface = navbarSurfaceFor(pathname)
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [textColor, setTextColor] = useState('text-white/90')
+  const [textColor, setTextColor] = useState(() => navbarTextColorFor(surface))
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
 
   const navItems = [
@@ -58,6 +65,14 @@ export function NavBarDemo() {
   }
 
   useEffect(() => {
+    // Light-surface pages: the dark-text treatment applies from the top, at every scroll
+    // position. Nothing to transition, so no listener.
+    if (surface === 'light') {
+      setTextColor(navbarTextColorFor('light'))
+      return
+    }
+
+    // Dark-hero pages keep the existing transition, threshold unchanged.
     const handleScroll = () => {
       const scrollY = window.scrollY
       // Povećavam threshold da se pozadina pojavi tek kada korisnik dođe do About Us sekcije
@@ -73,7 +88,7 @@ export function NavBarDemo() {
     handleScroll()
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [surface])
 
   return (
     <nav aria-label="Main" className="fixed top-0 left-0 right-0 z-50 pt-6">

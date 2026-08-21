@@ -6,6 +6,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { ChevronDown, Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { navbarSurfaceFor, navbarTextColorFor } from "@/lib/navbar-surface"
 
 interface NavItem {
   name: string
@@ -24,7 +25,10 @@ export function NavBar({ items, className }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name)
   const [isMobile, setIsMobile] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
-  const [textColor, setTextColor] = useState('text-white/90')
+  // Which treatment this route starts in. Pages that open on a light surface must not use
+  // the light-text state at all, or their white text sits on a white background.
+  const surface = navbarSurfaceFor(pathname)
+  const [textColor, setTextColor] = useState(() => navbarTextColorFor(surface))
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -101,6 +105,14 @@ export function NavBar({ items, className }: NavBarProps) {
   }, [])
 
   useEffect(() => {
+    // Light-surface pages have no dark hero to transition away from, so the dark-text
+    // treatment applies at every scroll position. No listener needed.
+    if (surface === 'light') {
+      setTextColor(navbarTextColorFor('light'))
+      return
+    }
+
+    // Dark-hero pages keep the existing transition, threshold unchanged.
     const handleScroll = () => {
       const navbar = document.querySelector('[data-navbar]')
       if (!navbar) return
@@ -118,7 +130,7 @@ export function NavBar({ items, className }: NavBarProps) {
     handleScroll() // Initial check
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [surface])
 
   // Cleanup timeouts on unmount
   useEffect(() => {
