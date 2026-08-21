@@ -18,6 +18,9 @@
  * Terminology:
  *      C1   "SAP ugrađena analitika" -> "Ugrađena SAP analitika"; "dashboard-a" ->
  *           "kontrolnih tabli" (drops the half-declined anglicism)
+ *      1A   the SAME anglicism in hero.pills[1], left standing at the C1 review because C1
+ *           named only the benefits line. Now consistent: both read "kontrolnih tabli".
+ *           The English "500+ prebuilt KPIs & dashboards" is unchanged.
  *      C8   "Zdravlje portfolija projekata" -> "Stanje portfolija projekata"
  *      C9   "Komandni centar" -> "Kontrolni centar"
  *      C12  "Potraživanja i obaveze i usaglašavanje sa bankom."
@@ -92,7 +95,7 @@ export const projectPulseBrochure: ProjectPulseBrochureDictionary = {
     body: 'ProjectPulse je SAP Qualified Partner-Packaged Solution kompanije Infinus, namenjen kompanijama iz oblasti profesionalnih usluga. Objedinjuje finansije, upravljanje projektima i resursima, prodaju, nabavku i osnovni HR – uz podršku SAP ugrađene analitike i SAP Business AI – kako bi automatizovao ceo proces od prilike i ponude do fakture i zatvaranja perioda.',
     pills: [
       'Implementacija u roku od 3–6 meseci',
-      '500+ unapred pripremljenih KPI-jeva i dashboard-a',
+      '500+ unapred pripremljenih KPI-jeva i kontrolnih tabli',
       'SAP Business AI i ugrađena analitika',
     ],
   },

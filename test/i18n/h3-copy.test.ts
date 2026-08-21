@@ -426,13 +426,29 @@ describe('G. the owner corrections from Parts B, C and E', () => {
     expect(sp.idealFor.items[3]).toBe('Organizacije koje se pripremaju za rast i skaliranje')
   })
 
-  test('C1 corrected the benefits line only — the hero pill keeps "dashboard-a"', () => {
-    // C1 replaced "dashboard-a" with "kontrolnih tabli" in benefits.items[2]. The same
-    // anglicism remains in hero.pills[1], which the owner ruling approves as written.
-    // Pinned on both sides so the asymmetry stays a decision: if someone "tidies" the pill
-    // without a ruling, or reverts the benefits line, this test says which one moved.
+  test('1A — "kontrolnih tabli" is now used consistently, pill included', () => {
+    // C1 corrected only benefits.items[2] and left the same anglicism in hero.pills[1].
+    // 1A finished the job, so the Serbian file uses one term throughout.
     expect(br.benefits.items[2]).toContain('kontrolnih tabli')
-    expect(br.hero.pills[1]).toBe('500+ unapred pripremljenih KPI-jeva i dashboard-a')
+    expect(br.hero.pills[1]).toBe('500+ unapred pripremljenih KPI-jeva i kontrolnih tabli')
+    expect(JSON.stringify(br).indexOf('dashboard-a'), '"dashboard-a" must be gone').toBe(-1)
+    // The English pill is untouched and still says "dashboards".
+    expect(getDictionary('en').projectPulseBrochure.hero.pills[1]).toBe('500+ prebuilt KPIs & dashboards')
+  })
+
+  test('1B — "strukturisan" is now used consistently across the Starter Package', () => {
+    // E5 introduced "Strukturisan" in solution.sub while hero.description and
+    // metadata.description kept "struktuiran". 1B harmonised both.
+    const SENTENCE =
+      'Brz i strukturisan način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast.'
+    expect(sp.hero.description).toBe(SENTENCE)
+    expect(sp.metadata.description).toBe(SENTENCE)
+    expect(sp.solution.sub).toBe('Strukturisan pristup implementaciji SAP Cloud ERP-a uz nizak rizik.')
+    expect(JSON.stringify(sp).indexOf('struktuiran'), '"struktuiran" must be gone').toBe(-1)
+    // The English source sentence is untouched.
+    expect(getDictionary('en').sapStarterPackage.hero.description).toBe(
+      'A fast, structured way to implement SAP Cloud ERP and establish a scalable digital foundation for growth.'
+    )
   })
 
   test('the pre-review wording is gone from all three files', () => {
@@ -445,6 +461,8 @@ describe('G. the owner corrections from Parts B, C and E', () => {
       'bolja responzivnost',
       'Zdravlje portfolija',
       'SAP ugrađena analitika',
+      'dashboard-a',
+      'struktuiran ',
       'Komandni centar',
       'Porazgovarajte',
       'Priznati kao',

@@ -25,6 +25,13 @@
  * No figure, claim, module name, process name or acronym changed. Everything not listed
  * above is approved exactly as it was written.
  *
+ *   1C  nearshoring challenge  "neprimetna integracija eksternih resursa u projekte u toku"
+ *                            -> "nesmetana integracija eksternih resursa u tekuće projekte"
+ *
+ * 1C completes the "neprimetan" -> "nesmetan" correction. A5 and A7 covered the two
+ * integration bullets and this was the last instance, in the nearshoring challenge
+ * paragraph. No occurrence of "neprimet-" remains anywhere in this file.
+ *
  * A8, the eighth review item, changed no copy at all: the nearshoring technology string was
  * being rendered as broken pills. Fixed in lib/case-study-technologies.ts.
  *
@@ -156,7 +163,7 @@ export const caseStudies: CaseStudiesDictionary = {
       clientOverview:
         'Vodeća konsultantska kompanija za SAP sa sedištem u EU, koja realizuje složene SAP projekte u više industrija i kojoj je potreban skalabilan i pouzdan kapacitet za isporuku kako bi podržala rastuću potražnju klijenata.',
       challenge:
-        'Uz rastući broj projekata i kratke rokove isporuke, klijentu je bio potreban fleksibilan i skalabilan način da proširi svoje SAP kapacitete za isporuku. Ključni izazovi bili su obezbeđivanje doslednog kvaliteta, brzo uključivanje stručnih konsultanata i neprimetna integracija eksternih resursa u projekte u toku.',
+        'Uz rastući broj projekata i kratke rokove isporuke, klijentu je bio potreban fleksibilan i skalabilan način da proširi svoje SAP kapacitete za isporuku. Ključni izazovi bili su obezbeđivanje doslednog kvaliteta, brzo uključivanje stručnih konsultanata i nesmetana integracija eksternih resursa u tekuće projekte.',
       solutionIntro:
         'Infinus je delovao kao strateški nearshore partner i obezbedio iskusne SAP konsultante za više modula. Naš tim se direktno integrisao u klijentovu organizaciju za isporuku, podržavajući realizaciju projekata, implementacije u toku i kontinuirana unapređenja.',
       solutionItems: [

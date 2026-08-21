@@ -21,10 +21,10 @@
  *
  * The claim in E5 is unchanged: still a structured, low-risk approach.
  *
- * NOTE for a future style pass, deliberately NOT changed here: E5 introduces
- * "Strukturisan" while `hero.description` still reads "Brz i struktuiran način". The owner
- * ruling approves every string not explicitly corrected, so the hero keeps its spelling and
- * the inconsistency is reported rather than silently harmonised.
+ *      1B   "Brz i struktuiran način…" -> "Brz i strukturisan način…", in BOTH places it
+ *           appears: hero.description and metadata.description. E5 had introduced
+ *           "Strukturisan" in solution.sub while these two kept the older spelling; the
+ *           file now uses one form throughout. The English source sentence is unchanged.
  *
  * E8: the bilingual modal behaviour is approved as built — the English page offers
  * "Serbian (Srpski)" and the Serbian page offers "Engleski (English)".
@@ -57,7 +57,7 @@ export const sapStarterPackage: SapStarterPackageDictionary = {
   metadata: {
     title: 'SAP Starter Package | Infinus – SAP Packaged Solutions',
     description:
-      'Brz i struktuiran način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast.',
+      'Brz i strukturisan način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast.',
   },
 
   hero: {
@@ -66,7 +66,7 @@ export const sapStarterPackage: SapStarterPackageDictionary = {
     title: 'SAP Starter Package',
     tagline: 'Kada vaša kompanija preraste Excel i nepovezane sisteme',
     description:
-      'Brz i struktuiran način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast.',
+      'Brz i strukturisan način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast.',
     ctaDiscovery: 'Zakažite uvodni razgovor',
     ctaBrochure: 'Preuzmite brošuru',
   },

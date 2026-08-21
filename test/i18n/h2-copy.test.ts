@@ -53,8 +53,10 @@ describe('A. the seven owner corrections are applied', () => {
 
   test('the retired wording is gone from the six corrected sites', () => {
     for (const gone of [
-      'Neprimetn',            // sentence-initial: only ever the two corrected bullets
+      'neprimetn',            // 1C retired the last one; no casing may return
+      'Neprimetn',
       'responzivnost',
+      'u projekte u toku',    // 1C: replaced by "u tekuće projekte"
       'klijentovim učesnicima',
       'spremno za cloud',
       'neprimetnu tranziciju',
@@ -63,16 +65,18 @@ describe('A. the seven owner corrections are applied', () => {
     }
   })
 
-  test('the ONE surviving "neprimetna" is the approved one, and only that one', () => {
-    // A5 and A7 retired "neprimetan" (imperceptible) in favour of "nesmetan" (unimpeded) in
-    // the two integration bullets. One instance remains, mid-sentence in the nearshoring
-    // CHALLENGE paragraph, which the owner ruling leaves approved as written:
-    //   "…brzo uključivanje stručnih konsultanata i neprimetna integracija eksternih resursa…"
-    // Pinned rather than silently tolerated, so it stays a deliberate exception: if a future
-    // edit adds a second one, or removes this one without a ruling, this test says so.
-    const hits = srText.split('eprimetn').length - 1
-    expect(hits, 'exactly one approved "neprimetna" should remain').toBe(1)
-    expect(sr.items.nearshoring1.challenge).toContain('neprimetna integracija eksternih resursa')
+  test('1C — "neprimetan" is gone entirely, including the challenge paragraph', () => {
+    // A5 and A7 retired the false friend in the two integration bullets and left one
+    // instance standing in the nearshoring CHALLENGE paragraph, approved as written at that
+    // review. 1C retired that one too, so the word now appears nowhere in this namespace.
+    expect(srText.indexOf('eprimetn'), 'no form of "neprimetan" may remain').toBe(-1)
+    expect(sr.items.nearshoring1.challenge).toContain(
+      'nesmetana integracija eksternih resursa u tekuće projekte'
+    )
+    // The English sentence it translates is untouched.
+    expect(en.items.nearshoring1.challenge).toContain(
+      'seamlessly integrating external resources into ongoing projects'
+    )
   })
 })
 
