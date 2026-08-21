@@ -13,8 +13,16 @@ import { localeAlternatesMetadata } from "@/lib/seo-i18n";
 const PATH = "/sr/projectpulse/video";
 const content = getDictionary("sr").projectPulseVideo;
 
+/**
+ * `title.absolute` is deliberate. The dictionary value already ends in "| Infinus", and the
+ * root layout's `%s | Infinus` template would append a second one, rendering
+ * "ProjectPulse Video | Infinus | Infinus". `absolute` opts this route out of the template
+ * so the title carries exactly the one suffix its content declares. The content string is
+ * unchanged.
+ */
 export const metadata: Metadata = {
-  title: content.metadata.title,
+  // See the note above the export: `absolute` prevents a second brand suffix.
+  title: { absolute: content.metadata.title },
   description: content.metadata.description,
   alternates: localeAlternatesMetadata(PATH),
 };

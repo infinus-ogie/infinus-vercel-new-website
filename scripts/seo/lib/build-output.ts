@@ -134,6 +134,17 @@ export function decodeEntities(value: string): string {
     .replace(/&gt;/g, '>')
 }
 
+/**
+ * The rendered document title, entity-decoded.
+ *
+ * Read from the whole document rather than from `headOf`, because Next emits <title> inside
+ * <head> but the helper's head slice is not guaranteed to survive future markup changes.
+ */
+export function titleOf(html: string): string | null {
+  const m = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(html)
+  return m ? decodeEntities(m[1]).trim() : null
+}
+
 export function htmlLang(html: string): string | null {
   const m = /<html[^>]*\slang="([^"]*)"/.exec(html)
   return m ? m[1] : null

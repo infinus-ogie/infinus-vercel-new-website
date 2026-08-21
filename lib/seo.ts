@@ -28,14 +28,36 @@ export function generateMetadata({
   noIndex = false,
   canonical
 }: SEOData): Metadata {
-  const fullTitle = title.includes('Infinus') ? title : `${title} | Infinus`;
+  // ── The document title vs the social title ────────────────────────────────────
+  // These were once the same value, and that is what produced "X | Infinus | Infinus" on
+  // 21 pages. TWO mechanisms were appending the brand:
+  //
+  //   1. this helper, guarded by `title.includes('Infinus')` — a CONTAINMENT check, which
+  //      passes for "Contact Infinus - …" but does nothing about a title that already ENDS
+  //      in "| Infinus";
+  //   2. the root layout's `title.template` = "%s | Infinus", which appends unconditionally
+  //      to any page title that is a plain string.
+  //
+  // So a page whose title lacked the brand got it from (1) and then again from (2), and a
+  // page whose title already ended in it got it from (2). Only pages with the brand
+  // mid-title — "Contact Infinus - …" — came out right, by accident.
+  //
+  // `socialTitle` keeps the OLD expression byte-for-byte, because og:title, twitter:title
+  // and og:image:alt have always carried that exact value and are not what was broken.
+  //
+  // `documentTitle` is normalised — strip any trailing brand, append exactly one — and
+  // returned as `title.absolute`, which opts this page out of the root template. That makes
+  // this helper the single owner of the <title> for every page that uses it, so the two
+  // mechanisms can no longer stack.
+  const socialTitle = title.includes('Infinus') ? title : `${title} | Infinus`;
+  const documentTitle = `${title.replace(/\s*\|\s*Infinus\s*$/i, '')} | Infinus`;
   const fullDescription = description || SITE_CONFIG.description;
   const fullUrl = url.startsWith('http') ? url : `${SITE_CONFIG.url}${url}`;
   const fullImage = image || SITE_CONFIG.defaultImage;
   const canonicalUrl = canonical || fullUrl;
 
   return {
-    title: fullTitle,
+    title: { absolute: documentTitle },
     description: fullDescription,
     keywords: keywords.join(', '),
     robots: noIndex ? 'noindex,nofollow' : 'index,follow',
@@ -43,7 +65,7 @@ export function generateMetadata({
       canonical: canonicalUrl
     },
     openGraph: {
-      title: fullTitle,
+      title: socialTitle,
       description: fullDescription,
       url: fullUrl,
       siteName: SITE_CONFIG.name,
@@ -52,7 +74,7 @@ export function generateMetadata({
           url: fullImage,
           width: 1200,
           height: 630,
-          alt: fullTitle
+          alt: socialTitle
         }
       ],
       locale: 'en_US',
@@ -60,12 +82,12 @@ export function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: fullTitle,
+      title: socialTitle,
       description: fullDescription,
       images: [fullImage]
     },
     other: {
-      'og:image:alt': fullTitle,
+      'og:image:alt': socialTitle,
       'og:image:width': '1200',
       'og:image:height': '630'
     }

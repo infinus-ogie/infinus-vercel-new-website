@@ -2,7 +2,11 @@ import { Metadata } from "next";
 import { SiteChrome } from "@/components/shell/SiteChrome";
 
 export const metadata: Metadata = {
-  title: "GROW with SAP za Professional Services | Infinus",
+  // `absolute` because this literal already ends in "| Infinus" and the root layout's
+  // "%s | Infinus" template would otherwise append a second one, rendering
+  // "… | Infinus | Infinus". The openGraph and twitter titles below keep the same literal
+  // they have always carried — only the <title> was rendering the brand twice.
+  title: { absolute: "GROW with SAP za Professional Services | Infinus" },
   description: "ERP rešenje za rast, agilnost i profitabilnost u profesionalnim uslugama - preuzmite materijale i zakažite konsultacije.",
   openGraph: {
     title: "GROW with SAP za Professional Services | Infinus",

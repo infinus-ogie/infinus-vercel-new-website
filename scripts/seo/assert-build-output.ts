@@ -30,6 +30,7 @@ import {
   assertBuildExists,
   headOf,
   htmlLang,
+  titleOf,
   htmlPathFor,
   linkByRel,
   listRenderedHtml,
@@ -184,6 +185,31 @@ main(() => {
           `${route.path} canonical ${actual} points at a non-production host`
         )
       }
+    }
+
+    // ── <title>: exactly one brand suffix ──────────────────────────────────────
+    // Two mechanisms used to append " | Infinus" — lib/seo.ts and the root layout's
+    // `title.template` — and on 21 of 35 pages they both fired, rendering
+    // "X | Infinus | Infinus". The fix makes lib/seo.ts the single owner via
+    // `title.absolute`; this asserts the OUTPUT so a future page that hand-writes its own
+    // metadata cannot quietly reintroduce it.
+    //
+    // The check counts brand SUFFIXES, i.e. "| Infinus" at the end or followed by another
+    // "|" separator. It deliberately does NOT ban the word appearing twice: two approved
+    // titles legitimately carry the brand mid-string as part of a phrase —
+    // "SAP Starter Package | Infinus – SAP Packaged Solutions | Infinus" and the
+    // ProjectPulse brochure equivalent — where only the final segment is a suffix.
+    const title = titleOf(html)
+    if (title !== null) {
+      const suffixes = title.split('|').filter((seg) => seg.trim() === 'Infinus').length
+      report.check(
+        suffixes <= 1,
+        `${route.path} <title> repeats the "| Infinus" suffix ${suffixes} times: ${JSON.stringify(title)}`
+      )
+      report.check(
+        !/\|\s*Infinus\s*\|\s*Infinus\s*$/i.test(title),
+        `${route.path} <title> ends in a doubled brand suffix: ${JSON.stringify(title)}`
+      )
     }
 
     ssrJsonLdTotal += ssrJsonLdBlocks(html).length
