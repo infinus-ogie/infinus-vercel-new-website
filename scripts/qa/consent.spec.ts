@@ -340,11 +340,18 @@ test.describe('the consent UI follows the site locale, not the URL', () => {
     { path: '/sr', copy: SR, other: EN, label: 'Serbian root' },
     { path: '/sr/contact', copy: SR, other: EN, label: 'Serbian child' },
     { path: '/sr/politika-privatnosti', copy: SR, other: EN, label: 'Serbian legal page' },
-    // Serbian root, UNPREFIXED. The cases that make URL sniffing wrong.
-    { path: '/grow', copy: SR, other: EN, label: 'Serbian legacy, no /sr prefix' },
-    { path: '/grow/cfo', copy: SR, other: EN, label: 'Serbian legacy, no /sr prefix' },
-    { path: '/grow/ceo', copy: SR, other: EN, label: 'Serbian legacy, no /sr prefix' },
-    { path: '/professional-services', copy: SR, other: EN, label: 'Serbian legacy, no /sr prefix' },
+    { path: '/sr/grow', copy: SR, other: EN, label: 'Serbian campaign page' },
+    { path: '/sr/grow/cfo', copy: SR, other: EN, label: 'Serbian campaign page' },
+    { path: '/sr/grow/ceo', copy: SR, other: EN, label: 'Serbian campaign page' },
+    { path: '/sr/professional-services', copy: SR, other: EN, label: 'Serbian campaign page' },
+    // The four paths those pages used to occupy. They are ENGLISH now, and they are the cases
+    // worth keeping: a stale locale rule keyed on "which pages are Serbian" rather than on the
+    // route group would still be serving Serbian consent copy here, and nothing else on the
+    // page would look wrong.
+    { path: '/grow', copy: EN, other: SR, label: 'formerly Serbian, now English' },
+    { path: '/grow/cfo', copy: EN, other: SR, label: 'formerly Serbian, now English' },
+    { path: '/grow/ceo', copy: EN, other: SR, label: 'formerly Serbian, now English' },
+    { path: '/professional-services', copy: EN, other: SR, label: 'formerly Serbian, now English' },
   ]
 
   for (const { path, copy, other, label } of CASES) {
@@ -410,7 +417,10 @@ test.describe('the consent UI follows the site locale, not the URL', () => {
   })
 
   test('a decision made in one locale is honoured in the other', async ({ page }) => {
-    await page.goto('/grow', { waitUntil: 'domcontentloaded' })
+    // Starts on /sr/grow rather than /grow: the point of this test is crossing a ROOT
+    // boundary, and since the GROW migration /grow is served by the English root, so the
+    // navigation below would no longer cross anything.
+    await page.goto('/sr/grow', { waitUntil: 'domcontentloaded' })
     await page.getByTestId('cookie-accept').click()
     await expect(page.getByTestId('cookie-banner')).toBeHidden()
     const before = await page.evaluate(

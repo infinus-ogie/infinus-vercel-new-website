@@ -41,6 +41,12 @@ export const COMPLETE_PAIRS: readonly LocalePairFixture[] = [
     en: '/sap-packaged-solutions/sap-starter-package',
     sr: '/sr/sap-packaged-solutions/sap-starter-package',
   },
+  // Phase H4 — the GROW campaign. English took the clean unprefixed paths, which is where
+  // the SERBIAN pages used to live; the Serbian halves moved under /sr like every other pair.
+  { en: '/grow', sr: '/sr/grow' },
+  { en: '/grow/cfo', sr: '/sr/grow/cfo' },
+  { en: '/grow/ceo', sr: '/sr/grow/ceo' },
+  { en: '/professional-services', sr: '/sr/professional-services' },
 ]
 
 /**
@@ -60,7 +66,7 @@ export const LOCALE_LINKED_PAIRS: readonly LocalePairFixture[] = [
   { en: '/privacy', sr: '/sr/politika-privatnosti' },
 ]
 
-/** Every pair a visitor can switch across — indexable or not. 13 as of the Privacy split. */
+/** Every pair a visitor can switch across — indexable or not. 17 as of the GROW migration. */
 export const NAVIGABLE_PAIRS: readonly LocalePairFixture[] = [
   ...COMPLETE_PAIRS,
   ...LOCALE_LINKED_PAIRS,
@@ -72,8 +78,20 @@ export const PAIRED_PATHS: readonly string[] = COMPLETE_PAIRS.flatMap((p) => [p.
 /** Every path that is half of ANY navigable pair — the paths allowed a SWITCHER. */
 export const NAVIGABLE_PATHS: readonly string[] = NAVIGABLE_PAIRS.flatMap((p) => [p.en, p.sr])
 
-/** Every Serbian half, i.e. every /sr URL that must exist. Includes the legal pair. */
-export const LIVE_SERBIAN_PREFIXED_PATHS: readonly string[] = NAVIGABLE_PAIRS.map((p) => p.sr)
+/**
+ * Every Serbian half that lives under /sr, i.e. every /sr URL that must exist.
+ *
+ * The filter is now a no-op — every navigable Serbian half is under /sr again, because the
+ * GROW migration moved the last four there. It stays because it is the assertion that keeps
+ * being true: if someone adds a pair whose Serbian side sits at an unprefixed URL, this list
+ * and LIVE_SERBIAN_PATHS below stop agreeing, and the test that compares them fails.
+ */
+export const LIVE_SERBIAN_PREFIXED_PATHS: readonly string[] = NAVIGABLE_PAIRS.map((p) => p.sr).filter(
+  (p) => p === '/sr' || p.indexOf('/sr/') === 0
+)
+
+/** Every Serbian half, wherever it lives. Identical to the filtered list above today. */
+export const LIVE_SERBIAN_PATHS: readonly string[] = NAVIGABLE_PAIRS.map((p) => p.sr)
 
 /**
  * English pages whose Serbian counterpart is still only PLANNED.
@@ -91,25 +109,23 @@ export const UNPAIRED_ENGLISH_PATHS: readonly string[] = []
 /**
  * Serbian URLs that must still 404 — the planned counterparts of the list above.
  *
- * Also EMPTY as of Phase H3. Note what this does NOT cover: the four English counterparts
- * of the Serbian legacy pages (/sr/grow, /sr/grow/cfo, /sr/grow/ceo,
- * /sr/professional-services) are not "planned Serbian paths" — those pages are already
- * Serbian, at unprefixed URLs, and what they lack is an ENGLISH half. They live in
- * SERBIAN_ONLY_PATHS below, and giving them English counterparts is a separate reverse
- * migration.
+ * Also EMPTY as of Phase H3, and still empty after the GROW migration: /sr/grow,
+ * /sr/grow/cfo, /sr/grow/ceo and /sr/professional-services were the one set of paths that
+ * might have belonged here, and they are LIVE — they are where the Serbian campaign pages
+ * moved to, not URLs waiting to be built.
  */
 export const PLANNED_SERBIAN_PATHS: readonly string[] = []
 
 /**
  * Serbian pages with NO English counterpart, not even a planned one.
  *
- * The legacy campaign pages plus the redirect-backed /cfo. They must never show a switcher
- * and must never be paired with "/" as a fake English version.
+ * They must never show a switcher and must never be paired with "/" as a fake English version.
  */
 export const SERBIAN_ONLY_PATHS: readonly string[] = [
-  '/grow',
-  '/grow/cfo',
-  '/grow/ceo',
-  '/professional-services',
+  // All that is left. Phase H4 paired the four campaign pages, and their Serbian halves then
+  // moved under /sr. /cfo stays here: a redirect-backed duplicate, `excluded` from pairing,
+  // with no counterpart in either direction. Its canonical points at /grow/cfo, which is now
+  // the ENGLISH page — irrelevant in practice, because the redirect means the document is
+  // never served.
   '/cfo',
 ]

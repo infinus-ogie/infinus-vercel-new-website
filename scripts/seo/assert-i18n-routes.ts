@@ -308,12 +308,26 @@ main(() => {
 
     // The switcher must be rendered here, and must point only at the real counterpart.
     report.check(/data-language-switcher/.test(html), `${routePath} has a live counterpart but renders no switcher`)
-    const switcherHrefs = Array.from(html.match(/href="\/sr\/[^"]*"|href="\/contact"/g) ?? [])
-    for (const href of switcherHrefs) {
-      const target = href.slice('href="'.length, -1)
+
+    // Every link into the Serbian URL space must resolve to a route the map declares live.
+    // This pattern catches more than the switcher — the footer's Serbian links land here too —
+    // and that is worth keeping, because a footer link to a Serbian URL that does not exist is
+    // the same bug with a wider blast radius.
+    //
+    // The FRAGMENT is stripped before resolving. It was not, and the omission was invisible
+    // until the footer's Resources column started pointing at /sr/grow#downloads: the raw href
+    // was compared against the declared paths, so any anchored Serbian link failed no matter
+    // how correct its page was. An href is a path plus an optional fragment; only the path is
+    // a route.
+    const serbianHrefs = Array.from(html.match(/href="\/sr\/[^"]*"|href="\/contact"/g) ?? [])
+    for (const href of serbianHrefs) {
+      const target = href.slice('href="'.length, -1).split('#')[0].split('?')[0]
+      // A bare fragment link (href="/sr/grow#downloads" on /sr/grow itself) resolves to the
+      // page's own path, which is live by construction — no special case needed.
       report.check(
         live.indexOf(target) !== -1,
-        `${routePath} links to ${target}, which content/routes.ts does not declare live`
+        `${routePath} links to ${target}, which content/routes.ts does not declare live` +
+          (target === href.slice('href="'.length, -1) ? '' : ` (from href ${href.slice('href="'.length, -1)})`)
       )
     }
 

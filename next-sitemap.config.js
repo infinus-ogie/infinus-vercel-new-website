@@ -25,7 +25,7 @@ module.exports = {
   // Everything else that the build produces is included automatically.
   exclude: [
     '/**#*',
-    '/cfo', // permanent redirect -> /grow/cfo
+    '/cfo', // permanent redirect -> /grow/cfo (which is now the ENGLISH CFO page)
     '/hero-demo',
     '/combined-demo',
     '/services-demo',
@@ -53,7 +53,15 @@ module.exports = {
     // /sr/contact is the Serbian half of the same page as /contact, so it carries the same
     // priority. Reciprocal hreflang lives in each page's <head>, not in the sitemap.
     // Serbian counterparts carry the same priority as their English half.
-    const keyRoutes = ['/', '/sr', '/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/contact', '/sr/contact', '/faq', '/sr/faq'];
+    const keyRoutes = [
+      '/', '/sr',
+      '/grow', '/sr/grow',
+      '/grow/cfo', '/sr/grow/cfo',
+      '/grow/ceo', '/sr/grow/ceo',
+      '/professional-services', '/sr/professional-services',
+      '/contact', '/sr/contact',
+      '/faq', '/sr/faq',
+    ];
     // Case studies are 0.7 in English, so their Serbian halves inherit 0.7 as well.
     const priority = keyRoutes.includes(path) ? 0.8 : 0.7;
 

@@ -79,8 +79,9 @@ function ElegantShape({
 /**
  * The homepage hero.
  *
- * Phase H1 made its copy content-driven. `hero` and `trust` default to the ENGLISH
- * dictionary, so the rendered output is byte-identical to before for any existing caller.
+ * Phase H1 made its copy content-driven. `hero` still defaults to the ENGLISH dictionary;
+ * `trust` no longer does, because it is forwarded to StatPills and an optional locale-bearing
+ * prop is precisely how English trust copy ended up on Serbian pages. Callers name it.
  *
  * NOTE: before H1 the `title1`/`title2`/`badge` props were declared but IGNORED — the h1
  * text was hardcoded in the JSX below and the badge is a logo image, not text. Those dead
@@ -92,7 +93,7 @@ function HeroGeometric({
     trust,
 }: {
     hero?: HomeDictionary["hero"];
-    trust?: HomeDictionary["trust"];
+    trust: HomeDictionary["trust"];
 }) {
     const fadeUpVariants: Variants = {
         hidden: { opacity: 0, y: 30 },

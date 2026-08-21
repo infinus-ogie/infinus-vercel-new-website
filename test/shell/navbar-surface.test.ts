@@ -82,6 +82,17 @@ const DARK_HERO_PATHS = [
   '/sr/projectpulse/brochure',
   '/sr/projectpulse/video',
   '/sr/sap-packaged-solutions/sap-starter-package',
+  // Phase H4: both halves of the four GROW pairs render the same ProServicesHero. They inherit
+  // `dark` from the page id, so no new entry in LIGHT_SURFACE_PAGE_IDS was needed — the same
+  // payoff as the case studies and the Privacy pair.
+  //
+  // Worth noting what this list survived: the four unprefixed paths listed further up changed
+  // LANGUAGE during the GROW migration, and these four /sr paths are new. Not one entry had to
+  // be reclassified, because classification keys on the page id, not on the URL or the locale.
+  '/sr/grow',
+  '/sr/grow/cfo',
+  '/sr/grow/ceo',
+  '/sr/professional-services',
 ]
 
 describe('the light-background pages are classified light', () => {

@@ -95,12 +95,15 @@ const indexable = (path: string, canonicalPath = path): RouteExpectation => ({
 })
 
 /**
- * The four Serbian-content campaign pages.
+ * A page whose document is SERBIAN: identical expectations to `indexable`, except lang.
  *
- * Phase E moved them under app/(sr)/, a second ROOT layout that emits
- * <html lang="sr-Latn">. Their URLs are unchanged — route groups are URL-invisible — and
- * so is every other head field. This corrects the long-standing bug where Serbian copy
- * was served under lang="en" because <html lang> lived in a single shared root layout.
+ * Phase E introduced this when the four campaign pages moved under app/(sr)/, a second ROOT
+ * layout emitting <html lang="sr-Latn"> — correcting a long-standing bug where Serbian copy
+ * was served under lang="en" from a single shared root layout.
+ *
+ * Those four pages have since moved again, to /sr/grow, /sr/grow/cfo, /sr/grow/ceo and
+ * /sr/professional-services, and the unprefixed paths they left behind are now English. The
+ * helper is unchanged; only which paths it is applied to.
  */
 const serbianPage = (path: string): RouteExpectation => ({
   ...indexable(path),
@@ -255,10 +258,20 @@ export const ROUTES: readonly RouteExpectation[] = [
     inSitemap: true,
     expectStaticHtml: true,
   },
-  serbianPage('/grow'),
-  serbianPage('/grow/cfo'),
-  serbianPage('/grow/ceo'),
-  serbianPage('/professional-services'),
+  // ── Phase H4: the four GROW pairs, English on the clean paths ────────────────
+  // These four URLs used to serve SERBIAN. The owner's route decision made English the
+  // unprefixed default here too, and moved the Serbian content to the same paths under /sr.
+  // Two consequences this fixture is the right place to pin:
+  //   · the unprefixed paths must now assert lang="en", not lang="sr-Latn"
+  //   · /sr/grow and friends must exist as real Serbian documents
+  indexable('/grow'),
+  indexable('/grow/cfo'),
+  indexable('/grow/ceo'),
+  indexable('/professional-services'),
+  serbianPage('/sr/grow'),
+  serbianPage('/sr/grow/cfo'),
+  serbianPage('/sr/grow/ceo'),
+  serbianPage('/sr/professional-services'),
 
   // ── 2 public noindex pages: the Privacy Policy, one per locale ───────────────
   // Split by locale in this phase. Both are deliberately noindex,follow and out of the
@@ -314,8 +327,10 @@ export const ROUTES: readonly RouteExpectation[] = [
     inSitemap: false,
     expectStaticHtml: true,
     knownIssue:
-      'Unreachable duplicate of /grow/cfo that is still built. Scheduled for deletion ' +
-      'in the Cleanup phase, which must land before any GROW URL migration.',
+      'Unreachable duplicate that is still built, and now a stale one: it is a SERBIAN ' +
+      'document whose canonical points at /grow/cfo, which is the ENGLISH CFO page since ' +
+      'the GROW URL migration. Harmless — the permanent redirect means no crawler or ' +
+      'visitor ever reaches this document — but it should be deleted in the Cleanup phase.',
   },
 
   // ── 4 internal / demo pages ──────────────────────────────────────────────────
@@ -412,12 +427,12 @@ export const EXPECTED_COUNTS = {
    * 16 before Phase G; +1 for /sr/contact, +2 for /sr and /sr/faq in H1, +5 for the
    * Serbian case studies in H2, +4 for the Serbian product pages in H3.
    *
-   * With H3 the English and Serbian halves are BALANCED: 12 English public pages, 12
-   * Serbian /sr pages, and no English page left without a counterpart. The remaining
-   * asymmetry runs the other way — four Serbian legacy pages at unprefixed URLs whose
-   * English halves do not exist yet.
+   * With H3 the English and Serbian halves were BALANCED for the /sr space. H4 closed the
+   * last gap in the other direction: the four Serbian legacy pages at unprefixed URLs got
+   * English counterparts at NEW paths, +4 -> 32. Every public page in either language now has
+   * a counterpart.
    */
-  indexable: 28,
+  indexable: 32,
   /** /privacy and /sr/politika-privatnosti — the Privacy Policy, one page per locale */
   noindex: 2,
   /** /cfo — page still built behind its redirect */
@@ -434,19 +449,20 @@ export const EXPECTED_COUNTS = {
    * build produced 22. Phase G added /sr/contact -> 23; H1 added /sr and /sr/faq -> 25;
    * H2 added the five Serbian case studies -> 30; H3 added the four Serbian product
    * pages -> 34; splitting the Privacy Policy by locale swaps /politika-privatnosti for
-   * /privacy and adds /sr/politika-privatnosti -> 35.
+   * /privacy and adds /sr/politika-privatnosti -> 35; H4 adds the four English GROW /
+   * Professional Services pages -> 39.
    */
-  manifestPages: 35,
+  manifestPages: 39,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
-  /** total manifest entries: 35 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 44,
+  /** total manifest entries: 39 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 48,
   /**
-   * Rendered .html files: 35 built pages + _not-found. /politika-privatnosti is in the
+   * Rendered .html files: 39 built pages + _not-found. /politika-privatnosti is in the
    * fixture as a redirect source but produces no HTML, so it is NOT counted here.
    */
-  renderedHtml: 36,
-  sitemapUrls: 28,
-  /** the 30 public pages whose <head> is snapshotted (28 indexable + 2 legal pages) */
-  snapshotPages: 30,
+  renderedHtml: 40,
+  sitemapUrls: 32,
+  /** the 34 public pages whose <head> is snapshotted (32 indexable + 2 legal pages) */
+  snapshotPages: 34,
 } as const

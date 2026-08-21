@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, MessageCircle } from "lucide-react";
 import { FaqSection } from "@/components/ui/Faq";
 import { StatPills } from "@/components/ui/StatPills";
+import { getDictionary } from "@/content/dictionary";
 import { IndustriesScroll } from "@/components/ui/IndustriesScroll";
 import CfoBenefits from "@/app/_components/CfoBenefits";
 
@@ -187,7 +188,13 @@ Excel“ pristup`}
             viewport={{ once: true, amount: 0.2 }}
           >
             <h2 className="text-3xl font-bold md:text-4xl lg:text-5xl text-slate-900">O Infinusu</h2>
-            <StatPills />
+            {/*
+              Serbian pills on a Serbian page. This document is unreachable — /cfo is a
+              permanent redirect to /grow/cfo — so this changes nothing a visitor can see; it
+              is here because StatPills has no default any more and leaving English in a
+              Serbian file would be a deliberate wrong answer.
+            */}
+            <StatPills trust={getDictionary("sr").home.trust} />
             <div className="pt-2">
               <IndustriesScroll />
             </div>

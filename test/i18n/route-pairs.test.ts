@@ -113,15 +113,18 @@ describe('validateRoutePairs catches invalid configuration', () => {
       en: null,
       sr: { path: '/nova-stranica', status: 'live' },
     })
-    expect(problems.join(' ')).toContain('neither under /sr nor one of the four legacy')
+    expect(problems.join(' ')).toContain('neither under /sr nor one of the')
   })
 
   test('an existing path marked "planned"', () => {
+    // Uses /cfo, the one path left in LEGACY_UNPREFIXED_SERBIAN_PATHS. It used to use /grow,
+    // which since the GROW migration is an ENGLISH path and trips the "must be under /sr" rule
+    // first — a different problem, and one that would have masked the one under test.
     const problems = problemsFor({
       id: 'already-there',
       pairing: 'translatable',
       en: null,
-      sr: { path: '/grow', status: 'planned' },
+      sr: { path: '/cfo', status: 'planned' },
     })
     expect(problems.join(' ')).toContain('cannot be "planned"')
   })
@@ -162,16 +165,52 @@ describe('locale ownership of live paths', () => {
     }
   })
 
-  test('the Serbian pages are owned by sr, at their real unprefixed URLs', () => {
+  test('the four clean campaign paths are owned by EN, not by sr any more', () => {
+    // These four served SERBIAN until the GROW migration and this test asserted `'sr'`. The
+    // inversion is the migration: English owns the unprefixed paths, Serbian moved under /sr.
+    // Getting this wrong in either direction is a visitor sent to the wrong language, so both
+    // halves are pinned explicitly rather than derived from each other.
     for (const path of ['/grow', '/grow/cfo', '/grow/ceo', '/professional-services']) {
+      expect(localeOfPath(path), path).toBe('en')
+    }
+    for (const path of ['/sr/grow', '/sr/grow/cfo', '/sr/grow/ceo', '/sr/professional-services']) {
       expect(localeOfPath(path), path).toBe('sr')
     }
   })
 
-  test('every Serbian half is owned by sr, at a properly prefixed URL', () => {
+  test('the rejected English slugs are not routes at all', () => {
+    // /grow-with-sap and friends were the first attempt at the English halves. They were never
+    // pushed, deployed or indexed, and the owner rejected them, so they must not exist in the
+    // map, must resolve no locale and must not be reachable as a counterpart from anywhere.
+    for (const path of [
+      '/grow-with-sap',
+      '/grow-with-sap/cfo',
+      '/grow-with-sap/ceo',
+      '/sap-for-professional-services',
+    ]) {
+      expect(localeOfPath(path), path).toBeNull()
+      expect(pairForPath(path), path).toBeNull()
+      expect(counterpartFor(path), path).toBeNull()
+    }
+    const declared = allLivePaths().concat(plannedPaths())
+    for (const path of declared) {
+      expect(path.indexOf('grow-with-sap'), path).toBe(-1)
+      expect(path.indexOf('sap-for-professional-services'), path).toBe(-1)
+    }
+  })
+
+  test('every Serbian half is owned by sr AND lives under /sr', () => {
+    // Both halves of this used to be needed separately, because four Serbian pages sat at
+    // unprefixed URLs and "owned by sr" and "starts with /sr" were different claims. After the
+    // migration they coincide again for every PAIRED page — so the test asserts the stronger
+    // statement, and would fail if a future pair reintroduced an unprefixed Serbian half.
+    const legacy: string[] = [...LEGACY_UNPREFIXED_SERBIAN_PATHS]
     for (const pair of REAL_PAIRS) {
       expect(localeOfPath(pair.sr), pair.sr).toBe('sr')
-      expect(pair.sr === '/sr' || pair.sr.indexOf('/sr/') === 0, pair.sr).toBe(true)
+      expect(pair.sr === '/sr' || pair.sr.indexOf('/sr/') === 0, `${pair.sr} must be under /sr`).toBe(true)
+      // And the legacy exception must not be reachable through a pair: the one path left in it
+      // is /cfo, which is `excluded` and therefore not in REAL_PAIRS at all.
+      expect(legacy.indexOf(pair.sr), `${pair.sr} must not need the legacy exception`).toBe(-1)
     }
   })
 
@@ -240,17 +279,47 @@ describe('counterparts are never invented', () => {
     }
   })
 
-  test('/grow has no English counterpart, and is NOT paired with "/"', () => {
+  test('/grow resolves to the Serbian page it used to be, and never to "/sr"', () => {
+    // This assertion has now been written three ways, and the guard that survives every
+    // rewrite is the one that matters: the counterpart must be the DECLARED path and must
+    // never be the other locale's home page, which is the tempting wrong answer whenever a
+    // page has no obvious mirror.
     const target = counterpartFor('/grow')
-    expect(target).toBeNull()
-    // Explicit guard against the tempting wrong answer.
-    expect(target === null ? null : target.path).not.toBe('/')
+    expect(target).toEqual({
+      locale: 'sr',
+      path: '/sr/grow',
+      url: 'https://www.infinus.co/sr/grow',
+    })
+    expect(target!.path).not.toBe('/sr')
   })
 
-  test('the other Serbian pages have no English counterpart either', () => {
-    for (const path of ['/grow/cfo', '/grow/ceo', '/professional-services']) {
-      expect(counterpartFor(path), path).toBeNull()
+  test('the four GROW pairs resolve reciprocally on the final URLs', () => {
+    const EXPECTED: ReadonlyArray<readonly [string, string]> = [
+      ['/grow', '/sr/grow'],
+      ['/grow/cfo', '/sr/grow/cfo'],
+      ['/grow/ceo', '/sr/grow/ceo'],
+      ['/professional-services', '/sr/professional-services'],
+    ]
+    for (const [en, sr] of EXPECTED) {
+      expect(counterpartFor(en)?.path, en).toBe(sr)
+      expect(counterpartFor(sr)?.path, sr).toBe(en)
     }
+  })
+
+  test('counterparts still come from the map, not from a /sr prefix rule', () => {
+    // These four pairs DO happen to follow the prefix pattern now, which makes it tempting to
+    // replace the lookup with string surgery. Three live cases prove that would be wrong, and
+    // they are the reason content/routes.ts writes every path out as a literal.
+    //
+    //   · the home pair is "/" <-> "/sr", where prefixing gives "/sr/" — a different URL
+    //   · the Privacy pair translates the SLUG, so no prefix reaches it
+    //   · /cfo is a Serbian-era path with no counterpart, and "/sr/cfo" does not exist
+    expect(counterpartFor('/')?.path).toBe('/sr')
+    expect(counterpartFor('/sr')?.path).toBe('/')
+    expect(counterpartFor('/privacy')?.path).toBe('/sr/politika-privatnosti')
+    expect(counterpartFor('/sr/politika-privatnosti')?.path).toBe('/privacy')
+    expect(counterpartFor('/cfo')).toBeNull()
+    expect(localeOfPath('/sr/cfo')).toBeNull()
   })
 
   test('/projectpulse now resolves to a REAL Serbian counterpart', () => {

@@ -175,7 +175,20 @@ describe('it never invents a destination', () => {
     // If it stripped or prefixed "/sr", these would produce targets. They must not.
     for (const path of PLANNED_SERBIAN_PATHS) expect(resolveSwitchTarget(path), path).toBeNull()
     for (const path of UNPAIRED_ENGLISH_PATHS) expect(resolveSwitchTarget(path), path).toBeNull()
-    expect(resolveSwitchTarget('/professional-services')).toBeNull()
+    // /cfo is `excluded`: built, redirected away, and paired with nothing in either direction.
+    expect(resolveSwitchTarget('/cfo')).toBeNull()
+
+    // And the positive proof. The GROW pairs now DO follow the /sr pattern, so they are no
+    // longer evidence of anything on their own — these three are the cases a prefix rule gets
+    // wrong: a translated slug, the home pair's missing trailing slash, and a rejected slug
+    // that must resolve to nothing at all.
+    expect(resolveSwitchTarget('/privacy')?.path).toBe('/sr/politika-privatnosti')
+    expect(resolveSwitchTarget('/sr')?.path).toBe('/')
+    expect(resolveSwitchTarget('/grow-with-sap')).toBeNull()
+    // The pairs themselves, both directions, on their final URLs.
+    expect(resolveSwitchTarget('/professional-services')?.path).toBe('/sr/professional-services')
+    expect(resolveSwitchTarget('/grow')?.path).toBe('/sr/grow')
+    expect(resolveSwitchTarget('/sr/grow/cfo')?.path).toBe('/grow/cfo')
 
     const source = readFileSync(join(ROOT, 'components/i18n/LanguageSwitcher.tsx'), 'utf8')
     const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')

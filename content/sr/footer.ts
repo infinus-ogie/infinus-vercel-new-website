@@ -22,10 +22,16 @@
  * Serbia". Everything else on this page is draft.
  *
  * ── Destinations ────────────────────────────────────────────────────────────────
- * Same rule as the Navbar: labels are translated, URLs are only ever real. The Company and
- * Resources columns keep /grow and /professional-services because those ARE the Serbian
- * pages, and the Legal column now points at the SERBIAN Privacy Policy,
- * /sr/politika-privatnosti — the single bilingual URL was split by locale.
+ * Same rule as the Navbar: labels are translated, URLs are only ever real.
+ *
+ * The Company and Resources columns used to point at /grow and /professional-services,
+ * because those WERE the Serbian pages. They are the English pages now: the owner's route
+ * decision gave English the clean unprefixed paths and moved the Serbian content under /sr.
+ * So these links became /sr/grow and /sr/professional-services — a change of href that keeps
+ * the destination exactly where it always was, which is the whole point.
+ *
+ * The Legal column points at the SERBIAN Privacy Policy, /sr/politika-privatnosti — the single
+ * bilingual URL was split by locale.
  */
 
 import type { FooterDictionary } from '../dictionary'
@@ -59,9 +65,8 @@ export const footer: FooterDictionary = {
       label: 'Kompanija',
       items: [
         { label: 'O nama', href: '/sr#about' },
-        // These two ARE the Serbian pages already.
-        { label: 'GROW with SAP: Finansije', href: '/grow' },
-        { label: 'SAP za Professional Services', href: '/professional-services' },
+        { label: 'GROW with SAP: Finansije', href: '/sr/grow' },
+        { label: 'SAP za Professional Services', href: '/sr/professional-services' },
         { label: 'Karijera', href: '/sr#join-team' },
         { label: 'Česta pitanja', href: '/sr/faq' },
         { label: 'Kontakt', href: '/sr/contact' },
@@ -70,8 +75,8 @@ export const footer: FooterDictionary = {
     resources: {
       label: 'Resursi',
       items: [
-        { label: 'GROW materijali', href: '/grow#downloads' },
-        { label: 'Materijali za Professional Services', href: '/professional-services#downloads' },
+        { label: 'GROW materijali', href: '/sr/grow#downloads' },
+        { label: 'Materijali za Professional Services', href: '/sr/professional-services#downloads' },
       ],
     },
     legal: {

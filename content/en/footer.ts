@@ -18,6 +18,24 @@
 
 import type { FooterDictionary } from '../dictionary'
 
+/**
+ * Phase H4 repointed four links, twice.
+ *
+ * The Company and Resources columns have always sent English readers to /grow and
+ * /professional-services. Until H4 those were the SERBIAN campaign pages, so an English
+ * footer link landed on Serbian content — there was no English version to point at.
+ *
+ * H4's first attempt gave English new slugs (/grow-with-sap, /sap-for-professional-services)
+ * and repointed these links at them. The owner rejected those slugs in favour of the clean
+ * paths, so the hrefs below are back to /grow and /professional-services — but they now reach
+ * ENGLISH pages, which is what makes them correct rather than merely unchanged.
+ *
+ * The Serbian footer points at /sr/grow and /sr/professional-services, so neither locale's
+ * footer crosses into the other's content.
+ *
+ * The anchors are unchanged: both halves use #downloads, the historical Serbian ID shared by
+ * both language versions of the page. See components/pages/GrowLandingPage.tsx.
+ */
 export const footer: FooterDictionary = {
   description:
     'Infinus d.o.o. is a SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.',

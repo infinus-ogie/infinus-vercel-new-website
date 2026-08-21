@@ -149,6 +149,12 @@ main(async () => {
   // vacuously smaller rule set.
   const expectPresent: { description: string; match: (r: RedirectRule) => boolean }[] = [
     {
+      // Unchanged by the GROW migration, and worth stating why. /cfo has always pointed at
+      // /grow/cfo, which was the SERBIAN CFO page and is now the ENGLISH one. The redirect is
+      // still correct: /grow/cfo is the canonical clean CFO route in either language, so the
+      // rule needs no repointing and creates no chain. What did change is the language a
+      // visitor following an old /cfo link arrives in — accepted, and one switcher click from
+      // the Serbian page at /sr/grow/cfo.
       description: '/cfo → /grow/cfo',
       match: (r) => r.source === '/cfo' && r.destination === '/grow/cfo' && r.permanent === true,
     },

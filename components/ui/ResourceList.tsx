@@ -3,13 +3,24 @@ import * as React from "react";
 import { ResourceCard, type Resource } from "./ResourceCard";
 import { ResourceDownloadModal } from "./ResourceDownloadModal";
 
+/**
+ * The downloads grid, shared by all four GROW / Professional Services pages in both locales:
+ * /grow and /sr/grow, /professional-services and /sr/professional-services.
+ *
+ * `title`, `description` and `zipLabel` were hardcoded SERBIAN, so the component could not be
+ * reused on an English page without leaking Serbian into it. They are props now, and every
+ * default is the exact former Serbian literal — so the two existing Serbian pages render
+ * byte-identically without passing anything, and the new English pages pass their own.
+ */
 export function ResourceList({
-  items, zipUrl, title, description,
+  items, zipUrl, title, description, zipLabel = "Preuzmi ceo paket (ZIP)",
 }: { 
   items: Resource[]; 
   zipUrl?: string; 
   title?: string;
   description?: string;
+  /** The ZIP control's visible text AND its accessible name. */
+  zipLabel?: string;
 }) {
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Resource | null>(null);
@@ -41,14 +52,12 @@ export function ResourceList({
             href={zipUrl}
             download
             data-vi="download"
-            data-vi-label="Preuzmi ceo paket (ZIP)"
+            data-vi-label={zipLabel}
             data-vi-doc={zipUrl.split('/').pop() || ''}
             className="hidden md:inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-600"
-            aria-label="Preuzmi ceo paket (ZIP)"
+            aria-label={zipLabel}
           >
-            <svg className="h-4 w-4 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1"/><path d="M21 10v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8"/><path d="M10 12h4"/></svg>
-            Preuzmi ceo paket (ZIP)
-          </a>
+            <svg className="h-4 w-4 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1"/><path d="M21 10v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8"/><path d="M10 12h4"/></svg>{zipLabel}</a>
         )}
       </div>
 
@@ -68,14 +77,12 @@ export function ResourceList({
             href={zipUrl}
             download
             data-vi="download"
-            data-vi-label="Preuzmi ceo paket (ZIP)"
+            data-vi-label={zipLabel}
             data-vi-doc={zipUrl.split('/').pop() || ''}
             className="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-600"
-            aria-label="Preuzmi ceo paket (ZIP)"
+            aria-label={zipLabel}
           >
-            <svg className="h-4 w-4 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1"/><path d="M21 10v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8"/><path d="M10 12h4"/></svg>
-            Preuzmi ceo paket (ZIP)
-          </a>
+            <svg className="h-4 w-4 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1"/><path d="M21 10v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8"/><path d="M10 12h4"/></svg>{zipLabel}</a>
         </div>
       )}
 

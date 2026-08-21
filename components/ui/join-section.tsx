@@ -6,7 +6,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle, Upload, X, ShieldCheck, Users2, Globe2 } from "lucide-react";
-import { StatPills } from "@/components/ui/StatPills";
 import { TrustPill } from "@/components/ui/TrustPill";
 
 // shadcn/ui components

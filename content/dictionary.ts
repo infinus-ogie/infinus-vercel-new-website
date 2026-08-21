@@ -66,6 +66,8 @@ import { sapStarterPackage as enSapStarterPackage } from './en/sap-starter-packa
 import { sapStarterPackage as srSapStarterPackage } from './sr/sap-starter-package'
 import { consent as enConsent } from './en/consent'
 import { consent as srConsent } from './sr/consent'
+import { growth as enGrowth } from './en/growth'
+import { growth as srGrowth } from './sr/growth'
 
 /**
  * Chrome strings that are not specific to any one page.
@@ -909,6 +911,215 @@ export interface ConsentDictionary {
   readonly privacyHref: string
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+ * GROW / PROFESSIONAL SERVICES — the four asymmetric locale pairs
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/** A question/answer pair, used by FaqSection and by the FAQPage schema. */
+export interface GrowthFaq {
+  readonly question: string
+  readonly answer: string
+}
+
+/** An animated statistic: the number, its suffix, and the claim it supports. */
+export interface GrowthStat {
+  /** Counted up to, so it must parse as a number. */
+  readonly value: string
+  readonly suffix: string
+  readonly label: string
+}
+
+/** A titled feature tile. */
+export interface GrowthCard {
+  readonly title: string
+  readonly description: string
+}
+
+/** One downloadable resource, as ResourceList renders it. */
+export interface GrowthDownload {
+  readonly id: string
+  readonly title: string
+  readonly description: string
+  readonly label: string
+  readonly url: string
+  /** Analytics identifier. NOT copy — identical in both locales so events stay comparable. */
+  readonly analyticsId: string
+}
+
+/** One entry in a role page's advantages timeline. */
+export interface GrowthTimelineItem {
+  readonly title: string
+  readonly body: string
+}
+
+/** One pill in the "fast start" row. */
+export interface GrowthQuickStart {
+  readonly title: string
+  readonly detail: string
+}
+
+/** A CreativeWork in the downloads ItemList schema. */
+export interface GrowthSchemaDownload {
+  readonly name: string
+  readonly url: string
+}
+
+/**
+ * The CFO and CEO pages are structurally IDENTICAL — hero, advantages timeline, fast-start
+ * pills, About, CTA, FAQ — so they share one interface and one component. Only their copy and
+ * their hero image differ.
+ */
+export interface GrowthRolePage {
+  readonly metadata: {
+    readonly title: string
+    readonly description: string
+    readonly ogImageAlt: string
+  }
+  readonly hero: {
+    readonly title: string
+    readonly description: string
+    readonly ctaText: string
+  }
+  readonly timelineHeading: string
+  readonly timelineDescription: string
+  readonly timeline: readonly GrowthTimelineItem[]
+  readonly quickStart: readonly [GrowthQuickStart, GrowthQuickStart, GrowthQuickStart]
+  readonly aboutBody: string
+  /** The one FAQ entry this page does not share with the others. */
+  readonly faqExtra: GrowthFaq
+  readonly schema: {
+    readonly pageName: string
+    readonly articleAbout: readonly string[]
+    readonly breadcrumbs: readonly [string, string, string]
+  }
+}
+
+export interface GrowthDictionary {
+  /**
+   * Copy every one of the four pages renders identically.
+   *
+   * Extracted once rather than four times: the About heading, the CTA block, the fast-start
+   * heading, the "Why now" heading, the hero badge and the two shared FAQ entries were
+   * duplicated verbatim across the Serbian originals. Translating them four times would have
+   * invited four slightly different English versions of the same sentence.
+   */
+  readonly shared: {
+    readonly aboutHeading: string
+    readonly ctaHeading: string
+    readonly ctaBody: string
+    readonly ctaButton: string
+    readonly ctaNote: string
+    readonly quickStartHeading: string
+    readonly whyHeading: string
+    readonly heroBadgeLabel: string
+    readonly heroBadgeText: string
+    /** IndustriesScroll's label. Its component default is Serbian, so English must pass this. */
+    readonly industriesLabel: string
+    /** FaqSection's heading. Its component default is Serbian too. */
+    readonly faqHeading: string
+    /**
+     * The closing CTA's destination, per locale: /contact for English and /sr/contact for
+     * Serbian. Written down in each dictionary rather than derived at render time, because
+     * the alternative is a component asking "which locale am I?" from the pathname — the
+     * exact request-time guessing this architecture exists to avoid.
+     */
+    readonly contactHref: string
+    /** The two FAQ entries all three GROW pages share word for word. */
+    readonly faqShared: readonly [GrowthFaq, GrowthFaq]
+    /** ResourceList's own copy, which was hardcoded Serbian before this phase. */
+    readonly resourceList: {
+      readonly zipLabel: string
+      readonly defaultTitle: string
+      readonly defaultDescription: string
+    }
+  }
+
+  readonly grow: {
+    readonly metadata: { readonly title: string; readonly description: string }
+    readonly hero: {
+      readonly title: string
+      readonly subtitle: string
+      readonly description: string
+      readonly ctaText: string
+    }
+    readonly whyBody: string
+    readonly stats: readonly [GrowthStat, GrowthStat, GrowthStat]
+    readonly sourceLabel: string
+    readonly sourceText: string
+    readonly sourceHref: string
+    /** The heading breaks across two lines in the original; the break is preserved. */
+    readonly benefitsHeadingLine1: string
+    readonly benefitsHeadingLine2: string
+    readonly valueCards: readonly [GrowthCard, GrowthCard, GrowthCard, GrowthCard]
+    readonly zipUrl: string
+    readonly downloads: readonly [GrowthDownload, GrowthDownload, GrowthDownload]
+    readonly focusHeading: string
+    readonly focusBody: string
+    /** The CFO and CEO role cards. Their destinations come from the ROUTE MAP, not from here. */
+    readonly focusCards: readonly [
+      { readonly title: string; readonly body: string; readonly cta: string; readonly ariaLabel: string },
+      { readonly title: string; readonly body: string; readonly cta: string; readonly ariaLabel: string },
+    ]
+    readonly aboutBody: string
+    readonly faqExtra: GrowthFaq
+    readonly schema: {
+      readonly articleAbout: readonly string[]
+      readonly downloadsListName: string
+      readonly downloadsListDescription: string
+      readonly schemaDownloadNames: readonly [string, string, string]
+    }
+  }
+
+  readonly cfo: GrowthRolePage
+  readonly ceo: GrowthRolePage
+
+  readonly professionalServices: {
+    readonly metadata: {
+      readonly title: string
+      readonly description: string
+      /** The OG image's alt text. Differs from the title: it carries no brand suffix. */
+      readonly ogImageAlt: string
+    }
+    readonly hero: {
+      readonly title: string
+      readonly description: string
+      readonly ctaText: string
+    }
+    readonly whyBody: string
+    readonly stats: readonly [GrowthStat, GrowthStat, GrowthStat, GrowthStat]
+    readonly sourceLabel: string
+    readonly sourceText: string
+    readonly sourceHref: string
+    readonly benefitsHeadingLine1: string
+    readonly benefitsHeadingLine2: string
+    readonly valueCards: readonly [GrowthCard, GrowthCard, GrowthCard, GrowthCard]
+    readonly zipUrl: string
+    readonly downloadsTitle: string
+    readonly downloadsDescription: string
+    readonly downloads: readonly [GrowthDownload, GrowthDownload, GrowthDownload, GrowthDownload]
+    readonly aboutBody: string
+    /** This page shares no FAQ entry with the GROW pages — all three differ. */
+    readonly faqs: readonly [GrowthFaq, GrowthFaq, GrowthFaq]
+    readonly schema: {
+      readonly articleAbout: readonly string[]
+      readonly downloadsListName: string
+      readonly downloadsListDescription: string
+      /**
+       * The ItemList entries. Deliberately SEPARATE from `downloads` above, because the
+       * Serbian half's URLs are historical and point at a directory that no longer exists —
+       * a pre-existing defect preserved so Serbian schema output cannot drift. The English
+       * half uses the real paths. See content/sr/growth.ts and the H4 report.
+       */
+      readonly schemaDownloads: readonly [
+        GrowthSchemaDownload,
+        GrowthSchemaDownload,
+        GrowthSchemaDownload,
+        GrowthSchemaDownload,
+      ]
+    }
+  }
+}
+
 /** Every namespace a locale must provide. Add a namespace here and both locales break. */
 export interface Dictionary {
   readonly common: CommonDictionary
@@ -923,6 +1134,7 @@ export interface Dictionary {
   readonly projectPulseVideo: ProjectPulseVideoDictionary
   readonly sapStarterPackage: SapStarterPackageDictionary
   readonly consent: ConsentDictionary
+  readonly growth: GrowthDictionary
 }
 
 /**
@@ -943,6 +1155,7 @@ export const dictionaries = {
     projectPulseVideo: enProjectPulseVideo,
     sapStarterPackage: enSapStarterPackage,
     consent: enConsent,
+    growth: enGrowth,
   },
   sr: {
     common: srCommon,
@@ -957,6 +1170,7 @@ export const dictionaries = {
     projectPulseVideo: srProjectPulseVideo,
     sapStarterPackage: srSapStarterPackage,
     consent: srConsent,
+    growth: srGrowth,
   },
 } as const satisfies Record<Locale, Dictionary>
 
@@ -984,6 +1198,7 @@ export const DICTIONARY_NAMESPACES = [
   'projectPulseVideo',
   'sapStarterPackage',
   'consent',
+  'growth',
 ] as const
 
 export type DictionaryNamespace = (typeof DICTIONARY_NAMESPACES)[number]

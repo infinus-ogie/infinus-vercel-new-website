@@ -92,14 +92,21 @@ describe('document language mapping', () => {
   test('the recorded tokens match the values live code actually uses', () => {
     const jsonld = readFileSync(join(ROOT, 'lib/jsonld.ts'), 'utf8')
     const seo = readFileSync(join(ROOT, 'lib/seo.ts'), 'utf8')
-    const growConfig = readFileSync(join(ROOT, 'app/(sr)/grow/_config.ts'), 'utf8')
+    // app/(sr)/grow/_config.ts held this literal until Phase H4 moved the GROW copy into the
+    // dictionary. The Serbian JSON-LD language now comes from LOCALE_META itself, via
+    // lib/growth-jsonld.ts, so the token is no longer duplicated anywhere — which is the
+    // stronger arrangement. lib/i18n.ts is where it is declared.
+    const i18n = readFileSync(join(ROOT, 'lib/i18n.ts'), 'utf8')
 
     // SITE_CONFIG.language is the default lib/auto-jsonld.ts applies to English pages.
     expect(jsonld).toContain(`language: '${LOCALE_META.en.jsonLdLanguage}'`)
     // The single og:locale literal in the shared metadata helper.
     expect(seo).toContain(`locale: '${LOCALE_META.en.ogLocale}'`)
-    // The Serbian pages already pass their own inLanguage.
-    expect(growConfig).toContain(`language: "${LOCALE_META.sr.jsonLdLanguage}"`)
+    // Declared exactly once, in the locale model.
+    expect(i18n).toContain(`jsonLdLanguage: '${LOCALE_META.sr.jsonLdLanguage}'`)
+    // And consumed from there rather than re-typed: no page or builder hardcodes it.
+    const growthJsonLd = readFileSync(join(ROOT, 'lib/growth-jsonld.ts'), 'utf8')
+    expect(growthJsonLd).toContain('LOCALE_META[locale].jsonLdLanguage')
   })
 })
 

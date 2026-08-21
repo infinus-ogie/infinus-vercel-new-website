@@ -5,6 +5,10 @@ import { defineConfig, devices } from '@playwright/test'
  *
  * Four specs, all needing a real layout/network engine that jsdom cannot provide:
  *   · consent.spec.ts        — the "no vendor request before consent" network proof
+ *   · growth-routes.spec.ts  — the eight GROW / Professional Services routes: language,
+ *                              chrome locale, canonical, hreflang, switcher destination and
+ *                              phone-width overflow. Added with the URL migration that made
+ *                              four published Serbian paths English.
  *   · contact-layout.spec.ts — the narrow-viewport overflow guard for the Contact pair
  *   · video-switcher.spec.ts — proof the video overlay does not cover the navbar. Pure
  *                              paint order, so it needs elementFromPoint and real layout.
@@ -26,7 +30,7 @@ export default defineConfig({
   testDir: './scripts/qa',
   // Extending this list is what gives a new browser assertion CI coverage for free: the
   // pipeline already runs `npm run test:consent` against the built site.
-  testMatch: /(consent|contact-layout|video-switcher|video-close-control)\.spec\.ts$/,
+  testMatch: /(consent|contact-layout|video-switcher|video-close-control|growth-routes)\.spec\.ts$/,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

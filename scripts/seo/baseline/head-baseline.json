@@ -864,8 +864,8 @@
     }
   },
   "/grow": {
-    "htmlLang": "sr-Latn",
-    "title": "GROW with SAP: Finansije kao pokretač rasta | Infinus",
+    "htmlLang": "en",
+    "title": "GROW with SAP: Finance as a Growth Driver | Infinus",
     "meta": {
       "name:author": [
         "Infinus Team"
@@ -874,7 +874,7 @@
         "Infinus"
       ],
       "name:description": [
-        "Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija."
+        "Transform the finance function so it supports fast, sustainable growth. For CFOs, finance managers, owners and CEOs of fast-growing midsize companies."
       ],
       "name:format-detection": [
         "telephone=no, address=no, email=no"
@@ -882,17 +882,20 @@
       "name:google-site-verification": [
         "your-google-verification-code"
       ],
-      "name:googlebot": [
-        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      "name:og:image:alt": [
+        "GROW with SAP: Finance as a Growth Driver | Infinus"
       ],
-      "name:keywords": [
-        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
       ],
       "name:publisher": [
         "Infinus"
       ],
       "name:robots": [
-        "index, follow"
+        "index,follow"
       ],
       "name:theme-color": [
         "#1e40af"
@@ -901,26 +904,26 @@
         "summary_large_image"
       ],
       "name:twitter:description": [
-        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+        "Transform the finance function so it supports fast, sustainable growth. For CFOs, finance managers, owners and CEOs of fast-growing midsize companies."
       ],
       "name:twitter:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "name:twitter:title": [
-        "Infinus"
+        "GROW with SAP: Finance as a Growth Driver | Infinus"
       ],
       "name:viewport": [
         "width=device-width, initial-scale=1",
         "width=device-width, initial-scale=1"
       ],
       "property:og:description": [
-        "Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija."
+        "Transform the finance function so it supports fast, sustainable growth. For CFOs, finance managers, owners and CEOs of fast-growing midsize companies."
       ],
       "property:og:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "property:og:image:alt": [
-        "GROW with SAP: Finansije kao pokretač rasta"
+        "GROW with SAP: Finance as a Growth Driver | Infinus"
       ],
       "property:og:image:height": [
         "630"
@@ -929,13 +932,13 @@
         "1200"
       ],
       "property:og:locale": [
-        "sr_RS"
+        "en_US"
       ],
       "property:og:site_name": [
         "Infinus"
       ],
       "property:og:title": [
-        "GROW with SAP: Finansije kao pokretač rasta"
+        "GROW with SAP: Finance as a Growth Driver | Infinus"
       ],
       "property:og:type": [
         "website"
@@ -945,6 +948,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/grow",
+        "sr-Latn => https://www.infinus.co/sr/grow",
+        "x-default => https://www.infinus.co/grow"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -964,7 +972,7 @@
     }
   },
   "/grow/ceo": {
-    "htmlLang": "sr-Latn",
+    "htmlLang": "en",
     "title": "SAP for CEOs | Infinus",
     "meta": {
       "name:author": [
@@ -974,7 +982,7 @@
         "Infinus"
       ],
       "name:description": [
-        "SAP Cloud ERP + Business AI iz CEO perspektive — kako lider brzorastuće kompanije dobija jedinstven izvor istine, brže odluke i spremnost za rast."
+        "SAP Cloud ERP + Business AI from a CEO perspective — how the leader of a fast-growing company gains a single source of truth, faster decisions and readiness for growth."
       ],
       "name:format-detection": [
         "telephone=no, address=no, email=no"
@@ -982,17 +990,20 @@
       "name:google-site-verification": [
         "your-google-verification-code"
       ],
-      "name:googlebot": [
-        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      "name:og:image:alt": [
+        "SAP for CEOs | Infinus"
       ],
-      "name:keywords": [
-        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
       ],
       "name:publisher": [
         "Infinus"
       ],
       "name:robots": [
-        "index, follow"
+        "index,follow"
       ],
       "name:theme-color": [
         "#1e40af"
@@ -1001,26 +1012,26 @@
         "summary_large_image"
       ],
       "name:twitter:description": [
-        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+        "SAP Cloud ERP + Business AI from a CEO perspective — how the leader of a fast-growing company gains a single source of truth, faster decisions and readiness for growth."
       ],
       "name:twitter:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "name:twitter:title": [
-        "Infinus"
+        "SAP for CEOs | Infinus"
       ],
       "name:viewport": [
         "width=device-width, initial-scale=1",
         "width=device-width, initial-scale=1"
       ],
       "property:og:description": [
-        "SAP Cloud ERP + Business AI iz CEO perspektive — kako lider brzorastuće kompanije dobija jedinstven izvor istine, brže odluke i spremnost za rast."
+        "SAP Cloud ERP + Business AI from a CEO perspective — how the leader of a fast-growing company gains a single source of truth, faster decisions and readiness for growth."
       ],
       "property:og:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "property:og:image:alt": [
-        "SAP for CEOs"
+        "SAP for CEOs | Infinus"
       ],
       "property:og:image:height": [
         "630"
@@ -1029,7 +1040,7 @@
         "1200"
       ],
       "property:og:locale": [
-        "sr_RS"
+        "en_US"
       ],
       "property:og:site_name": [
         "Infinus"
@@ -1045,6 +1056,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/grow/ceo",
+        "sr-Latn => https://www.infinus.co/sr/grow/ceo",
+        "x-default => https://www.infinus.co/grow/ceo"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -1064,7 +1080,7 @@
     }
   },
   "/grow/cfo": {
-    "htmlLang": "sr-Latn",
+    "htmlLang": "en",
     "title": "SAP for CFOs | Infinus",
     "meta": {
       "name:author": [
@@ -1074,7 +1090,7 @@
         "Infinus"
       ],
       "name:description": [
-        "SAP Cloud ERP + Business AI — 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup."
+        "SAP Cloud ERP + Business AI — 10 long-term advantages from a CFO perspective, compared with the traditional \"ERP + Excel\" approach."
       ],
       "name:format-detection": [
         "telephone=no, address=no, email=no"
@@ -1082,17 +1098,20 @@
       "name:google-site-verification": [
         "your-google-verification-code"
       ],
-      "name:googlebot": [
-        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      "name:og:image:alt": [
+        "SAP for CFOs | Infinus"
       ],
-      "name:keywords": [
-        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
       ],
       "name:publisher": [
         "Infinus"
       ],
       "name:robots": [
-        "index, follow"
+        "index,follow"
       ],
       "name:theme-color": [
         "#1e40af"
@@ -1101,26 +1120,26 @@
         "summary_large_image"
       ],
       "name:twitter:description": [
-        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+        "SAP Cloud ERP + Business AI — 10 long-term advantages from a CFO perspective, compared with the traditional \"ERP + Excel\" approach."
       ],
       "name:twitter:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "name:twitter:title": [
-        "Infinus"
+        "SAP for CFOs | Infinus"
       ],
       "name:viewport": [
         "width=device-width, initial-scale=1",
         "width=device-width, initial-scale=1"
       ],
       "property:og:description": [
-        "SAP Cloud ERP + Business AI — 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup."
+        "SAP Cloud ERP + Business AI — 10 long-term advantages from a CFO perspective, compared with the traditional \"ERP + Excel\" approach."
       ],
       "property:og:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "property:og:image:alt": [
-        "SAP for CFOs"
+        "SAP for CFOs | Infinus"
       ],
       "property:og:image:height": [
         "630"
@@ -1129,7 +1148,7 @@
         "1200"
       ],
       "property:og:locale": [
-        "sr_RS"
+        "en_US"
       ],
       "property:og:site_name": [
         "Infinus"
@@ -1145,6 +1164,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/grow/cfo",
+        "sr-Latn => https://www.infinus.co/sr/grow/cfo",
+        "x-default => https://www.infinus.co/grow/cfo"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -1249,8 +1273,8 @@
     }
   },
   "/professional-services": {
-    "htmlLang": "sr-Latn",
-    "title": "GROW with SAP za Professional Services | Infinus",
+    "htmlLang": "en",
+    "title": "GROW with SAP for Professional Services | Infinus",
     "meta": {
       "name:author": [
         "Infinus Team"
@@ -1259,7 +1283,7 @@
         "Infinus"
       ],
       "name:description": [
-        "ERP rešenje za rast, agilnost i profitabilnost u profesionalnim uslugama - preuzmite materijale i zakažite konsultacije."
+        "An ERP solution for growth, agility and profitability in professional services - download the materials and book a consultation."
       ],
       "name:format-detection": [
         "telephone=no, address=no, email=no"
@@ -1267,17 +1291,20 @@
       "name:google-site-verification": [
         "your-google-verification-code"
       ],
-      "name:googlebot": [
-        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      "name:og:image:alt": [
+        "GROW with SAP for Professional Services | Infinus"
       ],
-      "name:keywords": [
-        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
       ],
       "name:publisher": [
         "Infinus"
       ],
       "name:robots": [
-        "index, follow"
+        "index,follow"
       ],
       "name:theme-color": [
         "#1e40af"
@@ -1286,26 +1313,26 @@
         "summary_large_image"
       ],
       "name:twitter:description": [
-        "ERP rešenje za rast, agilnost i profitabilnost u profesionalnim uslugama - preuzmite materijale i zakažite konsultacije."
+        "An ERP solution for growth, agility and profitability in professional services - download the materials and book a consultation."
       ],
       "name:twitter:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "name:twitter:title": [
-        "GROW with SAP za Professional Services | Infinus"
+        "GROW with SAP for Professional Services | Infinus"
       ],
       "name:viewport": [
         "width=device-width, initial-scale=1",
         "width=device-width, initial-scale=1"
       ],
       "property:og:description": [
-        "ERP rešenje za rast, agilnost i profitabilnost u profesionalnim uslugama - preuzmite materijale i zakažite konsultacije."
+        "An ERP solution for growth, agility and profitability in professional services - download the materials and book a consultation."
       ],
       "property:og:image": [
         "https://www.infinus.co/og-default.png"
       ],
       "property:og:image:alt": [
-        "GROW with SAP za Professional Services"
+        "GROW with SAP for Professional Services | Infinus"
       ],
       "property:og:image:height": [
         "630"
@@ -1314,13 +1341,13 @@
         "1200"
       ],
       "property:og:locale": [
-        "sr_RS"
+        "en_US"
       ],
       "property:og:site_name": [
         "Infinus"
       ],
       "property:og:title": [
-        "GROW with SAP za Professional Services | Infinus"
+        "GROW with SAP for Professional Services | Infinus"
       ],
       "property:og:type": [
         "website"
@@ -1330,6 +1357,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/professional-services",
+        "sr-Latn => https://www.infinus.co/sr/professional-services",
+        "x-default => https://www.infinus.co/professional-services"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -2638,6 +2670,321 @@
       "types": []
     }
   },
+  "/sr/grow": {
+    "htmlLang": "sr-Latn",
+    "title": "GROW with SAP: Finansije kao pokretač rasta | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:googlebot": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "name:keywords": [
+        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index, follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Transformišite finansijsku funkciju da podrži brzi i održivi rast. Za CFO-ove, finansijske menadžere, vlasnike i CEO brzorastućih srednjih kompanija."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "GROW with SAP: Finansije kao pokretač rasta"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "GROW with SAP: Finansije kao pokretač rasta"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/grow"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/grow",
+        "sr-Latn => https://www.infinus.co/sr/grow",
+        "x-default => https://www.infinus.co/grow"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/grow"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/grow/ceo": {
+    "htmlLang": "sr-Latn",
+    "title": "SAP for CEOs | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "SAP Cloud ERP + Business AI iz CEO perspektive — kako lider brzorastuće kompanije dobija jedinstven izvor istine, brže odluke i spremnost za rast."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:googlebot": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "name:keywords": [
+        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index, follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "SAP Cloud ERP + Business AI iz CEO perspektive — kako lider brzorastuće kompanije dobija jedinstven izvor istine, brže odluke i spremnost za rast."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "SAP for CEOs"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "SAP for CEOs | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/grow/ceo"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/grow/ceo",
+        "sr-Latn => https://www.infinus.co/sr/grow/ceo",
+        "x-default => https://www.infinus.co/grow/ceo"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/grow/ceo"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/grow/cfo": {
+    "htmlLang": "sr-Latn",
+    "title": "SAP for CFOs | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "SAP Cloud ERP + Business AI — 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:googlebot": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "name:keywords": [
+        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index, follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "SAP Cloud ERP + Business AI — 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "SAP for CFOs"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "SAP for CFOs | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/grow/cfo"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/grow/cfo",
+        "sr-Latn => https://www.infinus.co/sr/grow/cfo",
+        "x-default => https://www.infinus.co/grow/cfo"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/grow/cfo"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
   "/sr/politika-privatnosti": {
     "htmlLang": "sr-Latn",
     "title": "Politika privatnosti | Infinus",
@@ -2710,6 +3057,111 @@
       ],
       "canonical": [
         "https://www.infinus.co/sr/politika-privatnosti"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/professional-services": {
+    "htmlLang": "sr-Latn",
+    "title": "GROW with SAP za Professional Services | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "ERP rešenje za rast, agilnost i profitabilnost u profesionalnim uslugama - preuzmite materijale i zakažite konsultacije."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:googlebot": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "name:keywords": [
+        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index, follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "ERP rešenje za rast, agilnost i profitabilnost u profesionalnim uslugama - preuzmite materijale i zakažite konsultacije."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "GROW with SAP za Professional Services | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "ERP rešenje za rast, agilnost i profitabilnost u profesionalnim uslugama - preuzmite materijale i zakažite konsultacije."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "GROW with SAP za Professional Services"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "GROW with SAP za Professional Services | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/professional-services"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/professional-services",
+        "sr-Latn => https://www.infinus.co/sr/professional-services",
+        "x-default => https://www.infinus.co/professional-services"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/professional-services"
       ],
       "icon": [
         "/favicon.ico"

@@ -9,8 +9,9 @@
  *   · which locale the shared Navbar and Footer render in
  *   · the navbar's light/dark surface classification (lib/navbar-surface.ts)
  *
- * Eight pairs are complete today — home, faq, contact and the five case studies — and ONLY
- * those reach rendered HTML. Everything still marked `planned` is inert.
+ * Sixteen pairs are complete today and every one of them reaches rendered HTML. The map
+ * still supports `planned`, and nothing uses it: a path written down before its page exists
+ * is mechanically incapable of becoming an hreflang, a switcher link or a sitemap entry.
  *
  * ── The one rule that makes this safe ───────────────────────────────────────────
  *
@@ -25,10 +26,19 @@
  * test/i18n/ prove it, including for the specific `/sr/*` paths named below.
  *
  * ── Why counterpart URLs are written out, never derived ─────────────────────────
- * Prefixing an English path with `/sr` would be wrong for the pages that already exist.
- * The four Serbian campaign pages are live at UNPREFIXED URLs — `/grow`, `/grow/cfo`,
- * `/grow/ceo`, `/professional-services` — and they have no English version at all. The
- * model has to express that asymmetry honestly, so every path is a literal.
+ * Every Serbian path here happens to be its English counterpart with `/sr` in front, and
+ * that is still not a rule this file relies on. Three reasons it stays a lookup:
+ *
+ *   · The Serbian homepage is `/sr`, not `/sr/`, so even the simple case needs a special
+ *     case.
+ *   · `/privacy` pairs with `/sr/politika-privatnosti`. The slug is translated, so no prefix
+ *     rule reaches it.
+ *   · `/cfo` is a Serbian-era path that pairs with nothing and must not be rewritten to
+ *     `/sr/cfo`, which does not exist.
+ *
+ * A derivation would be right for most entries and silently wrong for those, and "silently
+ * wrong counterpart" means advertising a 404 to crawlers or sending a visitor to a dead URL.
+ * Writing the literal costs one line and cannot be wrong by accident.
  *
  * ── What is NOT in here ─────────────────────────────────────────────────────────
  *   · internal demo/debug pages (/hero-demo, /combined-demo, /services-demo,
@@ -117,16 +127,20 @@ const live = (path: RoutePath): LocaleRoute => ({ path, status: 'live' })
 const planned = (path: RoutePath): LocaleRoute => ({ path, status: 'planned' })
 
 /**
- * The four Serbian pages that legitimately live at unprefixed URLs.
+ * The ONE Serbian path that still lives at an unprefixed URL.
  *
- * Any OTHER Serbian route must sit under `/sr`. validateRoutePairs() rejects a new
- * unprefixed Serbian path, so the legacy exception cannot quietly grow.
+ * This list used to hold five. Four of them - /grow, /grow/cfo, /grow/ceo and
+ * /professional-services - were the historical Serbian campaign pages, and the owner's final
+ * route decision moved their Serbian content under /sr and handed those clean paths to
+ * ENGLISH. See the GROW block in ROUTE_PAIRS below for why.
+ *
+ * What remains is /cfo, which is not really an exception at all: it is built but permanently
+ * redirected away, so no visitor ever sees a Serbian document at an unprefixed URL.
+ *
+ * The rule is therefore now simply "every Serbian route lives under /sr", and
+ * validateRoutePairs() rejects any new unprefixed Serbian path.
  */
 export const LEGACY_UNPREFIXED_SERBIAN_PATHS: readonly RoutePath[] = [
-  '/grow',
-  '/grow/cfo',
-  '/grow/ceo',
-  '/professional-services',
   // Built but redirected away; excluded from pairing, listed so validation accepts it.
   '/cfo',
 ]
@@ -209,20 +223,48 @@ export const ROUTE_PAIRS: readonly RoutePair[] = [
     sr: live('/sr/sap-packaged-solutions/sap-starter-package'),
   },
 
-  // ── Serbian campaign pages ───────────────────────────────────────────────────
-  // Live Serbian content at unprefixed URLs, with NO English counterpart — not even a
-  // planned one, because no English GROW page has been scoped. `en: null` is the honest
-  // representation: the helpers return NO COUNTERPART rather than falling back to `/`.
+  // ── The GROW campaign: four pairs, and the migration behind them ─────────────
+  // These were Serbian-only until Phase H4, and H4's first attempt got the URLs wrong. It
+  // left the Serbian content on the clean unprefixed paths and invented new English slugs
+  // beside them - /grow-with-sap, /sap-for-professional-services - producing four ASYMMETRIC
+  // pairs. The owner rejected those slugs: they are longer, they duplicate a programme name
+  // the page already states, and they made these four the only pairs on the site whose two
+  // halves could not be reasoned about from the URL.
+  //
+  // The final architecture is the same one every other pair uses:
+  //
+  //     English  = the clean unprefixed path
+  //     Serbian  = the same path under /sr
+  //
+  // That means the four clean paths CHANGE LANGUAGE. /grow, /grow/cfo, /grow/ceo and
+  // /professional-services served Serbian before the bilingual rollout and serve English
+  // after it; their Serbian content moves to /sr/grow, /sr/grow/cfo, /sr/grow/ceo and
+  // /sr/professional-services. This is a deliberate owner decision, taken with the
+  // consequence understood: an old inbound link to /grow now lands on English, and the
+  // visitor reaches Serbian in one click through the EN | SR switcher.
+  //
+  // The alternative - redirecting the old paths to /sr - was rejected because it cannot
+  // coexist with serving English there. One URL, one language, no request-time branching.
+  //
+  // The rejected English slugs were never pushed, deployed or indexed, so they get no
+  // redirects: they simply 404, exactly like any path that never existed.
   {
     id: 'grow',
     pairing: 'translatable',
-    en: null,
-    sr: live('/grow'),
-    note: 'Serbian campaign page with no English version. Must NOT be paired with "/".',
+    en: live('/grow'),
+    sr: live('/sr/grow'),
+    note:
+      'The unprefixed path is ENGLISH and the /sr path is Serbian, like every other pair. ' +
+      'Before the bilingual rollout /grow was Serbian; that content now lives at /sr/grow.',
   },
-  { id: 'grow-cfo', pairing: 'translatable', en: null, sr: live('/grow/cfo') },
-  { id: 'grow-ceo', pairing: 'translatable', en: null, sr: live('/grow/ceo') },
-  { id: 'professional-services', pairing: 'translatable', en: null, sr: live('/professional-services') },
+  { id: 'grow-cfo', pairing: 'translatable', en: live('/grow/cfo'), sr: live('/sr/grow/cfo') },
+  { id: 'grow-ceo', pairing: 'translatable', en: live('/grow/ceo'), sr: live('/sr/grow/ceo') },
+  {
+    id: 'professional-services',
+    pairing: 'translatable',
+    en: live('/professional-services'),
+    sr: live('/sr/professional-services'),
+  },
 
   // ── A real locale link that is deliberately not indexable ────────────────────
   {

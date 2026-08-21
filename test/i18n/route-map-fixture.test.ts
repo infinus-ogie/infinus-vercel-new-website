@@ -20,7 +20,12 @@
 import { describe, test, expect } from 'vitest'
 import { readdirSync, statSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
-import { ROUTE_PAIRS, validateRoutePairs, type RoutePair } from '@/content/routes'
+import {
+  ROUTE_PAIRS,
+  validateRoutePairs,
+  LEGACY_UNPREFIXED_SERBIAN_PATHS,
+  type RoutePair,
+} from '@/content/routes'
 import {
   allLivePaths,
   counterpartFor,
@@ -261,13 +266,50 @@ describe('every declared pair agrees with the independent fixture', () => {
 })
 
 describe('asymmetry is genuinely representable, not just claimed', () => {
-  test('at least one live Serbian path is NOT the /sr-prefixed form of an English path', () => {
-    // Proof the model does not derive URLs by prefixing: /grow is live Serbian at an
-    // unprefixed URL, and no /sr/grow exists or is planned.
+  test('every live Serbian path is under /sr — asymmetry is representable but unused', () => {
+    // This test used to assert the OPPOSITE, and the inversion is the GROW migration: /grow
+    // was live Serbian at an unprefixed URL, so "the map does not derive URLs by prefixing"
+    // had a live example. It no longer does — every paired Serbian page sits under /sr.
+    //
+    // Kept, and pointed the other way, because "no live pair needs asymmetry" is a fact worth
+    // failing on if it stops being true: a Serbian page at an unprefixed URL is a deliberate,
+    // visible decision, not something that should appear by accident.
+    // The legacy exception is pinned to its exact contents, not merely consulted: /cfo is the
+    // last unprefixed Serbian path, it is `excluded` from pairing, and it is only ever reached
+    // through a permanent redirect. If that list grows, this fails.
+    expect([...LEGACY_UNPREFIXED_SERBIAN_PATHS]).toEqual(['/cfo'])
+
     const srLive = livePathsFor('sr')
-    expect(srLive.indexOf('/grow')).not.toBe(-1)
-    expect(plannedPaths().indexOf('/sr/grow')).toBe(-1)
-    expect(allLivePaths().indexOf('/sr/grow')).toBe(-1)
+    for (const path of srLive) {
+      if (LEGACY_UNPREFIXED_SERBIAN_PATHS.indexOf(path as `/${string}`) !== -1) continue
+      expect(path === '/sr' || path.indexOf('/sr/') === 0, `${path} must be under /sr`).toBe(true)
+    }
+    // The four paths the Serbian pages used to occupy are now ENGLISH, and no /sr duplicate of
+    // an English path was left behind.
+    const enLive: string[] = [...livePathsFor('en')]
+    const srLivePaths: string[] = [...srLive]
+    for (const path of ['/grow', '/grow/cfo', '/grow/ceo', '/professional-services']) {
+      expect(enLive.indexOf(path), path).not.toBe(-1)
+      expect(srLivePaths.indexOf(path), `${path} must no longer be Serbian`).toBe(-1)
+    }
+  })
+
+  test('an ASYMMETRIC pair is still expressible, proven on a synthetic map', () => {
+    // The type and the validator must keep supporting a pair whose two halves are unrelated
+    // paths, because that is the shape the /privacy pair already needs — its slug is
+    // translated — and the shape any future campaign page would need. Proven here rather than
+    // in the live map, so nothing has to be asymmetric just to keep this test honest.
+    const synthetic: readonly RoutePair[] = [
+      {
+        id: 'asymmetric-thing',
+        pairing: 'translatable',
+        en: { path: '/some-english-slug', status: 'live' },
+        sr: { path: '/sr/potpuno-drugi-slug', status: 'live' },
+      },
+    ]
+    expect(validateRoutePairs(synthetic)).toEqual([])
+    // And no string rule connects the two halves.
+    expect('/sr' + '/some-english-slug').not.toBe('/sr/potpuno-drugi-slug')
   })
 
   test('a missing English side is representable AND currently used', () => {

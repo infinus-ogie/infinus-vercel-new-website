@@ -164,11 +164,22 @@ describe('route fixture — expectation coherence', () => {
 
 describe('route fixture — known issues are explicit', () => {
   test('the Serbian pages declare sr-Latn — the lang bug is fixed, not flagged', () => {
-    // Phase E moved these under app/(sr)/, a second root layout emitting
+    // Phase E moved the campaign pages under app/(sr)/, a second root layout emitting
     // <html lang="sr-Latn">. Before that they served Serbian copy under lang="en".
     // Phase G added /sr/contact, which is Serbian by construction: it sits under the
     // Serbian root, so it inherits the same sr-Latn document root.
-    const serbian = ['/grow', '/grow/cfo', '/grow/ceo', '/professional-services', '/cfo', '/sr/contact']
+    //
+    // The campaign paths in this list moved with the GROW migration: /grow and friends are
+    // ENGLISH now, and the Serbian documents are at the same paths under /sr. /cfo stays,
+    // still a Serbian document behind its permanent redirect.
+    const serbian = [
+      '/sr/grow',
+      '/sr/grow/cfo',
+      '/sr/grow/ceo',
+      '/sr/professional-services',
+      '/cfo',
+      '/sr/contact',
+    ]
     for (const path of serbian) {
       const route = ROUTES.find((r) => r.path === path)
       expect(route, `${path} must be in the fixture`).toBeDefined()

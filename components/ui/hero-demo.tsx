@@ -1,4 +1,5 @@
 import { HeroGeometric } from "@/components/ui/shape-landing-hero"
+import { getDictionary } from "@/content/dictionary"
 
 /**
  * Internal demo page wrapper for the hero (/hero-demo, robots-blocked).
@@ -11,7 +12,8 @@ import { HeroGeometric } from "@/components/ui/shape-landing-hero"
  * dictionary), so /hero-demo renders exactly what it rendered before.
  */
 function DemoHeroGeometric() {
-    return <HeroGeometric />
+    // English explicitly: an internal demo route, and `trust` has no default any more.
+    return <HeroGeometric trust={getDictionary("en").home.trust} />
 }
 
 export { DemoHeroGeometric }
