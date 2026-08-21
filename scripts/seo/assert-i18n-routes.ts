@@ -13,7 +13,9 @@
  *
  * A. The /sr URL space contains ONLY the live Serbian paths the route map declares — no
  *    undeclared Serbian URL in the manifest, the prerendered output or the sitemap.
- * B. No planned path from content/routes.ts exists as a real route.
+ * B. No planned path from content/routes.ts exists as a real route. As of Phase H3 the
+ *    planned set is EMPTY, so what B now guards is that the map is not empty INSTEAD of
+ *    being fully translated — an emptied or mis-parsed map would produce the same zero.
  * C. Reciprocal hreflang, on the real pair and NOWHERE ELSE:
  *      · each page of a complete pair emits one <link rel="alternate" hreflang> per locale
  *        plus x-default, with the exact absolute URLs the map implies
@@ -161,7 +163,12 @@ main(() => {
   }
 
   // ── B: planned paths are not real ──────────────────────────────────────────────
-  report.check(planned.length > 0, 'no planned paths declared — the pair map looks empty')
+  // Phase H3 emptied the planned set: every declared route is now a real destination. So
+  // `planned.length === 0` is the expected state and cannot be treated as a failure — but it
+  // is also exactly what a broken or emptied route map would produce. The guard therefore
+  // moved onto the live side, which a mis-parsed map cannot fake.
+  report.check(live.length >= 28, `only ${live.length} live paths — the pair map looks empty or unparsed`)
+  report.check(ROUTE_PAIRS.length >= 12, `only ${ROUTE_PAIRS.length} route pairs declared`)
   for (const plannedPath of planned) {
     report.check(
       allRoutes.indexOf(plannedPath) === -1,

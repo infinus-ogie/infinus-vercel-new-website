@@ -1430,6 +1430,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/projectpulse",
+        "sr-Latn => https://www.infinus.co/sr/projectpulse",
+        "x-default => https://www.infinus.co/projectpulse"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -1530,6 +1535,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/projectpulse/brochure",
+        "sr-Latn => https://www.infinus.co/sr/projectpulse/brochure",
+        "x-default => https://www.infinus.co/projectpulse/brochure"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -1630,6 +1640,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/projectpulse/video",
+        "sr-Latn => https://www.infinus.co/sr/projectpulse/video",
+        "x-default => https://www.infinus.co/projectpulse/video"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -1733,6 +1748,11 @@
       ]
     },
     "links": {
+      "alternate": [
+        "en => https://www.infinus.co/sap-packaged-solutions/sap-starter-package",
+        "sr-Latn => https://www.infinus.co/sr/sap-packaged-solutions/sap-starter-package",
+        "x-default => https://www.infinus.co/sap-packaged-solutions/sap-starter-package"
+      ],
       "apple-touch-icon": [
         "/apple-touch-icon.png"
       ],
@@ -2602,6 +2622,432 @@
       ],
       "canonical": [
         "https://www.infinus.co/sr/faq"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/projectpulse": {
+    "htmlLang": "sr-Latn",
+    "title": "ProjectPulse | SAP Qualified Partner-Packaged Solution | Infinus | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "ProjectPulse je SAP Qualified Partner-Packaged Solution (QPPS) za kompanije iz oblasti profesionalnih usluga. ERP rešenje koje povezuje pružanje usluga, planiranje resursa, spremnost za fakturisanje, profitabilnost i vidljivost novčanog toka u jedan proces od početka do kraja."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "ProjectPulse | SAP Qualified Partner-Packaged Solution | Infinus"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "ProjectPulse je SAP Qualified Partner-Packaged Solution (QPPS) za kompanije iz oblasti profesionalnih usluga. ERP rešenje koje povezuje pružanje usluga, planiranje resursa, spremnost za fakturisanje, profitabilnost i vidljivost novčanog toka u jedan proces od početka do kraja."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "ProjectPulse | SAP Qualified Partner-Packaged Solution | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "ProjectPulse je SAP Qualified Partner-Packaged Solution (QPPS) za kompanije iz oblasti profesionalnih usluga. ERP rešenje koje povezuje pružanje usluga, planiranje resursa, spremnost za fakturisanje, profitabilnost i vidljivost novčanog toka u jedan proces od početka do kraja."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "ProjectPulse | SAP Qualified Partner-Packaged Solution | Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "ProjectPulse | SAP Qualified Partner-Packaged Solution | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/projectpulse"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/projectpulse",
+        "sr-Latn => https://www.infinus.co/sr/projectpulse",
+        "x-default => https://www.infinus.co/projectpulse"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/projectpulse"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/projectpulse/brochure": {
+    "htmlLang": "sr-Latn",
+    "title": "ProjectPulse brošura | Infinus – SAP Qualified Partner-Packaged Solution | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "ProjectPulse je SAP Qualified Partner-Packaged Solution kompanije Infinus za kompanije iz oblasti profesionalnih usluga, koji na jednoj inteligentnoj cloud platformi objedinjuje finansije, projekte, prodaju, nabavku, HR i analitiku."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:googlebot": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "name:keywords": [
+        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index, follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "en_US"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/projectpulse/brochure",
+        "sr-Latn => https://www.infinus.co/sr/projectpulse/brochure",
+        "x-default => https://www.infinus.co/projectpulse/brochure"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/projectpulse/brochure"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/projectpulse/video": {
+    "htmlLang": "sr-Latn",
+    "title": "ProjectPulse video | Infinus | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Pogledajte pregled rešenja ProjectPulse — SAP Qualified Partner-Packaged Solution kompanije Infinus za kompanije iz oblasti profesionalnih usluga."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:googlebot": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "name:keywords": [
+        "SAP,SAP Cloud,SAP implementation,SAP support,SAP Gold Partner,business solutions,enterprise software,cloud migration,digital transformation,Infinus"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index, follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "SAP Cloud expertise and implementation services. SAP Gold Partner providing comprehensive business solutions."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "en_US"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/projectpulse/video",
+        "sr-Latn => https://www.infinus.co/sr/projectpulse/video",
+        "x-default => https://www.infinus.co/projectpulse/video"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/projectpulse/video"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/sap-packaged-solutions/sap-starter-package": {
+    "htmlLang": "sr-Latn",
+    "title": "SAP Starter Package | Infinus – SAP Packaged Solutions | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Brz i struktuiran način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "SAP Starter Package | Infinus – SAP Packaged Solutions"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Brz i struktuiran način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "SAP Starter Package | Infinus – SAP Packaged Solutions"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Brz i struktuiran način da implementirate SAP Cloud ERP i postavite skalabilnu digitalnu osnovu za rast."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "SAP Starter Package | Infinus – SAP Packaged Solutions"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "SAP Starter Package | Infinus – SAP Packaged Solutions"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/sap-packaged-solutions/sap-starter-package"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/sap-packaged-solutions/sap-starter-package",
+        "sr-Latn => https://www.infinus.co/sr/sap-packaged-solutions/sap-starter-package",
+        "x-default => https://www.infinus.co/sap-packaged-solutions/sap-starter-package"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/sap-packaged-solutions/sap-starter-package"
       ],
       "icon": [
         "/favicon.ico"

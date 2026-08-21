@@ -1,6 +1,27 @@
 "use client";
 import * as React from "react";
 import { FileDown, X } from "lucide-react";
+import type { SapStarterPackageDictionary } from "@/content/dictionary";
+
+/**
+ * The modal's own copy — heading, subheading, the two language options and the two dismiss
+ * controls.
+ *
+ * Until Phase H3 all of it was hardcoded English inside this file, so the Serbian half of a
+ * pair would have opened an English dialog. It now comes from the calling page's dictionary.
+ * `copy` is OPTIONAL and falls back to the exact former literals, so any existing caller
+ * that does not pass it renders precisely what it rendered before.
+ */
+export type BrochureModalCopy = SapStarterPackageDictionary["brochureModal"];
+
+const DEFAULT_COPY: BrochureModalCopy = {
+  heading: "Download Brochure",
+  subheading: "Choose your preferred language",
+  closeLabel: "Close",
+  cancelLabel: "Cancel",
+  englishOption: { label: "English", note: "" },
+  serbianOption: { label: "Serbian", note: "(Srpski)" },
+};
 
 interface BrochureLanguageModalProps {
   label: string;
@@ -9,6 +30,7 @@ interface BrochureLanguageModalProps {
   filenameEn?: string;
   filenameSr?: string;
   variant?: "hero" | "cta";
+  copy?: BrochureModalCopy;
 }
 
 function triggerDownloadAndOpen(href: string, filename: string) {
@@ -29,6 +51,7 @@ export function BrochureLanguageModal({
   filenameEn = "SAP-Starter-Package-Brochure-EN.pdf",
   filenameSr = "SAP-Starter-Package-Brosura-SR.pdf",
   variant = "hero",
+  copy = DEFAULT_COPY,
 }: BrochureLanguageModalProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -69,13 +92,13 @@ export function BrochureLanguageModal({
               type="button"
               onClick={() => setOpen(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
-              aria-label="Close"
+              aria-label={copy.closeLabel}
             >
               <X className="h-5 w-5" />
             </button>
 
-            <h2 className="text-lg font-semibold text-slate-900 mb-1">Download Brochure</h2>
-            <p className="text-sm text-slate-500 mb-5">Choose your preferred language</p>
+            <h2 className="text-lg font-semibold text-slate-900 mb-1">{copy.heading}</h2>
+            <p className="text-sm text-slate-500 mb-5">{copy.subheading}</p>
 
             <div className="flex flex-col gap-3">
               <button
@@ -84,7 +107,7 @@ export function BrochureLanguageModal({
                 className="flex items-center gap-3 w-full rounded-xl border border-slate-200 px-4 py-3.5 text-left text-sm font-medium text-slate-800 hover:border-blue-500 hover:bg-blue-50 transition-all"
               >
                 <span className="text-xl">🇬🇧</span>
-                <span>English</span>
+                <span>{copy.englishOption.label}{copy.englishOption.note !== "" && <> <span className="text-slate-400 font-normal">{copy.englishOption.note}</span></>}</span>
               </button>
 
               <button
@@ -93,7 +116,7 @@ export function BrochureLanguageModal({
                 className="flex items-center gap-3 w-full rounded-xl border border-slate-200 px-4 py-3.5 text-left text-sm font-medium text-slate-800 hover:border-blue-500 hover:bg-blue-50 transition-all"
               >
                 <span className="text-xl">🇷🇸</span>
-                <span>Serbian <span className="text-slate-400 font-normal">(Srpski)</span></span>
+                <span>{copy.serbianOption.label}{copy.serbianOption.note !== "" && <> <span className="text-slate-400 font-normal">{copy.serbianOption.note}</span></>}</span>
               </button>
             </div>
 
@@ -103,7 +126,7 @@ export function BrochureLanguageModal({
                 onClick={() => setOpen(false)}
                 className="text-sm text-slate-500 hover:text-slate-700 transition-colors px-3 py-1.5"
               >
-                Cancel
+                {copy.cancelLabel}
               </button>
             </div>
           </div>

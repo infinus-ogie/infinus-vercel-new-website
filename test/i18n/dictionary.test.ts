@@ -91,6 +91,19 @@ describe('shapes are identical across locales', () => {
     // The pharma1 case study has no engagement-model section; the shared component omits a
     // section whose content is empty rather than rendering a bare heading.
     'items.pharma1.engagementModel',
+    // ProjectPulse's four "Why ProjectPulse" cards render titles only. The empty
+    // descriptions are not placeholders — they are concatenated into the live JSON-LD
+    // featureList, so removing them would change the emitted schema. Both locales are
+    // empty, in both, deliberately.
+    'valueProposition.items.0.description',
+    'valueProposition.items.1.description',
+    'valueProposition.items.2.description',
+    'valueProposition.items.3.description',
+    // The brochure modal glosses the OTHER language's name in parentheses and leaves the
+    // reader's own language unglossed, so exactly one of these two is empty per locale —
+    // and it is a different one on each side. See the composition test below.
+    'brochureModal.englishOption.note',
+    'brochureModal.serbianOption.note',
   ]
 
   test('no key is optional or non-string, and only fragment keys may be empty', () => {
@@ -105,6 +118,22 @@ describe('shapes are identical across locales', () => {
           expect((value as string).length, `${locale}.${namespace}.${path} is empty`).toBeGreaterThan(0)
         }
       }
+    }
+  })
+
+  test('the brochure modal glosses the foreign language and not the reader’s own', () => {
+    // The two `note` fields are allowlisted above as legitimately empty, so assert the rule
+    // that makes them legitimate instead of just tolerating a blank string: on each side
+    // exactly one option is glossed, and it is never the reader's own language.
+    for (const locale of LOCALES) {
+      const modal = getDictionary(locale).sapStarterPackage.brochureModal
+      const own = locale === 'en' ? modal.englishOption : modal.serbianOption
+      const other = locale === 'en' ? modal.serbianOption : modal.englishOption
+      expect(own.note, `${locale}: own language must not be glossed`).toBe('')
+      expect(other.note.length, `${locale}: foreign language must be glossed`).toBeGreaterThan(0)
+      // Both options always carry a real label, gloss or not.
+      expect(modal.englishOption.label.length).toBeGreaterThan(0)
+      expect(modal.serbianOption.label.length).toBeGreaterThan(0)
     }
   })
 

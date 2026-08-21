@@ -33,6 +33,14 @@ export const COMPLETE_PAIRS: readonly LocalePairFixture[] = [
   { en: '/case-study/pharma2', sr: '/sr/case-study/pharma2' },
   { en: '/case-study/nearshoring1', sr: '/sr/case-study/nearshoring1' },
   { en: '/case-study/manufacturing1', sr: '/sr/case-study/manufacturing1' },
+  // Phase H3
+  { en: '/projectpulse', sr: '/sr/projectpulse' },
+  { en: '/projectpulse/brochure', sr: '/sr/projectpulse/brochure' },
+  { en: '/projectpulse/video', sr: '/sr/projectpulse/video' },
+  {
+    en: '/sap-packaged-solutions/sap-starter-package',
+    sr: '/sr/sap-packaged-solutions/sap-starter-package',
+  },
 ]
 
 /** Every path that is half of a complete pair — the only paths allowed locale output. */
@@ -46,21 +54,25 @@ export const LIVE_SERBIAN_PREFIXED_PATHS: readonly string[] = COMPLETE_PAIRS.map
  *
  * These must emit no hreflang and show no switcher. Kept explicit so that translating one
  * requires moving it up into COMPLETE_PAIRS rather than just deleting an expectation.
+ *
+ * EMPTY as of Phase H3: every English page in the public site now has a live Serbian
+ * counterpart. The list stays — as a declaration, and as the place the next untranslated
+ * English page goes — and the suites that iterate it are written to pass on an empty list
+ * rather than to assume at least one entry.
  */
-export const UNPAIRED_ENGLISH_PATHS: readonly string[] = [
-  '/projectpulse',
-  '/projectpulse/brochure',
-  '/projectpulse/video',
-  '/sap-packaged-solutions/sap-starter-package',
-]
+export const UNPAIRED_ENGLISH_PATHS: readonly string[] = []
 
-/** Serbian URLs that must still 404 — the planned counterparts of the list above. */
-export const PLANNED_SERBIAN_PATHS: readonly string[] = [
-  '/sr/projectpulse',
-  '/sr/projectpulse/brochure',
-  '/sr/projectpulse/video',
-  '/sr/sap-packaged-solutions/sap-starter-package',
-]
+/**
+ * Serbian URLs that must still 404 — the planned counterparts of the list above.
+ *
+ * Also EMPTY as of Phase H3. Note what this does NOT cover: the four English counterparts
+ * of the Serbian legacy pages (/sr/grow, /sr/grow/cfo, /sr/grow/ceo,
+ * /sr/professional-services) are not "planned Serbian paths" — those pages are already
+ * Serbian, at unprefixed URLs, and what they lack is an ENGLISH half. They live in
+ * SERBIAN_ONLY_PATHS below, and giving them English counterparts is a separate reverse
+ * migration.
+ */
+export const PLANNED_SERBIAN_PATHS: readonly string[] = []
 
 /**
  * Serbian pages with NO English counterpart, not even a planned one.

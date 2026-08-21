@@ -215,6 +215,46 @@ export const ROUTES: readonly RouteExpectation[] = [
   indexable('/projectpulse/brochure'),
   indexable('/projectpulse/video'),
   indexable('/sap-packaged-solutions/sap-starter-package'),
+  // ── Phase H3: the Serbian halves of the four product pages ──────────────────
+  // These sit under app/(sr)/sr/, so they emit <html lang="sr-Latn"> like every other /sr
+  // page. The Starter Package keeps the English `sap-packaged-solutions` segment: the
+  // offering's name is part of the URL, and translating segments would fork the pair map.
+  {
+    path: '/sr/projectpulse',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/projectpulse`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    path: '/sr/projectpulse/brochure',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/projectpulse/brochure`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    path: '/sr/projectpulse/video',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/projectpulse/video`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
+  {
+    path: '/sr/sap-packaged-solutions/sap-starter-package',
+    kind: 'page-indexable',
+    expectLang: 'sr-Latn',
+    expectRobots: 'index, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/sap-packaged-solutions/sap-starter-package`,
+    inSitemap: true,
+    expectStaticHtml: true,
+  },
   serbianPage('/grow'),
   serbianPage('/grow/cfo'),
   serbianPage('/grow/ceo'),
@@ -358,9 +398,14 @@ export const publicPages = (): RouteExpectation[] =>
 export const EXPECTED_COUNTS = {
   /**
    * 16 before Phase G; +1 for /sr/contact, +2 for /sr and /sr/faq in H1, +5 for the
-   * Serbian case studies in H2.
+   * Serbian case studies in H2, +4 for the Serbian product pages in H3.
+   *
+   * With H3 the English and Serbian halves are BALANCED: 12 English public pages, 12
+   * Serbian /sr pages, and no English page left without a counterpart. The remaining
+   * asymmetry runs the other way — four Serbian legacy pages at unprefixed URLs whose
+   * English halves do not exist yet.
    */
-  indexable: 24,
+  indexable: 28,
   noindex: 1,
   /** /cfo — page still built behind its redirect */
   redirected: 1,
@@ -374,19 +419,20 @@ export const EXPECTED_COUNTS = {
    * Page routes in app-path-routes-manifest.json (excludes _not-found).
    * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so the
    * build produced 22. Phase G added /sr/contact -> 23; H1 added /sr and /sr/faq -> 25;
-   * H2 adds the five Serbian case studies -> 30.
+   * H2 added the five Serbian case studies -> 30; H3 adds the four Serbian product
+   * pages -> 34.
    */
-  manifestPages: 30,
+  manifestPages: 34,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
-  /** total manifest entries: 30 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 39,
+  /** total manifest entries: 34 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 43,
   /**
-   * Rendered .html files: 30 built pages + _not-found. /privacy is in the fixture as a
+   * Rendered .html files: 34 built pages + _not-found. /privacy is in the fixture as a
    * redirect source but produces no HTML, so it is NOT counted here.
    */
-  renderedHtml: 31,
-  sitemapUrls: 24,
-  /** the 25 public pages whose <head> is snapshotted (24 indexable + the legal page) */
-  snapshotPages: 25,
+  renderedHtml: 35,
+  sitemapUrls: 28,
+  /** the 29 public pages whose <head> is snapshotted (28 indexable + the legal page) */
+  snapshotPages: 29,
 } as const

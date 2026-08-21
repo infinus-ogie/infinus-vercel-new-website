@@ -161,24 +161,24 @@ export const ROUTE_PAIRS: readonly RoutePair[] = [
     en: live('/case-study/manufacturing1'),
     sr: live('/sr/case-study/manufacturing1'),
   },
-  { id: 'projectpulse', pairing: 'translatable', en: live('/projectpulse'), sr: planned('/sr/projectpulse') },
+  { id: 'projectpulse', pairing: 'translatable', en: live('/projectpulse'), sr: live('/sr/projectpulse') },
   {
     id: 'projectpulse-brochure',
     pairing: 'translatable',
     en: live('/projectpulse/brochure'),
-    sr: planned('/sr/projectpulse/brochure'),
+    sr: live('/sr/projectpulse/brochure'),
   },
   {
     id: 'projectpulse-video',
     pairing: 'translatable',
     en: live('/projectpulse/video'),
-    sr: planned('/sr/projectpulse/video'),
+    sr: live('/sr/projectpulse/video'),
   },
   {
     id: 'sap-starter-package',
     pairing: 'translatable',
     en: live('/sap-packaged-solutions/sap-starter-package'),
-    sr: planned('/sr/sap-packaged-solutions/sap-starter-package'),
+    sr: live('/sr/sap-packaged-solutions/sap-starter-package'),
   },
 
   // ── Serbian campaign pages ───────────────────────────────────────────────────

@@ -52,6 +52,14 @@ import { footer as enFooter } from './en/footer'
 import { footer as srFooter } from './sr/footer'
 import { caseStudies as enCaseStudies } from './en/case-studies'
 import { caseStudies as srCaseStudies } from './sr/case-studies'
+import { projectPulse as enProjectPulse } from './en/project-pulse'
+import { projectPulse as srProjectPulse } from './sr/project-pulse'
+import { projectPulseBrochure as enProjectPulseBrochure } from './en/project-pulse-brochure'
+import { projectPulseBrochure as srProjectPulseBrochure } from './sr/project-pulse-brochure'
+import { projectPulseVideo as enProjectPulseVideo } from './en/project-pulse-video'
+import { projectPulseVideo as srProjectPulseVideo } from './sr/project-pulse-video'
+import { sapStarterPackage as enSapStarterPackage } from './en/sap-starter-package'
+import { sapStarterPackage as srSapStarterPackage } from './sr/sap-starter-package'
 
 /**
  * Chrome strings that are not specific to any one page.
@@ -475,6 +483,352 @@ export interface CaseStudiesDictionary {
 export const CASE_STUDY_KEYS = ['retail1', 'pharma1', 'pharma2', 'nearshoring1', 'manufacturing1'] as const
 export type CaseStudyKey = (typeof CASE_STUDY_KEYS)[number]
 
+/* ─────────────────────────────────────────────────────────────────────────────
+ * PROJECTPULSE — /projectpulse
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/** A card with a title and a body. Some cards on this page carry a title only. */
+export interface ProjectPulseCard {
+  readonly title: string
+  /**
+   * Empty on all four `valueProposition` items: the cards render titles only. The empty
+   * strings are not decorative — they still reach the JSON-LD `featureList`, which is why
+   * this is `string` and not optional. See content/en/project-pulse.ts.
+   */
+  readonly description: string
+}
+
+/** One implementation phase: a name, how long it takes, what happens in it. */
+export interface ProjectPulsePhase {
+  readonly name: string
+  readonly duration: string
+  readonly description: string
+}
+
+/**
+ * One `about` entry in the Article schema. The product entry is a SoftwareApplication and
+ * the rest are Things, so the @type travels with the name rather than being reconstructed.
+ */
+export interface ProjectPulseAboutEntry {
+  readonly name: string
+  readonly type: 'Thing' | 'SoftwareApplication'
+}
+
+export interface ProjectPulseDictionary {
+  /** Metadata and the absolute URL the JSON-LD uses. Locale-specific. */
+  readonly page: {
+    readonly title: string
+    readonly description: string
+    readonly url: string
+    readonly slug: string
+  }
+  readonly hero: {
+    readonly backgroundAlt: string
+    readonly badgeAlt: string
+    readonly title: string
+    readonly subtitle: string
+    readonly description: string
+    /** Three, and the first three entries of the schema's `featureList`. */
+    readonly valueHighlights: readonly [string, string, string]
+    readonly ctaDiscovery: string
+    readonly ctaBrochure: string
+  }
+  /**
+   * Eight, in a FIXED ORDER. components/pages/ProjectPulsePage.tsx pairs them with icons
+   * positionally, which is what lets the Serbian labels keep the English icons — an icon
+   * map keyed on the English label would have silently fallen back to one generic icon for
+   * every Serbian entry.
+   */
+  readonly industries: readonly [string, string, string, string, string, string, string, string]
+  readonly problem: {
+    readonly title: string
+    readonly description: string
+    readonly description2: string
+    readonly solution: {
+      readonly title: string
+      /** Split three ways because the component bolds the middle fragment. */
+      readonly descriptionPrefix: string
+      readonly descriptionStrong: string
+      readonly descriptionSuffix: string
+      readonly description2: string
+    }
+  }
+  readonly valueProposition: {
+    readonly kicker: string
+    readonly title: string
+    readonly items: readonly [
+      ProjectPulseCard,
+      ProjectPulseCard,
+      ProjectPulseCard,
+      ProjectPulseCard,
+    ]
+  }
+  readonly whatYouGain: {
+    readonly kicker: string
+    readonly title: string
+    readonly items: readonly [ProjectPulseCard, ProjectPulseCard, ProjectPulseCard]
+  }
+  readonly idealFor: {
+    readonly kicker: string
+    readonly title: string
+  }
+  /** Not rendered today — the section is commented out — but it feeds the schema. */
+  readonly howItWorks: {
+    readonly kicker: string
+    readonly title: string
+    readonly subtitle: string
+    /** Seven. The step NUMBER is derived from position, so it is not copy. */
+    readonly steps: readonly [string, string, string, string, string, string, string]
+    readonly microCards: readonly [ProjectPulseCard, ProjectPulseCard, ProjectPulseCard]
+  }
+  /** Not rendered and not in the schema; carried so re-enabling the section needs no phase. */
+  readonly outcomes: {
+    readonly kicker: string
+    readonly title: string
+    readonly subtitle: string
+    /** The word after the role in "CEO Outcomes" — a separate word order per locale. */
+    readonly outcomesSuffix: string
+    readonly roles: {
+      readonly CEO: readonly string[]
+      readonly CFO: readonly string[]
+      readonly COO: readonly string[]
+    }
+  }
+  /** Not rendered today; `subtitle` and `phases` build the whole HowTo schema. */
+  readonly implementation: {
+    readonly kicker: string
+    readonly title: string
+    readonly subtitle: string
+    readonly phases: readonly [
+      ProjectPulsePhase,
+      ProjectPulsePhase,
+      ProjectPulsePhase,
+      ProjectPulsePhase,
+      ProjectPulsePhase,
+    ]
+  }
+  /** Not rendered and not in the schema. Carried, as above. */
+  readonly about: {
+    readonly title: string
+    readonly description: string
+    readonly industriesLabel: string
+  }
+  readonly cta: {
+    readonly title: string
+    readonly description: string
+    readonly primaryCta: string
+    readonly secondaryCta: string
+    readonly trustNote: string
+  }
+  /** Strings that appear ONLY in JSON-LD, never on screen. */
+  readonly schema: {
+    readonly breadcrumbHome: string
+    readonly breadcrumbPage: string
+    readonly softwareReleaseNotes: string
+    readonly howToName: string
+    readonly industriesListName: string
+    readonly industriesListDescription: string
+    readonly articleAbout: readonly [
+      ProjectPulseAboutEntry,
+      ProjectPulseAboutEntry,
+      ProjectPulseAboutEntry,
+      ProjectPulseAboutEntry,
+    ]
+  }
+  /** Where the CTAs link. Locale-specific. */
+  readonly contactHref: string
+  /** The brochure PDF. One asset, identical in both locales. */
+  readonly brochureHref: string
+  readonly brochureFilename: string
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * PROJECTPULSE BROCHURE — /projectpulse/brochure
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/** A kicker/title/body card. */
+export interface BrochureCard {
+  readonly kicker: string
+  readonly title: string
+  readonly body: string
+}
+
+/** A kicker/title/bullets column. */
+export interface BrochureRoleColumn {
+  readonly kicker: string
+  readonly title: string
+  readonly bullets: readonly [string, string, string]
+}
+
+/** A titled bullet list in the functional-scope grid. */
+export interface BrochureScopeGroup {
+  readonly title: string
+  readonly bullets: readonly string[]
+}
+
+/** A label/value row — a dashboard KPI or a commercial-model line. */
+export interface BrochureRow {
+  readonly label: string
+  readonly value: string
+}
+
+export interface ProjectPulseBrochureDictionary {
+  readonly metadata: { readonly title: string; readonly description: string }
+  readonly ribbon: { readonly left: string; readonly right: string }
+  readonly hero: {
+    readonly kicker: string
+    readonly title: string
+    readonly body: string
+    readonly pills: readonly [string, string, string]
+  }
+  /**
+   * The illustrative "Executive Command Center" mock-up. The KPI figures are part of the
+   * mock-up, not claims about a customer — see content/en/project-pulse-brochure.ts.
+   */
+  readonly dashboard: {
+    readonly title: string
+    readonly subtitle: string
+    readonly portfolio: { readonly title: string; readonly body: string }
+    readonly utilization: { readonly title: string; readonly body: string }
+    readonly cash: { readonly title: string; readonly body: string }
+    readonly kpis: readonly [BrochureRow, BrochureRow, BrochureRow]
+    readonly poweredBy: string
+  }
+  readonly challenges: {
+    readonly heading: string
+    readonly intro: string
+    readonly items: readonly [BrochureCard, BrochureCard, BrochureCard]
+  }
+  readonly byRole: {
+    readonly heading: string
+    readonly intro: string
+    readonly roles: readonly [BrochureRoleColumn, BrochureRoleColumn, BrochureRoleColumn]
+  }
+  readonly benefits: {
+    readonly heading: string
+    readonly items: readonly [string, string, string, string, string, string]
+  }
+  readonly scope: {
+    readonly heading: string
+    readonly intro: string
+    readonly groups: readonly [
+      BrochureScopeGroup,
+      BrochureScopeGroup,
+      BrochureScopeGroup,
+      BrochureScopeGroup,
+    ]
+    readonly optional: { readonly title: string; readonly body: string }
+  }
+  readonly commercial: {
+    readonly heading: string
+    readonly intro: string
+    readonly rows: readonly [BrochureRow, BrochureRow, BrochureRow]
+    readonly footnote: string
+  }
+  readonly whyInfinus: {
+    readonly kicker: string
+    readonly title: string
+    readonly bullets: readonly [string, string, string, string]
+    readonly footnote: string
+  }
+  readonly cta: {
+    readonly kicker: string
+    readonly heading: string
+    readonly body: string
+    readonly button: string
+    /** The sentence is prefix + linked address + suffix. */
+    readonly emailPrefix: string
+    readonly emailAddress: string
+    readonly emailSuffix: string
+  }
+  /** Everything after the build-time year in the copyright line. */
+  readonly copyrightSuffix: string
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * PROJECTPULSE VIDEO — /projectpulse/video
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+export interface ProjectPulseVideoDictionary {
+  readonly metadata: { readonly title: string; readonly description: string }
+  /** The close control's accessible name, distinct from its visible label. */
+  readonly closeAriaLabel: string
+  readonly closeLabel: string
+  /** Shown by a browser with no <video> support. Real copy, rarely seen. */
+  readonly videoFallback: string
+  readonly title: string
+  readonly caption: string
+  /**
+   * NOT localised: there is one recording, narrated in English, served on both halves of
+   * the pair. A Serbian recording is a content task — see content/sr/project-pulse-video.ts.
+   */
+  readonly videoSrc: string
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * SAP STARTER PACKAGE — /sap-packaged-solutions/sap-starter-package
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+export interface SapStarterPackageDictionary {
+  readonly metadata: { readonly title: string; readonly description: string }
+  readonly hero: {
+    readonly badge: string
+    readonly imageAlt: string
+    readonly title: string
+    readonly tagline: string
+    readonly description: string
+    readonly ctaDiscovery: string
+    readonly ctaBrochure: string
+  }
+  readonly challenge: { readonly heading: string; readonly lines: readonly [string, string, string] }
+  readonly solution: {
+    readonly heading: string
+    readonly body: string
+    readonly highlight: string
+    readonly sub: string
+  }
+  /** Title-only cards; the icons are positional in the component. */
+  readonly whatYouGain: {
+    readonly heading: string
+    readonly items: readonly [string, string, string, string]
+  }
+  readonly idealFor: {
+    readonly heading: string
+    readonly items: readonly [string, string, string, string]
+  }
+  /** Title-only cards, as above. */
+  readonly why: {
+    readonly heading: string
+    readonly items: readonly [string, string, string, string]
+  }
+  readonly cta: {
+    readonly heading: string
+    readonly ctaDiscovery: string
+    readonly ctaBrochure: string
+    readonly trustNote: string
+  }
+  /**
+   * The brochure language modal. Until this phase its copy was hardcoded English inside
+   * components/ui/BrochureLanguageModal.tsx, so it read English on any page that used it.
+   * `note` is empty on the reader's own language — see content/en/sap-starter-package.ts.
+   */
+  readonly brochureModal: {
+    readonly heading: string
+    readonly subheading: string
+    readonly closeLabel: string
+    readonly cancelLabel: string
+    readonly englishOption: { readonly label: string; readonly note: string }
+    readonly serbianOption: { readonly label: string; readonly note: string }
+  }
+  /** Both PDFs are offered on both halves of the pair, so these are locale-invariant. */
+  readonly brochure: { readonly hrefEn: string; readonly hrefSr: string }
+  readonly schema: {
+    readonly breadcrumbHome: string
+    readonly articleAbout: readonly [string, string, string, string, string]
+  }
+  readonly contactHref: string
+}
+
 /** Every namespace a locale must provide. Add a namespace here and both locales break. */
 export interface Dictionary {
   readonly common: CommonDictionary
@@ -484,6 +838,10 @@ export interface Dictionary {
   readonly nav: NavDictionary
   readonly footer: FooterDictionary
   readonly caseStudies: CaseStudiesDictionary
+  readonly projectPulse: ProjectPulseDictionary
+  readonly projectPulseBrochure: ProjectPulseBrochureDictionary
+  readonly projectPulseVideo: ProjectPulseVideoDictionary
+  readonly sapStarterPackage: SapStarterPackageDictionary
 }
 
 /**
@@ -491,8 +849,32 @@ export interface Dictionary {
  * error; `satisfies` keeps that check while preserving the literal types for callers.
  */
 export const dictionaries = {
-  en: { common: enCommon, contact: enContact, home: enHome, faq: enFaq, nav: enNav, footer: enFooter, caseStudies: enCaseStudies },
-  sr: { common: srCommon, contact: srContact, home: srHome, faq: srFaq, nav: srNav, footer: srFooter, caseStudies: srCaseStudies },
+  en: {
+    common: enCommon,
+    contact: enContact,
+    home: enHome,
+    faq: enFaq,
+    nav: enNav,
+    footer: enFooter,
+    caseStudies: enCaseStudies,
+    projectPulse: enProjectPulse,
+    projectPulseBrochure: enProjectPulseBrochure,
+    projectPulseVideo: enProjectPulseVideo,
+    sapStarterPackage: enSapStarterPackage,
+  },
+  sr: {
+    common: srCommon,
+    contact: srContact,
+    home: srHome,
+    faq: srFaq,
+    nav: srNav,
+    footer: srFooter,
+    caseStudies: srCaseStudies,
+    projectPulse: srProjectPulse,
+    projectPulseBrochure: srProjectPulseBrochure,
+    projectPulseVideo: srProjectPulseVideo,
+    sapStarterPackage: srSapStarterPackage,
+  },
 } as const satisfies Record<Locale, Dictionary>
 
 /**
@@ -506,7 +888,19 @@ export function getDictionary(locale: Locale): Dictionary {
 }
 
 /** Namespaces every locale must provide, as literals for the runtime completeness test. */
-export const DICTIONARY_NAMESPACES = ['common', 'contact', 'home', 'faq', 'nav', 'footer', 'caseStudies'] as const
+export const DICTIONARY_NAMESPACES = [
+  'common',
+  'contact',
+  'home',
+  'faq',
+  'nav',
+  'footer',
+  'caseStudies',
+  'projectPulse',
+  'projectPulseBrochure',
+  'projectPulseVideo',
+  'sapStarterPackage',
+] as const
 
 export type DictionaryNamespace = (typeof DICTIONARY_NAMESPACES)[number]
 

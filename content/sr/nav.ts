@@ -6,7 +6,8 @@
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
  * Labels approved at H1 review. Phase H2 repointed the case-study submenu at the real
- * Serbian pages; the labels themselves are unchanged.
+ * Serbian pages and Phase H3 did the same for SAP paketna rešenja; the labels themselves are
+ * unchanged, and every destination in this file is now a Serbian page.
  *
  * ── Labels and destinations are separate decisions ──────────────────────────────
  * A translated label NEVER invents a URL. Each entry below points at a destination that
@@ -17,12 +18,12 @@
  *   faq                                   -> /sr/faq        (live in H1)
  *   contact                               -> /sr/contact    (live since Phase G)
  *   caseStudies.*                         -> /sr/case-study/... (live since Phase H2)
- *   packagedSolutions.*                   -> the ENGLISH pages, unchanged. Their Serbian
- *                                            counterparts are still only planned, so
- *                                            linking to /sr/... would 404.
+ *   packagedSolutions.*                   -> /sr/projectpulse and
+ *                                            /sr/sap-packaged-solutions/... (live in H3)
  *
- * That last group is the deliberate compromise of a partial rollout: a Serbian label on a
- * control that leads to an English page. It resolves as those pages are translated.
+ * With H3 the last English destination left this file. Every control in the Serbian navbar
+ * now leads to a Serbian page, so a visitor who switches language no longer falls back into
+ * English by following the menu.
  *
  * test/shell/chrome-locale.test.ts asserts every href here is either a live path in the
  * route map or an anchor on one, so a planned URL cannot slip in.
@@ -39,9 +40,11 @@ export const nav: NavDictionary = {
   packagedSolutions: {
     label: 'SAP paketna rešenja',
     items: [
-      // Product names, kept as they are. Destinations stay English: no Serbian version yet.
-      { label: 'ProjectPulse', href: '/projectpulse' },
-      { label: 'SAP Starter Package', href: '/sap-packaged-solutions/sap-starter-package' },
+      // Product names, kept as they are. Phase H3: destinations are now the REAL Serbian
+      // pages. The URL keeps the English `sap-packaged-solutions` segment — see the header
+      // of app/(sr)/sr/sap-packaged-solutions/sap-starter-package/page.tsx.
+      { label: 'ProjectPulse', href: '/sr/projectpulse' },
+      { label: 'SAP Starter Package', href: '/sr/sap-packaged-solutions/sap-starter-package' },
     ],
   },
 

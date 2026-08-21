@@ -63,6 +63,15 @@ const DARK_HERO_PATHS = [
   '/sr/case-study/pharma2',
   '/sr/case-study/nearshoring1',
   '/sr/case-study/manufacturing1',
+  // Phase H3: each Serbian product page renders the same dark surface as its English half —
+  // /sr/projectpulse the same photographic hero, the brochure the same bg-slate-950 sheet,
+  // the video the same full-screen black overlay, the Starter Package the same dark hero.
+  // None needed a new entry in LIGHT_SURFACE_PAGE_IDS: they inherit the page id from the
+  // route map and fall to the `dark` default, which is what their English halves do.
+  '/sr/projectpulse',
+  '/sr/projectpulse/brochure',
+  '/sr/projectpulse/video',
+  '/sr/sap-packaged-solutions/sap-starter-package',
 ]
 
 describe('the light-background pages are classified light', () => {

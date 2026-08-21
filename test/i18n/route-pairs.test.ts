@@ -6,10 +6,12 @@
  * no fake English GROW page, no live /sr/projectpulse, no silent fallback to the locale
  * home, no alternate for a merely planned path.
  *
- * Phase G created the first real pair and Phase H1 added two more, so the reciprocal path is
- * asserted against the live map for all three. Synthetic maps are still used for the shapes
- * the live map does not contain — a half-built pair, an excluded pair with two live sides —
- * so those cases can be proven without creating more /sr routes.
+ * Phase G created the first real pair, H1 added two more, H2 five and H3 the last four, so the
+ * reciprocal path is asserted against the live map for all twelve. Synthetic maps carry the
+ * shapes the live map does not contain — and as of H3 that now includes the PLANNED status
+ * itself: no real pair is half-built any more. The inertness of `planned` still has to be
+ * proven, because the next untranslated page will reintroduce it, so those tests moved from
+ * the live map onto a synthetic one rather than being deleted along with their last subject.
  */
 
 import { describe, test, expect } from 'vitest'
@@ -248,21 +250,52 @@ describe('counterparts are never invented', () => {
     }
   })
 
-  test('/projectpulse has no Serbian counterpart, despite a planned URL', () => {
+  test('/projectpulse now resolves to a REAL Serbian counterpart', () => {
+    // Until H3 this test asserted the opposite: /sr/projectpulse was declared, agreed,
+    // written down — and still not a destination. It is one now, so the assertion inverts.
     const pair = pairForPath('/projectpulse')
     expect(pair).not.toBeNull()
-    expect(pair!.sr).toEqual({ path: '/sr/projectpulse', status: 'planned' })
-    // Declared, agreed, written down — and still not a destination.
-    expect(counterpartFor('/projectpulse')).toBeNull()
+    expect(pair!.sr).toEqual({ path: '/sr/projectpulse', status: 'live' })
+    expect(counterpartFor('/projectpulse')).toEqual({
+      locale: 'sr',
+      path: '/sr/projectpulse',
+      url: 'https://www.infinus.co/sr/projectpulse',
+    })
+  })
+
+  test('a planned counterpart is still inert, proven on a synthetic map', () => {
+    // The live map has no planned entry left, so this proves the RULE rather than a
+    // particular route. It is the guard that has to survive H3: the next English page added
+    // without a translation must not start advertising a URL that 404s.
+    const halfBuilt: RoutePair[] = [
+      {
+        id: 'half-built',
+        pairing: 'translatable',
+        en: { path: '/new-thing', status: 'live' },
+        sr: { path: '/sr/new-thing', status: 'planned' },
+      },
+    ]
+    const halfPair = pairForPath('/new-thing', halfBuilt)
+    expect(halfPair).not.toBeNull()
+    // `sr` is nullable on a RoutePair — the Serbian legacy pages have `en: null` — so the
+    // entry is asserted whole rather than dereferenced twice.
+    expect(halfPair!.sr).toEqual({ path: '/sr/new-thing', status: 'planned' })
+    expect(counterpartFor('/new-thing', halfBuilt)).toBeNull()
+    expect(localeAlternatesFor('/new-thing', halfBuilt)).toBeNull()
+    expect(plannedPaths(halfBuilt)).toEqual(['/sr/new-thing'])
+    expect(allLivePaths(halfBuilt)).toEqual(['/new-thing'])
   })
 
   test('activating the translated pairs did not activate anything else', () => {
-    // Guards the specific H1 risk: flipping two statuses and accidentally waking the whole
-    // planned set.
+    // Guarded the specific H1 risk: flipping statuses and accidentally waking the whole
+    // planned set. PLANNED_SERBIAN_PATHS is empty as of H3, so this loop is now vacuous —
+    // and the assertion below is what stops that from passing silently forever.
     for (const path of PLANNED_SERBIAN_PATHS) {
       expect(plannedPaths(), `${path} must still be planned`).toContain(path)
       expect(counterpartFor(path), `${path} must not resolve`).toBeNull()
     }
+    // Every path the fixture says is planned, and nothing else, is planned in the map.
+    expect(plannedPaths().slice().sort()).toEqual(PLANNED_SERBIAN_PATHS.slice().sort())
   })
 
   test('excluded pages never produce a counterpart', () => {
@@ -365,13 +398,24 @@ describe('locale alternates', () => {
 })
 
 describe('planned routes are inert', () => {
-  test('the planned set is /sr counterparts only, and no longer contains /sr/contact', () => {
+  test('the planned set is EMPTY: every declared route is now a real destination', () => {
+    // This test tracked the shrinking backlog: /sr/contact left it in G, /sr and /sr/faq in
+    // H1, the five case studies in H2, and the four product pages in H3 emptied it.
     const planned = plannedPaths()
-    expect(planned.length).toBeGreaterThan(0)
+    expect(planned).toEqual([])
+    // The property it used to assert still has to hold whenever the set refills.
     for (const path of planned) {
       expect(path === '/sr' || path.indexOf('/sr/') === 0, `${path} must be under /sr`).toBe(true)
     }
     for (const pair of REAL_PAIRS) expect(planned, pair.sr).not.toContain(pair.sr)
+  })
+
+  test('an empty planned set does not mean an empty map', () => {
+    // Guards the way this could go wrong silently: plannedPaths() would also return [] if
+    // the pair map were emptied or mis-parsed. Assert there is a substantial live map behind
+    // the empty backlog.
+    expect(allLivePaths().length).toBeGreaterThanOrEqual(28)
+    expect(ROUTE_PAIRS.length).toBeGreaterThanOrEqual(12)
   })
 
   test('no planned path is also a live path', () => {
