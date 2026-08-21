@@ -122,10 +122,16 @@ describe("route ownership by locale root", () => {
     }
   })
 
-  test("the bilingual legal page stays under the English root", () => {
-    const legal = pages.find((p) => p.includes("politika-privatnosti"))
-    expect(legal).toBeDefined()
-    expect(legal, "the legal page keeps lang=en at document level by decision").toContain("(en)")
+  test("each Privacy Policy page sits under its own locale root", () => {
+    // The policy used to be one bilingual page under the English root. It is two pages now,
+    // and each must be under the root that emits its own <html lang> — that is the whole
+    // reason the split was worth doing.
+    const en = pages.find((p) => p.endsWith(`privacy${sep}page.tsx`))
+    expect(en, "the English policy must exist").toBeDefined()
+    expect(en, "the English policy belongs under the (en) root").toContain("(en)")
+    const sr = pages.find((p) => p.includes(`politika-privatnosti${sep}page.tsx`))
+    expect(sr, "the Serbian policy must exist").toBeDefined()
+    expect(sr, "the Serbian policy belongs under the (sr) root").toContain("(sr)")
   })
 
   test("internal demo/debug routes stay under the English root", () => {

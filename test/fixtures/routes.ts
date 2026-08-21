@@ -260,27 +260,39 @@ export const ROUTES: readonly RouteExpectation[] = [
   serbianPage('/grow/ceo'),
   serbianPage('/professional-services'),
 
-  // ── 1 public noindex page ────────────────────────────────────────────────────
+  // ── 2 public noindex pages: the Privacy Policy, one per locale ───────────────
+  // Split by locale in this phase. Both are deliberately noindex,follow and out of the
+  // sitemap — publicly reachable legal documents, not SEO landing pages — and neither emits
+  // hreflang. They ARE a real navigable pair for the EN|SR switcher, which content/routes.ts
+  // expresses as `locale-linked`: navigable is not the same property as indexable.
   {
-    // The approved bilingual legal page. Replaced /privacy in Phase C.
-    // Deliberately noindex,follow and out of the sitemap: a publicly reachable legal
-    // document, not an SEO landing page. It holds BOTH approved language versions on
-    // one URL, so it has no hreflang and no /sr counterpart.
-    path: '/politika-privatnosti',
+    // The canonical ENGLISH legal URL. Was a page before Phase C, was a redirect during it,
+    // and is a page again — English only this time.
+    path: '/privacy',
     kind: 'page-noindex',
     expectLang: 'en',
     expectRobots: 'noindex, follow',
-    expectCanonical: `${PRODUCTION_ORIGIN}/politika-privatnosti`,
+    expectCanonical: `${PRODUCTION_ORIGIN}/privacy`,
+    inSitemap: false,
+    expectStaticHtml: true,
+  },
+  {
+    // The Serbian legal URL, keeping the document's own Serbian name as its slug.
+    path: '/sr/politika-privatnosti',
+    kind: 'page-noindex',
+    expectLang: 'sr-Latn',
+    expectRobots: 'noindex, follow',
+    expectCanonical: `${PRODUCTION_ORIGIN}/sr/politika-privatnosti`,
     inSitemap: false,
     expectStaticHtml: true,
   },
 
   // ── redirect sources: 1 redirect-only + 1 still-built page ───────────────────
   {
-    // Phase C: the page component was deleted, so next.config.js is the only thing
-    // serving this path — one direct hop to /politika-privatnosti, no chain, and no
-    // prerendered HTML.
-    path: '/privacy',
+    // The old bilingual URL. Its page component was deleted when the policy was split, so
+    // next.config.js is the only thing serving this path — one direct hop to /privacy, no
+    // chain, and no prerendered HTML. This reverses the Phase C direction.
+    path: '/politika-privatnosti',
     kind: 'redirect-only',
     expectLang: null,
     expectRobots: null,
@@ -406,10 +418,11 @@ export const EXPECTED_COUNTS = {
    * English halves do not exist yet.
    */
   indexable: 28,
-  noindex: 1,
+  /** /privacy and /sr/politika-privatnosti — the Privacy Policy, one page per locale */
+  noindex: 2,
   /** /cfo — page still built behind its redirect */
   redirected: 1,
-  /** /privacy — redirect only, no page component and no HTML */
+  /** /politika-privatnosti — redirect only now, no page component and no HTML */
   redirectOnly: 1,
   internal: 4,
   framework: 1,
@@ -419,20 +432,21 @@ export const EXPECTED_COUNTS = {
    * Page routes in app-path-routes-manifest.json (excludes _not-found).
    * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so the
    * build produced 22. Phase G added /sr/contact -> 23; H1 added /sr and /sr/faq -> 25;
-   * H2 added the five Serbian case studies -> 30; H3 adds the four Serbian product
-   * pages -> 34.
+   * H2 added the five Serbian case studies -> 30; H3 added the four Serbian product
+   * pages -> 34; splitting the Privacy Policy by locale swaps /politika-privatnosti for
+   * /privacy and adds /sr/politika-privatnosti -> 35.
    */
-  manifestPages: 34,
+  manifestPages: 35,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
-  /** total manifest entries: 34 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 43,
+  /** total manifest entries: 35 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 44,
   /**
-   * Rendered .html files: 34 built pages + _not-found. /privacy is in the fixture as a
-   * redirect source but produces no HTML, so it is NOT counted here.
+   * Rendered .html files: 35 built pages + _not-found. /politika-privatnosti is in the
+   * fixture as a redirect source but produces no HTML, so it is NOT counted here.
    */
-  renderedHtml: 35,
+  renderedHtml: 36,
   sitemapUrls: 28,
-  /** the 29 public pages whose <head> is snapshotted (28 indexable + the legal page) */
-  snapshotPages: 29,
+  /** the 30 public pages whose <head> is snapshotted (28 indexable + 2 legal pages) */
+  snapshotPages: 30,
 } as const

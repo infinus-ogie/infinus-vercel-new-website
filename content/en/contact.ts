@@ -91,7 +91,7 @@ export const contact: ContactDictionary = {
     before: 'By submitting this form, you confirm that you have read our ',
     linkText: 'Privacy Policy',
     after: '.',
-    href: '/politika-privatnosti',
+    href: '/privacy',
   },
 
   cta: {

@@ -11,6 +11,12 @@
  * each pair internally consistent, and every other document must emit none. That distinction
  * is the whole safety story, so it is asserted per-document rather than in aggregate.
  *
+ * A0. HREFLANG and the SWITCHER are checked as SEPARATE permissions. Until the Privacy
+ *    Policy was split by locale they always agreed, so one check covered both. They no
+ *    longer do: a `locale-linked` pair is navigable (switcher required) and not indexable
+ *    (hreflang forbidden, absent from the sitemap). Conflating them again would either
+ *    strand visitors on the legal pages or advertise noindex URLs to crawlers.
+ *
  * A. The /sr URL space contains ONLY the live Serbian paths the route map declares — no
  *    undeclared Serbian URL in the manifest, the prerendered output or the sitemap.
  * B. No planned path from content/routes.ts exists as a real route. As of Phase H3 the
@@ -50,7 +56,14 @@ import {
   routePathForHtml,
 } from './lib/build-output'
 import { ROUTE_PAIRS, validateRoutePairs } from '../../content/routes'
-import { allLivePaths, localeAlternatesFor, localeOfPath, plannedPaths } from '../../lib/locale-routes'
+import {
+  allLivePaths,
+  counterpartFor,
+  isTranslatablePath,
+  localeAlternatesFor,
+  localeOfPath,
+  plannedPaths,
+} from '../../lib/locale-routes'
 import { DEFAULT_LOCALE, LOCALES, LOCALE_META, absoluteUrl, htmlLangFor } from '../../lib/i18n'
 
 const SITEMAP_URLSET = 'public/sitemap-0.xml'
@@ -142,6 +155,18 @@ main(() => {
     while ((lm = locRe.exec(sitemap)) !== null) locs.push(lm[1])
 
     for (const declared of declaredSr) {
+      // A live route is not automatically an indexable one. `locale-linked` pairs — the
+      // Privacy Policy — are real navigable pages that are deliberately noindex and OUT of
+      // the sitemap. Asserting their ABSENCE is the stronger check, because the failure mode
+      // worth catching is a legal page leaking INTO the sitemap.
+      if (!isTranslatablePath(declared)) {
+        report.check(
+          locs.indexOf(absoluteUrl(declared)) === -1,
+          `${declared} is not translatable but appears in ${SITEMAP_URLSET} — a noindex page ` +
+            'must not be advertised for crawling'
+        )
+        continue
+      }
       report.check(
         locs.indexOf(absoluteUrl(declared)) !== -1,
         `${declared} is a live indexable page but is missing from ${SITEMAP_URLSET}`
@@ -199,8 +224,8 @@ main(() => {
     // and override `locale`, which is exactly why a per-page convention was not enough and
     // the default now lives in app/(sr)/sr/layout.tsx.
     //
-    // Only pages that emit og:locale at all are checked. /cfo and /politika-privatnosti emit
-    // none, which is pre-existing and separate from this assertion.
+    // Only pages that emit og:locale at all are checked. /cfo emits none, which is
+    // pre-existing and separate from this assertion.
     const ogLocales = metaByProperty(head, 'og:locale')
     if (ogLocales.length > 0) {
       const docLocale = localeOfPath(routePath)
@@ -218,13 +243,32 @@ main(() => {
     }
 
     if (expected === null) {
-      // Every page that is NOT half of a complete pair: zero locale output, as before.
+      // No ALTERNATES. That used to imply no switcher either, because the two travelled
+      // together on every page. The Privacy Policy separates them: it is a real navigable
+      // locale pair whose halves are both noindex, so it must render the switcher and must
+      // NOT emit hreflang. So the switcher check is now driven by counterpart resolution
+      // rather than by hreflang eligibility.
       report.check(alternates.length === 0, `${routePath} emits hreflang but has no complete pair: ${alternates.join(', ')}`)
       report.check(!/x-default/i.test(head), `${routePath} emits x-default but has no complete pair`)
-      report.check(
-        !/data-language-switcher/.test(html),
-        `${routePath} renders the language switcher but has no live counterpart`
-      )
+
+      const counterpart = counterpartFor(routePath)
+      if (counterpart === null) {
+        report.check(
+          !/data-language-switcher/.test(html),
+          `${routePath} renders the language switcher but has no live counterpart`
+        )
+      } else {
+        // Navigable but not indexable: the switcher MUST be here, and it must point at the
+        // declared counterpart. A missing control would strand the visitor in one language.
+        report.check(
+          /data-language-switcher/.test(html),
+          `${routePath} has a live counterpart (${counterpart.path}) but renders no language switcher`
+        )
+        report.check(
+          html.indexOf(`href="${counterpart.path}"`) !== -1,
+          `${routePath} does not link its counterpart ${counterpart.path}`
+        )
+      }
       continue
     }
 

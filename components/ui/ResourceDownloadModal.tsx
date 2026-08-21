@@ -73,7 +73,7 @@ export function ResourceDownloadModal({
             Slanjem forme potvrđujete da ste pročitali našu{" "}
             <a
               className="underline underline-offset-4 hover:text-slate-700"
-              href="/politika-privatnosti"
+              href="/sr/politika-privatnosti"
             >
               Politiku privatnosti
             </a>

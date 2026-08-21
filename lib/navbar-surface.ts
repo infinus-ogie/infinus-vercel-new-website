@@ -6,7 +6,7 @@
  * light-text/dark-text treatment from SCROLL POSITION ALONE (`scrollY > 100` in
  * tubelight-navbar, `scrollY > 600` in navbar-demo). That assumes every page opens behind a
  * tall dark hero. Several pages do not, and on them white text landed on a white background:
- * measured contrast 1.00 on /contact, /sr/contact, /faq and /politika-privatnosti, against
+ * measured contrast 1.00 on /contact, /sr/contact, /faq and the Privacy Policy, against
  * 7.15–17.31 on the dark-hero pages. /sr/faq joined the light set in Phase H1 by inheriting
  * the `faq` page id, with no new entry needed here.
  *
@@ -62,7 +62,8 @@ export const LIGHT_SURFACE_PAGE_IDS: readonly string[] = [
   'contact',
   // /faq
   'faq',
-  // /politika-privatnosti — the bilingual legal page.
+  // /privacy and /sr/politika-privatnosti — the Privacy Policy, both locales. One id
+  // classifies both, which is the point of keying this on page identity rather than path.
   'legal-privacy-policy',
 ]
 

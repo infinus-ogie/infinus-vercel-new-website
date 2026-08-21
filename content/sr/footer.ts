@@ -24,7 +24,8 @@
  * ── Destinations ────────────────────────────────────────────────────────────────
  * Same rule as the Navbar: labels are translated, URLs are only ever real. The Company and
  * Resources columns keep /grow and /professional-services because those ARE the Serbian
- * pages, and the Legal column keeps the single bilingual /politika-privatnosti.
+ * pages, and the Legal column now points at the SERBIAN Privacy Policy,
+ * /sr/politika-privatnosti — the single bilingual URL was split by locale.
  */
 
 import type { FooterDictionary } from '../dictionary'
@@ -75,14 +76,14 @@ export const footer: FooterDictionary = {
     },
     legal: {
       label: 'Pravne informacije',
-      items: [{ label: 'Politika privatnosti', href: '/politika-privatnosti' }],
+      items: [{ label: 'Politika privatnosti', href: '/sr/politika-privatnosti' }],
     },
   },
 
   bottom: {
     rights: 'Sva prava zadržana.',
     privacyLabel: 'Privatnost',
-    privacyHref: '/politika-privatnosti',
+    privacyHref: '/sr/politika-privatnosti',
     cookieSettings: 'Podešavanja kolačića',
     developedBy: 'Razvio',
   },

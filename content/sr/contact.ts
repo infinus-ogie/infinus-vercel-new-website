@@ -105,7 +105,7 @@ export const contact: ContactDictionary = {
     before: 'Slanjem forme potvrđujete da ste pročitali našu ',
     linkText: 'Politiku privatnosti',
     after: '.',
-    href: '/politika-privatnosti',
+    href: '/sr/politika-privatnosti',
   },
 
   cta: {

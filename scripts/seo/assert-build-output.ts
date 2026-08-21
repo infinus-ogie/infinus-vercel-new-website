@@ -235,6 +235,31 @@ main(() => {
       }
     }
 
+    // ── the Privacy Policy must not serve the other language's legal text ──────
+    // The catastrophic failure mode of splitting a bilingual legal page is publishing the
+    // wrong jurisdiction's document, or both, at a URL that claims one language. Asserted on
+    // the real HTML rather than only on the renderer, because the route file chooses which
+    // document to pass and that choice is what could go wrong.
+    if (route.path === '/privacy' || route.path === '/sr/politika-privatnosti') {
+      const isEnglish = route.path === '/privacy'
+      const ownHeading = isEnglish ? 'Privacy Policy' : 'Politika privatnosti'
+      const foreignHeading = isEnglish ? 'Politika privatnosti' : 'Privacy Policy'
+      const ownDate = isEnglish ? 'Last updated: 10 August 2026' : 'Poslednje ažuriranje: 10. avgust 2026.'
+      const foreignDate = isEnglish ? 'Poslednje ažuriranje' : 'Last updated'
+      const text = html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ')
+
+      report.check(text.indexOf(ownHeading) !== -1, `${route.path} does not render its own heading "${ownHeading}"`)
+      report.check(text.indexOf(ownDate) !== -1, `${route.path} does not render its approved last-updated line`)
+      report.check(
+        text.indexOf(foreignHeading) === -1,
+        `${route.path} renders the OTHER language's legal heading "${foreignHeading}"`
+      )
+      report.check(
+        text.indexOf(foreignDate) === -1,
+        `${route.path} renders the OTHER language's last-updated line`
+      )
+    }
+
     ssrJsonLdTotal += ssrJsonLdBlocks(html).length
   }
 

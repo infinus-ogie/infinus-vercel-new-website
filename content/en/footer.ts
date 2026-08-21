@@ -62,14 +62,14 @@ export const footer: FooterDictionary = {
     },
     legal: {
       label: 'Legal',
-      items: [{ label: 'Privacy Policy', href: '/politika-privatnosti' }],
+      items: [{ label: 'Privacy Policy', href: '/privacy' }],
     },
   },
 
   bottom: {
     rights: 'All rights reserved.',
     privacyLabel: 'Privacy',
-    privacyHref: '/politika-privatnosti',
+    privacyHref: '/privacy',
     cookieSettings: 'Cookie settings',
     developedBy: 'Developed by',
   },

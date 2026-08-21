@@ -51,7 +51,6 @@ const INTENTIONALLY_SHARED = [
   'details.web.url',
   'form.emailPlaceholder',
   'privacy.after',
-  'privacy.href',
 ]
 
 describe('English is the unchanged source of truth', () => {
@@ -196,7 +195,10 @@ describe('the approved Serbian acknowledgement is used verbatim', () => {
 
   test('the linked text is the declined form "Politiku privatnosti"', () => {
     expect(sr.privacy.linkText).toBe('Politiku privatnosti')
-    expect(sr.privacy.href).toBe('/politika-privatnosti')
+    // The Privacy Policy is split by locale now, so this href is one of the few values that
+    // legitimately DIFFERS between the two contact dictionaries — see the note by SHARED
+    // above. The Serbian acknowledgement must reach the Serbian document.
+    expect(sr.privacy.href).toBe('/sr/politika-privatnosti')
   })
 
   test('it is an acknowledgement, not a consent phrasing', () => {

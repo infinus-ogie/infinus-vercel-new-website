@@ -6,7 +6,8 @@
  * source of truth and no prefix-sniffing appears anywhere. The one thing this adds is a
  * documented DEFAULT for paths the map does not classify:
  *
- *   · /politika-privatnosti resolves to `en` because the map says so, which is what we want:
+ *   · /privacy resolves to `en` and /sr/politika-privatnosti to `sr` because the map says
+ *     so — the Privacy Policy is one page identity with a real route in each locale:
  *     the bilingual legal page keeps English chrome by decision (it is the special page that
  *     holds both approved language versions on one URL).
  *   · demo and debug pages are not in the map at all. They render no SiteChrome today, but

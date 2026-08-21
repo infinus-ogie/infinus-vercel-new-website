@@ -10,7 +10,22 @@
  * dictionary system — that arrives in a later phase, and this file is not part of it.
  */
 
-export const PRIVACY_POLICY_PATH = "/politika-privatnosti" as const
+/**
+ * Where the banner's and dialog's "Privacy Policy" link goes.
+ *
+ * Updated to /privacy when the Privacy Policy was split by locale: the old single bilingual
+ * URL is now a permanent redirect, and a link a visitor clicks should not need a hop.
+ *
+ * Only the DESTINATION changed. No consent behaviour, category, storage key or cookie was
+ * touched.
+ *
+ * KNOWN GAP, deliberately not solved here: this banner is bilingual — it shows English and
+ * Serbian copy together — but carries a single privacy link, so a Serbian reader following it
+ * lands on the English document. That was equally true before the split (the bilingual page
+ * opened on its Serbian section only by anchor). Making the consent UI locale-aware is a
+ * separate piece of work; it is not a regression introduced here.
+ */
+export const PRIVACY_POLICY_PATH = "/privacy" as const
 
 export const consentCopy = {
   banner: {

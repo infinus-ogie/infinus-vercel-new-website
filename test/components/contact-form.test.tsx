@@ -70,7 +70,7 @@ const submitButton = (): HTMLButtonElement => {
   return button as HTMLButtonElement
 }
 
-describe.each(LOCALE_CASES)('Contact2 — $locale', ({ content }) => {
+describe.each(LOCALE_CASES)('Contact2 — $locale', ({ locale, content }) => {
   const { form, success, validation } = content
 
   beforeEach(() => {
@@ -311,9 +311,9 @@ describe.each(LOCALE_CASES)('Contact2 — $locale', ({ content }) => {
     // Same destination in both languages: there is only one bilingual legal page.
     expect(screen.getByRole('link', { name: content.privacy.linkText })).toHaveAttribute(
       'href',
-      '/politika-privatnosti'
+      locale === 'sr' ? '/sr/politika-privatnosti' : '/privacy'
     )
-    expect(content.privacy.href).toBe('/politika-privatnosti')
+    expect(content.privacy.href).toBe(locale === 'sr' ? '/sr/politika-privatnosti' : '/privacy')
   })
 
   it('shows this locale’s contact details, with the shared mailbox', () => {

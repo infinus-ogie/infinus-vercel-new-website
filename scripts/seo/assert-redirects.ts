@@ -160,8 +160,11 @@ main(async () => {
         r.permanent === true,
     },
     {
-      description: '/privacy → /politika-privatnosti',
-      match: (r) => r.source === '/privacy' && r.destination === '/politika-privatnosti' && r.permanent === true,
+      // Reversed when the Privacy Policy was split by locale: /privacy is the real English
+      // page now, and the old bilingual URL redirects to it. One hop, permanent.
+      description: '/politika-privatnosti → /privacy',
+      match: (r) =>
+        r.source === '/politika-privatnosti' && r.destination === '/privacy' && r.permanent === true,
     },
     {
       description: 'apex infinus.co/:path* → www.infinus.co/:path*',

@@ -20,8 +20,15 @@
 import { describe, test, expect } from 'vitest'
 import { readdirSync, statSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
-import { ROUTE_PAIRS } from '@/content/routes'
-import { allLivePaths, livePathsFor, localeAlternatesFor, localeOfPath, plannedPaths } from '@/lib/locale-routes'
+import { ROUTE_PAIRS, validateRoutePairs, type RoutePair } from '@/content/routes'
+import {
+  allLivePaths,
+  counterpartFor,
+  livePathsFor,
+  localeAlternatesFor,
+  localeOfPath,
+  plannedPaths,
+} from '@/lib/locale-routes'
 import { ROUTES, publicPages, type RouteExpectation } from '../fixtures/routes'
 import {
   COMPLETE_PAIRS as REAL_PAIRS,
@@ -170,21 +177,28 @@ describe('coverage: every public page has a known locale ownership', () => {
   })
 })
 
-describe('the legal page is classified as a non-pair', () => {
+describe('the legal pair is navigable but not indexable', () => {
   test('it is present, excluded, and has no Serbian side', () => {
     const legal = ROUTE_PAIRS.filter((p) => p.id === 'legal-privacy-policy')[0]
     expect(legal).toBeDefined()
-    expect(legal.pairing).toBe('excluded')
-    expect(legal.en).toEqual({ path: '/politika-privatnosti', status: 'live' })
-    expect(legal.sr).toBeNull()
+    // `locale-linked`, not `excluded`: both sides are real pages a visitor can switch
+    // between, but neither is indexable, so neither may emit hreflang. Navigability and
+    // indexability are separate properties — this pair is what forced them apart.
+    expect(legal.pairing).toBe('locale-linked')
+    expect(legal.en).toEqual({ path: '/privacy', status: 'live' })
+    expect(legal.sr).toEqual({ path: '/sr/politika-privatnosti', status: 'live' })
   })
 
   test('the fixture still expects it noindex and out of the sitemap', () => {
     // Unchanged by this phase; asserted here so pairing work cannot drift it.
-    const legal = fixtureByPath['/politika-privatnosti']
+    const legal = fixtureByPath['/privacy']
     expect(legal.expectRobots).toBe('noindex, follow')
     expect(legal.inSitemap).toBe(false)
     expect(legal.expectLang).toBe('en')
+    const legalSr = fixtureByPath['/sr/politika-privatnosti']
+    expect(legalSr.expectRobots).toBe('noindex, follow')
+    expect(legalSr.inSitemap).toBe(false)
+    expect(legalSr.expectLang).toBe('sr-Latn')
   })
 })
 
@@ -256,10 +270,33 @@ describe('asymmetry is genuinely representable, not just claimed', () => {
     expect(allLivePaths().indexOf('/sr/grow')).toBe(-1)
   })
 
-  test('at least one pair has a null side in each direction', () => {
+  test('a missing English side is representable AND currently used', () => {
+    // The Serbian legacy campaign pages and /cfo have no English half, so `en: null` is
+    // exercised by the live map.
     const nullEn = ROUTE_PAIRS.filter((p) => p.en === null && p.sr !== null)
-    const nullSr = ROUTE_PAIRS.filter((p) => p.sr === null && p.en !== null)
     expect(nullEn.length).toBeGreaterThan(0)
-    expect(nullSr.length).toBeGreaterThan(0)
+  })
+
+  test('a missing SERBIAN side is representable, and no longer used by any pair', () => {
+    // `sr: null` used to be exercised by the bilingual legal page, the last English page
+    // without a Serbian counterpart. Splitting the Privacy Policy by locale gave it one, so
+    // the rollout is complete in that direction: EVERY English page now has a Serbian half.
+    //
+    // Asserted rather than deleted, because "no pair needs this any more" is a fact worth
+    // failing on if it stops being true — a new `sr: null` means someone added an English
+    // page without a Serbian counterpart, which should be a deliberate, visible decision.
+    const nullSr = ROUTE_PAIRS.filter((p) => p.sr === null && p.en !== null)
+    expect(nullSr.map((p) => p.id)).toEqual([])
+
+    // The TYPE still permits it — the asymmetry is representable, just unused. Proven on a
+    // synthetic pair so the capability is not silently lost.
+    const synthetic: RoutePair = {
+      id: 'english-only',
+      pairing: 'translatable',
+      en: { path: '/english-only', status: 'live' },
+      sr: null,
+    }
+    expect(validateRoutePairs([synthetic])).toEqual([])
+    expect(counterpartFor('/english-only', [synthetic])).toBeNull()
   })
 })

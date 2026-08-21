@@ -201,13 +201,15 @@ test.describe('withdrawal', () => {
   })
 })
 
-test.describe('privacy policy page', () => {
-  test('/privacy redirects in one hop to the approved legal URL', async ({ page }) => {
-    const response = await page.goto('/privacy')
-    expect(new URL(page.url()).pathname).toBe('/politika-privatnosti')
+test.describe('privacy policy pages', () => {
+  test('/politika-privatnosti redirects in one hop to /privacy', async ({ page }) => {
+    // Reversed from the Phase C direction. /privacy is the real English page now, and the
+    // old bilingual URL points at it.
+    const response = await page.goto('/politika-privatnosti')
+    expect(new URL(page.url()).pathname).toBe('/privacy')
     expect(response?.status()).toBe(200)
 
-    // Redirect chain: exactly one hop, and it is a permanent redirect.
+    // Exactly one hop, and it is permanent.
     const chain: number[] = []
     let req = response?.request().redirectedFrom()
     while (req) {
@@ -218,21 +220,78 @@ test.describe('privacy policy page', () => {
     expect(chain).toEqual([308])
   })
 
-  test('serves both approved language versions with correct lang attributes', async ({ page }) => {
-    await page.goto('/politika-privatnosti', { waitUntil: 'domcontentloaded' })
-
-    const sr = page.locator('section[lang="sr-Latn"]')
-    const en = page.locator('section[lang="en"]')
-    await expect(sr).toHaveCount(1)
-    await expect(en).toHaveCount(1)
-    await expect(sr).toContainText('Politika privatnosti')
-    await expect(en).toContainText('Privacy Policy')
-    // The approved cookie/analytics commitment is present in both versions.
-    await expect(sr).toContainText('Google Analytics i drugi nenužni analitički ili marketinški kolačići')
-    await expect(en).toContainText('Google Analytics and other non-essential analytics or marketing cookies')
-
-    // noindex, and no hreflang: one URL holding two documents is not a locale pair.
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
-    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0)
+  test('/privacy does NOT redirect', async ({ page }) => {
+    // The inverse of the above, asserted separately so a future edit cannot reintroduce a
+    // loop by pointing /privacy back at the old URL.
+    const response = await page.goto('/privacy')
+    expect(response?.status()).toBe(200)
+    expect(new URL(page.url()).pathname).toBe('/privacy')
+    expect(response?.request().redirectedFrom()).toBeNull()
   })
+
+  test('/sr/privacy does not exist', async ({ page }) => {
+    const response = await page.goto('/sr/privacy')
+    expect(response?.status()).toBe(404)
+  })
+
+  for (const {
+    path, lang, ownHeading, ownDate, ownCommitment, foreignHeading, foreignCommitment, counterpart,
+  } of [
+    {
+      path: '/privacy',
+      lang: 'en',
+      ownHeading: 'Privacy Policy',
+      ownDate: 'Last updated: 10 August 2026',
+      ownCommitment: 'Google Analytics and other non-essential analytics or marketing cookies',
+      foreignHeading: 'Politika privatnosti',
+      foreignCommitment: 'Google Analytics i drugi nenužni analitički ili marketinški kolačići',
+      counterpart: '/sr/politika-privatnosti',
+    },
+    {
+      path: '/sr/politika-privatnosti',
+      lang: 'sr-Latn',
+      ownHeading: 'Politika privatnosti',
+      ownDate: 'Poslednje ažuriranje: 10. avgust 2026.',
+      ownCommitment: 'Google Analytics i drugi nenužni analitički ili marketinški kolačići',
+      foreignHeading: 'Privacy Policy',
+      foreignCommitment: 'Google Analytics and other non-essential analytics or marketing cookies',
+      counterpart: '/privacy',
+    },
+  ]) {
+    test(`${path} serves ONLY its own approved legal document`, async ({ page }) => {
+      await page.goto(path, { waitUntil: 'domcontentloaded' })
+
+      // The document's own language, at document level.
+      await expect(page.locator('html')).toHaveAttribute('lang', lang)
+
+      // Exactly one legal document: one h1, and it is this language's.
+      const h1 = page.locator('h1')
+      await expect(h1).toHaveCount(1)
+      await expect(h1).toHaveText(ownHeading)
+
+      // Scoped to <main>, i.e. the legal document, NOT the whole body. The consent banner is
+      // deliberately BILINGUAL — it carries English and Serbian copy together, including an
+      // English "Privacy Policy" link label — so a body-wide check would report the banner as
+      // a leak of the English legal document. Known and documented in consent-copy.ts.
+      const doc = (await page.locator('main').innerText()).replace(/\s+/g, ' ')
+      expect(doc).toContain(ownDate)
+      // The approved cookie/analytics commitment, in this language.
+      expect(doc).toContain(ownCommitment)
+
+      // And NOTHING of the other language's document. This is the failure that would matter
+      // most: publishing the wrong jurisdiction's text, or both, on a URL claiming one.
+      expect(doc).not.toContain(foreignHeading)
+      expect(doc).not.toContain(foreignCommitment)
+
+      // noindex, and NO hreflang. The pair is navigable, not indexable — see the
+      // `locale-linked` policy in content/routes.ts.
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
+      await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0)
+
+      // But the switcher IS here and points at the real counterpart, which is the whole
+      // reason navigability had to be separated from indexability.
+      const switcher = page.locator(`nav a[href="${counterpart}"]`).first()
+      await expect(switcher).toHaveCount(1)
+    })
+  }
 })

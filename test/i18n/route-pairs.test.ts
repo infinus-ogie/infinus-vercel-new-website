@@ -34,6 +34,7 @@ import {
 import {
   COMPLETE_PAIRS as REAL_PAIRS,
   PAIRED_PATHS,
+  NAVIGABLE_PATHS,
   PLANNED_SERBIAN_PATHS,
   LIVE_SERBIAN_PREFIXED_PATHS,
 } from '../fixtures/locale-pairs'
@@ -210,9 +211,11 @@ describe('locale ownership of live paths', () => {
 })
 
 describe('counterparts are never invented', () => {
-  test('exactly the paths of the declared complete pairs have a counterpart', () => {
+  test('exactly the paths of the declared NAVIGABLE pairs have a counterpart', () => {
+    // Navigable, not indexable: the Privacy pair resolves a counterpart and emits no
+    // hreflang, so this list is NAVIGABLE_PATHS while the hreflang tests use PAIRED_PATHS.
     const withCounterpart = allLivePaths().filter((p) => counterpartFor(p) !== null)
-    expect(withCounterpart.slice().sort()).toEqual([...PAIRED_PATHS].sort())
+    expect(withCounterpart.slice().sort()).toEqual([...NAVIGABLE_PATHS].sort())
   })
 
   test('each real pair resolves reciprocally', () => {
@@ -232,7 +235,7 @@ describe('counterparts are never invented', () => {
 
   test('every OTHER live path still has no counterpart', () => {
     for (const path of allLivePaths()) {
-      if (PAIRED_PATHS.indexOf(path) !== -1) continue
+      if (NAVIGABLE_PATHS.indexOf(path) !== -1) continue
       expect(counterpartFor(path), `${path} must have no counterpart`).toBeNull()
     }
   })
@@ -299,8 +302,23 @@ describe('counterparts are never invented', () => {
   })
 
   test('excluded pages never produce a counterpart', () => {
-    expect(isTranslatablePath('/politika-privatnosti')).toBe(false)
-    expect(counterpartFor('/politika-privatnosti')).toBeNull()
+    // The Privacy pair is the interesting case: NOT translatable (so no hreflang), yet it
+    // DOES resolve a counterpart (so the switcher works). Asserting both directions is the
+    // point — it is the one place where those two answers differ.
+    expect(isTranslatablePath('/privacy')).toBe(false)
+    expect(isTranslatablePath('/sr/politika-privatnosti')).toBe(false)
+    expect(localeAlternatesFor('/privacy')).toBeNull()
+    expect(localeAlternatesFor('/sr/politika-privatnosti')).toBeNull()
+    expect(counterpartFor('/privacy')).toEqual({
+      locale: 'sr',
+      path: '/sr/politika-privatnosti',
+      url: 'https://www.infinus.co/sr/politika-privatnosti',
+    })
+    expect(counterpartFor('/sr/politika-privatnosti')).toEqual({
+      locale: 'en',
+      path: '/privacy',
+      url: 'https://www.infinus.co/privacy',
+    })
     expect(isTranslatablePath('/cfo')).toBe(false)
     expect(counterpartFor('/cfo')).toBeNull()
   })
@@ -414,7 +432,7 @@ describe('planned routes are inert', () => {
     // Guards the way this could go wrong silently: plannedPaths() would also return [] if
     // the pair map were emptied or mis-parsed. Assert there is a substantial live map behind
     // the empty backlog.
-    expect(allLivePaths().length).toBeGreaterThanOrEqual(28)
+    expect(allLivePaths().length).toBeGreaterThanOrEqual(30)
     expect(ROUTE_PAIRS.length).toBeGreaterThanOrEqual(12)
   })
 

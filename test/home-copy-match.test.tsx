@@ -169,7 +169,7 @@ describe('Homepage copy', () => {
     expect(within(join).queryByText(/you agree to our/i)).not.toBeInTheDocument()
     expect(within(join).getByRole('link', { name: /privacy policy/i })).toHaveAttribute(
       'href',
-      '/politika-privatnosti'
+      '/privacy'
     )
   })
 
@@ -190,7 +190,7 @@ describe('Homepage copy', () => {
     )
     expect(within(footer).getByRole('link', { name: /^privacy policy$/i })).toHaveAttribute(
       'href',
-      '/politika-privatnosti'
+      '/privacy'
     )
   })
 

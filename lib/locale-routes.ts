@@ -9,7 +9,9 @@
  *
  * ── The safety invariant ────────────────────────────────────────────────────────
  * `counterpartFor` and `localeAlternatesFor` return null unless the counterpart is REAL:
- * `pairing: "translatable"` AND every side `status: "live"`. There is no fallback to the
+ * `pairing: "translatable"` AND every side `status: "live"`. A `pairing: "locale-linked"`
+ * pair resolves a COUNTERPART but never an ALTERNATE — see PairingPolicy. There is no
+ * fallback to the
  * locale home page and no fallback to the default locale. "No counterpart" is a first-class
  * answer, and today it is the answer for every page on the site.
  */
@@ -93,7 +95,11 @@ export function counterpartFor(
   pairs: readonly RoutePair[] = ROUTE_PAIRS
 ): Counterpart | null {
   const pair = pairForPath(path, pairs)
-  if (pair === null || pair.pairing !== 'translatable') return null
+  // `locale-linked` resolves here but NOT in localeAlternatesFor below: the Privacy pair is
+  // navigable but not indexable, so the switcher gets a counterpart and hreflang gets none.
+  if (pair === null || (pair.pairing !== 'translatable' && pair.pairing !== 'locale-linked')) {
+    return null
+  }
 
   const from = localeOfPath(path, pairs)
   if (from === null) return null
@@ -123,6 +129,8 @@ export function localeAlternatesFor(
   pairs: readonly RoutePair[] = ROUTE_PAIRS
 ): LocaleAlternates | null {
   const pair = pairForPath(path, pairs)
+  // Strictly `translatable`: a `locale-linked` pair has a real counterpart but must never
+  // emit hreflang, because both of its sides are noindex and outside the sitemap.
   if (pair === null || pair.pairing !== 'translatable') return null
 
   const languages: Record<string, string> = {}
@@ -180,5 +188,8 @@ export function plannedPaths(pairs: readonly RoutePair[] = ROUTE_PAIRS): RoutePa
 /** True when a live path may take part in hreflang and the language switcher at all. */
 export function isTranslatablePath(path: string, pairs: readonly RoutePair[] = ROUTE_PAIRS): boolean {
   const pair = pairForPath(path, pairs)
+  // Deliberately `translatable` only. This answers "does this path take part in hreflang?",
+  // which is what every caller uses it for — so a `locale-linked` path is NOT translatable
+  // even though it does have a counterpart.
   return pair !== null && pair.pairing === 'translatable'
 }

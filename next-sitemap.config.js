@@ -41,10 +41,13 @@ module.exports = {
     '/.well-known',
     '/.well-known/*',
     '/llms.txt', // plaintext AI file, not an indexable page
-    // The legal page is intentionally noindex,follow and stays out of the sitemap:
-    // it is a publicly reachable legal document, not an SEO landing page.
-    '/politika-privatnosti',
-    '/privacy', // permanent redirect -> /politika-privatnosti (no longer a page)
+    // The Privacy Policy is intentionally noindex,follow and stays out of the sitemap in
+    // BOTH languages: publicly reachable legal documents, not SEO landing pages. They are a
+    // real navigable locale pair for the EN|SR switcher, which is a separate concern from
+    // indexability — see the `locale-linked` policy in content/routes.ts.
+    '/privacy',
+    '/sr/politika-privatnosti',
+    '/politika-privatnosti', // permanent redirect -> /privacy (no longer a page)
   ],
   transform: async (config, path) => {
     // /sr/contact is the Serbian half of the same page as /contact, so it carries the same

@@ -121,7 +121,7 @@ describe('the copy decisions approved as first drafted', () => {
     expect(sr.home.join.form.submitting).toBe('Šalje se...')
     const sentence = `${sr.home.join.privacy.before}${sr.home.join.privacy.linkText}${sr.home.join.privacy.after}`
     expect(sentence).toBe('Slanjem prijave potvrđujete da ste pročitali našu Politiku privatnosti.')
-    expect(sr.home.join.privacy.href).toBe('/politika-privatnosti')
+    expect(sr.home.join.privacy.href).toBe('/sr/politika-privatnosti')
   })
 })
 

@@ -36,7 +36,17 @@ import { allLivePaths } from '@/lib/locale-routes'
  * inherits the existing `faq` page id, which is the whole point of classifying by identity
  * rather than by path.
  */
-const LIGHT_PATHS = ['/contact', '/sr/contact', '/faq', '/sr/faq', '/politika-privatnosti']
+// Both Privacy Policy URLs, from ONE page id. That is the payoff of keying the surface on
+// page identity: splitting the policy into two routes needed no new entry in
+// LIGHT_SURFACE_PAGE_IDS, and neither locale can drift from the other.
+const LIGHT_PATHS = [
+  '/contact',
+  '/sr/contact',
+  '/faq',
+  '/sr/faq',
+  '/privacy',
+  '/sr/politika-privatnosti',
+]
 
 /** Measured backdrop luminance 0.011–0.097 — the approved white-text treatment is correct. */
 const DARK_HERO_PATHS = [

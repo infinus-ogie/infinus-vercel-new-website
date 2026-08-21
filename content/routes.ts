@@ -16,6 +16,8 @@
  *
  *   NO locale alternate and NO switcher destination may be produced unless the paths on
  *   BOTH sides of a pair are `status: "live"` AND the pair is `pairing: "translatable"`.
+ *   `pairing: "locale-linked"` is the one case with two live sides and NO hreflang: a real
+ *   navigable counterpart on a page that is deliberately not indexable.
  *
  * A `"planned"` path is a design intention. It is written down so the eventual URL is
  * agreed and reviewable, and it is mechanically incapable of becoming an hreflang, a
@@ -61,13 +63,39 @@ export interface LocaleRoute {
   readonly status: RouteStatus
 }
 
+/**
+ * What a pair is allowed to produce.
+ *
+ * Two separate questions hide in here, and conflating them is what forced this type to grow
+ * a third case:
+ *
+ *   1. is there a REAL counterpart a visitor can navigate to?
+ *   2. does the pair participate in SEO output — hreflang and the sitemap?
+ *
+ * For every marketing page the answers move together. For the Privacy Policy they do not:
+ * the two documents are genuinely separate pages in two languages and a visitor should be
+ * able to switch between them, but both are `noindex, follow` and outside the sitemap, so
+ * neither may emit hreflang.
+ */
 export type PairingPolicy =
   /** A normal page: may take part in hreflang and the switcher once both sides are live. */
   | 'translatable'
   /**
+   * Both sides are real and navigable — counterpart resolution and the language switcher
+   * work — but the pair produces NO hreflang and stays out of the sitemap.
+   *
+   * The Privacy Policy: /privacy (English) and /sr/politika-privatnosti (Serbian) are two
+   * independently approved legal documents, each `noindex, follow`. Navigability and
+   * indexability are different properties and this is the case that proves it.
+   *
+   * Requires BOTH sides live — see validateRoutePairs. A half-built locale link is a bug,
+   * not a state: the switcher would advertise a URL that 404s.
+   */
+  | 'locale-linked'
+  /**
    * Classified but permanently outside locale pairing. Produces NO hreflang and NO
-   * switcher counterpart even if both sides were somehow live. Used for the bilingual
-   * legal page (both languages on one URL) and the redirect-backed /cfo duplicate.
+   * switcher counterpart even if both sides were somehow live. Used for the
+   * redirect-backed /cfo duplicate.
    */
   | 'excluded'
 
@@ -196,17 +224,19 @@ export const ROUTE_PAIRS: readonly RoutePair[] = [
   { id: 'grow-ceo', pairing: 'translatable', en: null, sr: live('/grow/ceo') },
   { id: 'professional-services', pairing: 'translatable', en: null, sr: live('/professional-services') },
 
-  // ── Excluded from locale pairing ─────────────────────────────────────────────
+  // ── A real locale link that is deliberately not indexable ────────────────────
   {
     id: 'legal-privacy-policy',
-    pairing: 'excluded',
-    en: live('/politika-privatnosti'),
-    sr: null,
+    pairing: 'locale-linked',
+    en: live('/privacy'),
+    sr: live('/sr/politika-privatnosti'),
     note:
-      'ONE URL holding both independently approved legal documents, as bilingual sections ' +
-      'inside the page. It is not an EN/SR route pair: there is nothing to point hreflang ' +
-      'at and nothing for the switcher to navigate to. Its own in-page Srpski/English ' +
-      'navigation is unrelated to this map and stays as it is.',
+      'Two INDEPENDENTLY APPROVED legal documents, one per locale, each on its own URL. ' +
+      'They are not a translation pair — neither was translated from the other — but they ' +
+      'are the same page in two languages as far as a visitor is concerned, so the switcher ' +
+      'moves between them. Both are noindex,follow and outside the sitemap, so neither ' +
+      'emits hreflang. This supersedes the single bilingual /politika-privatnosti URL, ' +
+      'which is now a permanent redirect to /privacy and therefore not a page at all.',
   },
   {
     id: 'cfo-legacy-redirect',
@@ -288,18 +318,33 @@ export function validateRoutePairs(pairs: readonly RoutePair[] = ROUTE_PAIRS): s
 
     if (declared === 0) problems.push(`${pair.id} declares no locale route at all`)
 
-    if (pair.pairing === 'excluded') {
-      let liveSides = 0
-      for (let j = 0; j < LOCALES.length; j += 1) {
-        const entry = pair[LOCALES[j]]
-        if (entry && entry.status === 'live') liveSides += 1
-      }
-      if (liveSides > 1) {
-        problems.push(
-          `${pair.id} is "excluded" but has ${liveSides} live sides — it looks like a real ` +
-            'pair and should say so, or be split'
-        )
-      }
+    // ── per-policy invariants on how many sides are live ──────────────────────
+    // The old rule was "excluded may not have two live sides", which existed to stop a real
+    // pair from hiding behind an exclusion. That is still worth enforcing, but it also made
+    // the legal pair inexpressible: two live sides that must NOT be indexable. So the rule
+    // is now per policy, and it is tighter than before rather than looser — `locale-linked`
+    // has a requirement of its own that nothing had before.
+    let liveSides = 0
+    for (let j = 0; j < LOCALES.length; j += 1) {
+      const entry = pair[LOCALES[j]]
+      if (entry && entry.status === 'live') liveSides += 1
+    }
+
+    if (pair.pairing === 'excluded' && liveSides > 1) {
+      problems.push(
+        `${pair.id} is "excluded" but has ${liveSides} live sides — it looks like a real ` +
+          'pair and should say so ("locale-linked" if it must stay out of hreflang), or be split'
+      )
+    }
+
+    if (pair.pairing === 'locale-linked' && liveSides !== 2) {
+      // The whole point of this policy is that the switcher CAN navigate between the two
+      // sides. With fewer than two live it would advertise a URL that 404s, which is the
+      // exact failure the planned/live distinction exists to prevent everywhere else.
+      problems.push(
+        `${pair.id} is "locale-linked" but has ${liveSides} live side(s) — this policy ` +
+          'requires both, because it exists to make the switcher work'
+      )
     }
   }
 

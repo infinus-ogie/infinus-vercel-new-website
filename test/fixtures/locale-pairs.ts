@@ -43,11 +43,37 @@ export const COMPLETE_PAIRS: readonly LocalePairFixture[] = [
   },
 ]
 
-/** Every path that is half of a complete pair — the only paths allowed locale output. */
+/**
+ * Pairs that are NAVIGABLE but deliberately NOT INDEXABLE.
+ *
+ * The Privacy Policy: two independently approved legal documents, one per locale, each
+ * `noindex, follow` and outside the sitemap. A visitor can switch between them and the
+ * EN|SR control must work, but neither page may emit hreflang.
+ *
+ * Kept in its own list, not folded into COMPLETE_PAIRS, because the two lists answer
+ * different questions and the tests must not blur them:
+ *   COMPLETE_PAIRS      -> may emit hreflang, must be in the sitemap
+ *   LOCALE_LINKED_PAIRS -> must emit NO hreflang, must be OUT of the sitemap
+ * Both -> must resolve a counterpart and render the switcher.
+ */
+export const LOCALE_LINKED_PAIRS: readonly LocalePairFixture[] = [
+  { en: '/privacy', sr: '/sr/politika-privatnosti' },
+]
+
+/** Every pair a visitor can switch across — indexable or not. 13 as of the Privacy split. */
+export const NAVIGABLE_PAIRS: readonly LocalePairFixture[] = [
+  ...COMPLETE_PAIRS,
+  ...LOCALE_LINKED_PAIRS,
+]
+
+/** Every path that is half of a complete pair — the only paths allowed HREFLANG output. */
 export const PAIRED_PATHS: readonly string[] = COMPLETE_PAIRS.flatMap((p) => [p.en, p.sr])
 
-/** Every Serbian half, i.e. every /sr URL that must exist. */
-export const LIVE_SERBIAN_PREFIXED_PATHS: readonly string[] = COMPLETE_PAIRS.map((p) => p.sr)
+/** Every path that is half of ANY navigable pair — the paths allowed a SWITCHER. */
+export const NAVIGABLE_PATHS: readonly string[] = NAVIGABLE_PAIRS.flatMap((p) => [p.en, p.sr])
+
+/** Every Serbian half, i.e. every /sr URL that must exist. Includes the legal pair. */
+export const LIVE_SERBIAN_PREFIXED_PATHS: readonly string[] = NAVIGABLE_PAIRS.map((p) => p.sr)
 
 /**
  * English pages whose Serbian counterpart is still only PLANNED.

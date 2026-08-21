@@ -20,10 +20,15 @@ const nextConfig = {
         permanent: true,
       },
       {
-        // The legal page moved to its approved public URL. One direct hop: /privacy
-        // no longer has a page component, so this is the only thing serving that path.
-        source: '/privacy',
-        destination: '/politika-privatnosti',
+        // The Privacy Policy is now split by locale: /privacy is the real ENGLISH page and
+        // /sr/politika-privatnosti the real Serbian one. This reverses the Phase C direction,
+        // which sent /privacy to a single bilingual /politika-privatnosti.
+        //
+        // One direct hop: /politika-privatnosti no longer has a page component, so this is
+        // the only thing serving that path, and /privacy is a real page so nothing sends it
+        // back here. No chain, no loop.
+        source: '/politika-privatnosti',
+        destination: '/privacy',
         permanent: true,
       },
       {

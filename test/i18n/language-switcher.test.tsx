@@ -22,6 +22,7 @@ import type { RoutePair } from '@/content/routes'
 import {
   COMPLETE_PAIRS as REAL_PAIRS,
   PAIRED_PATHS,
+  NAVIGABLE_PATHS,
   PLANNED_SERBIAN_PATHS,
   UNPAIRED_ENGLISH_PATHS,
   SERBIAN_ONLY_PATHS,
@@ -108,9 +109,18 @@ describe('the real pair renders a reciprocal EN | SR control', () => {
 })
 
 describe('it never invents a destination', () => {
-  test('resolveSwitchTarget returns a target for every declared pair and null elsewhere', () => {
+  test('resolveSwitchTarget returns a target for every NAVIGABLE pair and null elsewhere', () => {
+    // Navigable, not indexable: the Privacy pair gets a switch target even though it emits
+    // no hreflang. PAIRED_PATHS is the hreflang set and would be wrong here.
     const withTarget = allLivePaths().filter((p) => resolveSwitchTarget(p) !== null)
-    expect(withTarget.slice().sort()).toEqual([...PAIRED_PATHS].sort())
+    expect(withTarget.slice().sort()).toEqual([...NAVIGABLE_PATHS].sort())
+  })
+
+  test('the Privacy pair switches in both directions', () => {
+    // The switcher must work on a page that is deliberately absent from hreflang and the
+    // sitemap — the whole point of the `locale-linked` policy.
+    expect(resolveSwitchTarget('/privacy')?.path).toBe('/sr/politika-privatnosti')
+    expect(resolveSwitchTarget('/sr/politika-privatnosti')?.path).toBe('/privacy')
   })
 
   test('every pair resolves to its own counterpart, never to another pair', () => {
@@ -147,8 +157,8 @@ describe('it never invents a destination', () => {
     }
   })
 
-  test('renders nothing on the excluded legal page or on /cfo', () => {
-    for (const path of ['/politika-privatnosti', '/cfo']) {
+  test('renders nothing on /cfo, which has no counterpart at all', () => {
+    for (const path of ['/cfo']) {
       const { container } = render(<LanguageSwitcher currentPath={path} currentLocale="en" />)
       expect(container.innerHTML, path).toBe('')
     }

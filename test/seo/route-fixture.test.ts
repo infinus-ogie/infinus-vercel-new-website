@@ -87,9 +87,10 @@ describe('route fixture — counts match the verified build', () => {
     )
   })
 
-  test('the snapshot set is the 17 indexable pages plus the legal page', () => {
+  test('the snapshot set is the indexable pages plus both legal pages', () => {
     expect(publicPages()).toHaveLength(EXPECTED_COUNTS.snapshotPages)
-    expect(publicPages().map((r) => r.path)).toContain('/politika-privatnosti')
+    expect(publicPages().map((r) => r.path)).toContain('/privacy')
+    expect(publicPages().map((r) => r.path)).toContain('/sr/politika-privatnosti')
   })
 })
 

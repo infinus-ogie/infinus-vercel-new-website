@@ -126,7 +126,7 @@ describe("fresh visitor with no stored decision", () => {
     mount()
     await waitFor(() => expect(screen.getByTestId("cookie-banner")).toBeInTheDocument())
     const link = screen.getByRole("link", { name: /privacy policy/i })
-    expect(link).toHaveAttribute("href", "/politika-privatnosti")
+    expect(link).toHaveAttribute("href", "/privacy")
   })
 })
 

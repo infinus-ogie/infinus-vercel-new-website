@@ -216,7 +216,7 @@ export const home: HomeDictionary = {
       before: 'By submitting your application, you confirm that you have read our ',
       linkText: 'Privacy Policy',
       after: '.',
-      href: '/politika-privatnosti',
+      href: '/privacy',
     },
     faq: [
       {
