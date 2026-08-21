@@ -32,9 +32,13 @@
  * ── What must NOT come in here ──────────────────────────────────────────────────
  *   · content/legal/politika-privatnosti.ts — frozen, independently approved legal text.
  *     It is not UI copy, it is not translated from anything, and it stays where it is.
- *   · components/consent/consent-copy.ts — already bilingual for the consent UI, which is
- *     shown on English and Serbian pages alike. Left in place; duplicating approved
- *     consent wording here would create two sources of truth.
+ *
+ * The consent UI DID come in here, in the final rollout pass. It used to be a standalone
+ * module carrying the English strings plus two Serbian ones rendered together on every page,
+ * which was the right compromise before the site had locales and the wrong one after. It is
+ * now the `consent` namespace, which gets the same key-parity and no-fallback guarantees as
+ * everything else. Note it is INTERFACE copy: the approved legal text is still frozen in
+ * content/legal/politika-privatnosti.ts and still outside this system.
  */
 
 import { LOCALES, type Locale } from '@/lib/i18n'
@@ -60,6 +64,8 @@ import { projectPulseVideo as enProjectPulseVideo } from './en/project-pulse-vid
 import { projectPulseVideo as srProjectPulseVideo } from './sr/project-pulse-video'
 import { sapStarterPackage as enSapStarterPackage } from './en/sap-starter-package'
 import { sapStarterPackage as srSapStarterPackage } from './sr/sap-starter-package'
+import { consent as enConsent } from './en/consent'
+import { consent as srConsent } from './sr/consent'
 
 /**
  * Chrome strings that are not specific to any one page.
@@ -847,6 +853,62 @@ export interface SapStarterPackageDictionary {
   readonly contactHref: string
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+ * CONSENT UI — the cookie banner and the settings dialog
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/** One consent category as the settings dialog presents it. */
+export interface ConsentCategoryCopy {
+  readonly label: string
+  readonly description: string
+}
+
+/**
+ * Copy for the consent UI, per locale.
+ *
+ * INTERFACE copy, not legal copy — see content/en/consent.ts. The approved Privacy Policy
+ * lives in content/legal/politika-privatnosti.ts and is deliberately outside this system.
+ *
+ * Consumed by CLIENT components, but never imported by one: components/shell/RootShell.tsx
+ * is a server component and resolves this for its own root locale, then passes the single
+ * resolved object into ConsentProvider. That keeps the whole dictionary out of the client
+ * bundle while still giving the consent UI a compile-time-checked contract.
+ */
+export interface ConsentDictionary {
+  readonly banner: {
+    readonly title: string
+    readonly body: string
+    readonly accept: string
+    readonly reject: string
+    readonly settings: string
+    readonly policyLink: string
+  }
+  readonly settings: {
+    readonly title: string
+    readonly intro: string
+    readonly save: string
+    readonly acceptAll: string
+    readonly rejectAll: string
+    /** The dialog's close control. Used as its accessible name, so it is real copy. */
+    readonly close: string
+    /** The badge on the always-enabled category. */
+    readonly alwaysOn: string
+    readonly categories: {
+      readonly necessary: ConsentCategoryCopy
+      readonly analytics: ConsentCategoryCopy
+      readonly marketing: ConsentCategoryCopy
+    }
+  }
+  /**
+   * Where the consent UI's Privacy Policy link goes, per locale.
+   *
+   * Locale-aware by CONSTRUCTION rather than by a conditional at the call site: the banner
+   * and the dialog both read this one field, so a Serbian visitor cannot be sent to the
+   * English document from either of them.
+   */
+  readonly privacyHref: string
+}
+
 /** Every namespace a locale must provide. Add a namespace here and both locales break. */
 export interface Dictionary {
   readonly common: CommonDictionary
@@ -860,6 +922,7 @@ export interface Dictionary {
   readonly projectPulseBrochure: ProjectPulseBrochureDictionary
   readonly projectPulseVideo: ProjectPulseVideoDictionary
   readonly sapStarterPackage: SapStarterPackageDictionary
+  readonly consent: ConsentDictionary
 }
 
 /**
@@ -879,6 +942,7 @@ export const dictionaries = {
     projectPulseBrochure: enProjectPulseBrochure,
     projectPulseVideo: enProjectPulseVideo,
     sapStarterPackage: enSapStarterPackage,
+    consent: enConsent,
   },
   sr: {
     common: srCommon,
@@ -892,6 +956,7 @@ export const dictionaries = {
     projectPulseBrochure: srProjectPulseBrochure,
     projectPulseVideo: srProjectPulseVideo,
     sapStarterPackage: srSapStarterPackage,
+    consent: srConsent,
   },
 } as const satisfies Record<Locale, Dictionary>
 
@@ -918,6 +983,7 @@ export const DICTIONARY_NAMESPACES = [
   'projectPulseBrochure',
   'projectPulseVideo',
   'sapStarterPackage',
+  'consent',
 ] as const
 
 export type DictionaryNamespace = (typeof DICTIONARY_NAMESPACES)[number]

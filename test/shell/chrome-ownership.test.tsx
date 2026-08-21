@@ -16,6 +16,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs"
 import { join } from "node:path"
 import { SiteChrome } from "@/components/shell/SiteChrome"
 import { ConsentProvider } from "@/components/consent/ConsentProvider"
+import { getDictionary } from "@/content/dictionary"
 
 const ROOT = process.cwd()
 
@@ -141,14 +142,16 @@ describe("the shared shell keeps sole ownership of html, body, fonts and consent
   })
 
   test("each consent component is mounted exactly once, and only in the root layout", () => {
-    for (const tag of ["<ConsentProvider>", "<CookieBanner />", "<CookieSettingsDialog />", "<AnalyticsGate />", "<MarketingGate />"]) {
+    // <ConsentProvider carries a `copy` prop now, so match the OPENING TAG rather than the
+    // exact string — the claim under test is "mounted exactly once", not its attributes.
+    for (const tag of ["<ConsentProvider", "<CookieBanner />", "<CookieSettingsDialog />", "<AnalyticsGate />", "<MarketingGate />"]) {
       const re = new RegExp(tag.replace(/[/\\^$*+?.()|[\]{}]/g, "\\$&"), "g")
       expect((rootLayout.match(re) ?? []).length, `${tag} in RootShell.tsx`).toBe(1)
     }
 
     const others = walk(join(ROOT, "app"))
       .filter(isRouteFile)
-      .filter((f) => /<ConsentProvider>|<AnalyticsGate|<MarketingGate|<CookieBanner|<CookieSettingsDialog/.test(stripComments(readFileSync(f, "utf8"))))
+      .filter((f) => /<ConsentProvider|<AnalyticsGate|<MarketingGate|<CookieBanner|<CookieSettingsDialog/.test(stripComments(readFileSync(f, "utf8"))))
     expect(others.map((f) => f.slice(ROOT.length + 1))).toEqual([])
   })
 
@@ -168,7 +171,7 @@ describe("the shared shell keeps sole ownership of html, body, fonts and consent
 describe("footer keeps its consent control inside the shared chrome", () => {
   test("Cookie settings is a real button and reopens the dialog via the provider", () => {
     const { container } = render(
-      <ConsentProvider>
+      <ConsentProvider copy={getDictionary("en").consent}>
         <SiteChrome>x</SiteChrome>
       </ConsentProvider>
     )

@@ -269,10 +269,10 @@ test.describe('privacy policy pages', () => {
       await expect(h1).toHaveCount(1)
       await expect(h1).toHaveText(ownHeading)
 
-      // Scoped to <main>, i.e. the legal document, NOT the whole body. The consent banner is
-      // deliberately BILINGUAL — it carries English and Serbian copy together, including an
-      // English "Privacy Policy" link label — so a body-wide check would report the banner as
-      // a leak of the English legal document. Known and documented in consent-copy.ts.
+      // Scoped to <main>, i.e. the legal DOCUMENT, not the whole page. The consent banner is
+      // localised now, so a body-wide check would pass — but scoping is still what makes this
+      // assertion mean what it says: that the legal document on this URL is this language's,
+      // independent of any surrounding chrome that also mentions a privacy policy.
       const doc = (await page.locator('main').innerText()).replace(/\s+/g, ' ')
       expect(doc).toContain(ownDate)
       // The approved cookie/analytics commitment, in this language.
@@ -294,4 +294,134 @@ test.describe('privacy policy pages', () => {
       await expect(switcher).toHaveCount(1)
     })
   }
+})
+
+test.describe('the consent UI follows the site locale, not the URL', () => {
+  /**
+   * The point of this block is the THIRD group below.
+   *
+   * /grow, /grow/cfo, /grow/ceo and /professional-services are Serbian pages at UNPREFIXED
+   * URLs. Anything that decided locale from `pathname.startsWith('/sr')` would give them an
+   * English cookie banner and send them to the English Privacy Policy, and would still pass
+   * a test suite that only checked / and /sr. So they are checked explicitly, and they are
+   * the reason locale is threaded from the root layout instead of read from the URL.
+   */
+  const EN = {
+    title: 'Cookies on infinus.co',
+    accept: 'Accept',
+    reject: 'Reject',
+    settings: 'Cookie settings',
+    policy: 'Privacy Policy',
+    href: '/privacy',
+    close: 'Close',
+    save: 'Save settings',
+    necessary: 'Necessary',
+    alwaysOn: 'Always on',
+  }
+  const SR = {
+    title: 'Kolačići na infinus.co',
+    accept: 'Prihvati',
+    reject: 'Odbij',
+    settings: 'Podešavanja kolačića',
+    policy: 'Politika privatnosti',
+    href: '/sr/politika-privatnosti',
+    close: 'Zatvori',
+    save: 'Sačuvaj podešavanja',
+    necessary: 'Neophodni',
+    alwaysOn: 'Uvek uključeno',
+  }
+
+  const CASES: ReadonlyArray<{ path: string; copy: typeof EN; other: typeof EN; label: string }> = [
+    // English root.
+    { path: '/', copy: EN, other: SR, label: 'English root' },
+    { path: '/contact', copy: EN, other: SR, label: 'English child' },
+    { path: '/privacy', copy: EN, other: SR, label: 'English legal page' },
+    // Serbian root, /sr-prefixed.
+    { path: '/sr', copy: SR, other: EN, label: 'Serbian root' },
+    { path: '/sr/contact', copy: SR, other: EN, label: 'Serbian child' },
+    { path: '/sr/politika-privatnosti', copy: SR, other: EN, label: 'Serbian legal page' },
+    // Serbian root, UNPREFIXED. The cases that make URL sniffing wrong.
+    { path: '/grow', copy: SR, other: EN, label: 'Serbian legacy, no /sr prefix' },
+    { path: '/grow/cfo', copy: SR, other: EN, label: 'Serbian legacy, no /sr prefix' },
+    { path: '/grow/ceo', copy: SR, other: EN, label: 'Serbian legacy, no /sr prefix' },
+    { path: '/professional-services', copy: SR, other: EN, label: 'Serbian legacy, no /sr prefix' },
+  ]
+
+  for (const { path, copy, other, label } of CASES) {
+    test(`${path} — ${label}: banner copy and privacy destination`, async ({ page }) => {
+      // A fresh context per test is what Playwright already gives us, so the banner shows.
+      await page.goto(path, { waitUntil: 'domcontentloaded' })
+
+      const banner = page.getByTestId('cookie-banner')
+      await expect(banner).toBeVisible()
+      await expect(banner).toContainText(copy.title)
+      await expect(page.getByTestId('cookie-accept')).toHaveText(copy.accept)
+      await expect(page.getByTestId('cookie-reject')).toHaveText(copy.reject)
+      await expect(page.getByTestId('cookie-settings-open')).toHaveText(copy.settings)
+
+      // The destination, from the actual rendered link rather than from a helper.
+      const link = page.getByTestId('cookie-banner-privacy')
+      await expect(link).toHaveText(copy.policy)
+      await expect(link).toHaveAttribute('href', copy.href)
+
+      // And nothing of the other language leaked into this banner.
+      const text = await banner.innerText()
+      expect(text).not.toContain(other.title)
+      expect(text).not.toContain(other.accept)
+      expect(text).not.toContain(other.reject)
+    })
+  }
+
+  for (const { path, copy, label } of [CASES[0], CASES[3], CASES[6]]) {
+    test(`${path} — ${label}: settings dialog is localised, including its own privacy link`, async ({ page }) => {
+      await page.goto(path, { waitUntil: 'domcontentloaded' })
+      await page.getByTestId('cookie-settings-open').click()
+
+      const dialog = page.getByTestId('cookie-settings-dialog')
+      await expect(dialog).toBeVisible()
+      await expect(dialog).toContainText(copy.necessary)
+      await expect(dialog).toContainText(copy.alwaysOn)
+      await expect(page.getByTestId('cookie-settings-save')).toHaveText(copy.save)
+
+      // The close control's accessible name is user-facing copy and must be localised too.
+      await expect(page.getByTestId('cookie-settings-close')).toHaveAttribute('aria-label', copy.close)
+
+      // The dialog exposes its OWN privacy link; it must agree with the banner's.
+      await expect(page.getByTestId('cookie-settings-privacy')).toHaveAttribute('href', copy.href)
+
+      // Localisation must not have pre-ticked anything.
+      await expect(page.locator('#consent-analytics')).not.toBeChecked()
+      await expect(page.locator('#consent-marketing')).not.toBeChecked()
+      await expect(page.locator('#consent-necessary')).toBeChecked()
+      await expect(page.locator('#consent-necessary')).toBeDisabled()
+    })
+  }
+
+  test('the privacy link does not grant consent', async ({ page }) => {
+    // Navigation is not consent. Following the banner's own link must leave the visitor
+    // undecided, so the banner is still there when they come back.
+    await page.goto('/sr', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('cookie-banner')).toBeVisible()
+    await page.getByTestId('cookie-banner-privacy').click()
+    await page.waitForURL((u) => new URL(u).pathname === '/sr/politika-privatnosti')
+    const stored = await page.evaluate(() => document.cookie)
+    expect(stored).not.toContain('infinus_consent')
+    await expect(page.getByTestId('cookie-banner')).toBeVisible()
+  })
+
+  test('a decision made in one locale is honoured in the other', async ({ page }) => {
+    await page.goto('/grow', { waitUntil: 'domcontentloaded' })
+    await page.getByTestId('cookie-accept').click()
+    await expect(page.getByTestId('cookie-banner')).toBeHidden()
+    const before = await page.evaluate(
+      () => (document.cookie.match(/infinus_consent=([^;]*)/) ?? [])[1]
+    )
+    // Cross a root boundary, which is a full document navigation.
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    const after = await page.evaluate(
+      () => (document.cookie.match(/infinus_consent=([^;]*)/) ?? [])[1]
+    )
+    expect(after).toBe(before)
+    await expect(page.getByTestId('cookie-banner')).toBeHidden()
+  })
 })

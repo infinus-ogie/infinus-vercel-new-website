@@ -18,6 +18,8 @@ import { ConsentProvider, useConsent } from "@/components/consent/ConsentProvide
 import { CookieBanner } from "@/components/consent/CookieBanner"
 import { CookieSettingsDialog, CookieSettingsButton } from "@/components/consent/CookieSettingsDialog"
 import { CONSENT_COOKIE, CONSENT_VERSION, buildRecord, serializeConsent } from "@/lib/consent"
+import { getDictionary } from "@/content/dictionary"
+import type { Locale } from "@/lib/i18n"
 
 vi.mock("next/link", () => ({
   default: ({ children, href, ...rest }: { children: React.ReactNode; href: string }) => (
@@ -71,9 +73,9 @@ function GateProbe() {
   )
 }
 
-function mount() {
+function mount(locale: Locale = "en") {
   return render(
-    <ConsentProvider>
+    <ConsentProvider copy={getDictionary(locale).consent}>
       <GateProbe />
       <CookieBanner />
       <CookieSettingsDialog />

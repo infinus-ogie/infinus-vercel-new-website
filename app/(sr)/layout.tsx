@@ -20,5 +20,5 @@ import { rootMetadata } from "@/components/shell/root-metadata"
 export const metadata = rootMetadata
 
 export default function SerbianRootLayout({ children }: { children: React.ReactNode }) {
-  return <RootShell lang="sr-Latn">{children}</RootShell>
+  return <RootShell locale="sr">{children}</RootShell>
 }

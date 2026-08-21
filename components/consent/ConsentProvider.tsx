@@ -10,6 +10,7 @@
  */
 
 import * as React from "react"
+import type { ConsentDictionary } from "@/content/dictionary"
 import {
   type ConsentChoices,
   type ConsentRecord,
@@ -21,6 +22,18 @@ import {
 } from "@/lib/consent"
 
 interface ConsentContextValue {
+  /**
+   * The consent UI's copy for THIS document's locale.
+   *
+   * Resolved on the server by components/shell/RootShell.tsx from the root layout that
+   * rendered it, so it is fixed at build time. Carried on this context because the banner
+   * and the dialog are rendered by RootShell as siblings, not as children of anything that
+   * could pass them props — and because putting it here guarantees both read the same
+   * object, so they can never disagree about which language they are in.
+   *
+   * Copy only. It has no bearing on any decision this provider makes.
+   */
+  copy: ConsentDictionary
   /** False until the cookie has been read on the client. Treat as "no consent". */
   hydrated: boolean
   /** The stored decision, or null when the visitor has not decided yet. */
@@ -56,7 +69,13 @@ export function useConsentOptional(): ConsentContextValue | null {
   return React.useContext(ConsentContext)
 }
 
-export function ConsentProvider({ children }: { children: React.ReactNode }) {
+export function ConsentProvider({
+  copy,
+  children,
+}: {
+  copy: ConsentDictionary
+  children: React.ReactNode
+}) {
   const [hydrated, setHydrated] = React.useState(false)
   const [record, setRecord] = React.useState<ConsentRecord | null>(null)
   const [settingsOpen, setSettingsOpen] = React.useState(false)
@@ -89,6 +108,7 @@ export function ConsentProvider({ children }: { children: React.ReactNode }) {
   const value = React.useMemo<ConsentContextValue>(() => {
     const choices: ConsentChoices = record ?? NO_CONSENT
     return {
+      copy,
       hydrated,
       record,
       analytics: hydrated && choices.analytics === true,
@@ -101,7 +121,7 @@ export function ConsentProvider({ children }: { children: React.ReactNode }) {
       openSettings: () => setSettingsOpen(true),
       closeSettings: () => setSettingsOpen(false),
     }
-  }, [hydrated, record, settingsOpen, commit])
+  }, [copy, hydrated, record, settingsOpen, commit])
 
   return <ConsentContext.Provider value={value}>{children}</ConsentContext.Provider>
 }

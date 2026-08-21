@@ -13,5 +13,5 @@ import { rootMetadata } from "@/components/shell/root-metadata"
 export const metadata = rootMetadata
 
 export default function EnglishRootLayout({ children }: { children: React.ReactNode }) {
-  return <RootShell lang="en">{children}</RootShell>
+  return <RootShell locale="en">{children}</RootShell>
 }

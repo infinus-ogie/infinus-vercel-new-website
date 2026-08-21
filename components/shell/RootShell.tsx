@@ -6,6 +6,8 @@ import { CookieBanner } from "@/components/consent/CookieBanner"
 import { CookieSettingsDialog } from "@/components/consent/CookieSettingsDialog"
 import { AnalyticsGate } from "@/components/consent/AnalyticsGate"
 import { MarketingGate } from "@/components/consent/MarketingGate"
+import { getDictionary } from "@/content/dictionary"
+import { htmlLangFor, type Locale } from "@/lib/i18n"
 
 /**
  * The one and only HTML document shell.
@@ -19,6 +21,22 @@ import { MarketingGate } from "@/components/consent/MarketingGate"
  * A SERVER component. It must never become a client component: <html>/<body> ownership
  * has to stay on the server, and nothing here reads request state (no next/headers), so
  * every route remains statically prerendered.
+ *
+ * ── This is where the site's locale is decided ───────────────────────────────────
+ * `locale` comes from which ROOT LAYOUT rendered this, i.e. from the file's position in the
+ * tree — app/(en)/layout.tsx passes "en", app/(sr)/layout.tsx passes "sr". It is fixed at
+ * BUILD time and involves no request state whatsoever.
+ *
+ * That matters for more than the `lang` attribute. It is also the source of truth for which
+ * language the consent UI speaks, and it is the only correct one: four Serbian pages live at
+ * UNPREFIXED URLs — /grow, /grow/cfo, /grow/ceo, /professional-services — so deciding locale
+ * from `pathname.startsWith("/sr")` would serve them an English cookie banner and send them
+ * to the English Privacy Policy. Root position knows they are Serbian; the URL does not.
+ *
+ * The consent copy is resolved HERE, on the server, and passed down as a plain object. The
+ * consent components are client components, so importing content/dictionary.ts into them
+ * would pull all twelve namespaces into the client bundle for every page. This way only the
+ * active locale's consent strings cross into the client.
  *
  * Fonts are declared once, in this module. Both roots therefore share the same font
  * instances and the same CSS variables — no duplicate loading, no fallback change.
@@ -38,13 +56,20 @@ const ibmPlexSans = IBM_Plex_Sans({
 })
 
 export function RootShell({
-  lang,
+  locale,
   children,
 }: {
-  /** BCP-47 tag for this document root: "en" or "sr-Latn". The only per-root difference. */
-  lang: string
+  /**
+   * Which document root this is. The ONE per-root difference, and the source of truth for
+   * both the `lang` attribute and the consent UI's language — see the note above.
+   */
+  locale: Locale
   children: React.ReactNode
 }) {
+  // "en" / "sr-Latn", from the locale model rather than a literal repeated in each layout.
+  const lang = htmlLangFor(locale)
+  const consentCopy = getDictionary(locale).consent
+
   return (
     <html lang={lang} className="scroll-smooth">
       <head>
@@ -59,14 +84,16 @@ export function RootShell({
             components/consent/AnalyticsGate.tsx. */}
       </head>
       <body className={`${inter.variable} ${ibmPlexSans.variable} font-sans`}>
-        <ConsentProvider>
+        <ConsentProvider copy={consentCopy}>
           {children}
           <Toaster position="top-right" richColors />
 
-          {/* Consent UI. Exactly once per document, in both locale roots, so the Phase C
-              behaviour is identical whichever root a visitor lands on. The decision lives
-              in a first-party cookie, so it survives the full document navigation that
-              Next.js performs when crossing between root layouts. */}
+          {/* Consent UI. Exactly once per document, in both locale roots, so the behaviour
+              is identical whichever root a visitor lands on — ONE banner implementation and
+              ONE dialog implementation, differing only in the copy handed to them above.
+              The decision lives in a first-party cookie, so it survives the full document
+              navigation that Next.js performs when crossing between root layouts, and
+              switching language never re-prompts. */}
           <CookieBanner />
           <CookieSettingsDialog />
 

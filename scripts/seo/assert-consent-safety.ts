@@ -158,7 +158,9 @@ main(() => {
       'RootShell.tsx must render exactly one <html> and one <body>'
     )
     report.check(!src.trimStart().startsWith('"use client"'), 'RootShell.tsx must stay a server component')
-    for (const tag of ['<ConsentProvider>', '<AnalyticsGate />', '<MarketingGate />', '<CookieBanner />', '<CookieSettingsDialog />']) {
+    // '<ConsentProvider' without the '>': it takes a `copy` prop now. The claim is "mounted
+    // exactly once", which is about the count, not the attributes.
+    for (const tag of ['<ConsentProvider', '<AnalyticsGate />', '<MarketingGate />', '<CookieBanner />', '<CookieSettingsDialog />']) {
       report.check(
         (src.match(new RegExp(tag.replace(/[/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g')) ?? []).length === 1,
         `RootShell.tsx must mount ${tag} exactly once`
@@ -166,9 +168,15 @@ main(() => {
     }
   }
 
-  // The locale roots themselves may only differ by `lang`: no vendor scripts, no second
+  // The locale roots themselves may only differ by `locale`: no vendor scripts, no second
   // consent mount, no <html>/<body> of their own, no duplicate font declaration.
-  const langs: Record<string, string> = { 'app/(en)/layout.tsx': 'en', 'app/(sr)/layout.tsx': 'sr-Latn' }
+  //
+  // They pass `locale`, not `lang`. RootShell derives the BCP-47 tag from it via
+  // htmlLangFor(), so 'sr-Latn' appears once in lib/i18n.ts instead of once per root — and
+  // the same value decides which language the consent UI speaks. That second use is why this
+  // prop is worth asserting: getting it wrong would give the four UNPREFIXED Serbian pages
+  // an English cookie banner, which no URL-based check would notice.
+  const locales: Record<string, string> = { 'app/(en)/layout.tsx': 'en', 'app/(sr)/layout.tsx': 'sr' }
   for (const root of roots) {
     if (!fs.existsSync(root)) continue
     const rel = path.relative(paths.projectRoot, root)
@@ -179,12 +187,16 @@ main(() => {
     report.check(!/<html\b|<body\b/.test(src), `${rel} must not render its own <html>/<body> — that belongs to RootShell`)
     report.check(!/next\/font/.test(src), `${rel} must not declare fonts — RootShell owns them, so the roots cannot drift`)
     report.check(
-      !/<ConsentProvider>|<AnalyticsGate|<MarketingGate|<CookieBanner|<CookieSettingsDialog/.test(src),
+      !/<ConsentProvider|<AnalyticsGate|<MarketingGate|<CookieBanner|<CookieSettingsDialog/.test(src),
       `${rel} must not mount consent components — RootShell owns them`
     )
     report.check(
-      src.includes(`lang="${langs[rel]}"`),
-      `${rel} must pass lang="${langs[rel]}" to RootShell`
+      src.includes(`locale="${locales[rel]}"`),
+      `${rel} must pass locale="${locales[rel]}" to RootShell`
+    )
+    report.check(
+      !/lang="/.test(src),
+      `${rel} must not hardcode a lang attribute — RootShell derives it from the locale`
     )
   }
 

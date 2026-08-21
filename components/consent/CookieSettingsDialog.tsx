@@ -7,12 +7,15 @@
  * Necessary is rendered as a disabled, checked control: always on, never toggleable.
  * Analytics and marketing start from the stored decision, or from OFF when there is no
  * decision yet — never pre-ticked.
+ *
+ * All copy, including the close control's accessible name and the always-on badge, comes
+ * from the consent context, which RootShell filled from the root layout that rendered the
+ * document. ONE dialog implementation for both languages; no locale conditional in here.
  */
 
 import * as React from "react"
 import Link from "next/link"
 import { useConsent, useConsentOptional } from "./ConsentProvider"
-import { consentCopy, PRIVACY_POLICY_PATH } from "./consent-copy"
 
 const PRIMARY =
   "inline-flex h-11 items-center justify-center rounded-lg border border-slate-900 bg-slate-900 px-5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900"
@@ -109,7 +112,7 @@ function CategoryRow({
 }
 
 export function CookieSettingsDialog() {
-  const { settingsOpen, closeSettings, record, save, hydrated } = useConsent()
+  const { copy, settingsOpen, closeSettings, record, save, hydrated } = useConsent()
   const [analytics, setAnalytics] = React.useState(false)
   const [marketing, setMarketing] = React.useState(false)
 
@@ -132,7 +135,7 @@ export function CookieSettingsDialog() {
 
   if (!hydrated || !settingsOpen) return null
 
-  const c = consentCopy.settings
+  const c = copy.settings
 
   return (
     <div
@@ -195,10 +198,11 @@ export function CookieSettingsDialog() {
 
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <Link
-            href={PRIVACY_POLICY_PATH}
+            href={copy.privacyHref}
             className="text-xs text-slate-500 underline underline-offset-2 hover:text-slate-800"
+            data-testid="cookie-settings-privacy"
           >
-            {consentCopy.banner.policyLink}
+            {copy.banner.policyLink}
           </Link>
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
@@ -242,18 +246,18 @@ export function CookieSettingsDialog() {
 /**
  * The control that reopens the consent dialog.
  *
- * Phase H1 added an optional `label` so the shared Footer can render it in the page's
- * locale. It DEFAULTS to `consentCopy.settings.title`, so every existing call site and the
- * English footer are unchanged, and nothing about consent behaviour, storage, the dialog or
- * the banner is touched — the dialog itself deliberately stays as Phase C left it.
+ * `label` stays optional. The shared Footer passes its own locale's label (from the footer
+ * dictionary), which is every real call site. When it is omitted the label now falls back to
+ * the consent context's own `settings.title` — i.e. to THIS document's locale — rather than
+ * to a hardcoded English constant, so a caller that forgets the prop no longer produces an
+ * English control on a Serbian page.
+ *
+ * Still uses the OPTIONAL hook, because the footer is also mounted outside the provider by
+ * existing unit tests. Without a provider there is no locale to resolve, so the label falls
+ * back to the empty string and the control renders inert — markup identical, behaviour none,
+ * exactly as before.
  */
-export function CookieSettingsButton({
-  className,
-  label = consentCopy.settings.title,
-}: {
-  className?: string
-  label?: string
-}) {
+export function CookieSettingsButton({ className, label }: { className?: string; label?: string }) {
   const consent = useConsentOptional()
   return (
     <button
@@ -262,7 +266,7 @@ export function CookieSettingsButton({
       className={className}
       data-testid="cookie-settings-reopen"
     >
-      {label}
+      {label ?? consent?.copy.settings.title ?? ""}
     </button>
   )
 }

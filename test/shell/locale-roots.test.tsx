@@ -61,7 +61,10 @@ describe("exactly two root layouts, and no third", () => {
   test("only the two locale roots render a document, via the shared shell", () => {
     for (const rel of [EN_ROOT, SR_ROOT]) {
       const src = readFileSync(join(ROOT, rel), "utf8")
-      expect(src, `${rel} must delegate to RootShell`).toMatch(/<RootShell\s+lang=/)
+      // `locale`, not `lang`: RootShell derives the BCP-47 tag from the locale now, so the
+      // literal appears once in lib/i18n.ts instead of once per root layout. It is also the
+      // value the consent UI is localised from, which is why the prop matters here.
+      expect(src, `${rel} must delegate to RootShell`).toMatch(/<RootShell\s+locale=/)
     }
     const shell = readFileSync(join(ROOT, "components/shell/RootShell.tsx"), "utf8")
     // Comments legitimately mention these tags, so match code only.
