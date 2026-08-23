@@ -21,7 +21,10 @@
     "seo:assert-consent": "tsx scripts/seo/assert-consent-safety.ts",
     "seo:assert-i18n": "tsx scripts/seo/assert-i18n-routes.ts",
     "seo:check": "npm run seo:assert-build && npm run seo:assert-sitemap && npm run seo:assert-redirects && npm run seo:assert-consent && npm run seo:assert-i18n && npm run seo:snapshot-head",
-    "test:consent": "playwright test --config=playwright.consent.config.ts"
+    "test:consent": "playwright test --config=playwright.consent.config.ts",
+    "qa:viewports": "node scripts/qa/viewport-audit.mjs",
+    "qa:links": "node scripts/qa/link-and-locale-audit.mjs",
+    "qa:client-feedback": "npm run qa:viewports && npm run qa:links"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -17,6 +17,7 @@ const HEIGHT = 568 // the shortest realistic phone, paired with 320
 const PAGES = [
   '/', '/sr',
   '/careers', '/sr/careers',
+  '/insights/sap-mythbusters', '/sr/insights/sap-mythbusters',
   '/contact', '/sr/contact',
   '/grow', '/sr/grow',
   '/professional-services', '/sr/professional-services',
