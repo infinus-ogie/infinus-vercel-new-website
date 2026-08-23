@@ -17,7 +17,10 @@ export function HeroPartnerBadge({ logoAlt = "Infinus" }: { logoAlt?: string }) 
       <img
         src="/infinus-logo-pack/infinus-logo-05.png"
         alt={logoAlt}
-        className="h-20 w-auto sm:h-24 shrink-0"
+        // Stepped down at the smallest widths so the CTA and the SAP Gold Partner badge
+        // below it both reach the first screen at 320x568. Unchanged from `md` up, where
+        // the approved composition had room already.
+        className="h-12 w-auto sm:h-16 md:h-20 lg:h-24 shrink-0"
       />
     </div>
   );

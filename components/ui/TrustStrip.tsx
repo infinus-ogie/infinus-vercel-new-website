@@ -16,7 +16,7 @@ export function TrustStrip({ trust }: { trust: HomeDictionary["trust"] }) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18 }}
       viewport={{ once: true, amount: 0.2 }}
-      className="flex justify-center mt-8"
+      className="flex justify-center mt-5 md:mt-8"
     >
       <StatPills variant="dark" trust={trust} />
     </motion.div>

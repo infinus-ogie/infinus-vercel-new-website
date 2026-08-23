@@ -31,7 +31,9 @@ function expertiseTrigger() {
 }
 
 describe('the dropdown triggers announce themselves', () => {
-  beforeEach(() => renderBar())
+  beforeEach(() => {
+    renderBar()
+  })
 
   test('each group trigger has aria-haspopup and starts collapsed', () => {
     for (const name of [/^company$/i, /^expertise$/i, /^insights$/i]) {

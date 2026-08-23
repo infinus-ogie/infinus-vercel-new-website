@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { HeroPartnerBadge } from "./HeroPartnerBadge";
+import { SapGoldPartnerBadge } from "./SapGoldPartnerBadge";
 import { TrustStrip } from "./TrustStrip";
 import { getDictionary } from "@/content/dictionary";
 import type { HomeDictionary } from "@/content/dictionary";
@@ -167,7 +168,7 @@ function HeroGeometric({
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
-                        className="mb-8 md:mb-12 mt-2 md:mt-4 lg:mt-6"
+                        className="mb-4 md:mb-12 mt-2 md:mt-4 lg:mt-6"
                     >
                         <HeroPartnerBadge logoAlt={hero.logoAlt} />
                     </motion.div>
@@ -178,7 +179,7 @@ function HeroGeometric({
                         initial="hidden"
                         animate="visible"
                     >
-                        <h1 className="text-center font-light leading-tight tracking-tight text-[42px] md:text-[56px] lg:text-[64px] xl:text-[72px] mb-6 md:mb-8">
+                        <h1 className="text-center font-light leading-tight tracking-tight text-[34px] sm:text-[42px] md:text-[56px] lg:text-[64px] xl:text-[72px] mb-4 md:mb-8">
                             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
                                 {hero.titleLine1}
                             </span>
@@ -220,8 +221,22 @@ function HeroGeometric({
                         </Button>
                     </motion.div>
 
+                    {/* The SAP Gold Partner certification, on the first screen where the
+                        client asked for it: directly above the trust pills, one of which
+                        names the same certification in words — which is why the image is
+                        decorative rather than announced twice. */}
                     <motion.div
                         custom={4}
+                        variants={fadeUpVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="mt-5 md:mt-8 flex justify-center"
+                    >
+                        <SapGoldPartnerBadge />
+                    </motion.div>
+
+                    <motion.div
+                        custom={5}
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
