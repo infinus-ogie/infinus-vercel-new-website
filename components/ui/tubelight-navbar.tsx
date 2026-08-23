@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -9,6 +9,10 @@ import { cn } from "@/lib/utils"
 import { navbarSurfaceFor, navbarTextColorFor } from "@/lib/navbar-surface"
 
 import { submenuLinks, type NavItem } from "@/components/ui/nav-items"
+
+/** A stable DOM id fragment for a menu label, so aria-controls can point at its panel. */
+const slugify = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
 
 interface NavBarProps {
   items: NavItem[]
@@ -26,6 +30,110 @@ export function NavBar({ items, className }: NavBarProps) {
   const [textColor, setTextColor] = useState(() => navbarTextColorFor(surface))
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // ── Keyboard support for the dropdowns ────────────────────────────────────────
+  // The dropdowns used to open on `onMouseEnter` and nothing else: no way to open one from
+  // the keyboard, no aria-expanded, no aria-haspopup, and no way to close one once open.
+  // A keyboard or screen-reader user simply could not reach seven of the site's pages.
+  //
+  // The pattern implemented here is a DISCLOSURE, not an ARIA menu: a button that toggles a
+  // container of ordinary links. That is deliberate. `role="menu"` obliges roving tabindex
+  // and takes the links out of the normal tab order, which is the wrong model for site
+  // navigation and easy to implement subtly wrong. Links stay links.
+  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const menuRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  /**
+   * Where to put focus once a menu has actually rendered.
+   *
+   * Opening and focusing cannot happen in one go: the panel is conditionally rendered, so at
+   * the moment the trigger handler runs there is nothing to focus yet. This records the
+   * intent and an effect carries it out after the render that creates the panel.
+   */
+  const [pendingFocus, setPendingFocus] = useState<{ name: string; index: number } | null>(null)
+
+  /** The real links inside one open dropdown, in document order. Headings have none. */
+  const menuLinksOf = useCallback((name: string): HTMLAnchorElement[] => {
+    const node = menuRefs.current[name]
+    if (!node) return []
+    return Array.from(node.querySelectorAll<HTMLAnchorElement>("a[href]"))
+  }, [])
+
+  /** Focus the nth link, wrapping at both ends. Negative indexes count from the end. */
+  const focusMenuLink = useCallback(
+    (name: string, index: number) => {
+      const links = menuLinksOf(name)
+      if (links.length === 0) return
+      links[((index % links.length) + links.length) % links.length].focus()
+    },
+    [menuLinksOf]
+  )
+
+  useEffect(() => {
+    if (!pendingFocus || openSubmenu !== pendingFocus.name) return
+    focusMenuLink(pendingFocus.name, pendingFocus.index)
+    setPendingFocus(null)
+  }, [openSubmenu, pendingFocus, focusMenuLink])
+
+  const openWithFocus = (name: string, index: number) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout)
+      setHoverTimeout(null)
+    }
+    setOpenSubmenu(name)
+    setPendingFocus({ name, index })
+  }
+
+  /** Close and hand focus back to the trigger, so Escape never strands the caret. */
+  const closeSubmenu = (name: string, returnFocus = true) => {
+    setOpenSubmenu((prev) => (prev === name ? null : prev))
+    if (returnFocus) triggerRefs.current[name]?.focus()
+  }
+
+  const onTriggerKeyDown = (event: React.KeyboardEvent, name: string) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault()
+      openWithFocus(name, 0)
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault()
+      openWithFocus(name, -1)
+    } else if (event.key === "Escape" && openSubmenu === name) {
+      event.preventDefault()
+      closeSubmenu(name)
+    }
+    // Enter and Space are left alone: this is a <button>, so the browser fires onClick for
+    // both already, and calling preventDefault here would break that.
+  }
+
+  const onMenuKeyDown = (event: React.KeyboardEvent, name: string) => {
+    const links = menuLinksOf(name)
+    const current = links.indexOf(document.activeElement as HTMLAnchorElement)
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault()
+      focusMenuLink(name, current + 1)
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault()
+      focusMenuLink(name, current - 1)
+    } else if (event.key === "Home") {
+      event.preventDefault()
+      focusMenuLink(name, 0)
+    } else if (event.key === "End") {
+      event.preventDefault()
+      focusMenuLink(name, -1)
+    } else if (event.key === "Escape") {
+      event.preventDefault()
+      closeSubmenu(name)
+    }
+    // Tab is deliberately NOT trapped. It moves on to the next control and the blur handler
+    // below closes the menu — no keyboard trap, and the language switcher after the bar
+    // stays reachable.
+  }
+
+  /** Close when focus leaves the trigger + panel entirely, which is what makes Tab safe. */
+  const onGroupBlur = (event: React.FocusEvent<HTMLDivElement>, name: string) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
+    setOpenSubmenu((prev) => (prev === name ? null : prev))
+  }
 
   const handleMouseEnter = (itemName: string) => {
     // Clear any existing timeout
@@ -153,6 +261,17 @@ export function NavBar({ items, className }: NavBarProps) {
     }
   }, [hoverTimeout])
 
+  /**
+   * A visible focus indicator that survives both navbar treatments.
+   *
+   * The bar is transparent over a dark hero and white once scrolled, so a single ring colour
+   * is invisible in one of the two states. This picks per treatment.
+   */
+  const focusRing =
+    textColor === "text-white/90"
+      ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00144a]"
+      : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+
   return (
     <div
       data-navbar
@@ -173,19 +292,32 @@ export function NavBar({ items, className }: NavBarProps) {
           const hasSubmenu = item.submenu && item.submenu.length > 0
 
           return (
-            <div 
-              key={item.name} 
+            <div
+              key={item.name}
               className="relative"
               onMouseEnter={() => hasSubmenu && handleContainerMouseEnter(item.name)}
               onMouseLeave={() => hasSubmenu && handleContainerMouseLeave()}
+              onBlur={hasSubmenu ? (event) => onGroupBlur(event, item.name) : undefined}
             >
               {hasSubmenu ? (
                 <button
+                  type="button"
+                  ref={(node) => {
+                    triggerRefs.current[item.name] = node
+                  }}
+                  aria-haspopup="true"
+                  aria-expanded={openSubmenu === item.name}
+                  aria-controls={`navbar-submenu-${slugify(item.name)}`}
                   onClick={() => {
                     setActiveTab(item.name)
+                    // Click now TOGGLES. It used to only set the active tab, which meant a
+                    // pointer user who clicked instead of hovering got no menu at all.
+                    setOpenSubmenu((prev) => (prev === item.name ? null : item.name))
                   }}
+                  onKeyDown={(event) => onTriggerKeyDown(event, item.name)}
                   className={cn(
                     "relative cursor-pointer text-sm font-semibold px-3 py-2 rounded-full transition-colors flex items-center gap-1 whitespace-nowrap",
+                    focusRing,
                     textColor,
                     textColor === 'text-white/90' 
                       ? "hover:text-white hover:bg-white/10" 
@@ -217,6 +349,7 @@ export function NavBar({ items, className }: NavBarProps) {
                   }}
                   className={cn(
                     "relative cursor-pointer text-sm font-semibold px-3 py-2 rounded-full transition-colors flex items-center gap-1 whitespace-nowrap",
+                    focusRing,
                     textColor,
                     textColor === 'text-white/90' 
                       ? "hover:text-white hover:bg-white/10" 
@@ -231,6 +364,12 @@ export function NavBar({ items, className }: NavBarProps) {
               {/* Desktop Submenu */}
               {hasSubmenu && openSubmenu === item.name && (
                 <motion.div
+                  id={`navbar-submenu-${slugify(item.name)}`}
+                  ref={(node) => {
+                    menuRefs.current[item.name] = node
+                  }}
+                  aria-label={item.name}
+                  onKeyDown={(event) => onMenuKeyDown(event, item.name)}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -262,6 +401,7 @@ export function NavBar({ items, className }: NavBarProps) {
                               onClick={() => closeAfterNavigate(item.name, subItem.url)}
                               className={cn(
                                 "block rounded-md pl-6 pr-4 py-2 text-sm transition-colors",
+                                focusRing,
                                 textColor === 'text-white/90'
                                   ? "text-white/90 hover:text-white hover:bg-white/10"
                                   : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
@@ -278,6 +418,7 @@ export function NavBar({ items, className }: NavBarProps) {
                           onClick={() => closeAfterNavigate(item.name, entry.url)}
                           className={cn(
                             "block rounded-md px-4 py-2.5 text-sm transition-colors",
+                            focusRing,
                             textColor === 'text-white/90'
                               ? "text-white/90 hover:text-white hover:bg-white/10"
                               : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"

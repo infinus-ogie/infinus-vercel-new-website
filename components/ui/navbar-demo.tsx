@@ -7,12 +7,16 @@ import { LocaleSwitcherNav } from "@/components/i18n/LocaleSwitcherNav"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { navbarSurfaceFor, navbarTextColorFor } from "@/lib/navbar-surface"
 import { chromeLocaleFor } from "@/lib/chrome-locale"
 import { getDictionary } from "@/content/dictionary"
+
+/** Matches the desktop bar's helper, so aria-controls ids are formed the same way. */
+const slugify = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
 
 export function NavBarDemo() {
   const pathname = usePathname()
@@ -40,18 +44,36 @@ export function NavBarDemo() {
   ]
   const navItems = navItemsFor(nav).map((item, i) => ({ ...item, icon: icons[i] }))
 
+  // The hamburger, so focus can be handed back to it when the panel closes. Without this,
+  // dismissing the menu with Escape leaves the caret nowhere and a keyboard user has to tab
+  // in from the top of the document again.
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null)
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
-  const closeMobileMenu = () => {
+  const closeMobileMenu = ({ returnFocus = false } = {}) => {
     setIsMobileMenuOpen(false)
     setOpenSubmenu(null)
+    if (returnFocus) menuButtonRef.current?.focus()
   }
 
   const toggleSubmenu = (itemName: string) => {
     setOpenSubmenu(openSubmenu === itemName ? null : itemName)
   }
+
+  // Escape closes the panel from anywhere inside it. Bound at the document rather than on
+  // the panel so it works no matter which control currently holds focus.
+  useEffect(() => {
+    if (!isMobileMenuOpen) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeMobileMenu({ returnFocus: true })
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobileMenuOpen])
 
   useEffect(() => {
     // Light-surface pages: the dark-text treatment applies from the top, at every scroll
@@ -132,7 +154,12 @@ export function NavBarDemo() {
 
             {/* Hamburger Menu - Right */}
             <button
+              type="button"
+              ref={menuButtonRef}
               onClick={toggleMobileMenu}
+              aria-label={nav.menuLabel}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu-panel"
               className={cn(
                 "flex items-center justify-center w-12 h-12 rounded-full backdrop-blur-lg border transition-colors",
                 textColor === 'text-white/90' 
@@ -151,16 +178,20 @@ export function NavBarDemo() {
             {/* Backdrop */}
             <div 
               className="fixed inset-0 bg-black/20 backdrop-blur-sm"
-              onClick={closeMobileMenu}
+              onClick={() => closeMobileMenu()}
             />
             
             {/* Menu Panel */}
             <motion.div
+              id="mobile-menu-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-label={nav.menuLabel}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className={cn(
-                "fixed top-4 right-4 w-80 max-w-[calc(100vw-2rem)] rounded-lg shadow-lg border backdrop-blur-lg",
+                "fixed top-4 right-4 w-80 max-w-[calc(100vw-2rem)] rounded-lg shadow-lg border backdrop-blur-lg max-h-[calc(100vh-2rem)] overflow-y-auto",
                 textColor === 'text-white/90' 
                   ? "bg-black/80 border-white/20" 
                   : "bg-white/95 border-slate-700"
@@ -175,7 +206,9 @@ export function NavBarDemo() {
                     {nav.menuLabel}
                   </h2>
                   <button
-                    onClick={closeMobileMenu}
+                    type="button"
+                    onClick={() => closeMobileMenu({ returnFocus: true })}
+                    aria-label={nav.menuLabel}
                     className={cn(
                       "p-2 rounded-full transition-colors",
                       textColor === 'text-white/90' 
@@ -196,7 +229,10 @@ export function NavBarDemo() {
                         {hasSubmenu ? (
                           <div>
                             <button
+                              type="button"
                               onClick={() => toggleSubmenu(item.name)}
+                              aria-expanded={openSubmenu === item.name}
+                              aria-controls={`mobile-submenu-${slugify(item.name)}`}
                               className={cn(
                                 "w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors text-left",
                                 textColor === 'text-white/90' 
@@ -222,6 +258,7 @@ export function NavBarDemo() {
                             {/* Mobile Submenu */}
                             {openSubmenu === item.name && (
                               <motion.div
+                                id={`mobile-submenu-${slugify(item.name)}`}
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: "auto" }}
                                 exit={{ opacity: 0, height: 0 }}
@@ -244,7 +281,7 @@ export function NavBarDemo() {
                                         <Link
                                           key={subItem.name}
                                           href={subItem.url}
-                                          onClick={closeMobileMenu}
+                                          onClick={() => closeMobileMenu()}
                                           className={cn(
                                             "block pl-6 pr-4 py-2 rounded-lg transition-colors text-sm",
                                             textColor === 'text-white/90'
@@ -260,7 +297,7 @@ export function NavBarDemo() {
                                     <Link
                                       key={entry.name}
                                       href={entry.url}
-                                      onClick={closeMobileMenu}
+                                      onClick={() => closeMobileMenu()}
                                       className={cn(
                                         "block px-4 py-2 rounded-lg transition-colors text-sm",
                                         textColor === 'text-white/90'
@@ -278,7 +315,7 @@ export function NavBarDemo() {
                         ) : (
                           <Link
                             href={item.url}
-                            onClick={closeMobileMenu}
+                            onClick={() => closeMobileMenu()}
                             className={cn(
                               "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
                               textColor === 'text-white/90' 
