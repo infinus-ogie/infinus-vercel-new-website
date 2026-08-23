@@ -393,6 +393,8 @@ export const ROUTES: readonly RouteExpectation[] = [
   // ── 4 API route handlers ─────────────────────────────────────────────────────
   handler('/api/contact', 'handler-api'),
   handler('/api/join-team', 'handler-api'),
+  // The SAP MythBusting e-book lead endpoint.
+  handler('/api/ebook', 'handler-api'),
   handler('/api/upload', 'handler-api'),
   handler('/api/projectpulse/pdf', 'handler-api'),
 ]
@@ -450,7 +452,7 @@ export const EXPECTED_COUNTS = {
   internal: 4,
   framework: 1,
   utilityHandlers: 4,
-  apiHandlers: 4,
+  apiHandlers: 5,
   /**
    * Page routes in app-path-routes-manifest.json (excludes _not-found).
    * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so the
@@ -463,9 +465,9 @@ export const EXPECTED_COUNTS = {
    */
   manifestPages: 43,
   /** route handlers in app-path-routes-manifest.json */
-  manifestHandlers: 8,
-  /** total manifest entries: 43 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 52,
+  manifestHandlers: 9,
+  /** total manifest entries: 43 pages + 9 handlers + 1 _not-found */
+  manifestTotal: 53,
   /**
    * Rendered .html files: 43 built pages + _not-found. /politika-privatnosti is in the
    * fixture as a redirect source but produces no HTML, so it is NOT counted here.

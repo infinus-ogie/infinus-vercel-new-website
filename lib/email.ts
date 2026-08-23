@@ -185,6 +185,79 @@ This email was sent from the Infinus website job application form.
 Reply directly to this email to respond to ${data.name}.
     `
   })
+  ,
+
+  /**
+   * The SAP MythBusting e-book lead.
+   *
+   * Four fields plus attribution — deliberately NOT routed through the contact template.
+   * An e-book download and a sales enquiry are different events, and giving them the same
+   * subject line would make the shared inbox harder to work with, not easier.
+   *
+   * The e-book itself is NOT attached. It is 13MB, it is publicly downloadable from the
+   * page the visitor is already on, and attaching it to every internal notification would
+   * be 13MB per lead delivered to the wrong recipient.
+   */
+  ebookLead: (data: {
+    name: string
+    email: string
+    company: string
+    role?: string
+    locale?: string
+    utm_source?: string
+    utm_medium?: string
+    utm_campaign?: string
+  }) => ({
+    subject: `E-Book Download: ${data.company}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #2563eb;">New E-Book Download</h2>
+        <p style="color: #6b7280;">10 Myths About SAP Cloud ERP</p>
+
+        <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #1e40af; margin-top: 0;">Lead Details</h3>
+          <p><strong>Full Name:</strong> ${data.name}</p>
+          <p><strong>Business Email:</strong> ${data.email}</p>
+          <p><strong>Company:</strong> ${data.company}</p>
+          ${data.role ? `<p><strong>Role or Job Title:</strong> ${data.role}</p>` : ''}
+          ${data.locale ? `<p><strong>Page language:</strong> ${data.locale}</p>` : ''}
+        </div>
+
+        ${(data.utm_source || data.utm_medium || data.utm_campaign) ? `
+        <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #1e40af; margin-top: 0;">UTM Tracking</h3>
+          ${data.utm_source ? `<p><strong>Source:</strong> ${data.utm_source}</p>` : ''}
+          ${data.utm_medium ? `<p><strong>Medium:</strong> ${data.utm_medium}</p>` : ''}
+          ${data.utm_campaign ? `<p><strong>Campaign:</strong> ${data.utm_campaign}</p>` : ''}
+        </div>
+        ` : ''}
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
+          <p>This email was sent from the SAP MythBusting e-book landing page.</p>
+          <p>Reply directly to this email to respond to ${data.name}.</p>
+        </div>
+      </div>
+    `,
+    text: `
+New E-Book Download — 10 Myths About SAP Cloud ERP
+
+Lead Details:
+- Full Name: ${data.name}
+- Business Email: ${data.email}
+- Company: ${data.company}
+${data.role ? `- Role or Job Title: ${data.role}` : ''}
+${data.locale ? `- Page language: ${data.locale}` : ''}
+${(data.utm_source || data.utm_medium || data.utm_campaign) ? `
+UTM Tracking:
+${data.utm_source ? `- Source: ${data.utm_source}` : ''}
+${data.utm_medium ? `- Medium: ${data.utm_medium}` : ''}
+${data.utm_campaign ? `- Campaign: ${data.utm_campaign}` : ''}
+` : ''}
+
+This email was sent from the SAP MythBusting e-book landing page.
+Reply directly to this email to respond to ${data.name}.
+    `
+  })
 }
 
 // Send email function
@@ -342,5 +415,37 @@ export async function sendJoinTeamEmail(data: {
     template.text,
     data.email,
     attachments
+  )
+}
+
+/**
+ * Send the e-book lead notification.
+ *
+ * EMAIL ONLY. There is no CRM, no database and no third-party form backend in this project,
+ * and none was added: the owner's decision for this phase is that the notification IS the
+ * record of the lead. Worth stating plainly rather than leaving implicit — if this send
+ * fails, the lead is gone.
+ *
+ * Reuses sendEmail() and RECIPIENT_EMAILS, so delivery behaves exactly like the contact and
+ * job-application forms and there is one mail path on the site, not three.
+ */
+export async function sendEbookLeadEmail(data: {
+  name: string
+  email: string
+  company: string
+  role?: string
+  locale?: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+}) {
+  const template = emailTemplates.ebookLead(data)
+
+  return await sendEmail(
+    RECIPIENT_EMAILS.join(', '),
+    template.subject,
+    template.html,
+    template.text,
+    data.email
   )
 }
