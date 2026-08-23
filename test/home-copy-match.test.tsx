@@ -43,6 +43,15 @@ describe('Homepage copy', () => {
     expect(screen.getAllByText(/sap gold partner/i).length).toBeGreaterThan(0)
   })
 
+  test('hero offers a first-screen call to action pointing at Contact', () => {
+    render(<HomePage />)
+
+    // The English half of the pair. Its destination is locale-owned copy, so the Serbian
+    // homepage renders the same control pointing at /sr/contact — asserted in
+    // test/i18n/h1-copy.test.ts rather than here, where only English is rendered.
+    expect(screen.getByRole('link', { name: /^contact us$/i })).toHaveAttribute('href', '/contact')
+  })
+
   test('section headings are present and unchanged', () => {
     render(<HomePage />)
 

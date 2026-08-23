@@ -107,6 +107,15 @@ describe('the copy decisions approved as first drafted', () => {
     ])
   })
 
+  test('the hero CTA is Serbian copy pointing at the Serbian Contact page', () => {
+    // The failure this guards is a translated label wired to an English URL — a Serbian
+    // visitor clicking "Kontaktirajte nas" and landing on /contact.
+    expect(sr.home.hero.ctaLabel).toBe('Kontaktirajte nas')
+    expect(sr.home.hero.ctaHref).toBe('/sr/contact')
+    expect(en.home.hero.ctaLabel).toBe('Contact Us')
+    expect(en.home.hero.ctaHref).toBe('/contact')
+  })
+
   test('section headings and footer labels', () => {
     expect(sr.home.services.heading).toBe('SAP ekspertiza u praksi')
     expect(sr.home.benefits.heading).toBe('Zašto Infinus')

@@ -236,6 +236,16 @@ export interface HomeDictionary {
     readonly lede: string
     /** alt/aria for the Infinus logo badge. */
     readonly logoAlt: string
+    /**
+     * The first-screen call to action, added at the client's request.
+     *
+     * `ctaHref` is LOCALE-OWNED, like every other destination in this file: English points
+     * at /contact and Serbian at /sr/contact. The alternative — one href plus a "which
+     * locale am I?" check inside the hero component — is the request-time guessing this
+     * architecture exists to avoid.
+     */
+    readonly ctaLabel: string
+    readonly ctaHref: string
   }
 
   /** The three trust pills, shared by the hero and the join section. */

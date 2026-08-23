@@ -4,6 +4,8 @@ import { motion, Variants } from "framer-motion";
 import { Award, Shield, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { HeroPartnerBadge } from "./HeroPartnerBadge";
 import { TrustStrip } from "./TrustStrip";
 import { getDictionary } from "@/content/dictionary";
@@ -193,13 +195,33 @@ function HeroGeometric({
                         initial="hidden"
                         animate="visible"
                     >
-                        <p className="mx-auto text-center text-slate-300 text-base md:text-lg lg:text-xl max-w-none lg:max-w-4xl md:whitespace-nowrap lg:whitespace-nowrap mb-8 px-4">
+                        {/* mb tightened at the smallest widths: the CTA below now competes
+                            for first-screen height at 320x568. */}
+                        <p className="mx-auto text-center text-slate-300 text-base md:text-lg lg:text-xl max-w-none lg:max-w-4xl md:whitespace-nowrap lg:whitespace-nowrap mb-6 md:mb-8 px-4">
                             {hero.lede}
                         </p>
                     </motion.div>
 
+                    {/* The first-screen CTA. Its destination is locale-owned copy, so this
+                        component never has to work out which language it is rendering in. */}
                     <motion.div
                         custom={3}
+                        variants={fadeUpVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="flex justify-center"
+                    >
+                        <Button
+                            asChild
+                            size="lg"
+                            className="bg-white text-[#00144a] hover:bg-slate-100 focus-visible:ring-white focus-visible:ring-offset-[#00144a] shadow-lg"
+                        >
+                            <Link href={hero.ctaHref}>{hero.ctaLabel}</Link>
+                        </Button>
+                    </motion.div>
+
+                    <motion.div
+                        custom={4}
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"

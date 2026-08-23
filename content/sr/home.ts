@@ -60,6 +60,8 @@ export const home: HomeDictionary = {
     titleLine2: 'u poslovnu prednost',
     lede: 'Pomažemo kompanijama da rade pametnije i rastu brže',
     logoAlt: 'Infinus',
+    ctaLabel: 'Kontaktirajte nas',
+    ctaHref: '/sr/contact',
   },
 
   trust: {

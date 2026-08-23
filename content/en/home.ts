@@ -48,6 +48,8 @@ export const home: HomeDictionary = {
     titleLine2: 'into Business Advantage',
     lede: 'Empowering companies to work smarter and grow faster',
     logoAlt: 'Infinus',
+    ctaLabel: 'Contact Us',
+    ctaHref: '/contact',
   },
 
   trust: {
