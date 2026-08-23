@@ -127,7 +127,7 @@ export function buildProjectPulseJsonLd(locale: Locale) {
         url: baseUrl,
         address: {
           '@type': 'PostalAddress',
-          streetAddress: 'Tresnjinog cveta 1',
+          streetAddress: 'Trešnjinog cveta 1',
           addressLocality: 'Belgrade',
           postalCode: '11070',
           addressCountry: 'RS',

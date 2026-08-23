@@ -199,7 +199,7 @@ export const PAGE_METADATA = {
   },
   faq: {
     title: 'Frequently Asked Questions - SAP Services',
-    description: 'Find answers to common questions about SAP services, implementation, support, and our expertise as a SAP Gold Partner.',
+    description: 'Find answers to common questions about SAP services, implementation, support, and our expertise as an SAP Gold Partner.',
     keywords: [...DEFAULT_KEYWORDS, 'FAQ', 'questions', 'SAP help']
   },
   contact: {

@@ -38,14 +38,14 @@ import type { FooterDictionary } from '../dictionary'
  */
 export const footer: FooterDictionary = {
   description:
-    'Infinus d.o.o. is a SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.',
+    'Infinus d.o.o. is an SAP Gold Partner focused on SAP Business Suite solutions including Cloud ERP, Business Data Cloud, Business AI, and Business Technology Platform. We help businesses transform their operations with cutting-edge SAP technologies.',
   logoAlt: 'Infinus Logo',
 
   columns: {
     contact: {
       label: 'Contact Information',
       items: [
-        { label: 'Tresnjinog cveta 1, 11070 Belgrade, Serbia', href: '#' },
+        { label: 'Trešnjinog cveta 1, 11070 Belgrade, Serbia', href: '#' },
         { label: 'office@infinus.rs', href: 'mailto:office@infinus.rs' },
         { label: 'LinkedIn', href: 'https://www.linkedin.com/company/infinus1/posts/?feedView=all' },
       ],

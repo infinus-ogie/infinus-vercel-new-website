@@ -22,8 +22,12 @@
  * No copy editing was done, including where the original wording is imperfect. Left
  * exactly as-is and worth knowing:
  *
- *   · `join.paragraphs[0]` reads "Due to continues business expansion" — a typo in the
- *     live English page. NOT corrected here; correcting it would change `/`.
+ *   · `join.paragraphs[0]` used to read "Due to continues business expansion" and
+ *     `join.paragraphs[1]` "interested to become a member". Both were long-standing typos,
+ *     preserved verbatim through H1 because correcting them would have changed `/`. The
+ *     client asked for them in the final feedback round, so they now read "continuous" and
+ *     "interested in becoming"; this is the one place the extracted copy deliberately
+ *     departs from fe98e64.
  *   · `about.imageAlt` and `trust.goldPartner` are both "SAP Gold Partner"; they are
  *     different elements that happen to share a string.
  *   · `services.cardHref` / `benefits.cardHref` are "/contact" because every card in
@@ -176,8 +180,8 @@ export const home: HomeDictionary = {
   join: {
     heading: 'Join Our Team',
     paragraphs: [
-      'Due to continues business expansion, we are looking to expand our team.',
-      'If you have experience in some of SAP S/4HANA or ECC modules and areas, industry solutions, and/or LOB solutions, and if you are interested to become a member of the agile team of dedicated SAP professionals, please contact us.',
+      'Due to continuous business expansion, we are looking to expand our team.',
+      'If you have experience in some of SAP S/4HANA or ECC modules and areas, industry solutions, and/or LOB solutions, and if you are interested in becoming a member of the agile team of dedicated SAP professionals, please contact us.',
       'We will be glad to talk with you!',
     ],
     form: {

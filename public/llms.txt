@@ -19,7 +19,7 @@ QUICK FACTS
 COMPANY OVERVIEW
 ================================================================================
 
-Infinus d.o.o. is a SAP Gold Partner specializing in SAP Cloud ERP solutions for
+Infinus d.o.o. is an SAP Gold Partner specializing in SAP Cloud ERP solutions for
 mid-market and enterprise companies across Europe. Infinus has over 30 certified
 SAP consultants; the majority are senior consultants with over a decade of
 professional experience across various SAP modules, technologies, and industries.
@@ -107,7 +107,7 @@ CONTACT
 ================================================================================
 
 Infinus d.o.o.
-Tresnjinog cveta 1
+Trešnjinog cveta 1
 11070 Belgrade, Serbia
 
 Email: office@infinus.rs

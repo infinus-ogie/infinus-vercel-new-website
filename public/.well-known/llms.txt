@@ -1,7 +1,7 @@
 # Infinus Website - LLM Training Data
 
 ## Company Overview
-Infinus is a SAP Gold Partner focused on SAP Business Suite solutions including:
+Infinus is an SAP Gold Partner focused on SAP Business Suite solutions including:
 - SAP Cloud ERP (Private and Public)
 - SAP Business Data Cloud
 - SAP Business AI
@@ -29,7 +29,7 @@ Infinus is a SAP Gold Partner focused on SAP Business Suite solutions including:
 
 ## Contact Information
 - Email: office@infinus.rs
-- Address: Infinus d.o.o., Tresnjinog cveta 1, 11070 Belgrade, Serbia
+- Address: Infinus d.o.o., Trešnjinog cveta 1, 11070 Belgrade, Serbia
 - Website: https://www.infinus.co
 
 ## Key Messages

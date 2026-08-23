@@ -132,7 +132,8 @@ describe('Homepage copy', () => {
     const join = container.querySelector('[data-section="join-team"]') as HTMLElement
     expect(join).not.toBeNull()
 
-    expect(within(join).getByText(/due to continues business expansion/i)).toBeInTheDocument()
+    // Grammar corrected in the final client-feedback phase: "continues" -> "continuous".
+    expect(within(join).getByText(/due to continuous business expansion/i)).toBeInTheDocument()
     expect(within(join).getByText(/we will be glad to talk with you/i)).toBeInTheDocument()
   })
 
@@ -183,7 +184,7 @@ describe('Homepage copy', () => {
     const footer = container.querySelector('footer') as HTMLElement
     expect(footer).not.toBeNull()
 
-    expect(within(footer).getByText(/Tresnjinog cveta 1, 11070 Belgrade, Serbia/i)).toBeInTheDocument()
+    expect(within(footer).getByText(/Trešnjinog cveta 1, 11070 Belgrade, Serbia/i)).toBeInTheDocument()
     expect(within(footer).getByRole('link', { name: 'office@infinus.rs' })).toHaveAttribute(
       'href',
       'mailto:office@infinus.rs'

@@ -133,8 +133,10 @@ describe('the English source of truth is unchanged', () => {
     expect(en.home.hero.lede).toBe('Empowering companies to work smarter and grow faster')
     expect(en.home.services.items[2].title).toBe('SAP Application Management & Support')
     expect(en.home.benefits.heading).toBe('Benefits working with us')
-    // The pre-existing typo in the live English page, deliberately not corrected.
-    expect(en.home.join.paragraphs[0]).toContain('Due to continues business expansion')
+    // The long-standing typo ("continues") was corrected to "continuous" in the final
+    // client-feedback phase, at the client's explicit request.
+    expect(en.home.join.paragraphs[0]).toContain('Due to continuous business expansion')
+    expect(en.home.join.paragraphs[1]).toContain('interested in becoming a member')
     expect(en.faq.heading).toBe('Frequently Asked Questions')
     expect(en.nav.expertise.label).toBe('Our Expertise')
     expect(en.footer.columns.contact.label).toBe('Contact Information')

@@ -60,7 +60,9 @@ describe('English is the unchanged source of truth', () => {
     expect(en.metadata.title).toBe('Contact Infinus - Get Expert SAP Support')
     expect(en.hero.heading).toBe('Start your SAP transformation')
     expect(en.details.heading).toBe('Contact Details')
-    expect(en.details.address).toBe('Tresnjinog cveta 1, Belgrade, Serbia')
+    // The street name carries a š. The English page used an ASCII stand-in until the final
+    // client-feedback phase corrected it; only the diacritic changed.
+    expect(en.details.address).toBe('Trešnjinog cveta 1, Belgrade, Serbia')
     expect(en.form.nameLabel).toBe('Name *')
     expect(en.form.submit).toBe('Send Message')
     expect(en.form.submitting).toBe('Sending...')
