@@ -20,7 +20,11 @@
  *
  * Translated from content/en/home.ts, which is the source of truth. Faithful to the
  * English factual meaning throughout: no claim added, strengthened, softened or dropped,
- * and every number preserved (30+, 20+, 20+ years, 5 MB, 10 characters, 1 business day).
+ * and every number matches the English side (5 MB, 10 characters, 1 business day).
+ *
+ * Two figures moved together with English in the final client-feedback round, at the
+ * client's request: the client count is now 30+ (the business grew), and the "Deep SAP
+ * Expertise" card states 70% of consultants with 10+ years rather than 20+ combined years.
  *
  * ── Kept untranslated on purpose ────────────────────────────────────────────────
  *   Infinus · SAP · SAP Gold Partner · SAP Cloud ERP (Public / Private) · SAP Business AI
@@ -61,7 +65,7 @@ export const home: HomeDictionary = {
   trust: {
     goldPartner: 'SAP Gold Partner',
     consultants: '30+ iskusnih konsultanata',
-    customers: '20+ zadovoljnih klijenata',
+    customers: '30+ zadovoljnih klijenata',
   },
 
   about: {
@@ -125,7 +129,7 @@ export const home: HomeDictionary = {
       {
         title: 'Duboka SAP ekspertiza',
         body:
-          '20+ godina zajedničkog konsultantskog iskustva u SAP ECC, S/4HANA, ABAP, BTP, LoB rešenjima i platformama - dokazano znanje, primenjeno precizno.',
+          '70% naših konsultanata ima više od 10 godina praktičnog SAP iskustva u SAP ECC, SAP S/4HANA, ABAP, BTP i line-of-business rešenjima.',
       },
       {
         title: 'Razumevanje poslovanja',

@@ -125,7 +125,7 @@ describe('B. every figure in the English copy survives into the Serbian', () => 
   // commercial document is the expensive kind of translation bug.
   const FIGURES: Record<string, string[]> = {
     projectPulse: ['4-6', '7'],
-    projectPulseBrochure: ['3–6', '500+', '30+', '20+', '42', '82%', '31%', '9', '100'],
+    projectPulseBrochure: ['3–6', '500+', '30+', '42', '82%', '31%', '9', '100'],
     projectPulseVideo: [],
     sapStarterPackage: ['4–6'],
   }
@@ -405,8 +405,10 @@ describe('G. the owner corrections from Parts B, C and E', () => {
     )
     expect(br.scope.groups[0].bullets[0]).toBe('Potraživanja, obaveze i usaglašavanje bankovnih izvoda.')
     expect(br.scope.groups[0].bullets[2]).toBe('Trezorsko poslovanje i upravljanje novčanim tokom.')
+    // The count went 20+ -> 30+ in the final client-feedback round, on both sides at
+    // once. The participle-chain correction this line was written to guard is unchanged.
     expect(br.whyInfinus.bullets[2]).toBe(
-      '20+ SAP Cloud ERP klijenata kojima smo implementirali rešenje i pružali podršku.'
+      '30+ SAP Cloud ERP klijenata kojima smo implementirali rešenje i pružali podršku.'
     )
     expect(br.whyInfinus.bullets[3]).toBe('Prepoznati kao SAP Top Cloud Performer u regionu.')
     expect(br.whyInfinus.footnote).toContain('na jednoj inteligentnoj platformi u cloudu.')

@@ -53,7 +53,7 @@ export const home: HomeDictionary = {
   trust: {
     goldPartner: 'SAP Gold Partner',
     consultants: '30+ experienced consultants',
-    customers: '20+ satisfied customers',
+    customers: '30+ satisfied clients',
   },
 
   about: {
@@ -117,7 +117,7 @@ export const home: HomeDictionary = {
       {
         title: 'Deep SAP Expertise',
         body:
-          '20+ years of combined consulting experience across SAP ECC, S/4HANA, ABAP, BTP, LoB solutions and platforms - proven knowledge, delivered with precision.',
+          '70% of our consultants have over 10 years of hands-on SAP experience across SAP ECC, SAP S/4HANA, ABAP, BTP, and line-of-business solutions.',
       },
       {
         title: 'Business Understanding',

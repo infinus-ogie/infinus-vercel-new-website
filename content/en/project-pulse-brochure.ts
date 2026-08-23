@@ -218,7 +218,7 @@ export const projectPulseBrochure: ProjectPulseBrochureDictionary = {
     bullets: [
       'SAP Gold Partner with proven SAP Cloud ERP expertise.',
       '30+ consultants focused on Professional Services business models.',
-      '20+ SAP Cloud ERP customers implemented and supported.',
+      '30+ SAP Cloud ERP clients implemented and supported.',
       'Recognized as SAP Top Cloud Performer in the region.',
     ],
     footnote:

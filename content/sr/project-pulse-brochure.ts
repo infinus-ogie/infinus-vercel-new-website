@@ -43,7 +43,8 @@
  *           profitabilnošću"
  *      C14  "20+ implementiranih i podržanih SAP Cloud ERP klijenata." -> "20+ SAP Cloud
  *           ERP klijenata kojima smo implementirali rešenje i pružali podršku."
- *           The count and the claim are identical; only the participle chain is unwound.
+ *           At the time the count and the claim were identical; only the participle chain
+ *           was unwound. The count itself later became 30+ on BOTH sides — see below.
  *      C15  "Priznati kao…" -> "Prepoznati kao…" 
  *
  * ── Translation decisions ──────────────────────────────────────────────────────
@@ -61,9 +62,14 @@
  *   · The three role labels CEO / CFO / COO, and "COO / Delivery" keeps "Delivery".
  *
  * Numbers, ranges and prices are preserved EXACTLY: "3–6 month" -> "3–6 meseci", "500+",
- * "30+", "20+", "42 days" -> "42 dana", "82%", "31%", "€9,000 / month" -> "€9.000 / mesečno"
+ * "30+", "42 days" -> "42 dana", "82%", "31%", "€9,000 / month" -> "€9.000 / mesečno"
  * and "from EUR 100,000" -> "od EUR 100.000". Only the thousands separator follows Serbian
  * convention (a dot); no figure was rounded, converted or re-stated.
+ *
+ * ONE figure has since changed, and it changed on BOTH sides at once: the SAP Cloud ERP
+ * client count in `whyInfinus.bullets` went from 20+ to 30+ in the final client-feedback
+ * round, because the business grew. That is a data update the owner approved, not a
+ * translation drift — the English half carries the same 30+.
  *
  * The dashboard mock-up's KPI figures are illustrative in English and stay illustrative
  * here — see the English file.
@@ -263,7 +269,7 @@ export const projectPulseBrochure: ProjectPulseBrochureDictionary = {
     bullets: [
       'SAP Gold Partner sa dokazanom ekspertizom u SAP Cloud ERP-u.',
       '30+ konsultanata fokusiranih na poslovne modele profesionalnih usluga.',
-      '20+ SAP Cloud ERP klijenata kojima smo implementirali rešenje i pružali podršku.',
+      '30+ SAP Cloud ERP klijenata kojima smo implementirali rešenje i pružali podršku.',
       'Prepoznati kao SAP Top Cloud Performer u regionu.',
     ],
     footnote:

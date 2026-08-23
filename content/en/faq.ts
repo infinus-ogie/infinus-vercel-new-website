@@ -32,7 +32,7 @@ export const faq: FaqDictionary = {
     {
       question: 'What services do you offer?',
       answer:
-        "SAP implementation services - we are open for both T&M and fix-price types of engagement. SAP support services for customers' existing SAP system (for all modules and processes, including standard support and change requests). Other services related to SAP solutions, including upgrades, transformations, conversions, migrations, custom development training, and quality assurance services.",
+        "SAP implementation services - we are open for both T&M and fix-price types of engagement. SAP support services for clients' existing SAP system (for all modules and processes, including standard support and change requests). Other services related to SAP solutions, including upgrades, transformations, conversions, migrations, custom development training, and quality assurance services.",
     },
     {
       question: 'What are your setup resources?',
@@ -69,8 +69,8 @@ export const faq: FaqDictionary = {
       answer: 'Our hours of operation are from 9:00 AM to 5:00 PM CET time, Monday through Friday.',
     },
     {
-      question: 'Do you have any customer testimonials or case studies?',
-      answer: 'Yes, we have a variety of customer testimonials and case studies available upon request.',
+      question: 'Do you have any client testimonials or case studies?',
+      answer: 'Yes, we have a variety of client testimonials and case studies available upon request.',
     },
     {
       question: 'What are your terms and conditions?',
