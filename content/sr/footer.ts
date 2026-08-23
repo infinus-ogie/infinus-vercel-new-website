@@ -11,7 +11,7 @@
  *                                    "Upravljanje SAP aplikacijama i podrška"
  *
  * ── Unchanged data, never translated ────────────────────────────────────────────
- *   · office@infinus.rs, the LinkedIn URL, the Brivio credit and its URL
+ *   · office@infinus.co, the LinkedIn URL, the Brivio credit and its URL
  *   · "Infinus" and "Infinus d.o.o." — the legal company name
  *   · official SAP product names
  *
@@ -47,7 +47,7 @@ export const footer: FooterDictionary = {
       items: [
         // Verbatim from the approved Serbian legal text.
         { label: 'Trešnjinog cveta 1, 11070 Beograd', href: '#' },
-        { label: 'office@infinus.rs', href: 'mailto:office@infinus.rs' },
+        { label: 'office@infinus.co', href: 'mailto:office@infinus.co' },
         { label: 'LinkedIn', href: 'https://www.linkedin.com/company/infinus1/posts/?feedView=all' },
       ],
     },

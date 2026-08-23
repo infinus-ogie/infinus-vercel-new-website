@@ -27,8 +27,9 @@
  *   · the stated hours, 9:00–17:00 CET, Monday to Friday
  *   · "Life Sciences", which Serbian industry usage keeps untranslated
  *
- * `cta.emailHref` keeps the pre-existing contact@infinus.co inconsistency rather than
- * silently correcting it on the Serbian side only.
+ * `cta.emailHref` is office@infinus.co, matching the English half and every other visible
+ * surface. It used to be contact@infinus.co on both sides; the final client-feedback round
+ * normalised the public contact address, so this is not a Serbian-only correction.
  */
 
 import type { FaqDictionary } from '../dictionary'
@@ -112,7 +113,7 @@ export const faq: FaqDictionary = {
     contactHref: '/sr/contact',
     emailLabel: 'Pišite nam',
     // Same mailbox as the English page — pre-existing inconsistency, preserved.
-    emailHref: 'mailto:contact@infinus.co',
+    emailHref: 'mailto:office@infinus.co',
   },
 
   structuredAbout: ['SAP usluge', 'SAP česta pitanja', 'SAP podrška', 'SAP implementacija'],

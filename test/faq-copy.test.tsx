@@ -97,12 +97,13 @@ describe('/faq page', () => {
 
     expect(screen.getByRole('link', { name: /^contact us$/i })).toHaveAttribute('href', '/contact')
 
-    // NOTE: this mailto uses contact@infinus.co, while the footer, the contact page
-    // and lib/email.ts all use office@infinus.rs. Recorded here rather than changed,
-    // since production copy is out of scope for this phase.
+    // This mailto used to be contact@infinus.co while the footer and the contact page
+    // said office@infinus.rs. All three now agree on office@infinus.co. Note lib/email.ts
+    // still DELIVERS to the .rs mailbox — displaying an address and routing mail to it are
+    // separate decisions, and only the visible one has been made.
     expect(screen.getByRole('link', { name: /^email us$/i })).toHaveAttribute(
       'href',
-      'mailto:contact@infinus.co'
+      'mailto:office@infinus.co'
     )
   })
 

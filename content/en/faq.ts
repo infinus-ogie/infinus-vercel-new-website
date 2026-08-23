@@ -8,9 +8,12 @@
  *
  * No copy editing. Two things left exactly as they are:
  *
- *   · `cta.emailHref` is contact@infinus.co, while the footer, the Contact page and
- *     lib/email.ts all use office@infinus.rs. That inconsistency is pre-existing and
- *     out of scope; recorded here rather than silently corrected.
+ *   · `cta.emailHref` used to be contact@infinus.co while the footer and the Contact page
+ *     said office@infinus.rs. Both are now office@infinus.co: the final client-feedback
+ *     round normalised the public contact address across every visible surface.
+ *     lib/email.ts still DELIVERS to the .rs mailbox — displaying an address and routing
+ *     mail to it are separate decisions, and the .co mailbox has not been verified to
+ *     receive form submissions yet.
  *   · The lede renders as one sentence because JSX collapses its source line break.
  *     Reproduced here as that single rendered string.
  */
@@ -94,8 +97,7 @@ export const faq: FaqDictionary = {
     contactLabel: 'Contact Us',
     contactHref: '/contact',
     emailLabel: 'Email Us',
-    // Pre-existing inconsistency with office@infinus.rs elsewhere. Left untouched.
-    emailHref: 'mailto:contact@infinus.co',
+    emailHref: 'mailto:office@infinus.co',
   },
 
   // Verbatim from the pre-H1 `articleAbout`.

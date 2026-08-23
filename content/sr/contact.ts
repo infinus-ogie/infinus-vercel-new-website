@@ -8,7 +8,7 @@
  * Translated from content/en/contact.ts, which remains the source of truth for the pair.
  * Meaning and factual claims are preserved: nothing was added, strengthened, softened or
  * dropped. Proper names (Infinus, SAP, SAP Gold Partner, PDF/DOC/DOCX/TXT,
- * office@infinus.rs, infinus.co) are left untranslated. Changing any string here changes
+ * office@infinus.co, infinus.co) are left untranslated. Changing any string here changes
  * live Serbian copy, so treat it the way the English file is treated.
  *
  * ── Corrections applied at owner review ─────────────────────────────────────────
@@ -54,7 +54,7 @@ export const contact: ContactDictionary = {
     emailLabel: 'E-mail: ',
     addressLabel: 'Adresa: ',
     webLabel: 'Sajt: ',
-    email: 'office@infinus.rs',
+    email: 'office@infinus.co',
     // Verbatim from the approved Serbian legal text. See the header note.
     address: 'Trešnjinog cveta 1, 11070 Beograd',
     web: { label: 'infinus.co', url: 'https://infinus.co' },

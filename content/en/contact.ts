@@ -43,7 +43,7 @@ export const contact: ContactDictionary = {
     emailLabel: 'Email: ',
     addressLabel: 'Address: ',
     webLabel: 'Web: ',
-    email: 'office@infinus.rs',
+    email: 'office@infinus.co',
     address: 'Trešnjinog cveta 1, Belgrade, Serbia',
     web: { label: 'infinus.co', url: 'https://infinus.co' },
   },

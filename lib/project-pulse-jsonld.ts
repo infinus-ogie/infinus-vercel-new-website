@@ -134,7 +134,7 @@ export function buildProjectPulseJsonLd(locale: Locale) {
         },
         contactPoint: {
           '@type': 'ContactPoint',
-          email: 'office@infinus.rs',
+          email: 'office@infinus.co',
           contactType: 'Customer Service',
         },
       },

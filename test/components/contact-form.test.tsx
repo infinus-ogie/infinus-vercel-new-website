@@ -320,9 +320,9 @@ describe.each(LOCALE_CASES)('Contact2 — $locale', ({ locale, content }) => {
     render(<Contact2 content={content} />)
 
     // The mailbox is data, identical in both locales.
-    expect(screen.getByRole('link', { name: 'office@infinus.rs' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'office@infinus.co' })).toHaveAttribute(
       'href',
-      'mailto:office@infinus.rs'
+      'mailto:office@infinus.co'
     )
     expect(screen.getByText(content.details.address)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: content.details.heading })).toBeInTheDocument()

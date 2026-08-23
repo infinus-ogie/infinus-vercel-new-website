@@ -6,7 +6,7 @@
  * label and href, and the bottom row.
  *
  * DATA, not copy — identical in both locales and never translated:
- *   · the mailbox office@infinus.rs
+ *   · the mailbox office@infinus.co
  *   · the LinkedIn URL
  *   · the Brivio credit and its URL
  *   · "Infinus" in the copyright line
@@ -46,7 +46,7 @@ export const footer: FooterDictionary = {
       label: 'Contact Information',
       items: [
         { label: 'Trešnjinog cveta 1, 11070 Belgrade, Serbia', href: '#' },
-        { label: 'office@infinus.rs', href: 'mailto:office@infinus.rs' },
+        { label: 'office@infinus.co', href: 'mailto:office@infinus.co' },
         { label: 'LinkedIn', href: 'https://www.linkedin.com/company/infinus1/posts/?feedView=all' },
       ],
     },

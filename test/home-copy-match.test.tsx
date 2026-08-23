@@ -185,9 +185,9 @@ describe('Homepage copy', () => {
     expect(footer).not.toBeNull()
 
     expect(within(footer).getByText(/Trešnjinog cveta 1, 11070 Belgrade, Serbia/i)).toBeInTheDocument()
-    expect(within(footer).getByRole('link', { name: 'office@infinus.rs' })).toHaveAttribute(
+    expect(within(footer).getByRole('link', { name: 'office@infinus.co' })).toHaveAttribute(
       'href',
-      'mailto:office@infinus.rs'
+      'mailto:office@infinus.co'
     )
     expect(within(footer).getByRole('link', { name: /^privacy policy$/i })).toHaveAttribute(
       'href',

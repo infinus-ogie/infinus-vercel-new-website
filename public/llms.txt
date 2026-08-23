@@ -13,7 +13,7 @@ QUICK FACTS
 - Coverage: Europe
 - Languages: English (all consultants); some also German
 - Website: https://www.infinus.co
-- Email: office@infinus.rs
+- Email: office@infinus.co
 
 ================================================================================
 COMPANY OVERVIEW
@@ -110,6 +110,6 @@ Infinus d.o.o.
 Trešnjinog cveta 1
 11070 Belgrade, Serbia
 
-Email: office@infinus.rs
+Email: office@infinus.co
 Website: https://www.infinus.co
 Contact page: https://www.infinus.co/contact

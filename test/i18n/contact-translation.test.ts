@@ -173,7 +173,7 @@ describe('proper names and technical values survive translation', () => {
   })
 
   test('the mailbox and domain are the real ones', () => {
-    expect(sr.details.email).toBe('office@infinus.rs')
+    expect(sr.details.email).toBe('office@infinus.co')
     expect(sr.details.web.url).toBe('https://infinus.co')
   })
 

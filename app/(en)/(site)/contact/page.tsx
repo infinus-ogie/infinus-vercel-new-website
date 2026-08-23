@@ -31,7 +31,7 @@ export const metadata = {
  * Page config — single source of truth for JSON-LD.
  *
  * The FAQ entries are unchanged from before Phase G. NOTE: they contain placeholder contact
- * data ("+1 (555) 123-4567", "9 AM to 6 PM EST", contact@infinus.co) that contradicts the
+ * data ("+1 (555) 123-4567", "9 AM to 6 PM EST") that contradicts the
  * real details on the page. Pre-existing and out of scope here — flagged rather than fixed,
  * and deliberately NOT carried over into the Serbian page's structured data.
  */
@@ -44,7 +44,7 @@ const pageConfig = createSimplePageConfig(
     faqs: [
       {
         question: "How can I contact Infinus for SAP services?",
-        answer: "You can contact us through our contact form, email us at contact@infinus.co, or call us at +1 (555) 123-4567. We're available Monday through Friday, 9 AM to 6 PM EST."
+        answer: "You can contact us through our contact form, email us at office@infinus.co, or call us at +1 (555) 123-4567. We're available Monday through Friday, 9 AM to 6 PM EST."
       },
       {
         question: "What information should I include when contacting you?",
