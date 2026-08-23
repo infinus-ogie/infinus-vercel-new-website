@@ -275,6 +275,20 @@ export const ROUTE_PAIRS: readonly RoutePair[] = [
     sr: live('/sr/professional-services'),
   },
 
+  {
+    // The SAP MythBusting e-book landing page. `/insights` was an unused URL space; the
+    // client's own source document names /insights/sap-mythbusters as the English canonical,
+    // and the Serbian half follows the site's prefix convention.
+    //
+    // The SLUG is not translated, for the same reason /sr/case-study and
+    // /sr/sap-packaged-solutions are not: only /privacy has a translated slug, because its
+    // two documents were approved independently. A campaign URL is not that case.
+    id: 'insights-sap-mythbusters',
+    pairing: 'translatable',
+    en: live('/insights/sap-mythbusters'),
+    sr: live('/sr/insights/sap-mythbusters'),
+  },
+
   // ── A real locale link that is deliberately not indexable ────────────────────
   {
     id: 'legal-privacy-policy',

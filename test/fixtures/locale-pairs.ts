@@ -47,8 +47,10 @@ export const COMPLETE_PAIRS: readonly LocalePairFixture[] = [
   { en: '/grow/cfo', sr: '/sr/grow/cfo' },
   { en: '/grow/ceo', sr: '/sr/grow/ceo' },
   { en: '/professional-services', sr: '/sr/professional-services' },
-  // Final client-feedback phase: the Careers page, split out of the homepage.
+  // Final client-feedback phase: the Careers page, split out of the homepage, and the
+  // SAP MythBusting e-book landing page.
   { en: '/careers', sr: '/sr/careers' },
+  { en: '/insights/sap-mythbusters', sr: '/sr/insights/sap-mythbusters' },
 ]
 
 /**
@@ -68,7 +70,7 @@ export const LOCALE_LINKED_PAIRS: readonly LocalePairFixture[] = [
   { en: '/privacy', sr: '/sr/politika-privatnosti' },
 ]
 
-/** Every pair a visitor can switch across — indexable or not. 18 with Careers added. */
+/** Every pair a visitor can switch across — indexable or not. 19 as of MythBusting. */
 export const NAVIGABLE_PAIRS: readonly LocalePairFixture[] = [
   ...COMPLETE_PAIRS,
   ...LOCALE_LINKED_PAIRS,

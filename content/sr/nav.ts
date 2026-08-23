@@ -83,7 +83,8 @@ export const nav: NavDictionary = {
       // the dedicated /sr/grow/cfo role page, which stays live and reachable from it.
       { kind: 'link', label: 'SAP za CFO', href: '/sr/grow' },
       { kind: 'link', label: 'SAP za Professional Services', href: '/sr/professional-services' },
-      // SAP MythBusting joins this group when /sr/insights/sap-mythbusters exists.
+      // A campaign name, like ProjectPulse and GROW with SAP: kept untranslated.
+      { kind: 'link', label: 'SAP MythBusting', href: '/sr/insights/sap-mythbusters' },
     ],
   },
 

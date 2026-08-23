@@ -56,6 +56,9 @@ const DARK_HERO_PATHS = [
   '/',
   // The Serbian homepage renders the same dark hero as `/`.
   '/sr',
+  // The MythBusting pair opens on a #00144a hero, like the campaign pages.
+  '/insights/sap-mythbusters',
+  '/sr/insights/sap-mythbusters',
   '/grow',
   '/grow/cfo',
   '/grow/ceo',

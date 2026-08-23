@@ -1295,6 +1295,114 @@
       "types": []
     }
   },
+  "/insights/sap-mythbusters": {
+    "htmlLang": "en",
+    "title": "10 Myths About SAP Cloud ERP | Free E-Book | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Download the free e-book and discover the facts behind 10 common myths about SAP Cloud ERP costs, implementation, scalability, and business value."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "10 Myths About SAP Cloud ERP | Free E-Book | Infinus"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Download the free e-book and discover the facts behind 10 common myths about SAP Cloud ERP costs, implementation, scalability, and business value."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "10 Myths About SAP Cloud ERP | Free E-Book | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Download the free e-book and discover the facts behind 10 common myths about SAP Cloud ERP costs, implementation, scalability, and business value."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "10 Myths About SAP Cloud ERP | Free E-Book | Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "en_US"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "10 Myths About SAP Cloud ERP | Free E-Book | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/insights/sap-mythbusters"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/insights/sap-mythbusters",
+        "sr-Latn => https://www.infinus.co/sr/insights/sap-mythbusters",
+        "x-default => https://www.infinus.co/insights/sap-mythbusters"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/insights/sap-mythbusters"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
   "/privacy": {
     "htmlLang": "en",
     "title": "Privacy Policy | Infinus",
@@ -3188,6 +3296,114 @@
       ],
       "canonical": [
         "https://www.infinus.co/sr/grow/cfo"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/insights/sap-mythbusters": {
+    "htmlLang": "sr-Latn",
+    "title": "10 mitova o SAP Cloud ERP-u | Besplatna e-knjiga | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Preuzmite besplatnu e-knjigu i otkrijte činjenice iza 10 najčešćih mitova o troškovima, implementaciji, skalabilnosti i poslovnoj vrednosti SAP Cloud ERP rešenja."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "10 mitova o SAP Cloud ERP-u | Besplatna e-knjiga | Infinus"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Preuzmite besplatnu e-knjigu i otkrijte činjenice iza 10 najčešćih mitova o troškovima, implementaciji, skalabilnosti i poslovnoj vrednosti SAP Cloud ERP rešenja."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "10 mitova o SAP Cloud ERP-u | Besplatna e-knjiga | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Preuzmite besplatnu e-knjigu i otkrijte činjenice iza 10 najčešćih mitova o troškovima, implementaciji, skalabilnosti i poslovnoj vrednosti SAP Cloud ERP rešenja."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "10 mitova o SAP Cloud ERP-u | Besplatna e-knjiga | Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "10 mitova o SAP Cloud ERP-u | Besplatna e-knjiga | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/insights/sap-mythbusters"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/insights/sap-mythbusters",
+        "sr-Latn => https://www.infinus.co/sr/insights/sap-mythbusters",
+        "x-default => https://www.infinus.co/insights/sap-mythbusters"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/insights/sap-mythbusters"
       ],
       "icon": [
         "/favicon.ico"

@@ -86,8 +86,7 @@ export const nav: NavDictionary = {
       // indexed and remain reachable from /grow itself.
       { kind: 'link', label: 'SAP for CFO', href: '/grow' },
       { kind: 'link', label: 'SAP for Professional Services', href: '/professional-services' },
-      // SAP MythBusting joins this group when its pages exist — a menu entry pointing at a
-      // route that has not been built is a 404 with extra steps.
+      { kind: 'link', label: 'SAP MythBusting', href: '/insights/sap-mythbusters' },
     ],
   },
 

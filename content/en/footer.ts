@@ -95,7 +95,7 @@ export const footer: FooterDictionary = {
         // Same owner decision as the navbar: /grow, not /grow/cfo.
         { kind: 'link', label: 'SAP for CFO', href: '/grow' },
         { kind: 'link', label: 'SAP for Professional Services', href: '/professional-services' },
-        // SAP MythBusting joins this group when its pages exist.
+        { kind: 'link', label: 'SAP MythBusting', href: '/insights/sap-mythbusters' },
       ],
     },
 

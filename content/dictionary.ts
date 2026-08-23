@@ -70,6 +70,8 @@ import { consent as enConsent } from './en/consent'
 import { consent as srConsent } from './sr/consent'
 import { growth as enGrowth } from './en/growth'
 import { growth as srGrowth } from './sr/growth'
+import { mythBusters as enMythBusters } from './en/mythbusters'
+import { mythBusters as srMythBusters } from './sr/mythbusters'
 
 /**
  * Chrome strings that are not specific to any one page.
@@ -1001,6 +1003,124 @@ export interface SapStarterPackageDictionary {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+ * SAP MYTHBUSTING — /insights/sap-mythbusters
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * The SAP MythBusting e-book landing page.
+ *
+ * ── The copy is CLIENT-SUPPLIED SOURCE OF TRUTH ─────────────────────────────────
+ * Both locale files are transcribed from the client's own documents ("eng verzija.docx"
+ * and "srp. verzija.docx"). Unlike every other namespace here, neither side is a
+ * translation of the other — the client wrote both — so the usual "English is the source"
+ * rule does not apply and neither file may be edited to match the other.
+ *
+ * ONE deliberate departure from the supplied text, in Serbian only: the acknowledgement
+ * ended "...pročitali našu Privacy Policy", an English legal term inside Serbian body copy
+ * and grammatically wrong in the accusative slot. It uses the site's already-approved
+ * "Politiku privatnosti" instead. Recorded in content/sr/mythbusters.ts.
+ *
+ * ── Tuple types where the design has a fixed count ──────────────────────────────
+ * Ten myths, four hero bullets, four trust items, four value blocks, six audience roles.
+ * A locale that quietly ships nine myths is a compile error rather than a rendering
+ * surprise.
+ */
+export interface MythBustersDictionary {
+  readonly metadata: {
+    /**
+     * The client's SEO title already ends in "| Infinus", so the route file passes it as
+     * `title.absolute` — the root layout's `%s | Infinus` template would otherwise brand
+     * the tab twice. seo:assert-build fails on exactly that.
+     */
+    readonly title: string
+    readonly description: string
+  }
+
+  readonly hero: {
+    readonly eyebrow: string
+    /** Two lines in the source, kept separate so each locale controls its own break. */
+    readonly titleLine1: string
+    readonly titleLine2: string
+    readonly lede: string
+    readonly bullets: readonly [string, string, string, string]
+    readonly cta: string
+  }
+
+  /**
+   * The trust bar. FOUR items, where the shared StatPills renders three — which is why
+   * this page carries its own list rather than reusing that component.
+   */
+  readonly trustBar: readonly [string, string, string, string]
+
+  readonly why: {
+    /** The source's lead block: a heading and a paragraph, above the four value blocks. */
+    readonly introTitle: string
+    readonly introBody: string
+    readonly items: readonly [CardCopy, CardCopy, CardCopy, CardCopy]
+  }
+
+  readonly myths: {
+    readonly heading: string
+    readonly items: readonly [
+      string, string, string, string, string,
+      string, string, string, string, string,
+    ]
+    readonly cta: string
+  }
+
+  readonly audience: {
+    readonly heading: string
+    readonly body: string
+    readonly roles: readonly [string, string, string, string, string, string]
+  }
+
+  readonly form: {
+    readonly heading: string
+    readonly body: string
+    readonly nameLabel: string
+    readonly emailLabel: string
+    readonly companyLabel: string
+    /** The one optional field in the source, and it says so in its own label. */
+    readonly roleLabel: string
+    readonly submit: string
+    readonly submitting: string
+    /** Zod messages. The RULES are shared; only the wording is per locale. */
+    readonly validation: {
+      readonly name: string
+      readonly email: string
+      readonly company: string
+    }
+    readonly success: {
+      readonly heading: string
+      readonly body: string
+      readonly downloadLabel: string
+    }
+    readonly error: string
+    /**
+     * "The e-book is provided in PDF format and is available in English."
+     *
+     * Rendered BEFORE submission on both halves. On the Serbian page especially: a visitor
+     * must know the asset is English-only before handing over their details, not after.
+     */
+    readonly languageNote: string
+    readonly privacy: {
+      readonly before: string
+      readonly linkText: string
+      readonly after: string
+      readonly href: string
+    }
+  }
+
+  /** Strings that appear only in JSON-LD, never on screen. */
+  readonly schema: {
+    readonly breadcrumbHome: string
+    readonly breadcrumbPage: string
+    readonly mythListName: string
+    readonly ebookName: string
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
  * CONSENT UI — the cookie banner and the settings dialog
  * ─────────────────────────────────────────────────────────────────────────── */
 
@@ -1281,6 +1401,7 @@ export interface Dictionary {
   readonly sapStarterPackage: SapStarterPackageDictionary
   readonly consent: ConsentDictionary
   readonly growth: GrowthDictionary
+  readonly mythBusters: MythBustersDictionary
 }
 
 /**
@@ -1303,6 +1424,7 @@ export const dictionaries = {
     sapStarterPackage: enSapStarterPackage,
     consent: enConsent,
     growth: enGrowth,
+    mythBusters: enMythBusters,
   },
   sr: {
     common: srCommon,
@@ -1319,6 +1441,7 @@ export const dictionaries = {
     sapStarterPackage: srSapStarterPackage,
     consent: srConsent,
     growth: srGrowth,
+    mythBusters: srMythBusters,
   },
 } as const satisfies Record<Locale, Dictionary>
 
@@ -1348,6 +1471,7 @@ export const DICTIONARY_NAMESPACES = [
   'sapStarterPackage',
   'consent',
   'growth',
+  'mythBusters',
 ] as const
 
 export type DictionaryNamespace = (typeof DICTIONARY_NAMESPACES)[number]

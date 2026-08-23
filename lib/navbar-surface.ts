@@ -69,6 +69,8 @@ export const LIGHT_SURFACE_PAGE_IDS: readonly string[] = [
   // `surface-1` panel (slate-50), with no hero above it — so the navbar needs its
   // dark-text treatment from the very top, exactly like /contact.
   'careers',
+  // NOT listed, and deliberately: `insights-sap-mythbusters` opens on a #00144a hero, so it
+  // takes the default dark treatment like every other hero page.
 ]
 
 /** The default for anything not explicitly classified: today's behaviour, unchanged. */
