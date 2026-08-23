@@ -48,9 +48,9 @@ describe('Homepage copy', () => {
 
     for (const name of [
       /^about us$/i,
-      /^our expertise in action$/i,
-      /^benefits working with us$/i,
-      /^domain expertise$/i,
+      /^our sap expertise in action$/i,
+      /^why infinus$/i,
+      /^industry expertise$/i,
       /^join our team$/i,
     ]) {
       expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument()

@@ -84,7 +84,7 @@ export const home: HomeDictionary = {
   },
 
   services: {
-    heading: 'Naša ekspertiza u praksi',
+    heading: 'SAP ekspertiza u praksi',
     lede:
       'Kombinujemo razumevanje poslovanja i SAP ekspertizu kako bismo kompanijama pomogli da rade pametnije, brže i sa sigurnošću. Od strategije do podrške, vaš smo pouzdan partner kroz ceo SAP životni ciklus.',
     items: [
@@ -118,7 +118,7 @@ export const home: HomeDictionary = {
   },
 
   benefits: {
-    heading: 'Prednosti saradnje sa nama',
+    heading: 'Zašto Infinus',
     lede:
       'Saradnja sa kompanijom Infinus znači rad sa stručnjacima koji razumeju i SAP tehnologiju i stvarne poslovne izazove.',
     items: [
@@ -158,7 +158,7 @@ export const home: HomeDictionary = {
 
   domains: {
     eyebrow: 'Industrije',
-    heading: 'Ekspertiza po industrijama',
+    heading: 'Industrijska ekspertiza',
     lede: 'SAP rešenja prilagođena industriji, uz duboko poznavanje poslovnih procesa.',
     items: [
       { label: 'Maloprodaja', imageAlt: 'Maloprodajna industrija' },

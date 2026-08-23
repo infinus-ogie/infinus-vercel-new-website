@@ -51,7 +51,7 @@ export const footer: FooterDictionary = {
       ],
     },
     expertise: {
-      label: 'Our Expertise',
+      label: 'SAP Expertise',
       items: [
         { label: 'SAP Advisory & Consulting', href: '/#our-expertise' },
         { label: 'SAP Implementations', href: '/#our-expertise' },

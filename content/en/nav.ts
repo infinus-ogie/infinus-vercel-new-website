@@ -3,7 +3,12 @@
  *
  * Extracted VERBATIM from the `navItems` array in components/ui/navbar-demo.tsx as it
  * stood at commit fe98e64 — the same eight top-level entries in the same order, the same
- * two submenus, and the same hrefs. The English navbar is therefore unchanged.
+ * two submenus, and the same hrefs.
+ *
+ * One label has since changed at the client's request: `expertise` reads "SAP Expertise"
+ * rather than "Our Expertise". Only the label moved — the href is still the
+ * `#our-expertise` anchor, because the anchor id is an addressable identifier that inbound
+ * links, the footer and the tests depend on, and renaming terminology must not break it.
  *
  * `label` and `href` are separate concerns. This file happens to pair English labels with
  * English URLs; content/sr/nav.ts pairs Serbian labels with whichever destination is
@@ -18,7 +23,7 @@ import type { NavDictionary } from '../dictionary'
 export const nav: NavDictionary = {
   home: { label: 'Home', href: '/' },
   about: { label: 'About', href: '/#about' },
-  expertise: { label: 'Our Expertise', href: '/#our-expertise' },
+  expertise: { label: 'SAP Expertise', href: '/#our-expertise' },
   benefits: { label: 'Benefits', href: '/#partnership-benefits' },
 
   packagedSolutions: {

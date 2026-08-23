@@ -52,7 +52,7 @@ export const footer: FooterDictionary = {
       ],
     },
     expertise: {
-      label: 'Naša ekspertiza',
+      label: 'SAP ekspertiza',
       items: [
         { label: 'SAP savetovanje i konsalting', href: '/sr#our-expertise' },
         { label: 'SAP implementacije', href: '/sr#our-expertise' },

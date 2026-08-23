@@ -76,7 +76,7 @@ export const home: HomeDictionary = {
   },
 
   services: {
-    heading: 'Our Expertise in Action',
+    heading: 'Our SAP Expertise in Action',
     lede:
       "We combine business insight and SAP expertise to help companies operate smarter, faster, and with confidence. From strategy to support, we're your trusted partner throughout the entire SAP lifecycle.",
     items: [
@@ -110,7 +110,7 @@ export const home: HomeDictionary = {
   },
 
   benefits: {
-    heading: 'Benefits working with us',
+    heading: 'Why Infinus',
     lede:
       'Partnering with Infinus means working with experts who understand both SAP technology and real business challenges.',
     items: [
@@ -150,7 +150,7 @@ export const home: HomeDictionary = {
 
   domains: {
     eyebrow: 'Industries',
-    heading: 'Domain Expertise',
+    heading: 'Industry Expertise',
     lede: 'Industry-specific SAP solutions delivered with deep process knowledge.',
     items: [
       { label: 'Retail', imageAlt: 'Retail industry' },

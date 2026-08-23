@@ -95,7 +95,7 @@ describe('the thirteen corrections made at owner review', () => {
 describe('the copy decisions approved as first drafted', () => {
   test('nav labels', () => {
     expect(sr.nav.home.label).toBe('Početna')
-    expect(sr.nav.expertise.label).toBe('Naša ekspertiza')
+    expect(sr.nav.expertise.label).toBe('SAP ekspertiza')
     expect(sr.nav.faq.label).toBe('Česta pitanja')
     expect(sr.nav.caseStudies.label).toBe('Studije slučaja')
     expect(sr.nav.caseStudies.items.map((i) => i.label)).toEqual([
@@ -108,8 +108,8 @@ describe('the copy decisions approved as first drafted', () => {
   })
 
   test('section headings and footer labels', () => {
-    expect(sr.home.services.heading).toBe('Naša ekspertiza u praksi')
-    expect(sr.home.benefits.heading).toBe('Prednosti saradnje sa nama')
+    expect(sr.home.services.heading).toBe('SAP ekspertiza u praksi')
+    expect(sr.home.benefits.heading).toBe('Zašto Infinus')
     expect(sr.home.benefits.items[5].title).toBe('Regionalno prisustvo, evropski domet')
     expect(sr.footer.columns.legal.label).toBe('Pravne informacije')
     expect(sr.footer.bottom.cookieSettings).toBe('Podešavanja kolačića')
@@ -132,13 +132,13 @@ describe('the English source of truth is unchanged', () => {
     expect(en.home.hero.titleLine2).toBe('into Business Advantage')
     expect(en.home.hero.lede).toBe('Empowering companies to work smarter and grow faster')
     expect(en.home.services.items[2].title).toBe('SAP Application Management & Support')
-    expect(en.home.benefits.heading).toBe('Benefits working with us')
+    expect(en.home.benefits.heading).toBe('Why Infinus')
     // The long-standing typo ("continues") was corrected to "continuous" in the final
     // client-feedback phase, at the client's explicit request.
     expect(en.home.join.paragraphs[0]).toContain('Due to continuous business expansion')
     expect(en.home.join.paragraphs[1]).toContain('interested in becoming a member')
     expect(en.faq.heading).toBe('Frequently Asked Questions')
-    expect(en.nav.expertise.label).toBe('Our Expertise')
+    expect(en.nav.expertise.label).toBe('SAP Expertise')
     expect(en.footer.columns.contact.label).toBe('Contact Information')
   })
 })

@@ -6,8 +6,12 @@
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
  * Labels approved at H1 review. Phase H2 repointed the case-study submenu at the real
- * Serbian pages and Phase H3 did the same for SAP paketna rešenja; the labels themselves are
- * unchanged, and every destination in this file is now a Serbian page.
+ * Serbian pages and Phase H3 did the same for SAP paketna rešenja; every destination in this
+ * file is a Serbian page.
+ *
+ * One label changed in the final client-feedback round: `expertise` reads "SAP ekspertiza"
+ * rather than "Naša ekspertiza", mirroring the English rename. The href still points at the
+ * `#our-expertise` anchor — the anchor id is deliberately NOT renamed with the terminology.
  *
  * ── Labels and destinations are separate decisions ──────────────────────────────
  * A translated label NEVER invents a URL. Each entry below points at a destination that
@@ -34,7 +38,7 @@ import type { NavDictionary } from '../dictionary'
 export const nav: NavDictionary = {
   home: { label: 'Početna', href: '/sr' },
   about: { label: 'O nama', href: '/sr#about' },
-  expertise: { label: 'Naša ekspertiza', href: '/sr#our-expertise' },
+  expertise: { label: 'SAP ekspertiza', href: '/sr#our-expertise' },
   benefits: { label: 'Prednosti', href: '/sr#partnership-benefits' },
 
   packagedSolutions: {
