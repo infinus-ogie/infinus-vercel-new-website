@@ -485,16 +485,53 @@ export interface NavGroupCopy {
   readonly items: readonly NavLinkCopy[]
 }
 
-/** The shared Navbar, per locale. */
+/**
+ * One entry inside a dropdown: either a link, or a HEADING over its own links.
+ *
+ * The heading case exists because of a rule the owner was explicit about: a category name
+ * must never masquerade as a link to one of its children. "SAP Packaged Solutions" and
+ * "Case Studies" are categories with no index page, so pointing them at
+ * /sap-packaged-solutions/sap-starter-package or /case-study/retail1 would tell a visitor
+ * they are opening a category and then show them one arbitrary member of it.
+ *
+ * Inventing the two index pages was the alternative and was rejected — no new routes just to
+ * satisfy a menu shape. So the category renders as a non-interactive label with its real
+ * children listed beneath it, and the type makes "heading" a thing the data can SAY rather
+ * than something the component has to infer.
+ */
+export type NavMenuEntry =
+  | ({ readonly kind: 'link' } & NavLinkCopy)
+  | { readonly kind: 'group'; readonly label: string; readonly items: readonly NavLinkCopy[] }
+
+/** A top-level dropdown: its trigger label and what it contains. */
+export interface NavMenuCopy {
+  readonly label: string
+  readonly entries: readonly NavMenuEntry[]
+}
+
+/**
+ * The shared Navbar, per locale.
+ *
+ * ── Restructured at the client's request ────────────────────────────────────────
+ * This used to be EIGHT flat top-level entries (Home, About, Our Expertise, Benefits, SAP
+ * Packaged Solutions, Case Studies, Contact, FAQ). The client proposed five groups, and
+ * that is what this shape encodes:
+ *
+ *     Home · Company · Expertise · Insights · Contact
+ *
+ * Nothing lost a page in the move. About, Why Infinus and FAQ moved under Company; the two
+ * former top-level dropdowns became categories inside Expertise; the campaign pages that
+ * were only reachable from the footer got a home in Insights.
+ *
+ * `label` and `href` remain SEPARATE CONCERNS at every level: translating a label must
+ * never invent a URL. Each locale declares its own real destinations.
+ */
 export interface NavDictionary {
   readonly home: NavLinkCopy
-  readonly about: NavLinkCopy
-  readonly expertise: NavLinkCopy
-  readonly benefits: NavLinkCopy
-  readonly packagedSolutions: NavGroupCopy
-  readonly caseStudies: NavGroupCopy
+  readonly company: NavMenuCopy
+  readonly expertise: NavMenuCopy
+  readonly insights: NavMenuCopy
   readonly contact: NavLinkCopy
-  readonly faq: NavLinkCopy
   /** Accessible name for the mobile menu panel. */
   readonly menuLabel: string
 }

@@ -8,12 +8,7 @@ import { ChevronDown, Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { navbarSurfaceFor, navbarTextColorFor } from "@/lib/navbar-surface"
 
-interface NavItem {
-  name: string
-  url: string
-  icon?: React.ReactNode
-  submenu?: { name: string; url: string }[]
-}
+import { submenuLinks, type NavItem } from "@/components/ui/nav-items"
 
 interface NavBarProps {
   items: NavItem[]
@@ -66,6 +61,21 @@ export function NavBar({ items, className }: NavBarProps) {
     setHoverTimeout(timeout)
   }
 
+  /**
+   * What a dropdown link does on click, for both the plain and the grouped case.
+   *
+   * The hash branch reproduces the pre-existing behaviour: a `#…` link followed from a page
+   * that is not the homepage loses the active highlight, and this puts it back once the
+   * navigation has settled. Extracted rather than duplicated a third time.
+   */
+  const closeAfterNavigate = (itemName: string, url: string) => {
+    setActiveTab(itemName)
+    setOpenSubmenu(null)
+    if (url.startsWith('#') && pathname !== '/') {
+      setTimeout(() => setActiveTab(itemName), 100)
+    }
+  }
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
@@ -82,9 +92,11 @@ export function NavBar({ items, className }: NavBarProps) {
       if (item.url === pathname) return true
       // Handle hash links (e.g., /#about, /#services) - only on home page
       if (item.url.startsWith('#') && pathname === '/') return true
-      // Handle submenu items - check if current path matches any submenu URL
+      // A dropdown may contain HEADINGS as well as links, and a heading has no URL —
+      // so this flattens to the real links first. `submenu.some(s => s.url === ...)`
+      // would read undefined off a group and silently never match.
       if (item.submenu) {
-        return item.submenu.some(subItem => subItem.url === pathname)
+        return submenuLinks(item.submenu).some(subItem => subItem.url === pathname)
       }
       return false
     })
@@ -229,31 +241,52 @@ export function NavBar({ items, className }: NavBarProps) {
                       : "bg-white/95 border-slate-200/60"
                   )}
                 >
-                  <div className="py-4 px-2">
-                    {item.submenu!.map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        href={subItem.url}
-                        onClick={() => {
-                          setActiveTab(item.name)
-                          setOpenSubmenu(null)
-                          // If clicking on a hash link from a different page, ensure proper navigation
-                          if (subItem.url.startsWith('#') && pathname !== '/') {
-                            setTimeout(() => {
-                              setActiveTab(item.name)
-                            }, 100)
-                          }
-                        }}
-                        className={cn(
-                          "block px-4 py-3 text-sm transition-colors",
-                          textColor === 'text-white/90' 
-                            ? "text-white/90 hover:text-white hover:bg-white/10" 
-                            : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
-                        )}
-                      >
-                        {subItem.name}
-                      </Link>
-                    ))}
+                  <div className="py-3 px-2">
+                    {item.submenu!.map((entry) =>
+                      entry.kind === 'group' ? (
+                        // A CATEGORY, not a link. It has no index page, so it is rendered as
+                        // a label over its real children rather than pointed at one of them.
+                        <div key={entry.name} className="mt-2 first:mt-0">
+                          <p
+                            className={cn(
+                              "px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider",
+                              textColor === 'text-white/90' ? "text-white/50" : "text-slate-400"
+                            )}
+                          >
+                            {entry.name}
+                          </p>
+                          {entry.items.map((subItem) => (
+                            <Link
+                              key={subItem.name}
+                              href={subItem.url}
+                              onClick={() => closeAfterNavigate(item.name, subItem.url)}
+                              className={cn(
+                                "block rounded-md pl-6 pr-4 py-2 text-sm transition-colors",
+                                textColor === 'text-white/90'
+                                  ? "text-white/90 hover:text-white hover:bg-white/10"
+                                  : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
+                              )}
+                            >
+                              {subItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <Link
+                          key={entry.name}
+                          href={entry.url}
+                          onClick={() => closeAfterNavigate(item.name, entry.url)}
+                          className={cn(
+                            "block rounded-md px-4 py-2.5 text-sm transition-colors",
+                            textColor === 'text-white/90'
+                              ? "text-white/90 hover:text-white hover:bg-white/10"
+                              : "text-slate-700 hover:text-slate-900 hover:bg-slate-50"
+                          )}
+                        >
+                          {entry.name}
+                        </Link>
+                      )
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -364,7 +397,7 @@ export function NavBar({ items, className }: NavBarProps) {
                                 exit={{ opacity: 0, height: 0 }}
                                 className="ml-4 mt-2 space-y-1"
                               >
-                                {item.submenu!.map((subItem) => (
+                                {submenuLinks(item.submenu).map((subItem) => (
                                   <Link
                                     key={subItem.name}
                                     href={subItem.url}

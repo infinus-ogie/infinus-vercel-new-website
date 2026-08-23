@@ -1,7 +1,8 @@
 "use client"
 
-import { Home, User, Briefcase, FileText, MessageCircle, HelpCircle, ChevronDown, Zap, Users, Menu, X, Star, BookOpen } from 'lucide-react'
+import { Home, Building2, Briefcase, Lightbulb, MessageCircle, ChevronDown, Menu, X } from 'lucide-react'
 import { NavBar } from "@/components/ui/tubelight-navbar"
+import { navItemsFor } from "@/components/ui/nav-items"
 import { LocaleSwitcherNav } from "@/components/i18n/LocaleSwitcherNav"
 import Link from "next/link"
 import Image from "next/image"
@@ -26,28 +27,18 @@ export function NavBarDemo() {
   const [textColor, setTextColor] = useState(() => navbarTextColorFor(surface))
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
 
-  // Same eight entries in the same order as before; only the source of the labels and URLs
-  // changed. Icons stay here — they are presentation, not copy.
-  const navItems = [
-    { name: nav.home.label, url: nav.home.href, icon: <Home size={18} strokeWidth={2.5} /> },
-    { name: nav.about.label, url: nav.about.href, icon: <User size={18} strokeWidth={2.5} /> },
-    { name: nav.expertise.label, url: nav.expertise.href, icon: <Briefcase size={18} strokeWidth={2.5} /> },
-    { name: nav.benefits.label, url: nav.benefits.href, icon: <Star size={18} strokeWidth={2.5} /> },
-    {
-      name: nav.packagedSolutions.label,
-      url: '#',
-      icon: <FileText size={18} strokeWidth={2.5} />,
-      submenu: nav.packagedSolutions.items.map((item) => ({ name: item.label, url: item.href })),
-    },
-    {
-      name: nav.caseStudies.label,
-      url: '#',
-      icon: <BookOpen size={18} strokeWidth={2.5} />,
-      submenu: nav.caseStudies.items.map((item) => ({ name: item.label, url: item.href })),
-    },
-    { name: nav.contact.label, url: nav.contact.href, icon: <MessageCircle size={18} strokeWidth={2.5} /> },
-    { name: nav.faq.label, url: nav.faq.href, icon: <HelpCircle size={18} strokeWidth={2.5} /> }
+  // FIVE top-level entries since the client's restructure: Home, Company, Expertise,
+  // Insights, Contact. Structure comes from the shared builder so the desktop bar and this
+  // mobile panel cannot disagree about the menu; the icons are attached here because they
+  // are presentation, not copy, and are matched by position.
+  const icons = [
+    <Home key="home" size={18} strokeWidth={2.5} />,
+    <Building2 key="company" size={18} strokeWidth={2.5} />,
+    <Briefcase key="expertise" size={18} strokeWidth={2.5} />,
+    <Lightbulb key="insights" size={18} strokeWidth={2.5} />,
+    <MessageCircle key="contact" size={18} strokeWidth={2.5} />,
   ]
+  const navItems = navItemsFor(nav).map((item, i) => ({ ...item, icon: icons[i] }))
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -236,21 +227,51 @@ export function NavBarDemo() {
                                 exit={{ opacity: 0, height: 0 }}
                                 className="ml-4 mt-2 space-y-1"
                               >
-                                {item.submenu!.map((subItem) => (
-                                  <Link
-                                    key={subItem.name}
-                                    href={subItem.url}
-                                    onClick={closeMobileMenu}
-                                    className={cn(
-                                      "block px-4 py-2 rounded-lg transition-colors text-sm",
-                                      textColor === 'text-white/90' 
-                                        ? "text-white/70 hover:bg-white/10 hover:text-white" 
-                                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                                    )}
-                                  >
-                                    {subItem.name}
-                                  </Link>
-                                ))}
+                                {item.submenu!.map((entry) =>
+                                  entry.kind === 'group' ? (
+                                    // A CATEGORY with no index page: a label over its real
+                                    // children, never a link to one arbitrary child.
+                                    <div key={entry.name}>
+                                      <p
+                                        className={cn(
+                                          "px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wider",
+                                          textColor === 'text-white/90' ? "text-white/50" : "text-slate-400"
+                                        )}
+                                      >
+                                        {entry.name}
+                                      </p>
+                                      {entry.items.map((subItem) => (
+                                        <Link
+                                          key={subItem.name}
+                                          href={subItem.url}
+                                          onClick={closeMobileMenu}
+                                          className={cn(
+                                            "block pl-6 pr-4 py-2 rounded-lg transition-colors text-sm",
+                                            textColor === 'text-white/90'
+                                              ? "text-white/70 hover:bg-white/10 hover:text-white"
+                                              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                                          )}
+                                        >
+                                          {subItem.name}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <Link
+                                      key={entry.name}
+                                      href={entry.url}
+                                      onClick={closeMobileMenu}
+                                      className={cn(
+                                        "block px-4 py-2 rounded-lg transition-colors text-sm",
+                                        textColor === 'text-white/90'
+                                          ? "text-white/70 hover:bg-white/10 hover:text-white"
+                                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                                      )}
+                                    >
+                                      {entry.name}
+                                    </Link>
+                                  )
+                                )}
                               </motion.div>
                             )}
                           </div>

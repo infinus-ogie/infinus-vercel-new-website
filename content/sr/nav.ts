@@ -2,71 +2,92 @@
  * Serbian shared-Navbar copy and destinations (Latin script, ekavian).
  *
  * ╔══════════════════════════════════════════════════════════════════════════════╗
- * ║  OWNER-APPROVED. Reviewed and signed off after the Phase H1 translation report. ║
+ * ║  OWNER-APPROVED. Labels signed off in the final client-feedback round.          ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
- * Labels approved at H1 review. Phase H2 repointed the case-study submenu at the real
- * Serbian pages and Phase H3 did the same for SAP paketna rešenja; every destination in this
- * file is a Serbian page.
- *
- * One label changed in the final client-feedback round: `expertise` reads "SAP ekspertiza"
- * rather than "Naša ekspertiza", mirroring the English rename. The href still points at the
- * `#our-expertise` anchor — the anchor id is deliberately NOT renamed with the terminology.
- *
  * ── Labels and destinations are separate decisions ──────────────────────────────
- * A translated label NEVER invents a URL. Each entry below points at a destination that
- * genuinely exists today:
+ * A translated label NEVER invents a URL. Every href below points at a Serbian page that
+ * genuinely exists today: the /sr homepage and its anchors, /sr/careers, /sr/faq,
+ * /sr/projectpulse, /sr/sap-packaged-solutions/…, the five /sr/case-study/… pages,
+ * /sr/grow, /sr/professional-services and /sr/contact.
  *
- *   home / about / expertise / benefits   -> /sr and its anchors. Real: the Serbian
- *                                            homepage renders those same sections.
- *   faq                                   -> /sr/faq        (live in H1)
- *   contact                               -> /sr/contact    (live since Phase G)
- *   caseStudies.*                         -> /sr/case-study/... (live since Phase H2)
- *   packagedSolutions.*                   -> /sr/projectpulse and
- *                                            /sr/sap-packaged-solutions/... (live in H3)
+ * No control in this navbar leads to an English page, so a visitor who switches language
+ * cannot fall back into English by following the menu.
  *
- * With H3 the last English destination left this file. Every control in the Serbian navbar
- * now leads to a Serbian page, so a visitor who switches language no longer falls back into
- * English by following the menu.
+ * ── Which labels were newly approved here ───────────────────────────────────────
+ * Most reuse terminology the site already had. Three are new and were approved explicitly:
  *
- * test/shell/chrome-locale.test.ts asserts every href here is either a live path in the
- * route map or an anchor on one, so a planned URL cannot slip in.
+ *   Ekspertiza              the Expertise group (new grouping, so a new label)
+ *   Uvidi                   Insights
+ *   Industrijska ekspertiza the industry section, previously "Ekspertiza po industrijama"
+ *
+ * "Zašto Infinus" already existed as a kicker in the ProjectPulse brochure copy, and
+ * "SAP ekspertiza" replaced "Naša ekspertiza" alongside the English rename.
+ *
+ * ── Kept untranslated on purpose ────────────────────────────────────────────────
+ * "SAP MythBusting" is a campaign name, like "ProjectPulse" and "GROW with SAP". "SAP za
+ * Professional Services" keeps the industry category in English, matching the existing
+ * footer label. "Nearshoring" is an established loanword in Serbian IT usage.
  */
 
 import type { NavDictionary } from '../dictionary'
 
 export const nav: NavDictionary = {
   home: { label: 'Početna', href: '/sr' },
-  about: { label: 'O nama', href: '/sr#about' },
-  expertise: { label: 'SAP ekspertiza', href: '/sr#our-expertise' },
-  benefits: { label: 'Prednosti', href: '/sr#partnership-benefits' },
 
-  packagedSolutions: {
-    label: 'SAP paketna rešenja',
-    items: [
-      // Product names, kept as they are. Phase H3: destinations are now the REAL Serbian
-      // pages. The URL keeps the English `sap-packaged-solutions` segment — see the header
-      // of app/(sr)/sr/sap-packaged-solutions/sap-starter-package/page.tsx.
-      { label: 'ProjectPulse', href: '/sr/projectpulse' },
-      { label: 'SAP Starter Package', href: '/sr/sap-packaged-solutions/sap-starter-package' },
+  company: {
+    label: 'Kompanija',
+    entries: [
+      { kind: 'link', label: 'O nama', href: '/sr#about' },
+      { kind: 'link', label: 'Zašto Infinus', href: '/sr#partnership-benefits' },
+      { kind: 'link', label: 'Karijera', href: '/sr/careers' },
+      { kind: 'link', label: 'Česta pitanja', href: '/sr/faq' },
     ],
   },
 
-  caseStudies: {
-    label: 'Studije slučaja',
-    items: [
-      // Phase H2: these now point at the REAL Serbian case studies.
-      { label: 'Maloprodaja', href: '/sr/case-study/retail1' },
-      { label: 'Farmacija 1', href: '/sr/case-study/pharma1' },
-      { label: 'Farmacija 2', href: '/sr/case-study/pharma2' },
-      // Established loanword in Serbian IT usage; left as-is deliberately.
-      { label: 'Nearshoring', href: '/sr/case-study/nearshoring1' },
-      { label: 'Proizvodnja', href: '/sr/case-study/manufacturing1' },
+  expertise: {
+    label: 'Ekspertiza',
+    entries: [
+      { kind: 'link', label: 'SAP ekspertiza', href: '/sr#our-expertise' },
+      { kind: 'link', label: 'Industrijska ekspertiza', href: '/sr#domain-expertise' },
+      {
+        kind: 'group',
+        label: 'SAP paketna rešenja',
+        items: [
+          // Product names, kept as they are. The URL keeps the English
+          // `sap-packaged-solutions` segment — see the header of
+          // app/(sr)/sr/sap-packaged-solutions/sap-starter-package/page.tsx.
+          { label: 'ProjectPulse', href: '/sr/projectpulse' },
+          { label: 'SAP Starter Package', href: '/sr/sap-packaged-solutions/sap-starter-package' },
+        ],
+      },
+      {
+        kind: 'group',
+        label: 'Studije slučaja',
+        items: [
+          { label: 'Maloprodaja', href: '/sr/case-study/retail1' },
+          { label: 'Farmacija 1', href: '/sr/case-study/pharma1' },
+          { label: 'Farmacija 2', href: '/sr/case-study/pharma2' },
+          // Established loanword in Serbian IT usage; left as-is deliberately.
+          { label: 'Nearshoring', href: '/sr/case-study/nearshoring1' },
+          { label: 'Proizvodnja', href: '/sr/case-study/manufacturing1' },
+        ],
+      },
+    ],
+  },
+
+  insights: {
+    label: 'Uvidi',
+    entries: [
+      // Mirrors the English decision: "SAP za CFO" points at the GROW landing page, not at
+      // the dedicated /sr/grow/cfo role page, which stays live and reachable from it.
+      { kind: 'link', label: 'SAP za CFO', href: '/sr/grow' },
+      { kind: 'link', label: 'SAP za Professional Services', href: '/sr/professional-services' },
+      // SAP MythBusting joins this group when /sr/insights/sap-mythbusters exists.
     ],
   },
 
   contact: { label: 'Kontakt', href: '/sr/contact' },
-  faq: { label: 'Česta pitanja', href: '/sr/faq' },
 
   menuLabel: 'Meni',
 }

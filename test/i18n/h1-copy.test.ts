@@ -94,11 +94,30 @@ describe('the thirteen corrections made at owner review', () => {
 
 describe('the copy decisions approved as first drafted', () => {
   test('nav labels', () => {
+    // The navbar was restructured into five groups. The Serbian labels below are the ones
+    // that survived that move unchanged, plus the two the owner approved for the new
+    // groupings ("Ekspertiza", "Uvidi").
     expect(sr.nav.home.label).toBe('Početna')
-    expect(sr.nav.expertise.label).toBe('SAP ekspertiza')
-    expect(sr.nav.faq.label).toBe('Česta pitanja')
-    expect(sr.nav.caseStudies.label).toBe('Studije slučaja')
-    expect(sr.nav.caseStudies.items.map((i) => i.label)).toEqual([
+    expect(sr.nav.company.label).toBe('Kompanija')
+    expect(sr.nav.expertise.label).toBe('Ekspertiza')
+    expect(sr.nav.insights.label).toBe('Uvidi')
+    expect(sr.nav.contact.label).toBe('Kontakt')
+
+    const companyLabels = sr.nav.company.entries.map((e) => e.label)
+    expect(companyLabels).toEqual(['O nama', 'Zašto Infinus', 'Karijera', 'Česta pitanja'])
+
+    const expertiseLabels = sr.nav.expertise.entries.map((e) => e.label)
+    expect(expertiseLabels).toEqual([
+      'SAP ekspertiza',
+      'Industrijska ekspertiza',
+      'SAP paketna rešenja',
+      'Studije slučaja',
+    ])
+
+    // The case studies survive as a CATEGORY inside Expertise, with all five pages.
+    const caseStudies = sr.nav.expertise.entries.find((e) => e.label === 'Studije slučaja')
+    expect(caseStudies?.kind).toBe('group')
+    expect(caseStudies?.kind === 'group' && caseStudies.items.map((i) => i.label)).toEqual([
       'Maloprodaja',
       'Farmacija 1',
       'Farmacija 2',
@@ -150,7 +169,7 @@ describe('the English source of truth is unchanged', () => {
     expect(en.careers.paragraphs[0]).toContain('Due to continuous business expansion')
     expect(en.careers.paragraphs[1]).toContain('interested in becoming a member')
     expect(en.faq.heading).toBe('Frequently Asked Questions')
-    expect(en.nav.expertise.label).toBe('SAP Expertise')
+    expect(en.nav.expertise.label).toBe('Expertise')
     expect(en.footer.columns.contact.label).toBe('Contact Information')
   })
 })
