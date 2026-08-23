@@ -312,6 +312,48 @@ export interface HomeDictionary {
   }
 
   /**
+   * The short business contact form that replaced the Join Our Team section.
+   *
+   * The homepage used to host the JOB APPLICATION form. The client asked for that to move
+   * to a page of its own — see CareersDictionary — and for a short business enquiry form
+   * to take its place.
+   *
+   * Deliberately shorter than the Contact page's form, and deliberately NOT a second copy
+   * of it: no phone, no attachment, and explicitly no LinkedIn and no CV upload. It posts
+   * to the same /api/contact endpoint, so this is presentation and copy only — there is no
+   * second contact backend.
+   */
+  readonly contactShort: {
+    readonly heading: string
+    readonly body: string
+    readonly nameLabel: string
+    readonly namePlaceholder: string
+    readonly emailLabel: string
+    readonly emailPlaceholder: string
+    readonly companyLabel: string
+    readonly companyPlaceholder: string
+    readonly messageLabel: string
+    readonly messagePlaceholder: string
+    readonly submit: string
+    readonly submitting: string
+    /** Zod messages. The RULES are the ones /api/contact already enforces. */
+    readonly validation: {
+      readonly name: string
+      readonly email: string
+      readonly message: string
+    }
+    readonly success: { readonly heading: string; readonly body: string }
+    /** Rendered on a failed submission — unlike the Contact page, which sets and never shows it. */
+    readonly error: string
+    readonly privacy: {
+      readonly before: string
+      readonly linkText: string
+      readonly after: string
+      readonly href: string
+    }
+  }
+
+  /**
    * Homepage JSON-LD: the Q&A the page advertises as structured data.
    *
    * This used to be a FOUR-tuple whose last two entries were "How do I apply?" and "What

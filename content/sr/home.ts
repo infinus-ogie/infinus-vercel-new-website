@@ -194,6 +194,45 @@ export const home: HomeDictionary = {
   },
 
 
+  /**
+   * Kratka forma za poslovni upit — na mestu gde je ranije stajala sekcija "Pridružite se
+   * našem timu".
+   *
+   * Prevedeno sa engleskog. `privacy` doslovno preuzima već odobrenu rečenicu sa Kontakt
+   * stranice, uključujući SRPSKI link ka Politici privatnosti.
+   */
+  contactShort: {
+    heading: 'Razgovarajte sa našim SAP timom',
+    body:
+      'Recite nam na čemu radite i javićemo vam se u roku od jednog radnog dana.',
+    nameLabel: 'Ime i prezime *',
+    namePlaceholder: 'Vaše ime i prezime',
+    emailLabel: 'Poslovni email *',
+    emailPlaceholder: 'name@company.com',
+    companyLabel: 'Kompanija',
+    companyPlaceholder: 'Naziv vaše kompanije',
+    messageLabel: 'Poruka *',
+    messagePlaceholder: 'Opišite nam svoje SAP potrebe ili zahteve projekta...',
+    submit: 'Kontaktirajte nas',
+    submitting: 'Šalje se...',
+    validation: {
+      name: 'Ime mora imati najmanje 2 znaka',
+      email: 'Neispravna email adresa',
+      message: 'Poruka mora imati najmanje 10 znakova',
+    },
+    success: {
+      heading: 'Hvala vam!',
+      body: 'Vaša poruka je uspešno poslata. Javićemo vam se u najkraćem roku.',
+    },
+    error: 'Slanje poruke nije uspelo. Pokušajte ponovo.',
+    privacy: {
+      before: 'Slanjem forme potvrđujete da ste pročitali našu ',
+      linkText: 'Politiku privatnosti',
+      after: '.',
+      href: '/sr/politika-privatnosti',
+    },
+  },
+
   structuredDescription:
     'Vaš pouzdan partner za SAP ekspertizu. SAP Gold Partner fokusiran na rešenja iz SAP Business Suite portfolija.',
 

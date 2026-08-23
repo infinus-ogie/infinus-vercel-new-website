@@ -44,6 +44,10 @@ export async function POST(request: NextRequest) {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
       phone: formData.get('phone') as string || undefined,
+      // `company` has always been in the Zod schema and in the notification template, but
+      // was never read out of the FormData — so the field silently vanished between the
+      // browser and the inbox. The homepage's short form actually sends it, so read it.
+      company: formData.get('company') as string || undefined,
       subject: formData.get('subject') as string,
       message: formData.get('message') as string,
       attachment: attachment && attachment.size > 0 ? attachment : undefined

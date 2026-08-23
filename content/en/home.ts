@@ -180,6 +180,45 @@ export const home: HomeDictionary = {
   },
 
 
+  /**
+   * The short business enquiry form, in the slot the Join Our Team section used to occupy.
+   *
+   * Wording is new — there was no English source to extract, because this form did not
+   * exist. It stays close to the approved Contact page's register rather than inventing a
+   * different voice for the same company.
+   */
+  contactShort: {
+    heading: 'Talk to our SAP team',
+    body:
+      'Tell us what you are working on and we will get back to you within one business day.',
+    nameLabel: 'Name *',
+    namePlaceholder: 'Your full name',
+    emailLabel: 'Business Email *',
+    emailPlaceholder: 'name@company.com',
+    companyLabel: 'Company',
+    companyPlaceholder: 'Your company',
+    messageLabel: 'Message *',
+    messagePlaceholder: 'Tell us about your SAP needs or project requirements...',
+    submit: 'Contact Us',
+    submitting: 'Sending...',
+    validation: {
+      name: 'Name must be at least 2 characters',
+      email: 'Invalid email address',
+      message: 'Message must be at least 10 characters',
+    },
+    success: {
+      heading: 'Thank You!',
+      body: "Your message has been sent successfully. We'll get back to you soon.",
+    },
+    error: 'Failed to send message. Please try again.',
+    privacy: {
+      before: 'By submitting this form, you confirm that you have read our ',
+      linkText: 'Privacy Policy',
+      after: '.',
+      href: '/privacy',
+    },
+  },
+
   // Verbatim from the WebPage/Article schema in the pre-H1 page: shorter than the meta
   // description, and left exactly as it was.
   structuredDescription:

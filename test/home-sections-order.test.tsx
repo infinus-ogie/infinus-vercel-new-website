@@ -27,14 +27,16 @@ import { SiteChrome } from '@/components/shell/SiteChrome'
  * The `data-section` values the homepage renders, in the order it renders them.
  *
  * `join-team` used to close this list. The client asked for the job-application form to
- * move to a dedicated Careers page, so it is no longer a homepage section — it is asserted
- * in test/careers-page.test.tsx instead.
+ * move to a dedicated Careers page — asserted in test/careers-page.test.tsx — and for a
+ * short business enquiry form to take its place. Hence `contact-form`: a different id for
+ * a different purpose, so an anchor cannot promise recruitment and deliver sales.
  */
 const EXPECTED_SECTION_ORDER = [
   'about',
   'sap-services',
   'partnership-benefits',
   'domain',
+  'contact-form',
 ] as const
 
 function renderedSectionOrder(container: HTMLElement): string[] {

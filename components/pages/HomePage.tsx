@@ -5,6 +5,7 @@ import { SapServicesSection } from "@/components/ui/sap-services-section"
 import { PartnershipBenefitsSection } from "@/components/ui/partnership-benefits-section"
 import DomainExpertiseSection from "@/components/ui/domain-expertise-section"
 import AboutSection from "@/components/ui/about-section"
+import { HomeContactSection } from "@/components/home/HomeContactSection"
 import type { HomeDictionary } from "@/content/dictionary"
 
 /**
@@ -68,6 +69,17 @@ export function HomePage({ content, jsonLd, anchorBase }: HomePageProps) {
           copy={content.domains}
           sectionHref={`${anchorBase === "/" ? "/" : anchorBase}#domain-expertise`}
         />
+
+        {/* [G] Short business contact form.
+
+            This slot held the Join Our Team APPLICATION form until the client asked for the
+            two to be separated: recruitment moved to /careers, and a business enquiry form
+            took its place. The section keeps the id `contact-form` rather than the old
+            `join-team`, because an anchor that says "join-team" and shows a sales form is
+            worse than no anchor at all. */}
+        <Section id="contact-form" surface="surface-1" topFade data-section="contact-form">
+          <HomeContactSection copy={content.contactShort} />
+        </Section>
 
     </>
   )
