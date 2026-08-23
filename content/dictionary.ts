@@ -536,15 +536,35 @@ export interface NavDictionary {
   readonly menuLabel: string
 }
 
-/** The shared Footer, per locale. */
+/**
+ * The shared Footer, per locale.
+ *
+ * ── Restructured alongside the navbar ───────────────────────────────────────────
+ * The columns were `contact / expertise / company / resources / legal`, where Expertise
+ * listed five service names that all pointed at the same `#our-expertise` anchor, and
+ * Company mixed About and FAQ with two campaign pages. The client proposed a structure that
+ * mirrors the new navigation instead:
+ *
+ *     Contact Information · Company · Expertise · Insights · Legal
+ *
+ * The old Resources column is gone. Its two links pointed at `#downloads` on the campaign
+ * pages; those sections, their anchors and every PDF and ZIP behind them are untouched —
+ * only the footer column was removed.
+ *
+ * `company`, `expertise` and `insights` use NavMenuEntry, so a category with no index page
+ * renders as a heading over its real children rather than as a link to one of them. Same
+ * rule as the navbar, same type, for the same reason.
+ *
+ * `contact` and `legal` stay plain link lists: neither has a category in it.
+ */
 export interface FooterDictionary {
   readonly description: string
   readonly logoAlt: string
   readonly columns: {
     readonly contact: NavGroupCopy
-    readonly expertise: NavGroupCopy
-    readonly company: NavGroupCopy
-    readonly resources: NavGroupCopy
+    readonly company: NavMenuCopy
+    readonly expertise: NavMenuCopy
+    readonly insights: NavMenuCopy
     readonly legal: NavGroupCopy
   }
   readonly bottom: {

@@ -21,15 +21,25 @@ export default function Footer() {
   const dictionary = getDictionary(chromeLocaleFor(pathname));
   const copy = dictionary.footer;
 
-  // Same five columns in the same order as before; only the source changed. The Contact
-  // column keeps its distinct card treatment, now keyed on identity rather than on the
-  // English title string.
+  // Five columns in the order the client proposed, mirroring the new navigation:
+  // Contact Information, Company, Expertise, Insights, Legal. The Contact column keeps its
+  // distinct card treatment, keyed on identity rather than on the English title string.
+  //
+  // The three middle columns hold NavMenuEntry, so a category with no index page renders as
+  // a heading over its children instead of linking to one of them. Contact and Legal are
+  // plain link lists — neither has a category in it — so they are converted to the same
+  // shape here rather than growing a second rendering path.
+  const asEntries = (group: { label: string; items: readonly { label: string; href: string }[] }) => ({
+    label: group.label,
+    entries: group.items.map((item) => ({ kind: "link" as const, ...item })),
+  });
+
   const columns = [
-    { key: "contact", isContact: true, group: copy.columns.contact },
-    { key: "expertise", isContact: false, group: copy.columns.expertise },
-    { key: "company", isContact: false, group: copy.columns.company },
-    { key: "resources", isContact: false, group: copy.columns.resources },
-    { key: "legal", isContact: false, group: copy.columns.legal },
+    { key: "contact", isContact: true, menu: asEntries(copy.columns.contact) },
+    { key: "company", isContact: false, menu: copy.columns.company },
+    { key: "expertise", isContact: false, menu: copy.columns.expertise },
+    { key: "insights", isContact: false, menu: copy.columns.insights },
+    { key: "legal", isContact: false, menu: asEntries(copy.columns.legal) },
   ];
 
   return (
@@ -61,13 +71,16 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
           {/* Links Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 flex-1">
-            {columns.map((col) => (
+            {columns.map((col) => {
+              // The Contact column renders address / mailbox / LinkedIn, never a category.
+              const contactLinks = copy.columns.contact.items;
+              return (
               <div key={col.key} className={col.isContact ? "relative" : ""}>
                 {col.isContact ? (
                   <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4">
-                    <h3 className="text-sm font-medium mb-3 text-white">{col.group.label}</h3>
+                    <h3 className="text-sm font-medium mb-3 text-white">{col.menu.label}</h3>
                     <ul className="space-y-2">
-                      {col.group.items.map((link, i) => (
+                      {contactLinks.map((link, i) => (
                         <li key={i}>
                           <Link
                             href={link.href}
@@ -91,24 +104,48 @@ export default function Footer() {
                   </div>
                 ) : (
                   <>
-                    <h3 className="text-sm font-medium mb-3 text-white">{col.group.label}</h3>
+                    <h3 className="text-sm font-medium mb-3 text-white">{col.menu.label}</h3>
                     <ul className="space-y-2">
-                      {col.group.items.map((link, i) => (
-                        <li key={i}>
-                          <Link
-                            href={link.href}
-                            className="text-[0.85rem] text-white/70 hover:text-blue-300 transition"
-                            {...(link.href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer" })}
-                          >
-                            {link.label}
-                          </Link>
-                        </li>
-                      ))}
+                      {col.menu.entries.map((entry, i) =>
+                        entry.kind === "group" ? (
+                          // A CATEGORY with no index page. It is a label, not a link — the
+                          // whole reason NavMenuEntry has two shapes. Its children carry the
+                          // real destinations.
+                          <li key={i}>
+                            <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-white/40 mt-3 mb-1.5">
+                              {entry.label}
+                            </p>
+                            <ul className="space-y-2 pl-3 border-l border-white/10">
+                              {entry.items.map((link, j) => (
+                                <li key={j}>
+                                  <Link
+                                    href={link.href}
+                                    className="text-[0.85rem] text-white/70 hover:text-blue-300 transition"
+                                  >
+                                    {link.label}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        ) : (
+                          <li key={i}>
+                            <Link
+                              href={entry.href}
+                              className="text-[0.85rem] text-white/70 hover:text-blue-300 transition"
+                              {...(entry.href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer" })}
+                            >
+                              {entry.label}
+                            </Link>
+                          </li>
+                        )
+                      )}
                     </ul>
                   </>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

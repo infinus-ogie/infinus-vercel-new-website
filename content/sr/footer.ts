@@ -2,36 +2,35 @@
  * Serbian shared-Footer copy and destinations (Latin script, ekavian).
  *
  * ╔══════════════════════════════════════════════════════════════════════════════╗
- * ║  OWNER-APPROVED. Reviewed and signed off after the Phase H1 translation report. ║
+ * ║  OWNER-APPROVED. Restructured and re-approved in the final client-feedback      ║
+ * ║  round; the labels reuse the navbar's approved set.                             ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
- * ── Corrections applied at owner review ─────────────────────────────────────────
- *   columns.contact.label            "Kontakt informacije" -> "Kontakt podaci"
- *   columns.expertise.items[2]       "SAP upravljanje aplikacijama i podrška" ->
- *                                    "Upravljanje SAP aplikacijama i podrška"
+ * ── Same restructure as the English half ────────────────────────────────────────
+ * Kontakt podaci · Kompanija · Ekspertiza · Uvidi · Pravne informacije, mirroring the new
+ * navigation. The old "Resursi" column is gone; the campaign download sections, their
+ * `#downloads` anchors and every PDF and ZIP behind them are untouched.
+ *
+ * ── Corrections carried forward from the H1 owner review ────────────────────────
+ *   columns.contact.label   "Kontakt informacije" -> "Kontakt podaci"
+ *
+ * The five service names that used to fill the Ekspertiza column all pointed at the same
+ * `/sr#our-expertise` anchor. They are replaced by the real destinations, so the column now
+ * leads somewhere different for each entry rather than five times to one place.
  *
  * ── Unchanged data, never translated ────────────────────────────────────────────
  *   · office@infinus.co, the LinkedIn URL, the Brivio credit and its URL
  *   · "Infinus" and "Infinus d.o.o." — the legal company name
- *   · official SAP product names
+ *   · official SAP product names, and "SAP za Professional Services" as the industry category
  *
- * ── The one approved string here ────────────────────────────────────────────────
- * The postal address is "Trešnjinog cveta 1, 11070 Beograd", copied verbatim from the
- * owner-approved Serbian legal text in content/legal/politika-privatnosti.ts, rather than
- * transliterated from the English footer's ASCII "Tresnjinog cveta 1, 11070 Belgrade,
- * Serbia". Everything else on this page is draft.
+ * ── The approved address ────────────────────────────────────────────────────────
+ * "Trešnjinog cveta 1, 11070 Beograd", verbatim from the owner-approved Serbian legal text
+ * in content/legal/politika-privatnosti.ts.
  *
  * ── Destinations ────────────────────────────────────────────────────────────────
- * Same rule as the Navbar: labels are translated, URLs are only ever real.
- *
- * The Company and Resources columns used to point at /grow and /professional-services,
- * because those WERE the Serbian pages. They are the English pages now: the owner's route
- * decision gave English the clean unprefixed paths and moved the Serbian content under /sr.
- * So these links became /sr/grow and /sr/professional-services — a change of href that keeps
- * the destination exactly where it always was, which is the whole point.
- *
- * The Legal column points at the SERBIAN Privacy Policy, /sr/politika-privatnosti — the single
- * bilingual URL was split by locale.
+ * Same rule as the navbar: labels are translated, URLs are only ever real, and every one of
+ * them is Serbian. The Legal column points at the SERBIAN Privacy Policy — that slug is
+ * translated, so no prefix rule reaches it.
  */
 
 import type { FooterDictionary } from '../dictionary'
@@ -51,34 +50,54 @@ export const footer: FooterDictionary = {
         { label: 'LinkedIn', href: 'https://www.linkedin.com/company/infinus1/posts/?feedView=all' },
       ],
     },
-    expertise: {
-      label: 'SAP ekspertiza',
-      items: [
-        { label: 'SAP savetovanje i konsalting', href: '/sr#our-expertise' },
-        { label: 'SAP implementacije', href: '/sr#our-expertise' },
-        { label: 'Upravljanje SAP aplikacijama i podrška', href: '/sr#our-expertise' },
-        { label: 'SAP integracija i optimizacija procesa', href: '/sr#our-expertise' },
-        { label: 'SAP ekstenzije i inovacije', href: '/sr#our-expertise' },
-      ],
-    },
+
     company: {
       label: 'Kompanija',
-      items: [
-        { label: 'O nama', href: '/sr#about' },
-        { label: 'GROW with SAP: Finansije', href: '/sr/grow' },
-        { label: 'SAP za Professional Services', href: '/sr/professional-services' },
-        { label: 'Karijera', href: '/sr/careers' },
-        { label: 'Česta pitanja', href: '/sr/faq' },
-        { label: 'Kontakt', href: '/sr/contact' },
+      entries: [
+        { kind: 'link', label: 'O nama', href: '/sr#about' },
+        { kind: 'link', label: 'Zašto Infinus', href: '/sr#partnership-benefits' },
+        { kind: 'link', label: 'Karijera', href: '/sr/careers' },
+        { kind: 'link', label: 'Česta pitanja', href: '/sr/faq' },
       ],
     },
-    resources: {
-      label: 'Resursi',
-      items: [
-        { label: 'GROW materijali', href: '/sr/grow#downloads' },
-        { label: 'Materijali za Professional Services', href: '/sr/professional-services#downloads' },
+
+    expertise: {
+      label: 'Ekspertiza',
+      entries: [
+        { kind: 'link', label: 'SAP ekspertiza', href: '/sr#our-expertise' },
+        { kind: 'link', label: 'Industrijska ekspertiza', href: '/sr#domain-expertise' },
+        {
+          kind: 'group',
+          label: 'SAP paketna rešenja',
+          items: [
+            { label: 'ProjectPulse', href: '/sr/projectpulse' },
+            { label: 'SAP Starter Package', href: '/sr/sap-packaged-solutions/sap-starter-package' },
+          ],
+        },
+        {
+          kind: 'group',
+          label: 'Studije slučaja',
+          items: [
+            { label: 'Maloprodaja', href: '/sr/case-study/retail1' },
+            { label: 'Farmacija 1', href: '/sr/case-study/pharma1' },
+            { label: 'Farmacija 2', href: '/sr/case-study/pharma2' },
+            { label: 'Nearshoring', href: '/sr/case-study/nearshoring1' },
+            { label: 'Proizvodnja', href: '/sr/case-study/manufacturing1' },
+          ],
+        },
       ],
     },
+
+    insights: {
+      label: 'Uvidi',
+      entries: [
+        // Same owner decision as the navbar: /sr/grow, not /sr/grow/cfo.
+        { kind: 'link', label: 'SAP za CFO', href: '/sr/grow' },
+        { kind: 'link', label: 'SAP za Professional Services', href: '/sr/professional-services' },
+        // SAP MythBusting joins this group when /sr/insights/sap-mythbusters exists.
+      ],
+    },
+
     legal: {
       label: 'Pravne informacije',
       items: [{ label: 'Politika privatnosti', href: '/sr/politika-privatnosti' }],

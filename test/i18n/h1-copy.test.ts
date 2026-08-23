@@ -43,8 +43,10 @@ describe('the thirteen corrections made at owner review', () => {
 
   test('the application-management service title', () => {
     expect(sr.home.services.items[2].title).toBe('Upravljanje SAP aplikacijama i podrška')
-    // The same service name appears in the footer's expertise column and must match.
-    expect(sr.footer.columns.expertise.items[2].label).toBe('Upravljanje SAP aplikacijama i podrška')
+    // This name used to be duplicated in the footer's Ekspertiza column, which listed five
+    // service names all pointing at the same #our-expertise anchor. The footer restructure
+    // replaced them with real, distinct destinations, so the homepage section is now the
+    // single place this string appears and there is no second copy to keep in step.
   })
 
   test('the "custom" anglicism is gone from every Serbian string', () => {
