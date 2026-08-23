@@ -179,64 +179,6 @@ export const home: HomeDictionary = {
     contactHref: '/contact',
   },
 
-  join: {
-    heading: 'Join Our Team',
-    paragraphs: [
-      'Due to continuous business expansion, we are looking to expand our team.',
-      'If you have experience in some of SAP S/4HANA or ECC modules and areas, industry solutions, and/or LOB solutions, and if you are interested in becoming a member of the agile team of dedicated SAP professionals, please contact us.',
-      'We will be glad to talk with you!',
-    ],
-    form: {
-      nameLabel: 'Your Name *',
-      namePlaceholder: 'Nikola Trivic',
-      phoneLabel: 'Phone Number',
-      phonePlaceholder: '+381 64 123 4567',
-      phoneHint: 'Include country code (E.164 format)',
-      emailLabel: 'Your Email *',
-      emailPlaceholder: 'name@company.com',
-      linkedinLabel: 'LinkedIn URL',
-      linkedinPlaceholder: 'https://linkedin.com/in/yourprofile',
-      subjectLabel: 'Subject *',
-      subjectPlaceholder: 'SAP Consultant Position',
-      messageLabel: 'Message *',
-      messagePlaceholder: "Tell us about your SAP experience and why you'd like to join our team...",
-      fileLabel: 'Attach your resume (optional)',
-      fileClickToUpload: 'Click to upload',
-      fileOrDragAndDrop: ' or drag and drop',
-      fileHint: 'PDF, DOC, DOCX (max 5MB)',
-      submit: 'Submit Application',
-      submitting: 'Submitting...',
-      replyPromise: 'We reply within 1 business day.',
-    },
-    validation: {
-      name: 'Please enter your name.',
-      email: 'Enter a valid email address.',
-      linkedin: 'Please enter a valid LinkedIn URL.',
-      subject: 'Subject is required.',
-      message: 'Message should be at least 10 characters.',
-      fileType: 'Allowed files: PDF, DOC, DOCX.',
-      fileSize: 'Max file size is 5MB.',
-    },
-    success: "Thanks for your application. We'll get back to you!",
-    privacy: {
-      before: 'By submitting your application, you confirm that you have read our ',
-      linkText: 'Privacy Policy',
-      after: '.',
-      href: '/privacy',
-    },
-    faq: [
-      {
-        title: 'How do I apply?',
-        body:
-          'Fill in your name, email, phone, subject and message, attach your resume if you have one, and click Submit Application. We will review and get back to you.',
-      },
-      {
-        title: 'What happens after I submit?',
-        body:
-          'Our team reviews your application and replies by email. If there is a fit, we will schedule an introductory call.',
-      },
-    ],
-  },
 
   // Verbatim from the WebPage/Article schema in the pre-H1 page: shorter than the meta
   // description, and left exactly as it was.
@@ -253,16 +195,6 @@ export const home: HomeDictionary = {
       title: 'What are the benefits of working with Infinus?',
       body:
         'Benefits include European Focus (located in Serbia, CET time zone, services throughout Europe), Hybrid Work Model (onsite and remote work), Competitive Pricing (cost-effective services without sacrificing quality), and Flexible Solutions (flexible engagement models tailored to your needs).',
-    },
-    {
-      title: 'How do I apply?',
-      body:
-        'Fill in your name, email, phone, subject and message, attach your resume if you have one, and click Submit Application. We will review and get back to you.',
-    },
-    {
-      title: 'What happens after I submit?',
-      body:
-        'Our team reviews your application and replies by email. If there is a fit, we will schedule an introductory call.',
     },
   ],
 }

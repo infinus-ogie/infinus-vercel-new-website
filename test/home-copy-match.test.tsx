@@ -21,10 +21,12 @@
  *                                                       <label> elements at all, so
  *                                                       these could never resolve
  *
- * This rewrite keeps a deliberately small set of anchors: the hero, the section
- * headings, the domain list, and the join-team form's fields and consent line. These
- * are the strings whose accidental loss would be a real regression, and they are the
- * ones Phase F must reproduce byte-identically when copy moves into dictionaries.
+ * This rewrite keeps a deliberately small set of anchors: the hero, its call to action,
+ * the section headings and the domain list. These are the strings whose accidental loss
+ * would be a real regression.
+ *
+ * The join-team form's anchors USED to live here too. It moved to a page of its own in the
+ * final client-feedback phase, so its assertions moved with it, to careers-page.test.tsx.
  * Section ordering is covered by home-sections-order.test.tsx.
  */
 import { render, screen, within } from '@testing-library/react'
@@ -60,7 +62,6 @@ describe('Homepage copy', () => {
       /^our sap expertise in action$/i,
       /^why infinus$/i,
       /^industry expertise$/i,
-      /^join our team$/i,
     ]) {
       expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument()
     }
@@ -134,53 +135,6 @@ describe('Homepage copy', () => {
     ]) {
       expect(within(domain).getByText(industry)).toBeInTheDocument()
     }
-  })
-
-  test('join-team section keeps its recruiting copy', () => {
-    const { container } = render(<HomePage />)
-    const join = container.querySelector('[data-section="join-team"]') as HTMLElement
-    expect(join).not.toBeNull()
-
-    // Grammar corrected in the final client-feedback phase: "continues" -> "continuous".
-    expect(within(join).getByText(/due to continuous business expansion/i)).toBeInTheDocument()
-    expect(within(join).getByText(/we will be glad to talk with you/i)).toBeInTheDocument()
-  })
-
-  test('join-team application form exposes its fields and submit control', () => {
-    const { container } = render(<HomePage />)
-    const join = container.querySelector('[data-section="join-team"]') as HTMLElement
-
-    // These field captions are plain text, not <label for=...>, which is why the old
-    // getByLabelText assertions could never pass. Recorded as-is; making them real
-    // labels is an accessibility improvement for a later phase, not for A1.
-    for (const field of [
-      /your name \*/i,
-      /phone number/i,
-      /your email \*/i,
-      /subject \*/i,
-      /message \*/i,
-      /attach your resume/i,
-    ]) {
-      expect(within(join).getByText(field)).toBeInTheDocument()
-    }
-
-    expect(within(join).getByRole('button', { name: /submit application/i })).toBeInTheDocument()
-  })
-
-  test('job application form uses the owner-approved acknowledgement wording', () => {
-    const { container } = render(<HomePage />)
-    const join = container.querySelector('[data-section="join-team"]') as HTMLElement
-
-    // Exact owner-approved sentence. It is an informational acknowledgement, NOT the
-    // cookie-consent mechanism — "agree"/"consent"/"accept" phrasings are wrong here.
-    expect(
-      within(join).getByText(/by submitting your application, you confirm that you have read our/i)
-    ).toBeInTheDocument()
-    expect(within(join).queryByText(/you agree to our/i)).not.toBeInTheDocument()
-    expect(within(join).getByRole('link', { name: /privacy policy/i })).toHaveAttribute(
-      'href',
-      '/privacy'
-    )
   })
 
   test('footer carries the company details and the privacy policy link', () => {

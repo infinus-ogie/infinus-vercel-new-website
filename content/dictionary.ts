@@ -48,6 +48,8 @@ import { contact as enContact } from './en/contact'
 import { contact as srContact } from './sr/contact'
 import { home as enHome } from './en/home'
 import { home as srHome } from './sr/home'
+import { careers as enCareers } from './en/careers'
+import { careers as srCareers } from './sr/careers'
 import { faq as enFaq } from './en/faq'
 import { faq as srFaq } from './sr/faq'
 import { nav as enNav } from './en/nav'
@@ -309,62 +311,85 @@ export interface HomeDictionary {
     readonly contactHref: string
   }
 
-  readonly join: {
-    readonly heading: string
-    readonly paragraphs: readonly [string, string, string]
-    readonly form: {
-      readonly nameLabel: string
-      readonly namePlaceholder: string
-      readonly phoneLabel: string
-      readonly phonePlaceholder: string
-      readonly phoneHint: string
-      readonly emailLabel: string
-      readonly emailPlaceholder: string
-      readonly linkedinLabel: string
-      readonly linkedinPlaceholder: string
-      readonly subjectLabel: string
-      readonly subjectPlaceholder: string
-      readonly messageLabel: string
-      readonly messagePlaceholder: string
-      readonly fileLabel: string
-      readonly fileClickToUpload: string
-      readonly fileOrDragAndDrop: string
-      readonly fileHint: string
-      readonly submit: string
-      readonly submitting: string
-      readonly replyPromise: string
-    }
-    /** Zod messages. The RULES stay shared; only the wording is per locale. */
-    readonly validation: {
-      readonly name: string
-      readonly email: string
-      readonly linkedin: string
-      readonly subject: string
-      readonly message: string
-      readonly fileType: string
-      readonly fileSize: string
-    }
-    readonly success: string
-    /**
-     * The job-application acknowledgement. English is OWNER-APPROVED wording; the
-     * Serbian is DRAFT. Informational, NOT the cookie-consent mechanism.
-     */
-    readonly privacy: {
-      readonly before: string
-      readonly linkText: string
-      readonly after: string
-      readonly href: string
-    }
-    /** Q&A used only for the homepage's JSON-LD, not rendered on the page. */
-    readonly faq: readonly [CardCopy, CardCopy]
-  }
-
-  /** Homepage JSON-LD: the four Q&A the page advertises as structured data. */
-  readonly structuredFaq: readonly [CardCopy, CardCopy, CardCopy, CardCopy]
+  /**
+   * Homepage JSON-LD: the Q&A the page advertises as structured data.
+   *
+   * This used to be a FOUR-tuple whose last two entries were "How do I apply?" and "What
+   * happens after I submit?". Those described the job-application form, which now lives on
+   * the Careers page — see CareersDictionary.faq. Leaving them here would have advertised
+   * an application process to crawlers on a page that can no longer start one.
+   */
+  readonly structuredFaq: readonly [CardCopy, CardCopy]
   /**
    * The shorter description the homepage's WebPage schema uses — deliberately not the same
    * string as `metadata.description`, which is what the live English page already does.
    */
+  readonly structuredDescription: string
+}
+
+/**
+ * The Careers page — /careers and /sr/careers.
+ *
+ * This IS the old `HomeDictionary.join`, promoted to a namespace of its own when the client
+ * asked for the job-application form to leave the homepage. The keys are unchanged, so the
+ * move is a relocation rather than a rewrite; `metadata` and `structuredDescription` are the
+ * only additions, because a section has no title of its own and a page needs one.
+ *
+ * The form's Zod RULES (min 2 / min 10 characters, email format, the three accepted MIME
+ * types, the 5MB ceiling) and its FormData keys are NOT here and never were: they belong to
+ * components/ui/join-section.tsx and to /api/join-team. Only the wording is per locale.
+ */
+export interface CareersDictionary {
+  readonly metadata: { readonly title: string; readonly description: string }
+  readonly heading: string
+  readonly paragraphs: readonly [string, string, string]
+  readonly form: {
+    readonly nameLabel: string
+    readonly namePlaceholder: string
+    readonly phoneLabel: string
+    readonly phonePlaceholder: string
+    readonly phoneHint: string
+    readonly emailLabel: string
+    readonly emailPlaceholder: string
+    readonly linkedinLabel: string
+    readonly linkedinPlaceholder: string
+    readonly subjectLabel: string
+    readonly subjectPlaceholder: string
+    readonly messageLabel: string
+    readonly messagePlaceholder: string
+    readonly fileLabel: string
+    readonly fileClickToUpload: string
+    readonly fileOrDragAndDrop: string
+    readonly fileHint: string
+    readonly submit: string
+    readonly submitting: string
+    readonly replyPromise: string
+  }
+  /** Zod messages. The RULES stay shared; only the wording is per locale. */
+  readonly validation: {
+    readonly name: string
+    readonly email: string
+    readonly linkedin: string
+    readonly subject: string
+    readonly message: string
+    readonly fileType: string
+    readonly fileSize: string
+  }
+  readonly success: string
+  /**
+   * The job-application acknowledgement. Informational — NOT the cookie-consent mechanism,
+   * so "agree"/"accept"/"pristajete" phrasings are wrong here. `href` is locale-owned so a
+   * Serbian applicant is never sent to the English document.
+   */
+  readonly privacy: {
+    readonly before: string
+    readonly linkText: string
+    readonly after: string
+    readonly href: string
+  }
+  /** Q&A used only for this page's JSON-LD, not rendered. Moved here from the homepage. */
+  readonly faq: readonly [CardCopy, CardCopy]
+  /** The shorter description this page's WebPage schema uses. */
   readonly structuredDescription: string
 }
 
@@ -1146,6 +1171,7 @@ export interface Dictionary {
   readonly common: CommonDictionary
   readonly contact: ContactDictionary
   readonly home: HomeDictionary
+  readonly careers: CareersDictionary
   readonly faq: FaqDictionary
   readonly nav: NavDictionary
   readonly footer: FooterDictionary
@@ -1167,6 +1193,7 @@ export const dictionaries = {
     common: enCommon,
     contact: enContact,
     home: enHome,
+    careers: enCareers,
     faq: enFaq,
     nav: enNav,
     footer: enFooter,
@@ -1182,6 +1209,7 @@ export const dictionaries = {
     common: srCommon,
     contact: srContact,
     home: srHome,
+    careers: srCareers,
     faq: srFaq,
     nav: srNav,
     footer: srFooter,
@@ -1210,6 +1238,7 @@ export const DICTIONARY_NAMESPACES = [
   'common',
   'contact',
   'home',
+  'careers',
   'faq',
   'nav',
   'footer',

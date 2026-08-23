@@ -174,6 +174,15 @@ export const ROUTE_PAIRS: readonly RoutePair[] = [
     sr: live('/sr/faq'),
   },
   {
+    // The job-application form used to be a homepage section reached at /#join-team. The
+    // client asked for a real page, so it became one — in both locales at once, because a
+    // half-built pair is exactly what the `planned` status exists to keep out of hreflang.
+    id: 'careers',
+    pairing: 'translatable',
+    en: live('/careers'),
+    sr: live('/sr/careers'),
+  },
+  {
     id: 'case-study-retail1',
     pairing: 'translatable',
     en: live('/case-study/retail1'),

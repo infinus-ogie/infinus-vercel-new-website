@@ -65,6 +65,10 @@ export const LIGHT_SURFACE_PAGE_IDS: readonly string[] = [
   // /privacy and /sr/politika-privatnosti — the Privacy Policy, both locales. One id
   // classifies both, which is the point of keying this on page identity rather than path.
   'legal-privacy-policy',
+  // /careers and /sr/careers. The page opens directly on the application form's
+  // `surface-1` panel (slate-50), with no hero above it — so the navbar needs its
+  // dark-text treatment from the very top, exactly like /contact.
+  'careers',
 ]
 
 /** The default for anything not explicitly classified: today's behaviour, unchanged. */

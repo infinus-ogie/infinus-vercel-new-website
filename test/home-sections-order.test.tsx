@@ -23,13 +23,18 @@ import { describe, test, expect } from 'vitest'
 import HomePage from '../app/(en)/(site)/page'
 import { SiteChrome } from '@/components/shell/SiteChrome'
 
-/** The `data-section` values the homepage renders, in the order it renders them. */
+/**
+ * The `data-section` values the homepage renders, in the order it renders them.
+ *
+ * `join-team` used to close this list. The client asked for the job-application form to
+ * move to a dedicated Careers page, so it is no longer a homepage section — it is asserted
+ * in test/careers-page.test.tsx instead.
+ */
 const EXPECTED_SECTION_ORDER = [
   'about',
   'sap-services',
   'partnership-benefits',
   'domain',
-  'join-team',
 ] as const
 
 function renderedSectionOrder(container: HTMLElement): string[] {

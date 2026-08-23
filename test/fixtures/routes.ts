@@ -124,6 +124,10 @@ export const ROUTES: readonly RouteExpectation[] = [
   // ── 24 public indexable pages ────────────────────────────────────────────────
   indexable('/', '/'),
   indexable('/contact'),
+  // The final client-feedback phase: the job-application form left the homepage for a
+  // page of its own, in both locales at once.
+  indexable('/careers'),
+  serbianPage('/sr/careers'),
   {
     // Phase G: the Serbian half of the site's first real locale pair.
     path: '/sr/contact',
@@ -432,7 +436,8 @@ export const EXPECTED_COUNTS = {
    * English counterparts at NEW paths, +4 -> 32. Every public page in either language now has
    * a counterpart.
    */
-  indexable: 32,
+  /** +2 in the final client-feedback phase: /careers and /sr/careers. */
+  indexable: 34,
   /** /privacy and /sr/politika-privatnosti — the Privacy Policy, one page per locale */
   noindex: 2,
   /** /cfo — page still built behind its redirect */
@@ -450,19 +455,20 @@ export const EXPECTED_COUNTS = {
    * H2 added the five Serbian case studies -> 30; H3 added the four Serbian product
    * pages -> 34; splitting the Privacy Policy by locale swaps /politika-privatnosti for
    * /privacy and adds /sr/politika-privatnosti -> 35; H4 adds the four English GROW /
-   * Professional Services pages -> 39.
+   * Professional Services pages -> 39; the final client-feedback phase adds the Careers
+   * pair -> 41.
    */
-  manifestPages: 39,
+  manifestPages: 41,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
-  /** total manifest entries: 39 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 48,
+  /** total manifest entries: 41 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 50,
   /**
-   * Rendered .html files: 39 built pages + _not-found. /politika-privatnosti is in the
+   * Rendered .html files: 41 built pages + _not-found. /politika-privatnosti is in the
    * fixture as a redirect source but produces no HTML, so it is NOT counted here.
    */
-  renderedHtml: 40,
-  sitemapUrls: 32,
-  /** the 34 public pages whose <head> is snapshotted (32 indexable + 2 legal pages) */
-  snapshotPages: 34,
+  renderedHtml: 42,
+  sitemapUrls: 34,
+  /** the 36 public pages whose <head> is snapshotted (34 indexable + 2 legal pages) */
+  snapshotPages: 36,
 } as const

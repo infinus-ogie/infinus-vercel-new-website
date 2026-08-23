@@ -5,7 +5,6 @@ import { SapServicesSection } from "@/components/ui/sap-services-section"
 import { PartnershipBenefitsSection } from "@/components/ui/partnership-benefits-section"
 import DomainExpertiseSection from "@/components/ui/domain-expertise-section"
 import AboutSection from "@/components/ui/about-section"
-import { JoinSection } from "@/components/ui/join-section"
 import type { HomeDictionary } from "@/content/dictionary"
 
 /**
@@ -70,10 +69,6 @@ export function HomePage({ content, jsonLd, anchorBase }: HomePageProps) {
           sectionHref={`${anchorBase === "/" ? "/" : anchorBase}#domain-expertise`}
         />
 
-        {/* [G] Join Our Team Section */}
-        <Section id="join-team" surface="surface-1" topFade data-section="join-team">
-          <JoinSection copy={content.join} trust={content.trust} />
-        </Section>
     </>
   )
 }

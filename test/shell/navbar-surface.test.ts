@@ -46,6 +46,9 @@ const LIGHT_PATHS = [
   '/sr/faq',
   '/privacy',
   '/sr/politika-privatnosti',
+  // The Careers pair opens on the form's slate-50 panel, with no hero above it.
+  '/careers',
+  '/sr/careers',
 ]
 
 /** Measured backdrop luminance 0.011–0.097 — the approved white-text treatment is correct. */
@@ -125,8 +128,15 @@ describe('the light-background pages are classified light', () => {
     }
   })
 
-  test('the light set is exactly these three page ids — no accidental growth', () => {
-    expect([...LIGHT_SURFACE_PAGE_IDS].slice().sort()).toEqual(['contact', 'faq', 'legal-privacy-policy'])
+  test('the light set is exactly these four page ids — no accidental growth', () => {
+    // Growing this list must be a deliberate edit with a measured backdrop behind it, not
+    // something a new page picks up by resembling an existing one.
+    expect([...LIGHT_SURFACE_PAGE_IDS].slice().sort()).toEqual([
+      'careers',
+      'contact',
+      'faq',
+      'legal-privacy-policy',
+    ])
   })
 })
 

@@ -14,8 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getDictionary } from "@/content/dictionary";
-import type { HomeDictionary } from "@/content/dictionary";
+import type { CareersDictionary, HomeDictionary } from "@/content/dictionary";
 
 // ---------- schema ----------
 /**
@@ -23,7 +22,7 @@ import type { HomeDictionary } from "@/content/dictionary";
  * WORDING differs per locale while the RULES must not: min 2 / min 10 characters, email
  * format, valid URL, the three accepted MIME types and the 5MB ceiling are all unchanged.
  */
-function createFormSchema(messages: HomeDictionary["join"]["validation"]) {
+function createFormSchema(messages: CareersDictionary["validation"]) {
   return z.object({
     name: z.string().min(2, messages.name),
     phone: z.string().optional(),
@@ -45,20 +44,31 @@ function createFormSchema(messages: HomeDictionary["join"]["validation"]) {
 }
 type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
-// The two JSON-LD-only Q&A moved to content/{en,sr}/home.ts (`join.faq`) in Phase H1.
+// The two JSON-LD-only Q&A live in content/{en,sr}/careers.ts (`faq`), alongside the rest
+// of this page's copy. They were on the homepage until the form moved off it.
 
 /**
- * Phase H1: every string became a lookup on a typed dictionary, defaulting to ENGLISH so
- * existing callers render byte-identical output. What deliberately did NOT change: one
- * behavioural implementation, the same POST to /api/join-team, and the same untranslated
- * FormData keys — translating a label must never rename an API field.
+ * The job-application section, now the body of /careers and /sr/careers.
+ *
+ * Phase H1 made every string a lookup on a typed dictionary. This phase moved that
+ * dictionary out of `home` into its own `careers` namespace and, in the same step, made
+ * BOTH props REQUIRED.
+ *
+ * They used to default to the English dictionary. That default is precisely how English
+ * copy ended up inside Serbian documents when StatPills had one — a migration aid that
+ * silently produces wrong output rather than failing. There is no default now: a caller
+ * names its locale's dictionary or does not compile.
+ *
+ * What deliberately did NOT change in the move: one behavioural implementation, the same
+ * POST to /api/join-team, the same Zod rules, and the same untranslated FormData keys.
+ * Relocating a component must not touch an API contract.
  */
 export function JoinSection({
-  copy = getDictionary("en").home.join,
-  trust = getDictionary("en").home.trust,
+  copy,
+  trust,
 }: {
-  copy?: HomeDictionary["join"];
-  trust?: HomeDictionary["trust"];
+  copy: CareersDictionary;
+  trust: HomeDictionary["trust"];
 }) {
   const { form: f, validation } = copy;
   const FormSchema = createFormSchema(validation);

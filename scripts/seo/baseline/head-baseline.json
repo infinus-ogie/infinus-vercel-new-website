@@ -107,6 +107,114 @@
       "types": []
     }
   },
+  "/careers": {
+    "htmlLang": "en",
+    "title": "Careers - Join Our SAP Team | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "We are growing. If you have SAP S/4HANA, ECC, industry or line-of-business experience and want to join a team of dedicated SAP professionals, get in touch."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "Careers - Join Our SAP Team | Infinus"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "We are growing. If you have SAP S/4HANA, ECC, industry or line-of-business experience and want to join a team of dedicated SAP professionals, get in touch."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Careers - Join Our SAP Team | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "We are growing. If you have SAP S/4HANA, ECC, industry or line-of-business experience and want to join a team of dedicated SAP professionals, get in touch."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "Careers - Join Our SAP Team | Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "en_US"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "Careers - Join Our SAP Team | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/careers"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/careers",
+        "sr-Latn => https://www.infinus.co/sr/careers",
+        "x-default => https://www.infinus.co/careers"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/careers"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
   "/case-study/manufacturing1": {
     "htmlLang": "en",
     "title": "Manufacturing Case Study | Infinus",
@@ -766,7 +874,7 @@
         "Infinus"
       ],
       "name:description": [
-        "Find answers to common questions about SAP services, implementation, support, and our expertise as a SAP Gold Partner."
+        "Find answers to common questions about SAP services, implementation, support, and our expertise as an SAP Gold Partner."
       ],
       "name:format-detection": [
         "telephone=no, address=no, email=no"
@@ -796,7 +904,7 @@
         "summary_large_image"
       ],
       "name:twitter:description": [
-        "Find answers to common questions about SAP services, implementation, support, and our expertise as a SAP Gold Partner."
+        "Find answers to common questions about SAP services, implementation, support, and our expertise as an SAP Gold Partner."
       ],
       "name:twitter:image": [
         "https://www.infinus.co/og-default.png"
@@ -809,7 +917,7 @@
         "width=device-width, initial-scale=1"
       ],
       "property:og:description": [
-        "Find answers to common questions about SAP services, implementation, support, and our expertise as a SAP Gold Partner."
+        "Find answers to common questions about SAP services, implementation, support, and our expertise as an SAP Gold Partner."
       ],
       "property:og:image": [
         "https://www.infinus.co/og-default.png"
@@ -1901,6 +2009,114 @@
       ],
       "canonical": [
         "https://www.infinus.co/sr"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/careers": {
+    "htmlLang": "sr-Latn",
+    "title": "Karijera - pridružite se našem SAP timu | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Rastemo. Ako imate iskustva sa SAP S/4HANA, ECC, industrijskim ili LOB rešenjima i želite da postanete član tima posvećenih SAP profesionalaca, javite nam se."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "Karijera - pridružite se našem SAP timu | Infinus"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Rastemo. Ako imate iskustva sa SAP S/4HANA, ECC, industrijskim ili LOB rešenjima i želite da postanete član tima posvećenih SAP profesionalaca, javite nam se."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "Karijera - pridružite se našem SAP timu | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Rastemo. Ako imate iskustva sa SAP S/4HANA, ECC, industrijskim ili LOB rešenjima i želite da postanete član tima posvećenih SAP profesionalaca, javite nam se."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "Karijera - pridružite se našem SAP timu | Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "Karijera - pridružite se našem SAP timu | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/careers"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/careers",
+        "sr-Latn => https://www.infinus.co/sr/careers",
+        "x-default => https://www.infinus.co/careers"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/careers"
       ],
       "icon": [
         "/favicon.ico"

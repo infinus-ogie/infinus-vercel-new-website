@@ -66,7 +66,7 @@ export const footer: FooterDictionary = {
         { label: 'About Us', href: '/#about' },
         { label: 'GROW with SAP: Finance', href: '/grow' },
         { label: 'SAP for Professional Services', href: '/professional-services' },
-        { label: 'Careers', href: '/#join-team' },
+        { label: 'Careers', href: '/careers' },
         { label: 'FAQ', href: '/faq' },
         { label: 'Contact', href: '/contact' },
       ],

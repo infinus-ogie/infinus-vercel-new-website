@@ -67,7 +67,7 @@ export const footer: FooterDictionary = {
         { label: 'O nama', href: '/sr#about' },
         { label: 'GROW with SAP: Finansije', href: '/sr/grow' },
         { label: 'SAP za Professional Services', href: '/sr/professional-services' },
-        { label: 'Karijera', href: '/sr#join-team' },
+        { label: 'Karijera', href: '/sr/careers' },
         { label: 'Česta pitanja', href: '/sr/faq' },
         { label: 'Kontakt', href: '/sr/contact' },
       ],

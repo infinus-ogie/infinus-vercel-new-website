@@ -124,13 +124,16 @@ describe('the copy decisions approved as first drafted', () => {
     expect(sr.footer.bottom.cookieSettings).toBe('Podešavanja kolačića')
   })
 
+  // The application form left the homepage for /careers, so its copy now lives in the
+  // `careers` namespace. The approved Serbian wording is unchanged by that move, which is
+  // exactly what these assertions are here to prove.
   test('the job form labels and the approved acknowledgement', () => {
-    expect(sr.home.join.form.linkedinLabel).toBe('LinkedIn profil')
-    expect(sr.home.join.form.submit).toBe('Pošaljite prijavu')
-    expect(sr.home.join.form.submitting).toBe('Šalje se...')
-    const sentence = `${sr.home.join.privacy.before}${sr.home.join.privacy.linkText}${sr.home.join.privacy.after}`
+    expect(sr.careers.form.linkedinLabel).toBe('LinkedIn profil')
+    expect(sr.careers.form.submit).toBe('Pošaljite prijavu')
+    expect(sr.careers.form.submitting).toBe('Šalje se...')
+    const sentence = `${sr.careers.privacy.before}${sr.careers.privacy.linkText}${sr.careers.privacy.after}`
     expect(sentence).toBe('Slanjem prijave potvrđujete da ste pročitali našu Politiku privatnosti.')
-    expect(sr.home.join.privacy.href).toBe('/sr/politika-privatnosti')
+    expect(sr.careers.privacy.href).toBe('/sr/politika-privatnosti')
   })
 })
 
@@ -144,8 +147,8 @@ describe('the English source of truth is unchanged', () => {
     expect(en.home.benefits.heading).toBe('Why Infinus')
     // The long-standing typo ("continues") was corrected to "continuous" in the final
     // client-feedback phase, at the client's explicit request.
-    expect(en.home.join.paragraphs[0]).toContain('Due to continuous business expansion')
-    expect(en.home.join.paragraphs[1]).toContain('interested in becoming a member')
+    expect(en.careers.paragraphs[0]).toContain('Due to continuous business expansion')
+    expect(en.careers.paragraphs[1]).toContain('interested in becoming a member')
     expect(en.faq.heading).toBe('Frequently Asked Questions')
     expect(en.nav.expertise.label).toBe('SAP Expertise')
     expect(en.footer.columns.contact.label).toBe('Contact Information')
