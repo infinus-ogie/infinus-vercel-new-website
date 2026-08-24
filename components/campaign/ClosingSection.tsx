@@ -48,7 +48,26 @@ export function ClosingSection({
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_55%_at_25%_0%,rgba(10,110,209,0.20),transparent_70%)]"
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 md:pb-28 md:pt-20 lg:px-8">
+      {/*
+        The seam with the footer.
+
+        The footer is `brand.navyDeep` (#00144a) and this section is `brand.navy` (#061A4D) —
+        close enough that at a glance the page can look like it ends in one long navy block.
+        Three restrained things separate them, none of which is a new colour: a bottom rule
+        that mirrors the top one, a gradient that settles this section INTO the footer's
+        darker value over its last 96px, and deeper bottom padding so the form is not sitting
+        on the join.
+      */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-brand-navyDeep"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-white/10"
+      />
+
+      <div className="relative mx-auto max-w-7xl px-4 pb-28 pt-16 sm:px-6 md:pb-32 md:pt-20 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(380px,44%)] lg:gap-16">
           <div>
             <h2 className="text-balance text-3xl font-semibold leading-tight tracking-tight text-white md:text-4xl lg:text-[42px]">

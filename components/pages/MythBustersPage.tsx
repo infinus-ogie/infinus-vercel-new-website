@@ -10,9 +10,10 @@ import {
   CampaignHeading,
 } from "@/components/campaign/CampaignHero"
 import { EbookCover } from "@/components/campaign/EbookCover"
-import { TrustBand, TrustMetrics } from "@/components/campaign/TrustBand"
+import { TrustBand, TrustMetrics, TrustLogo } from "@/components/campaign/TrustBand"
 import { ValuePoints } from "@/components/campaign/ValuePoints"
 import { ClosingSection } from "@/components/campaign/ClosingSection"
+import { ConversionModule } from "@/components/campaign/ConversionModule"
 import type { MythBustersDictionary, EnMythBustersLayout } from "@/content/dictionary"
 
 /**
@@ -100,27 +101,29 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
           </div>
         }
         conversion={
-          <div className="flex flex-col items-center gap-6 lg:items-stretch">
-            {/* Decorative: the form heading and the eyebrow beside it already name the
-                document, and the English dictionary carries no cover copy to use as alt. */}
-            <div className="w-[min(14rem,55vw)] sm:w-[min(16rem,42vw)] lg:w-full lg:max-w-[17rem] lg:self-center">
-              <EbookCover priority />
-            </div>
-
-            {/*
-              `tabIndex={-1}` with `scroll-mt-24` is what makes the mobile CTA correct rather
-              than merely functional: a bare `#id` jump moves the viewport but leaves focus on
-              the link, so a keyboard or screen-reader user lands nowhere. Focusing the
-              wrapper puts them at the top of the form they asked for, and the scroll margin
-              keeps the heading clear of the fixed navbar.
-            */}
-            <div id={HERO_FORM_ID} tabIndex={-1} className="w-full scroll-mt-24 focus:outline-none">
-              {/* Compact: two columns of fields instead of four stacked rows. The card was
-                  taller than the copy it sits beside, which inverted the hero's hierarchy —
-                  the form was the loudest thing on a page whose job is to sell a document. */}
-              <EbookForm copy={content.form} locale="en" placement="hero" density="compact" />
-            </div>
-          </div>
+          <ConversionModule
+            aside={
+              /* Decorative: the form heading and the eyebrow beside it already name the
+                 document, and the English dictionary carries no cover copy to use as alt. */
+              <div className="w-[min(14rem,55vw)] sm:w-[min(16rem,42vw)] xl:w-full">
+                <EbookCover priority />
+              </div>
+            }
+            form={
+              /*
+                `tabIndex={-1}` with `scroll-mt-24` is what makes the mobile CTA correct rather
+                than merely functional: a bare `#id` jump moves the viewport but leaves focus
+                on the link, so a keyboard or screen-reader user lands nowhere. Focusing the
+                wrapper puts them at the top of the form they asked for, and the scroll margin
+                keeps the heading clear of the fixed navbar.
+              */
+              <div id={HERO_FORM_ID} tabIndex={-1} className="scroll-mt-24 focus:outline-none">
+                {/* Compact: two fields per row instead of four stacked. The card was taller
+                    than the copy beside it, which inverted the hero's hierarchy. */}
+                <EbookForm copy={content.form} locale="en" placement="hero" density="compact" />
+              </div>
+            }
+          />
         }
       />
 
@@ -128,9 +131,12 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
       <TrustBand
         data-section="mythbusters-trust"
         proof={
-          <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-8">
-            {/* Decorative: the first metric beside it reads "SAP Gold Partner". */}
-            <SapGoldPartnerBadge className="h-10 w-auto shrink-0 md:h-12" />
+          <div className="flex flex-col items-center gap-6 lg:flex-row lg:gap-8">
+            {/* Decorative: the first metric beside it reads "SAP Gold Partner". The container
+                is the same one the Serbian band puts its two marks in. */}
+            <TrustLogo>
+              <SapGoldPartnerBadge className="h-9 w-auto shrink-0" />
+            </TrustLogo>
             <TrustMetrics items={layout.trustBar} />
           </div>
         }

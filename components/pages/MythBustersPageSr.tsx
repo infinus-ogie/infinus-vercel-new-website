@@ -11,10 +11,11 @@ import {
   CampaignEyebrow,
   CampaignHeading,
 } from "@/components/campaign/CampaignHero"
-import { TrustBand } from "@/components/campaign/TrustBand"
+import { TrustBand, TrustLogos, TrustLogo } from "@/components/campaign/TrustBand"
 import { MythFactItem } from "@/components/campaign/MythFactItem"
 import { ValuePoints, ClosingPoints } from "@/components/campaign/ValuePoints"
 import { ClosingSection } from "@/components/campaign/ClosingSection"
+import { ConversionModule } from "@/components/campaign/ConversionModule"
 import type { MythBustersDictionary, SrMythBustersLayout } from "@/content/dictionary"
 
 /**
@@ -100,18 +101,20 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
           </div>
         }
         conversion={
-          <div className="space-y-6">
-            <EbookAssetCard copy={layout.assetCard} />
-            {/* Compact, for the same reason as the English hero: four stacked fields made a
-                card taller than the pitch it sits beside. */}
-            <EbookForm
-              copy={content.form}
-              locale="sr"
-              placement="hero"
-              assurances={layout.formAssurances}
-              density="compact"
-            />
-          </div>
+          <ConversionModule
+            aside={<EbookAssetCard copy={layout.assetCard} />}
+            form={
+              /* Compact, for the same reason as the English hero: four stacked fields made a
+                 card taller than the pitch it sits beside. */
+              <EbookForm
+                copy={content.form}
+                locale="sr"
+                placement="hero"
+                assurances={layout.formAssurances}
+                density="compact"
+              />
+            }
+          />
         }
       />
 
@@ -121,20 +124,25 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
         statement={layout.trustBar.statement}
         proof={
           /* Both marks are MEANINGFUL here: no adjacent text names either, unlike the
-             homepage badge which now sits inside a pill that says "SAP Gold Partner". */
-          <div className="flex items-center gap-8 md:gap-10">
-            <SapGoldPartnerBadge
-              className="h-10 w-auto shrink-0 md:h-12"
-              alt={layout.trustBar.sapLogoAlt}
-            />
-            <Image
-              src="/infinus-new-logo.webp"
-              alt={layout.trustBar.infinusLogoAlt}
-              width={250}
-              height={75}
-              className="h-9 w-auto shrink-0 md:h-10"
-            />
-          </div>
+             homepage badge which now sits inside a pill that says "SAP Gold Partner".
+             The containers are the shared ones the English band uses for its metric marks. */
+          <TrustLogos>
+            <TrustLogo>
+              <SapGoldPartnerBadge
+                className="h-9 w-auto shrink-0"
+                alt={layout.trustBar.sapLogoAlt}
+              />
+            </TrustLogo>
+            <TrustLogo>
+              <Image
+                src="/infinus-new-logo.webp"
+                alt={layout.trustBar.infinusLogoAlt}
+                width={250}
+                height={75}
+                className="h-7 w-auto shrink-0"
+              />
+            </TrustLogo>
+          </TrustLogos>
         }
       />
 

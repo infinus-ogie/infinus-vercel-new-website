@@ -57,8 +57,20 @@ export function CampaignHero({
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-28 sm:px-6 md:pb-20 md:pt-32 lg:px-8">
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(380px,44%)] lg:gap-16">
+      {/*
+        `pt-32 md:pt-44` — the campaign content used to start at 112/128px, which put the
+        eyebrow almost against the fixed navbar. This is +16 on mobile and +48 on desktop, so
+        the hero has a deliberate starting position below the chrome rather than beginning
+        wherever the nav happens to end. The bottom padding is unchanged: the extra room is
+        wanted at the top, not everywhere.
+      */}
+      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-32 sm:px-6 md:pb-20 md:pt-44 lg:px-8">
+        {/*
+          The conversion column widens at `xl` so the cover and the form can sit side by side
+          inside it — see ConversionModule, which is what actually splits. At `lg` it keeps
+          the narrower 46% and the module stays stacked.
+        */}
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(400px,46%)] lg:gap-14 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.18fr)] xl:gap-16">
           <div>{editorial}</div>
           {/* `lg:sticky` keeps the conversion column beside the copy on tall desktop heroes
               without any scroll listener. Harmless when the column is the taller of the two. */}

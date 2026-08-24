@@ -59,10 +59,26 @@ describe('the English page is unchanged by the Serbian rework', () => {
     }
   })
 
+  /**
+   * The band now renders each metric's leading figure larger than the words after it, so
+   * "30+ Satisfied Clients" is two elements rather than one text node.
+   *
+   * That is a LINE BREAK, not an edit, and this asserts exactly that: the four approved
+   * strings must survive whole and in order once the item's text is normalised. It is a
+   * stronger check than the old single-node lookup — it would catch a split that dropped or
+   * reordered a word, which the previous assertion could not.
+   */
   test('keeps its four-metric trust bar, including the 70% claim', () => {
-    render(<EnglishMythBusters />)
-    expect(screen.getByText('70% of Consultants with 10+ Years of SAP Experience')).toBeInTheDocument()
-    expect(screen.getByText('30+ Satisfied Clients')).toBeInTheDocument()
+    const { container } = render(<EnglishMythBusters />)
+    const bar = container.querySelector('[data-section="mythbusters-trust"]') as HTMLElement
+
+    const rendered = Array.from(bar.querySelectorAll('li')).map((li) =>
+      (li.textContent ?? '').replace(/\s+/g, ' ').trim()
+    )
+
+    expect(rendered).toEqual([...enLayout.trustBar])
+    expect(rendered).toContain('70% of Consultants with 10+ Years of SAP Experience')
+    expect(rendered).toContain('30+ Satisfied Clients')
   })
 
   test('still lists all ten myths, in the source order', () => {
