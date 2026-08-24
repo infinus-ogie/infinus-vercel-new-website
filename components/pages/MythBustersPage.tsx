@@ -11,6 +11,8 @@ import {
 } from "@/components/campaign/CampaignHero"
 import { EbookCover } from "@/components/campaign/EbookCover"
 import { TrustBand, TrustMetrics } from "@/components/campaign/TrustBand"
+import { ValuePoints } from "@/components/campaign/ValuePoints"
+import { ClosingSection } from "@/components/campaign/ClosingSection"
 import type { MythBustersDictionary, EnMythBustersLayout } from "@/content/dictionary"
 
 /**
@@ -73,22 +75,13 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
 
             {/* Held to a readable measure rather than the full column: a 900px line of
                 12-word prose is what made this hero read as a document. */}
-            <p className="mt-6 max-w-[52ch] text-base leading-relaxed text-slate-300 md:text-lg">
+            <p className="mt-6 max-w-[50ch] text-base leading-relaxed text-slate-300/90 md:text-[17px]">
               {layout.hero.lede}
             </p>
 
-            {/* Separated by rhythm, not by four boxes. */}
-            <ul className="mt-8 grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
-              {layout.hero.bullets.map((bullet) => (
-                <li key={bullet} className="flex items-start gap-3 text-[15px] text-slate-200">
-                  <CheckCircle2
-                    className="mt-0.5 h-4 w-4 shrink-0 text-blue-300"
-                    aria-hidden="true"
-                  />
-                  <span>{bullet}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-8">
+              <ValuePoints items={layout.hero.bullets} />
+            </div>
 
             {/* MOBILE ONLY. On desktop the form sits in the column beside this copy, so a
                 button promising the same thing would be a second, weaker route to something
@@ -107,10 +100,10 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
           </div>
         }
         conversion={
-          <div className="flex flex-col items-center gap-7 lg:items-stretch">
+          <div className="flex flex-col items-center gap-6 lg:items-stretch">
             {/* Decorative: the form heading and the eyebrow beside it already name the
                 document, and the English dictionary carries no cover copy to use as alt. */}
-            <div className="w-[min(15rem,60vw)] sm:w-[min(17rem,45vw)] lg:w-full lg:max-w-[19rem] lg:self-center">
+            <div className="w-[min(14rem,55vw)] sm:w-[min(16rem,42vw)] lg:w-full lg:max-w-[17rem] lg:self-center">
               <EbookCover priority />
             </div>
 
@@ -122,7 +115,10 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
               keeps the heading clear of the fixed navbar.
             */}
             <div id={HERO_FORM_ID} tabIndex={-1} className="w-full scroll-mt-24 focus:outline-none">
-              <EbookForm copy={content.form} locale="en" placement="hero" />
+              {/* Compact: two columns of fields instead of four stacked rows. The card was
+                  taller than the copy it sits beside, which inverted the hero's hierarchy —
+                  the form was the loudest thing on a page whose job is to sell a document. */}
+              <EbookForm copy={content.form} locale="en" placement="hero" density="compact" />
             </div>
           </div>
         }
@@ -220,45 +216,31 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
         </ul>
       </Section>
 
-      {/* ── Closing conversion ───────────────────────────────────────────────── */}
-      <ClosingConversion>
-        <EbookForm copy={content.form} locale="en" placement="closing" />
-      </ClosingConversion>
-    </>
-  )
-}
+      {/*
+        ── Closing conversion ─────────────────────────────────────────────────────
+        The English layout carries NO dedicated closing copy — the Serbian source supplies a
+        `finalCta` block and the English one does not. Rather than invent a headline, the
+        section promotes the form's own approved heading and body to section scale and the
+        card below turns its copy off, so the same two sentences are stated once, larger,
+        where a closing argument belongs.
 
-/**
- * The dark closing section, shared in spirit with the Serbian page's.
- *
- * ── Why it is `brand.navy` and not the hero's navy ─────────────────────────────
- * The footer is `#00144a` — the same value as the hero. A closing section in that colour
- * would butt straight into the footer and the page would end in one undifferentiated navy
- * block. `brand.navy` (#061A4D) is already in the palette as the CTA-card ground, so this is
- * a tonal step rather than a new colour, and the hairline top rule plus the deeper bottom
- * padding keep the seam between section and footer legible.
- *
- * The form inside stays white. Contrast and field legibility matter more here than tonal
- * consistency, and a dark form on a dark ground is a worse trade.
- */
-function ClosingConversion({ children }: { children: React.ReactNode }) {
-  return (
-    <section
-      id="download"
-      data-section="mythbusters-form"
-      className="relative scroll-mt-24 overflow-hidden bg-brand-navy"
-    >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_50%_at_50%_0%,rgba(10,110,209,0.18),transparent_70%)]"
-      />
-      <div className="relative mx-auto max-w-xl px-4 pb-24 pt-16 sm:px-6 md:pb-28 md:pt-20 lg:px-8">
-        {children}
-      </div>
-    </section>
+        Flagged in the report: if the owner approves a proper English closing line, it drops
+        straight in here.
+      */}
+      <ClosingSection
+        id="download"
+        data-section="mythbusters-form"
+        heading={content.form.heading}
+        body={content.form.body}
+      >
+        <EbookForm
+          copy={content.form}
+          locale="en"
+          placement="closing"
+          density="compact"
+          showIntro={false}
+        />
+      </ClosingSection>
+    </>
   )
 }

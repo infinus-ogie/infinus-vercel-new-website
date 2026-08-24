@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useId, useState } from "react";
 import { z } from "zod";
-import { CheckCircle2, Download } from "lucide-react";
+import { CheckCircle2, Download, Lock } from "lucide-react";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -109,6 +109,8 @@ export function EbookForm({
   placement,
   assurances,
   className,
+  density = "comfortable",
+  showIntro = true,
 }: {
   copy: MythBustersDictionary["form"];
   locale: Locale;
@@ -116,9 +118,29 @@ export function EbookForm({
   /** The reassurance lines the Serbian source prints under the CTA. */
   assurances?: readonly string[];
   className?: string;
+  /**
+   * PRESENTATION ONLY — how tightly the fields are packed.
+   *
+   * `compact` puts them in a two-column grid from `sm` up. Four fields stacked in one column
+   * made a card tall enough to dominate the hero it was supposed to sit beside; two rows of
+   * two is the same form at roughly half the height.
+   *
+   * Field order, names, types, validation and submission are identical in both densities.
+   */
+  density?: "comfortable" | "compact";
+  /**
+   * Whether the card prints its own heading and body.
+   *
+   * The closing section states them at section scale in its own column, so the card there
+   * turns them off rather than repeating the same two sentences twice within one screen.
+   */
+  showIntro?: boolean;
 }) {
   // One per mounted instance. This is what keeps two forms on one page from colliding.
   const uid = useId();
+  const isCompact = density === "compact";
+  /** In the compact grid everything below the fields runs the full width. */
+  const span = isCompact ? "sm:col-span-2" : "";
   const recaptcha = useRecaptcha();
   const fieldId = (key: string) => `ebook-${uid}-${key}`;
   const errorId = (key: string) => `ebook-${uid}-${key}-error`;
@@ -286,20 +308,35 @@ export function EbookForm({
       data-testid={`ebook-form-${placement}`}
       className={`${CARD_SURFACE} ${className ?? ""}`}
     >
-      <h2 className="text-[22px] font-semibold leading-snug tracking-tight text-slate-900 sm:text-2xl">
-        {copy.heading}
-      </h2>
-      <p className="mt-2.5 text-[15px] leading-relaxed text-slate-600">{copy.body}</p>
+      {showIntro && (
+        <>
+          <h2 className="text-[22px] font-semibold leading-snug tracking-tight text-slate-900 sm:text-2xl">
+            {copy.heading}
+          </h2>
+          <p className="mt-2.5 text-[15px] leading-relaxed text-slate-600">{copy.body}</p>
+        </>
+      )}
 
       {/* Stated BEFORE the fields. A Serbian visitor must know the asset is English-only
-          before handing over their details, not after. */}
-      <p className="mt-5 rounded-xl border border-slate-200/70 bg-slate-50 px-4 py-3 text-[13px] leading-relaxed text-slate-600">
+          before handing over their details, not after. Compact renders it as one quiet line
+          rather than a boxed paragraph — same sentence, a third of the height. */}
+      <p
+        className={
+          isCompact
+            ? `${showIntro ? "mt-4" : ""} text-[12.5px] leading-relaxed text-slate-500`
+            : "mt-5 rounded-xl border border-slate-200/70 bg-slate-50 px-4 py-3 text-[13px] leading-relaxed text-slate-600"
+        }
+      >
         {copy.languageNote}
       </p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        noValidate
+        className={isCompact ? "mt-5 grid gap-x-4 gap-y-4 sm:grid-cols-2" : "mt-6 space-y-5"}
+      >
         {copy.fields.map((field) => (
-          <div key={field.key} className="space-y-1.5">
+          <div key={field.key} className={isCompact ? "space-y-1.5" : "space-y-1.5"}>
             <Label
               htmlFor={fieldId(field.key)}
               className="text-[13px] font-semibold text-slate-800"
@@ -329,7 +366,7 @@ export function EbookForm({
         {errors.general && (
           <p
             role="alert"
-            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-medium text-red-700"
+            className={`rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-medium text-red-700 ${span}`}
           >
             {errors.general}
           </p>
@@ -341,13 +378,13 @@ export function EbookForm({
           type="submit"
           size="lg"
           disabled={isSubmitting}
-          className="h-12 w-full text-[15px] font-semibold"
+          className={`h-12 w-full text-[15px] font-semibold ${span}`}
         >
           {isSubmitting ? copy.submitting : copy.submit}
         </Button>
 
         {assurances && assurances.length > 0 && (
-          <ul className="flex flex-wrap gap-x-4 gap-y-2 pt-0.5">
+          <ul className={`flex flex-wrap gap-x-4 gap-y-2 pt-0.5 ${span}`}>
             {assurances.map((line) => (
               <li key={line} className="flex items-center gap-1.5 text-xs text-slate-600">
                 <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden="true" />
@@ -360,12 +397,20 @@ export function EbookForm({
         {/* Informational acknowledgement, NOT the cookie-consent mechanism. Present beside
             BOTH form instances — a marketing document going quiet on a legal UI requirement
             does not remove it. The href is locale-owned. */}
-        <p className="border-t border-slate-100 pt-4 text-xs leading-relaxed text-slate-500">
-          {copy.privacy.before}
-          <a className="underline underline-offset-4 hover:text-slate-700" href={copy.privacy.href}>
-            {copy.privacy.linkText}
-          </a>
-          {copy.privacy.after}
+        <p
+          className={`flex items-start gap-2.5 rounded-xl bg-slate-50 px-3.5 py-3 text-[11.5px] leading-relaxed text-slate-500 ${span}`}
+        >
+          <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden="true" />
+          <span>
+            {copy.privacy.before}
+            <a
+              className="underline underline-offset-4 hover:text-slate-700"
+              href={copy.privacy.href}
+            >
+              {copy.privacy.linkText}
+            </a>
+            {copy.privacy.after}
+          </span>
         </p>
       </form>
     </div>

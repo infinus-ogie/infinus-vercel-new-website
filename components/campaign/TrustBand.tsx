@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Award, Globe2, ShieldCheck, Users2, type LucideIcon } from "lucide-react"
 
 /**
  * The trust band that sits directly under both campaign heroes.
@@ -33,10 +34,10 @@ export function TrustBand({
 } & React.ComponentPropsWithoutRef<"section">) {
   return (
     <section
-      className="border-b border-slate-200 bg-gradient-to-b from-white to-slate-50"
+      className="border-b border-slate-200/80 bg-white"
       {...rest}
     >
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-10 lg:px-8">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 md:py-7 lg:px-8">
         {/* Side by side from `lg`, stacked below it.
             It used to switch at `md`, which is 768px exactly — and at that width the Serbian
             statement's own `max-w-xl` plus the two logos needed more room than the container
@@ -61,22 +62,37 @@ export function TrustBand({
 }
 
 /**
+ * Icons for the metric list. Positional and `aria-hidden`, like the hero's value tiles: the
+ * approved metric strings are not parsed or interpreted, they are simply given an anchor so
+ * a row of four claims reads as four things rather than one run of text.
+ */
+const METRIC_ICONS: readonly LucideIcon[] = [ShieldCheck, Users2, Globe2, Award]
+
+/**
  * The English metric list, as the band's proof slot.
  *
  * Kept in this module rather than inline in the page so the two locales' bands share their
  * spacing and type decisions in one place.
+ *
+ * The strings are rendered WHOLE. Splitting "30+ SAP Consultants" into a big number and a
+ * caption would look closer to a dashboard, but it means parsing client-approved copy at
+ * render time — and the first metric ("SAP Gold Partner") has no number to split on, so the
+ * row would stop being uniform the moment the copy changed.
  */
 export function TrustMetrics({ items }: { items: readonly string[] }) {
   return (
-    <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 lg:justify-end">
-      {items.map((item) => (
-        <li
-          key={item}
-          className="text-sm font-semibold leading-snug text-slate-800 md:max-w-[13rem]"
-        >
-          {item}
-        </li>
-      ))}
+    <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-4 lg:justify-end">
+      {items.map((item, index) => {
+        const Icon = METRIC_ICONS[index % METRIC_ICONS.length]
+        return (
+          <li key={item} className="flex items-center gap-2.5 lg:max-w-[13rem]">
+            <span className="inline-grid size-8 shrink-0 place-items-center rounded-full border border-slate-200 bg-white">
+              <Icon className="h-4 w-4 text-brand-sap" aria-hidden="true" />
+            </span>
+            <span className="text-[13px] font-semibold leading-snug text-slate-800">{item}</span>
+          </li>
+        )
+      })}
     </ul>
   )
 }

@@ -57,7 +57,7 @@ export function CampaignHero({
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-28 sm:px-6 md:pb-24 md:pt-32 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-28 sm:px-6 md:pb-20 md:pt-32 lg:px-8">
         <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(380px,44%)] lg:gap-16">
           <div>{editorial}</div>
           {/* `lg:sticky` keeps the conversion column beside the copy on tall desktop heroes

@@ -22,10 +22,10 @@ import type { SrMythBustersLayout } from "@/content/dictionary"
  */
 export function EbookAssetCard({ copy }: { copy: SrMythBustersLayout["assetCard"] }) {
   return (
-    <div className="flex flex-col items-center gap-6 lg:items-stretch">
+    <div className="flex flex-col items-center gap-5 lg:items-stretch">
       {/* Sized to be unmistakable on a phone without eating the first screen, and to sit
           comfortably in the conversion column on desktop. */}
-      <div className="w-[min(15rem,60vw)] sm:w-[min(17rem,45vw)] lg:w-full lg:max-w-[19rem] lg:self-center">
+      <div className="w-[min(14rem,55vw)] sm:w-[min(16rem,42vw)] lg:w-full lg:max-w-[17rem] lg:self-center">
         <EbookCover alt={copy.coverAlt} priority />
       </div>
 
@@ -36,7 +36,7 @@ export function EbookAssetCard({ copy }: { copy: SrMythBustersLayout["assetCard"
         {/* The four asset facts, as a compact inline run rather than a labelled sub-panel.
             "PDF vodič · oko 15 minuta čitanja · …" is metadata; it does not need a heading and
             a bordered box to be understood. The source's own heading is kept as its label. */}
-        <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">
+        <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">
           {copy.whatYouGetHeading}
         </p>
         <ul className="mt-2.5 flex flex-wrap justify-center gap-x-4 gap-y-2 lg:justify-start">

@@ -1,6 +1,6 @@
 import Script from "next/script"
 import Image from "next/image"
-import { Check, CheckCircle2 } from "lucide-react"
+import { CheckCircle2 } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { SapGoldPartnerBadge } from "@/components/ui/SapGoldPartnerBadge"
 import { EbookForm } from "@/components/mythbusters/EbookForm"
@@ -13,6 +13,8 @@ import {
 } from "@/components/campaign/CampaignHero"
 import { TrustBand } from "@/components/campaign/TrustBand"
 import { MythFactItem } from "@/components/campaign/MythFactItem"
+import { ValuePoints, ClosingPoints } from "@/components/campaign/ValuePoints"
+import { ClosingSection } from "@/components/campaign/ClosingSection"
 import type { MythBustersDictionary, SrMythBustersLayout } from "@/content/dictionary"
 
 /**
@@ -71,50 +73,43 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
 
             {/* The subtitle carries the specific promise, so it gets the blue and real size
                 rather than sitting in the paragraph flow as it did before. */}
-            <p className="mt-5 max-w-[46ch] text-lg font-medium leading-snug text-blue-200 md:text-xl">
+            <p className="mt-5 max-w-[44ch] text-lg font-medium leading-snug text-blue-200 md:text-xl">
               {layout.hero.subtitle}
             </p>
 
-            <div className="mt-6 space-y-4">
+            {/*
+              Both approved paragraphs are kept — none of the client's prose is dropped — but
+              they are set one step quieter than the subtitle above and the tiles below. The
+              Serbian hero carries more words than the English one because its source does;
+              the fix for "too much competing at once" is hierarchy, not deletion.
+            */}
+            <div className="mt-5 space-y-3.5">
               {layout.hero.paragraphs.map((paragraph) => (
                 <p
                   key={paragraph}
-                  className="max-w-[54ch] text-base leading-relaxed text-slate-300"
+                  className="max-w-[52ch] text-[15px] leading-relaxed text-slate-300/85"
                 >
                   {paragraph}
                 </p>
               ))}
             </div>
 
-            <div className="mt-9">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/60">
-                {layout.hero.benefitsHeading}
-              </p>
-              <ul className="mt-4 space-y-3">
-                {layout.hero.benefits.map((benefit) => (
-                  <li
-                    key={benefit}
-                    className="flex items-start gap-3 text-[15px] leading-relaxed text-slate-200 md:text-base"
-                  >
-                    <Check
-                      className="mt-1 h-4 w-4 shrink-0 text-blue-300"
-                      aria-hidden="true"
-                    />
-                    <span>{benefit}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="mt-8">
+              <ValuePoints items={layout.hero.benefits} heading={layout.hero.benefitsHeading} />
             </div>
           </div>
         }
         conversion={
-          <div className="space-y-8">
+          <div className="space-y-6">
             <EbookAssetCard copy={layout.assetCard} />
+            {/* Compact, for the same reason as the English hero: four stacked fields made a
+                card taller than the pitch it sits beside. */}
             <EbookForm
               copy={content.form}
               locale="sr"
               placement="hero"
               assurances={layout.formAssurances}
+              density="compact"
             />
           </div>
         }
@@ -300,47 +295,26 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
       </Section>
 
       {/* ── Final conversion ─────────────────────────────────────────────────── */}
-      <section
+      <ClosingSection
         id="download"
         data-section="mythbusters-form"
-        className="relative scroll-mt-24 overflow-hidden bg-brand-navy"
+        heading={layout.finalCta.heading}
+        body={layout.finalCta.body}
+        note={layout.finalCta.note}
+        /* The reassurances move out of the card and up beside the headline. Inside the form
+           they were fine print under a button; here they are part of the closing argument,
+           and the card gets shorter for it. */
+        points={<ClosingPoints items={layout.formAssurances} />}
       >
-        {/* `brand.navy` (#061A4D), not the hero's `#00144a`: the footer is that exact value,
-            so a closing section in it would merge into one undifferentiated navy block. This
-            is a tonal step within the existing palette, and the hairline rule plus the deeper
-            bottom padding keep the seam to the footer legible. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+        <EbookForm
+          copy={content.form}
+          locale="sr"
+          placement="closing"
+          density="compact"
+          showIntro={false}
         />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_50%_at_50%_0%,rgba(10,110,209,0.18),transparent_70%)]"
-        />
+      </ClosingSection>
 
-        <div className="relative mx-auto max-w-3xl px-4 pb-24 pt-16 text-center sm:px-6 md:pb-28 md:pt-20 lg:px-8">
-          <h2 className="text-pretty text-3xl font-semibold tracking-tight text-white md:text-4xl lg:text-[44px]">
-            {layout.finalCta.heading}
-          </h2>
-          <p className="mx-auto mt-5 max-w-[52ch] text-lg leading-relaxed text-slate-300">
-            {layout.finalCta.body}
-          </p>
-          <p className="mt-4 text-sm font-medium tracking-wide text-blue-200">
-            {layout.finalCta.note}
-          </p>
-
-          {/* The form stays white inside the dark section: contrast and field legibility beat
-              tonal consistency, and a dark form on a dark ground is the worse trade. */}
-          <div className="mx-auto mt-12 max-w-xl text-left">
-            <EbookForm
-              copy={content.form}
-              locale="sr"
-              placement="closing"
-              assurances={layout.formAssurances}
-            />
-          </div>
-        </div>
-      </section>
     </>
   )
 }
