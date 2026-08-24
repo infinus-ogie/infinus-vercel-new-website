@@ -391,11 +391,14 @@ export const ROUTES: readonly RouteExpectation[] = [
   handler('/vi-debug', 'handler-utility'),
 
   // ── 4 API route handlers ─────────────────────────────────────────────────────
+  // /api/upload is deliberately ABSENT. It was a public, unauthenticated Vercel Blob write
+  // with no size or type restriction, and it had no caller: lib/upload.ts was its only
+  // consumer and nothing imported that. Both were deleted rather than hardened — an
+  // arbitrary write endpoint kept alive "just in case" is a liability with no user.
   handler('/api/contact', 'handler-api'),
   handler('/api/join-team', 'handler-api'),
   // The SAP MythBusting e-book lead endpoint.
   handler('/api/ebook', 'handler-api'),
-  handler('/api/upload', 'handler-api'),
   handler('/api/projectpulse/pdf', 'handler-api'),
 ]
 
@@ -452,7 +455,8 @@ export const EXPECTED_COUNTS = {
   internal: 4,
   framework: 1,
   utilityHandlers: 4,
-  apiHandlers: 5,
+  /** -1: /api/upload was REMOVED. See the note on that line's disappearance below. */
+  apiHandlers: 4,
   /**
    * Page routes in app-path-routes-manifest.json (excludes _not-found).
    * Phase C: /privacy stopped being a page and /politika-privatnosti became one, so the
@@ -465,9 +469,9 @@ export const EXPECTED_COUNTS = {
    */
   manifestPages: 43,
   /** route handlers in app-path-routes-manifest.json */
-  manifestHandlers: 9,
-  /** total manifest entries: 43 pages + 9 handlers + 1 _not-found */
-  manifestTotal: 53,
+  manifestHandlers: 8,
+  /** total manifest entries: 43 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 52,
   /**
    * Rendered .html files: 43 built pages + _not-found. /politika-privatnosti is in the
    * fixture as a redirect source but produces no HTML, so it is NOT counted here.
