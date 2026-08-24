@@ -1,94 +1,128 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { z } from "zod";
-import { CheckCircle, Download } from "lucide-react";
+import { CheckCircle2, Download } from "lucide-react";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import type { MythBustersDictionary } from "@/content/dictionary";
+import type { MythBustersDictionary, EbookFormField } from "@/content/dictionary";
 import type { Locale } from "@/lib/i18n";
 
 /**
  * The e-book download form.
  *
- * ── Four fields, exactly as the client specified ────────────────────────────────
- * Full Name, Business Email, Company, and Role or Job Title — the last one optional, which
- * the source marks in the label itself rather than with an asterisk.
+ * ── The fields are DATA, not JSX ────────────────────────────────────────────────
+ * The two locales ask for different things. The English source asks for Full Name, Business
+ * Email, Company and an OPTIONAL Role or Job Title; the newer Serbian source asks for Ime,
+ * Poslovna e-mail adresa, Kompanija and a REQUIRED Zemlja, with no role at all.
+ *
+ * So the component iterates `copy.fields` and builds its Zod schema from the same list.
+ * There is no `locale === 'sr'` conditional anywhere in here, and adding or reordering a
+ * field is a content edit rather than a component edit.
+ *
+ * `key` is the API contract and is never translated; only `label` is.
+ *
+ * ── TWO INSTANCES ON ONE PAGE ───────────────────────────────────────────────────
+ * The Serbian page renders this form twice — once in the hero and once at the bottom — so a
+ * visitor never has to scroll to reach it. That makes DOM uniqueness a correctness
+ * requirement rather than a nicety:
+ *
+ *   · every input id, and every aria-describedby it points at, is prefixed with useId()
+ *   · each instance owns its own state, so validation errors, the submitting flag and the
+ *     success panel belong to the instance the visitor actually used
+ *   · submitting one leaves the other untouched
+ *
+ * Without the prefix, two identical ids would make BOTH labels focus the FIRST input, and a
+ * screen reader would read the top form's error while the visitor typed in the bottom one.
  *
  * ── Why /api/ebook and not /api/contact ─────────────────────────────────────────
  * /api/contact requires `subject` >= 5 and `message` >= 10. This form has neither, and
- * inventing values to satisfy those rules would push e-book leads into the contact
- * notification stream under a fabricated subject and body. A dedicated handler keeps the two
- * kinds of enquiry distinguishable in the inbox. It reuses lib/email.ts, so no new mail
- * infrastructure exists either way.
+ * inventing values would push e-book leads into the contact notification stream under a
+ * fabricated subject and body.
  *
  * ── The gate is a marketing gate, not a security boundary ───────────────────────
- * The PDF sits in public/ and is publicly addressable. That is the approved model for this
- * phase: no signed URLs, no auth, no expiring tokens. Anyone with the URL can bypass the
- * form, and that is understood.
- *
- * ── The download is user-initiated ──────────────────────────────────────────────
- * On success the panel renders a real link and clicks it programmatically. Browsers block
- * window.open() that is not tied to a user gesture, so the visible link is the reliable
- * path and the auto-click is the convenience — never the other way round.
+ * The PDF sits in public/ and is publicly addressable. That is the approved model: no
+ * signed URLs, no auth, no expiring tokens.
  */
 
+/** The public asset. Same file the success panel links to. */
 const EBOOK_HREF = "/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf";
 
-function createSchema(messages: MythBustersDictionary["form"]["validation"]) {
-  return z.object({
-    name: z.string().min(2, messages.name),
-    email: z.string().email(messages.email),
-    company: z.string().min(1, messages.company),
-    // Optional in the source, so optional here. No message, because it cannot fail.
-    role: z.string().optional(),
-  });
+/**
+ * Build the validation schema from the field list.
+ *
+ * Optional fields become `z.string().optional()` — they cannot fail, which is why their
+ * `validation` string is empty in the dictionary. Email gets a format check on top of the
+ * presence check, and only when it is present.
+ */
+function createSchema(fields: readonly EbookFormField[]) {
+  const shape: Record<string, z.ZodTypeAny> = {};
+  for (const field of fields) {
+    if (!field.required) {
+      shape[field.key] = z.string().optional();
+      continue;
+    }
+    shape[field.key] =
+      field.key === "email"
+        ? z.string().email(field.validation)
+        : z.string().trim().min(1, field.validation);
+  }
+  return z.object(shape);
 }
 
-type FormValues = z.infer<ReturnType<typeof createSchema>>;
-type FieldErrors = Partial<Record<keyof FormValues | "general", string>>;
+type Values = Record<string, string>;
+type FieldErrors = Record<string, string | undefined>;
 
 export function EbookForm({
   copy,
   locale,
+  /** Distinguishes the hero instance from the closing one in analytics. Not user-visible. */
+  placement,
+  assurances,
+  className,
 }: {
   copy: MythBustersDictionary["form"];
-  /** Sent with the lead so the notification says which half of the pair it came from. */
   locale: Locale;
+  placement: "hero" | "closing";
+  /** The reassurance lines the Serbian source prints under the CTA. */
+  assurances?: readonly string[];
+  className?: string;
 }) {
-  const schema = createSchema(copy.validation);
+  // One per mounted instance. This is what keeps two forms on one page from colliding.
+  const uid = useId();
+  const fieldId = (key: string) => `ebook-${uid}-${key}`;
+  const errorId = (key: string) => `ebook-${uid}-${key}-error`;
 
-  const [values, setValues] = useState<FormValues>({
-    name: "",
-    email: "",
-    company: "",
-    role: "",
+  const schema = React.useMemo(() => createSchema(copy.fields), [copy.fields]);
+
+  const [values, setValues] = useState<Values>(() => {
+    const initial: Values = {};
+    for (const field of copy.fields) initial[field.key] = "";
+    return initial;
   });
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const downloadRef = React.useRef<HTMLAnchorElement | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
     setValues((prev) => ({ ...prev, [name]: value }));
-    if (errors[name as keyof FormValues]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setErrors({});
 
     const parsed = schema.safeParse(values);
     if (!parsed.success) {
       const next: FieldErrors = {};
       for (const issue of parsed.error.errors) {
-        const key = issue.path[0] as keyof FormValues;
+        const key = String(issue.path[0]);
         if (!next[key]) next[key] = issue.message;
       }
       setErrors(next);
@@ -97,15 +131,14 @@ export function EbookForm({
 
     setIsSubmitting(true);
     try {
-      // Untranslated keys: this is the API contract, not copy.
+      // Untranslated keys: the API contract, not copy.
       const body = new FormData();
-      body.append("name", parsed.data.name);
-      body.append("email", parsed.data.email);
-      body.append("company", parsed.data.company);
-      if (parsed.data.role) body.append("role", parsed.data.role);
+      for (const field of copy.fields) {
+        const value = (parsed.data as Values)[field.key];
+        if (value) body.append(field.key, value);
+      }
       body.append("locale", locale);
 
-      // UTM attribution, captured the same way the Careers form does it.
       if (typeof window !== "undefined") {
         const params = new URLSearchParams(window.location.search);
         for (const key of ["utm_source", "utm_medium", "utm_campaign"]) {
@@ -124,12 +157,11 @@ export function EbookForm({
 
       setIsDone(true);
 
-      // Consent-gated analytics, reusing the event name the resource modal already uses so
-      // downloads stay comparable across the site.
       if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
         (window as any).gtag("event", "download_resource", {
           id: "sap_mythbusters_ebook",
           title: "10 Myths About SAP Cloud ERP",
+          placement,
         });
       }
     } catch {
@@ -139,17 +171,23 @@ export function EbookForm({
     }
   };
 
-  // Fire the download once the success panel exists, so the anchor is in the DOM.
+  // Fire the download once the success panel exists, so the anchor is in the DOM. The
+  // visible link is the reliable path; the click is the convenience.
   React.useEffect(() => {
     if (isDone) downloadRef.current?.click();
   }, [isDone]);
 
   if (isDone) {
+    const s = copy.success;
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <CheckCircle className="mx-auto mb-4 h-12 w-12 text-emerald-600" aria-hidden="true" />
-        <h3 className="text-2xl font-semibold text-slate-900">{copy.success.heading}</h3>
-        <p className="mt-3 text-slate-600">{copy.success.body}</p>
+      <div
+        data-testid={`ebook-success-${placement}`}
+        className={`rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 ${className ?? ""}`}
+      >
+        <p className="text-sm font-semibold uppercase tracking-wide text-[#0a6ed1]">{s.eyebrow}</p>
+        <h2 className="mt-2 text-2xl font-semibold text-slate-900">{s.heading}</h2>
+        <p className="mt-3 text-slate-600">{s.body}</p>
+
         <a
           ref={downloadRef}
           href={EBOOK_HREF}
@@ -157,16 +195,41 @@ export function EbookForm({
           className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary-700 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
         >
           <Download className="h-4 w-4" aria-hidden="true" />
-          {copy.success.downloadLabel}
+          {s.downloadLabel}
         </a>
+        <p className="mt-2 text-xs text-slate-500">{s.downloadNote}</p>
+
+        <div className="mt-6 rounded-xl bg-slate-50 p-4">
+          <p className="text-sm font-semibold text-slate-900">{s.emailHeading}</p>
+          <p className="mt-1 text-sm text-slate-600">{s.emailBody}</p>
+        </div>
+
+        <div className="mt-6 border-t border-slate-200 pt-6">
+          <h3 className="text-lg font-semibold text-slate-900">{s.nextHeading}</h3>
+          <p className="mt-2 text-sm text-slate-600">{s.nextBody}</p>
+          <Button asChild className="mt-4">
+            <a href={s.contactHref}>{s.expertCta}</a>
+          </Button>
+        </div>
+
+        <div className="mt-6 border-t border-slate-200 pt-6">
+          <h3 className="text-base font-semibold text-slate-900">{s.questionsHeading}</h3>
+          <p className="mt-1 text-sm text-slate-600">{s.questionsBody}</p>
+          <Button asChild variant="outline" className="mt-4">
+            <a href={s.contactHref}>{s.contactCta}</a>
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-      <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">{copy.heading}</h2>
-      <p className="mt-2 text-slate-600">{copy.body}</p>
+    <div
+      data-testid={`ebook-form-${placement}`}
+      className={`rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 ${className ?? ""}`}
+    >
+      <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">{copy.heading}</h2>
+      <p className="mt-2 text-sm text-slate-600">{copy.body}</p>
 
       {/* Stated BEFORE the fields. A Serbian visitor must know the asset is English-only
           before handing over their details, not after. */}
@@ -174,63 +237,26 @@ export function EbookForm({
         {copy.languageNote}
       </p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="ebook-name">{copy.nameLabel}</Label>
-          <Input
-            id="ebook-name"
-            name="name"
-            value={values.name}
-            onChange={handleChange}
-            aria-invalid={errors.name ? true : undefined}
-            aria-describedby={errors.name ? "ebook-name-error" : undefined}
-          />
-          {errors.name && (
-            <p id="ebook-name-error" className="text-sm text-red-600">
-              {errors.name}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="ebook-email">{copy.emailLabel}</Label>
-          <Input
-            id="ebook-email"
-            name="email"
-            type="email"
-            value={values.email}
-            onChange={handleChange}
-            aria-invalid={errors.email ? true : undefined}
-            aria-describedby={errors.email ? "ebook-email-error" : undefined}
-          />
-          {errors.email && (
-            <p id="ebook-email-error" className="text-sm text-red-600">
-              {errors.email}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="ebook-company">{copy.companyLabel}</Label>
-          <Input
-            id="ebook-company"
-            name="company"
-            value={values.company}
-            onChange={handleChange}
-            aria-invalid={errors.company ? true : undefined}
-            aria-describedby={errors.company ? "ebook-company-error" : undefined}
-          />
-          {errors.company && (
-            <p id="ebook-company-error" className="text-sm text-red-600">
-              {errors.company}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="ebook-role">{copy.roleLabel}</Label>
-          <Input id="ebook-role" name="role" value={values.role} onChange={handleChange} />
-        </div>
+      <form onSubmit={handleSubmit} noValidate className="mt-5 space-y-4">
+        {copy.fields.map((field) => (
+          <div key={field.key} className="space-y-2">
+            <Label htmlFor={fieldId(field.key)}>{field.label}</Label>
+            <Input
+              id={fieldId(field.key)}
+              name={field.key}
+              type={field.key === "email" ? "email" : "text"}
+              value={values[field.key] ?? ""}
+              onChange={handleChange}
+              aria-invalid={errors[field.key] ? true : undefined}
+              aria-describedby={errors[field.key] ? errorId(field.key) : undefined}
+            />
+            {errors[field.key] && (
+              <p id={errorId(field.key)} className="text-sm text-red-600">
+                {errors[field.key]}
+              </p>
+            )}
+          </div>
+        ))}
 
         {errors.general && (
           <p role="alert" className="text-sm text-red-600">
@@ -242,8 +268,20 @@ export function EbookForm({
           {isSubmitting ? copy.submitting : copy.submit}
         </Button>
 
-        {/* Informational acknowledgement, NOT the cookie-consent mechanism. The href is
-            locale-owned, so a Serbian visitor is never sent to the English document. */}
+        {assurances && assurances.length > 0 && (
+          <ul className="space-y-1.5">
+            {assurances.map((line) => (
+              <li key={line} className="flex items-start gap-2 text-xs text-slate-600">
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden="true" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Informational acknowledgement, NOT the cookie-consent mechanism. Present beside
+            BOTH form instances — a marketing document going quiet on a legal UI requirement
+            does not remove it. The href is locale-owned. */}
         <p className="text-xs text-slate-500">
           {copy.privacy.before}
           <a className="underline underline-offset-4 hover:text-slate-700" href={copy.privacy.href}>

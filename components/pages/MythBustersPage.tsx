@@ -4,8 +4,7 @@ import { Section } from "@/components/ui/section"
 import { Button } from "@/components/ui/button"
 import { SapGoldPartnerBadge } from "@/components/ui/SapGoldPartnerBadge"
 import { EbookForm } from "@/components/mythbusters/EbookForm"
-import type { MythBustersDictionary } from "@/content/dictionary"
-import type { Locale } from "@/lib/i18n"
+import type { MythBustersDictionary, EnMythBustersLayout } from "@/content/dictionary"
 
 /**
  * The SAP MythBusting landing page, shared by /insights/sap-mythbusters and its Serbian half.
@@ -31,12 +30,13 @@ import type { Locale } from "@/lib/i18n"
  */
 export interface MythBustersPageProps {
   content: MythBustersDictionary
-  locale: Locale
+  /** The English page body, narrowed by the route file. */
+  layout: EnMythBustersLayout
   /** Serialised JSON-LD for this locale, built by the route file. */
   jsonLd: string
 }
 
-export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProps) {
+export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProps) {
   return (
     <>
       <Script
@@ -50,24 +50,24 @@ export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProp
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.10] via-transparent to-blue-600/[0.06] blur-3xl" />
         <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300 sm:text-sm">
-            {content.hero.eyebrow}
+            {layout.hero.eyebrow}
           </p>
 
           <h1 className="mt-5 text-[30px] font-light leading-tight tracking-tight text-white sm:text-[38px] md:text-[50px]">
             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
-              {content.hero.titleLine1}
+              {layout.hero.titleLine1}
             </span>{" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-white/90 to-blue-400">
-              {content.hero.titleLine2}
+              {layout.hero.titleLine2}
             </span>
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base text-slate-300 md:text-lg">
-            {content.hero.lede}
+            {layout.hero.lede}
           </p>
 
           <ul className="mx-auto mt-8 grid max-w-2xl gap-3 text-left sm:grid-cols-2">
-            {content.hero.bullets.map((bullet) => (
+            {layout.hero.bullets.map((bullet) => (
               <li key={bullet} className="flex items-start gap-2.5 text-sm text-slate-200">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-300" aria-hidden="true" />
                 <span>{bullet}</span>
@@ -81,7 +81,7 @@ export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProp
               size="lg"
               className="bg-white text-[#00144a] shadow-lg hover:bg-slate-100 focus-visible:ring-white focus-visible:ring-offset-[#00144a]"
             >
-              <a href="#download">{content.hero.cta}</a>
+              <a href="#download">{layout.hero.cta}</a>
             </Button>
           </div>
         </div>
@@ -95,7 +95,7 @@ export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProp
                 in words right beside it, so the image is decorative. */}
             <SapGoldPartnerBadge className="h-9 w-auto md:h-11" />
             <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center">
-              {content.trustBar.map((item) => (
+              {layout.trustBar.map((item) => (
                 <li key={item} className="text-sm font-medium text-slate-700">
                   {item}
                 </li>
@@ -109,13 +109,13 @@ export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProp
       <Section surface="surface-0" data-section="mythbusters-why">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
-            {content.why.introTitle}
+            {layout.why.introTitle}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-600">{content.why.introBody}</p>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-600">{layout.why.introBody}</p>
         </div>
 
         <div className="mx-auto mt-12 grid max-w-5xl gap-6 sm:grid-cols-2">
-          {content.why.items.map((item) => (
+          {layout.why.items.map((item) => (
             <div key={item.title} className="card rounded-2xl border border-slate-200 p-6">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-[#0a6ed1]">
                 {item.title}
@@ -129,11 +129,11 @@ export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProp
       {/* ── The ten myths ────────────────────────────────────────────────────── */}
       <Section surface="surface-1" data-section="mythbusters-myths">
         <h2 className="text-center text-2xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-          {content.myths.heading}
+          {layout.myths.heading}
         </h2>
 
         <ol className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2">
-          {content.myths.items.map((myth, index) => (
+          {layout.myths.items.map((myth, index) => (
             <li
               key={myth}
               className="flex items-start gap-4 rounded-xl border border-slate-200 bg-white p-5"
@@ -148,7 +148,7 @@ export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProp
 
         <div className="mt-10 flex justify-center">
           <Button asChild size="lg">
-            <a href="#download">{content.myths.cta}</a>
+            <a href="#download">{layout.myths.cta}</a>
           </Button>
         </div>
       </Section>
@@ -157,13 +157,13 @@ export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProp
       <Section surface="surface-0" data-section="mythbusters-audience">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            {content.audience.heading}
+            {layout.audience.heading}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-600">{content.audience.body}</p>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-600">{layout.audience.body}</p>
         </div>
 
         <ul className="mx-auto mt-10 grid max-w-3xl gap-3 sm:grid-cols-2">
-          {content.audience.roles.map((role) => (
+          {layout.audience.roles.map((role) => (
             <li key={role} className="flex items-start gap-2.5 text-slate-700">
               <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#0a6ed1]" aria-hidden="true" />
               <span>{role}</span>
@@ -174,7 +174,7 @@ export function MythBustersPage({ content, locale, jsonLd }: MythBustersPageProp
 
       {/* ── Download form ────────────────────────────────────────────────────── */}
       <Section id="download" surface="surface-1" data-section="mythbusters-form">
-        <EbookForm copy={content.form} locale={locale} />
+        <EbookForm copy={content.form} locale="en" placement="closing" />
       </Section>
     </>
   )

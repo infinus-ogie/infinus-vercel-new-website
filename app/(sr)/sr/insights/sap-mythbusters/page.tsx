@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
-import { MythBustersPage } from "@/components/pages/MythBustersPage"
-import { getDictionary } from "@/content/dictionary"
+import { MythBustersPageSr } from "@/components/pages/MythBustersPageSr"
+import { getDictionary, srMythBustersLayout } from "@/content/dictionary"
 import { buildMythBustersJsonLd } from "@/lib/mythbusters-jsonld"
 import { generatePageMetadata } from "@/lib/seo"
 import { localeAlternatesMetadata } from "@/lib/seo-i18n"
@@ -19,12 +19,25 @@ import { LOCALE_META } from "@/lib/i18n"
  * were approved independently as separate legal texts; /sr/case-study and
  * /sr/sap-packaged-solutions keep their English segments for the same reason this one does.
  *
- * The copy is the client's own Serbian document, not a translation of the English page — see
- * content/sr/mythbusters.ts.
+ * ── This half does NOT share the English page's component ───────────────────────
+ * Every other locale pair on this site renders one component twice. This one does not: the
+ * client sent a NEW Serbian document ("LP_copy_structure_INFINUS_RS.docx") with a different
+ * conversion structure — a split hero carrying the form and an e-book asset card, a
+ * one-line trust bar, four myth/fact previews instead of ten myth statements, a real FAQ,
+ * and a second form at the bottom.
+ *
+ * That is a different page, not a translation, so it has its own component and its own
+ * layout shape. See components/pages/MythBustersPageSr.tsx and the union in
+ * content/dictionary.ts.
+ *
+ * The SEO title and description still come from the OLDER "srp. verzija.docx" — the newer
+ * LP document supplies none.
  */
 
 const PATH = pairPath("insights-sap-mythbusters", "sr")
 const content = getDictionary("sr").mythBusters
+// Narrowed once at module scope — see the English half.
+const layout = srMythBustersLayout(content)
 
 const base = generatePageMetadata(content.metadata.title, content.metadata.description, PATH)
 
@@ -42,9 +55,9 @@ export const metadata: Metadata = {
 
 export default function SerbianMythBustersPage() {
   return (
-    <MythBustersPage
+    <MythBustersPageSr
       content={content}
-      locale="sr"
+      layout={layout}
       jsonLd={buildMythBustersJsonLd("sr")}
     />
   )

@@ -12,19 +12,27 @@ import { pairPath } from './growth-routes'
 /**
  * JSON-LD for the SAP MythBusting landing page, per locale.
  *
- * ── What is emitted, and one thing deliberately not ─────────────────────────────
- * WebPage + BreadcrumbList + Article, from the shared helper, plus two additions specific to
- * this page: an ItemList of the ten myths, and a DigitalDocument for the e-book itself.
+ * ── The schema follows what each locale actually SHOWS ──────────────────────────
+ * The two halves are different pages, so their structured data differs too. Both emit
+ * WebPage + BreadcrumbList + Article from the shared helper, plus a DigitalDocument for the
+ * e-book. What varies is the list:
  *
- * FAQPage is deliberately NOT emitted. The ten myths are statements, not questions, and
- * dressing them as Q&A to win a rich result is exactly the kind of mismatched markup that
- * earns a manual action. The helper only adds a FAQPage when it is given `faqs`, so it is
- * simply not given any.
+ *   EN  an ItemList of the ten myths it displays in full
+ *   SR  an ItemList of the four myth/fact previews it displays, and a FAQPage
+ *
+ * FAQPage is emitted for SERBIAN ONLY, and only over its "Često postavljana pitanja"
+ * section — five genuine question/answer pairs that are visible on the page. The myth/fact
+ * previews are NOT marked up as FAQ on either half: they are statements, and dressing them
+ * as Q&A to win a rich result is the kind of mismatched markup that earns a manual action.
+ * The English page has no FAQ section at all, so it emits none.
  *
  * ── inLanguage on the e-book is 'en' on BOTH halves ─────────────────────────────
- * The page is bilingual; the PDF is not. The Serbian landing page says so on screen and must
- * say the same thing in its structured data — advertising a Serbian-language asset that does
- * not exist would be a straightforward inaccuracy.
+ * The page is bilingual; the PDF is not. A Serbian e-book was announced but NOT delivered —
+ * the file supplied alongside that message is byte-identical to the English one already in
+ * the repository. Both halves therefore serve, and describe, an English asset.
+ *
+ * When a real Serbian PDF arrives this becomes locale-dependent. Until then, marking the
+ * Serbian download as `sr` would advertise a document that does not exist.
  *
  * The page's own `inLanguage` still follows the locale, so the Serbian document is correctly
  * described as Serbian while the file it offers is described as English.
@@ -43,6 +51,8 @@ export function buildMythBustersJsonLd(locale: Locale): string {
   const path = pairPath('insights-sap-mythbusters', locale)
   const pageUrl = absoluteUrl(path)
   const inLanguage = LOCALE_META[locale].jsonLdLanguage
+
+  const layout = content.layout
 
   const base = generatePageJsonLd({
     pageData: {
@@ -67,8 +77,21 @@ export function buildMythBustersJsonLd(locale: Locale): string {
       mainEntityOfPage: pageUrl,
       publisher: DEFAULT_PUBLISHER,
     },
-    // No `faqs` — see the note above.
+    // `faqs` is supplied ONLY where a real FAQ section is visible — Serbian. The helper
+    // omits the FAQPage node entirely when the list is empty.
+    faqs:
+      layout.variant === 'sr-conversion'
+        ? layout.faq.items.map((item) => ({ question: item.question, answer: item.answer }))
+        : [],
   })
+
+  // The list each locale actually displays: ten myth statements in English, four myth/fact
+  // previews in Serbian. Emitting ten on the Serbian page would describe six items no
+  // visitor can see there.
+  const listItems =
+    layout.variant === 'sr-conversion'
+      ? layout.preview.items.map((item) => item.myth)
+      : layout.myths.items
 
   return JSON.stringify([
     ...base,
@@ -76,7 +99,7 @@ export function buildMythBustersJsonLd(locale: Locale): string {
       '@context': 'https://schema.org',
       '@type': 'ItemList',
       name: content.schema.mythListName,
-      itemListElement: content.myths.items.map((myth, index) => ({
+      itemListElement: listItems.map((myth, index) => ({
         '@type': 'ListItem',
         position: index + 1,
         name: myth,

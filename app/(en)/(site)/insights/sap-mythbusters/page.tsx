@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { MythBustersPage } from "@/components/pages/MythBustersPage"
-import { getDictionary } from "@/content/dictionary"
+import { getDictionary, enMythBustersLayout } from "@/content/dictionary"
 import { buildMythBustersJsonLd } from "@/lib/mythbusters-jsonld"
 import { generatePageMetadata } from "@/lib/seo"
 import { localeAlternatesMetadata } from "@/lib/seo-i18n"
@@ -22,6 +22,9 @@ import { pairPath } from "@/lib/growth-routes"
 
 const PATH = pairPath("insights-sap-mythbusters", "en")
 const content = getDictionary("en").mythBusters
+// Narrowed once at module scope: a dictionary that stops carrying the English layout is a
+// BUILD failure, not a page that renders half of itself.
+const layout = enMythBustersLayout(content)
 
 const base = generatePageMetadata(content.metadata.title, content.metadata.description, PATH)
 
@@ -37,7 +40,7 @@ export default function EnglishMythBustersPage() {
   return (
     <MythBustersPage
       content={content}
-      locale="en"
+      layout={layout}
       jsonLd={buildMythBustersJsonLd("en")}
     />
   )

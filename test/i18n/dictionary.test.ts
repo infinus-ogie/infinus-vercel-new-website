@@ -44,12 +44,45 @@ describe('the registry covers every locale', () => {
   })
 })
 
+/**
+ * The ONE namespace whose two locales are allowed to differ in shape.
+ *
+ * Every other namespace is a translation: one page, two languages, identical keys. The
+ * MythBusting landing page is not. The client wrote the English page, then sent a DIFFERENT
+ * Serbian page — a conversion layout with a split hero, an asset card, four myth/fact
+ * previews instead of ten myth statements, a real FAQ and two form instances.
+ *
+ * `MythBustersDictionary.layout` is a discriminated union for exactly that reason, and a
+ * union has different leaf keys per branch. Forcing key parity here would mean either
+ * inventing Serbian copy the client did not write, or dropping Serbian sections they did.
+ *
+ * This is an exemption of ONE namespace, listed by name, asserted below to be genuinely a
+ * union rather than an accident — not a relaxation of the rule for everything.
+ */
+const DIVERGENT_BY_DESIGN: readonly string[] = ['mythBusters']
+
 describe('shapes are identical across locales', () => {
   test('both locales expose exactly the same key paths, in every namespace', () => {
     for (const namespace of DICTIONARY_NAMESPACES) {
       const report = dictionaryKeyReport(namespace)
-      expect(report.sr, namespace).toEqual(report.en)
       expect(report.en.length, `${namespace} looks empty`).toBeGreaterThan(0)
+      if (DIVERGENT_BY_DESIGN.indexOf(namespace) !== -1) continue
+      expect(report.sr, namespace).toEqual(report.en)
+    }
+  })
+
+  test('the divergent namespace really is a two-variant union, not a drifted translation', () => {
+    // The exemption above is only legitimate if the divergence is the DECLARED one. Both
+    // sides must carry a layout variant, and they must differ — a Serbian page that quietly
+    // fell back to the English shape would otherwise pass unnoticed.
+    const en = getDictionary('en').mythBusters
+    const sr = getDictionary('sr').mythBusters
+    expect(en.layout.variant).toBe('en-overview')
+    expect(sr.layout.variant).toBe('sr-conversion')
+
+    // Everything OUTSIDE the union is still a strict translation pair.
+    for (const shared of ['metadata', 'schema'] as const) {
+      expect(Object.keys(sr[shared]).sort(), shared).toEqual(Object.keys(en[shared]).sort())
     }
   })
 
@@ -85,6 +118,15 @@ describe('shapes are identical across locales', () => {
    * "Retail Expertise", so it has no prefix; Serbian reads "Ekspertiza: Maloprodaja", so it
    * has no suffix. Exactly one of the two is empty in each locale, by design.
    */
+  /**
+   * Paths matched by PATTERN rather than by name, where the index is not knowable up front.
+   *
+   * An OPTIONAL e-book form field cannot fail validation, so it carries no message. English
+   * has one such field (Role or Job Title); Serbian has none. Listing "form.fields.3.
+   * validation" by name would encode the field ORDER into this test.
+   */
+  const EMPTY_BY_PATTERN = [/^form\.fields\.\d+\.validation$/]
+
   const MAY_BE_EMPTY = [
     'domains.modal.titlePrefix',
     'domains.modal.titleSuffix',
@@ -109,12 +151,27 @@ describe('shapes are identical across locales', () => {
   test('no key is optional or non-string, and only fragment keys may be empty', () => {
     // An optional key in an interface would let a locale omit it and still compile.
     for (const namespace of DICTIONARY_NAMESPACES) {
-      const paths = dictionaryKeyReport(namespace).en
       for (const locale of LOCALES) {
+        // The divergent namespace is walked per LOCALE rather than against the English key
+        // list, because its two sides legitimately have different keys.
+        const paths =
+          DIVERGENT_BY_DESIGN.indexOf(namespace) === -1
+            ? dictionaryKeyReport(namespace).en
+            : dictionaryKeyReport(namespace)[locale]
+
         for (const path of paths) {
           const value = resolvePath(getDictionary(locale)[namespace] as unknown as Record<string, unknown>, path)
+          // `required` on an e-book form field is a genuine BOOLEAN: it drives validation,
+          // and the two locales disagree about it (Serbian requires Zemlja, English makes
+          // Role optional). Encoding that as the string "true" to satisfy this rule would be
+          // hiding a real type behind a convention.
+          if (/^form\.fields\.\d+\.required$/.test(path)) {
+            expect(typeof value, `${locale}.${namespace}.${path}`).toBe('boolean')
+            continue
+          }
           expect(typeof value, `${locale}.${namespace}.${path}`).toBe('string')
           if (MAY_BE_EMPTY.indexOf(path) !== -1) continue
+          if (EMPTY_BY_PATTERN.some((pattern) => pattern.test(path))) continue
           expect((value as string).length, `${locale}.${namespace}.${path} is empty`).toBeGreaterThan(0)
         }
       }

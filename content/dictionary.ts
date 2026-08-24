@@ -1007,58 +1007,60 @@ export interface SapStarterPackageDictionary {
  * ─────────────────────────────────────────────────────────────────────────── */
 
 /**
- * The SAP MythBusting e-book landing page.
+ * One field in the e-book form.
  *
- * ── The copy is CLIENT-SUPPLIED SOURCE OF TRUTH ─────────────────────────────────
- * Both locale files are transcribed from the client's own documents ("eng verzija.docx"
- * and "srp. verzija.docx"). Unlike every other namespace here, neither side is a
- * translation of the other — the client wrote both — so the usual "English is the source"
- * rule does not apply and neither file may be edited to match the other.
+ * The two locales ask for DIFFERENT fields — the English source asks for an optional Role
+ * or Job Title, the newer Serbian source asks for a required Zemlja and no role at all — so
+ * the field list is DATA rather than JSX. That is what lets one form component serve both
+ * without a `locale === 'sr'` conditional inside it.
  *
- * ONE deliberate departure from the supplied text, in Serbian only: the acknowledgement
- * ended "...pročitali našu Privacy Policy", an English legal term inside Serbian body copy
- * and grammatically wrong in the accusative slot. It uses the site's already-approved
- * "Politiku privatnosti" instead. Recorded in content/sr/mythbusters.ts.
- *
- * ── Tuple types where the design has a fixed count ──────────────────────────────
- * Ten myths, four hero bullets, four trust items, four value blocks, six audience roles.
- * A locale that quietly ships nine myths is a compile error rather than a rendering
- * surprise.
+ * `key` is the API contract and is NEVER translated. `label` is.
  */
-export interface MythBustersDictionary {
-  readonly metadata: {
-    /**
-     * The client's SEO title already ends in "| Infinus", so the route file passes it as
-     * `title.absolute` — the root layout's `%s | Infinus` template would otherwise brand
-     * the tab twice. seo:assert-build fails on exactly that.
-     */
-    readonly title: string
-    readonly description: string
-  }
+export type EbookFieldKey = 'name' | 'email' | 'company' | 'role' | 'country'
 
+export interface EbookFormField {
+  readonly key: EbookFieldKey
+  readonly label: string
+  readonly required: boolean
+  /** The Zod message shown when a REQUIRED field is empty or malformed. */
+  readonly validation: string
+}
+
+/** A myth paired with the fact that answers it. The Serbian page previews four. */
+export interface MythFact {
+  readonly myth: string
+  readonly fact: string
+}
+
+/** One question and its answer, rendered visibly AND emitted as FAQPage schema. */
+export interface EbookFaq {
+  readonly question: string
+  readonly answer: string
+}
+
+/**
+ * The ENGLISH landing page's body — the structure of "eng verzija.docx".
+ *
+ * Hero, a four-metric trust bar, a why-download block, the ten myths as a list, an audience
+ * section, then the form.
+ */
+export interface EnMythBustersLayout {
+  readonly variant: 'en-overview'
   readonly hero: {
     readonly eyebrow: string
-    /** Two lines in the source, kept separate so each locale controls its own break. */
     readonly titleLine1: string
     readonly titleLine2: string
     readonly lede: string
     readonly bullets: readonly [string, string, string, string]
     readonly cta: string
   }
-
-  /**
-   * The trust bar. FOUR items, where the shared StatPills renders three — which is why
-   * this page carries its own list rather than reusing that component.
-   */
+  /** FOUR items, where the shared StatPills renders three — hence a page-local list. */
   readonly trustBar: readonly [string, string, string, string]
-
   readonly why: {
-    /** The source's lead block: a heading and a paragraph, above the four value blocks. */
     readonly introTitle: string
     readonly introBody: string
     readonly items: readonly [CardCopy, CardCopy, CardCopy, CardCopy]
   }
-
   readonly myths: {
     readonly heading: string
     readonly items: readonly [
@@ -1067,33 +1069,142 @@ export interface MythBustersDictionary {
     ]
     readonly cta: string
   }
-
   readonly audience: {
     readonly heading: string
     readonly body: string
     readonly roles: readonly [string, string, string, string, string, string]
   }
+}
+
+/**
+ * The SERBIAN landing page's body — the structure of "LP_copy_structure_INFINUS_RS.docx".
+ *
+ * A genuinely different page: a split hero with the form and an e-book asset card beside the
+ * copy, a one-line trust bar with two logos, then audience, contents, four myth/fact
+ * previews, why-Infinus, why-now, a real FAQ, and a closing CTA above a second form.
+ *
+ * ── Why this is a separate shape rather than optional keys ──────────────────────
+ * The site's dictionary convention forbids optional keys, because an optional key is how a
+ * locale quietly ships a missing section. The client did not send a translation of the
+ * English page; they sent a different page. Modelling that as one interface with half its
+ * fields unused per locale would be describing something that is not true.
+ */
+export interface SrMythBustersLayout {
+  readonly variant: 'sr-conversion'
+  readonly hero: {
+    readonly badge: string
+    readonly title: string
+    readonly subtitle: string
+    readonly paragraphs: readonly [string, string]
+    readonly benefitsHeading: string
+    readonly benefits: readonly [string, string, string]
+  }
+  /** The e-book card shown beside the form. */
+  readonly assetCard: {
+    readonly title: string
+    readonly subtitle: string
+    readonly whatYouGetHeading: string
+    readonly items: readonly [string, string, string, string]
+    readonly coverAlt: string
+  }
+  /** Reassurances printed under the form's CTA. */
+  readonly formAssurances: readonly [string, string, string]
+  readonly trustBar: {
+    readonly statement: string
+    readonly sapLogoAlt: string
+    readonly infinusLogoAlt: string
+  }
+  readonly audience: {
+    readonly heading: string
+    readonly body: string
+    readonly rolesIntro: string
+    readonly roles: readonly [string, string, string, string, string, string]
+  }
+  readonly contents: {
+    readonly heading: string
+    readonly intro: string
+    readonly items: readonly [string, string, string, string, string]
+  }
+  readonly preview: {
+    readonly heading: string
+    readonly mythLabel: string
+    readonly factLabel: string
+    readonly items: readonly [MythFact, MythFact, MythFact, MythFact]
+    readonly more: string
+  }
+  readonly whyInfinus: {
+    readonly heading: string
+    readonly paragraphs: readonly [string, string]
+    readonly reasonsHeading: string
+    readonly reasons: readonly [string, string, string, string]
+  }
+  readonly whyNow: {
+    readonly heading: string
+    readonly paragraphs: readonly [string, string, string]
+  }
+  readonly faq: {
+    readonly heading: string
+    readonly items: readonly [EbookFaq, EbookFaq, EbookFaq, EbookFaq, EbookFaq]
+  }
+  readonly finalCta: {
+    readonly heading: string
+    readonly body: string
+    readonly button: string
+    readonly note: string
+  }
+}
+
+/**
+ * The SAP MythBusting e-book landing page.
+ *
+ * ── The copy is CLIENT-SUPPLIED SOURCE OF TRUTH ─────────────────────────────────
+ * Neither side is a translation of the other — the client wrote both — so the usual
+ * "English is the source" rule does not apply and neither file may be edited to match the
+ * other. `layout` is a discriminated union precisely because they are different pages.
+ *
+ * ONE deliberate departure from the supplied text, in Serbian only: the acknowledgement
+ * ended "...pročitali našu Privacy Policy", an English legal term inside Serbian body copy
+ * and grammatically wrong in the accusative slot. It uses the site's already-approved
+ * "Politiku privatnosti" instead. Recorded in content/sr/mythbusters.ts.
+ */
+export interface MythBustersDictionary {
+  readonly metadata: {
+    /**
+     * Both supplied SEO titles already end in "| Infinus", so the route files pass them as
+     * `title.absolute` — the root layout's `%s | Infinus` template would otherwise brand
+     * the tab twice. seo:assert-build fails on exactly that.
+     */
+    readonly title: string
+    readonly description: string
+  }
+
+  /** The page body. The two locales have genuinely different structures — see above. */
+  readonly layout: EnMythBustersLayout | SrMythBustersLayout
 
   readonly form: {
     readonly heading: string
     readonly body: string
-    readonly nameLabel: string
-    readonly emailLabel: string
-    readonly companyLabel: string
-    /** The one optional field in the source, and it says so in its own label. */
-    readonly roleLabel: string
+    /** Ordered. The locale decides which fields exist and which are required. */
+    readonly fields: readonly EbookFormField[]
     readonly submit: string
     readonly submitting: string
-    /** Zod messages. The RULES are shared; only the wording is per locale. */
-    readonly validation: {
-      readonly name: string
-      readonly email: string
-      readonly company: string
-    }
     readonly success: {
+      readonly eyebrow: string
       readonly heading: string
       readonly body: string
       readonly downloadLabel: string
+      readonly downloadNote: string
+      /** Empty when this locale does not promise an emailed copy — see the SR file. */
+      readonly emailHeading: string
+      readonly emailBody: string
+      readonly nextHeading: string
+      readonly nextBody: string
+      readonly expertCta: string
+      readonly questionsHeading: string
+      readonly questionsBody: string
+      readonly contactCta: string
+      /** Where both closing CTAs go. Locale-owned; there is no scheduling integration. */
+      readonly contactHref: string
     }
     readonly error: string
     /**
@@ -1118,6 +1229,28 @@ export interface MythBustersDictionary {
     readonly mythListName: string
     readonly ebookName: string
   }
+}
+
+/**
+ * Narrow the layout to the Serbian shape, or fail loudly at module scope.
+ *
+ * The Serbian route file calls this once when the module loads, so a dictionary that stops
+ * carrying the Serbian layout is a BUILD failure rather than a page that renders half of
+ * itself. Same discipline as `pairPath` in lib/growth-routes.ts.
+ */
+export function srMythBustersLayout(content: MythBustersDictionary): SrMythBustersLayout {
+  if (content.layout.variant !== 'sr-conversion') {
+    throw new Error('the Serbian MythBusting page requires the "sr-conversion" layout')
+  }
+  return content.layout
+}
+
+/** The English counterpart of {@link srMythBustersLayout}. */
+export function enMythBustersLayout(content: MythBustersDictionary): EnMythBustersLayout {
+  if (content.layout.variant !== 'en-overview') {
+    throw new Error('the English MythBusting page requires the "en-overview" layout')
+  }
+  return content.layout
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

@@ -2,157 +2,268 @@
  * Serbian SAP MythBusting landing-page copy (Latin script, ekavian).
  *
  * ╔══════════════════════════════════════════════════════════════════════════════╗
- * ║  CLIENT-SUPPLIED SOURCE OF TRUTH. Transcribed from "srp. verzija.docx".        ║
- * ║  Do NOT rewrite, improve or paraphrase without separate approval.              ║
+ * ║  CLIENT-SUPPLIED SOURCE OF TRUTH.                                              ║
+ * ║  VISIBLE PAGE  -> "LP_copy_structure_INFINUS_RS.docx"  (newest)                 ║
+ * ║  SEO TITLE/META -> "srp. verzija.docx"  (the LP document carries none)          ║
+ * ║  Do NOT rewrite, improve or paraphrase without separate approval.               ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  *
- * NOT a translation of content/en/mythbusters.ts. The client wrote both documents, so this
- * file is a source in its own right and the two are allowed to differ. They do, visibly:
- * the Serbian hero reads "10 mitova o SAP-u" where the English reads "10 Myths About SAP
- * Cloud ERP", and the Serbian SEO title says "o SAP Cloud ERP-u". Those are the client's
- * choices and are preserved rather than harmonised.
+ * ── Two generations of Serbian source, and which one wins ───────────────────────
+ * The first Serbian document mirrored the English page: a four-metric trust bar, all ten
+ * myths as a list, one form at the bottom. The client then sent a NEW document with a
+ * different conversion structure — a split hero with the form and an e-book asset card, a
+ * one-line trust bar with two logos, four myth/fact previews instead of ten myth
+ * statements, a why-Infinus section, a why-now section, a real FAQ, and a second form.
  *
- * ── THE ONE APPROVED DEPARTURE FROM THE SUPPLIED TEXT ───────────────────────────
- * The source's acknowledgement ends:
+ * The newer document SUPERSEDES the older one for everything it covers. It carries no SEO
+ * metadata, so the title and description below are still the approved ones from "srp.
+ * verzija.docx" — that is the only place the older document still governs.
  *
- *     "Slanjem formulara potvrđujete da ste pročitali našu Privacy Policy."
+ * The two variants were NOT merged. Where the new document is silent on a technical or
+ * legal requirement (the privacy acknowledgement, the English-only note on the asset) the
+ * existing implementation is preserved; where it speaks, it wins outright.
  *
- * "Privacy Policy" is an English legal term sitting inside Serbian body copy, and it is
- * grammatically wrong in that accusative slot. The site has fully localized legal
- * terminology and uses "Politiku privatnosti" in the Contact form, the Careers form and the
- * consent UI. This file uses that, linking to /sr/politika-privatnosti.
+ * ── THE APPROVED DEPARTURES FROM THE SUPPLIED TEXT ──────────────────────────────
+ *  1. The older source's acknowledgement ended "...pročitali našu Privacy Policy" — an
+ *     English legal term inside Serbian body copy, and grammatically wrong in that
+ *     accusative slot. It uses the site's approved "Politiku privatnosti" instead. The new
+ *     LP document independently confirms this wording in its FAQ ("u skladu sa našom
+ *     Politikom privatnosti").
+ *  2. The LP document offers the asset card subtitle as "Executive vodič (ili: Praktični
+ *     vodič)" — an author's alternative, not two strings. "Executive vodič" is used, being
+ *     the first and primary option. Flagged for the owner rather than chosen silently.
  *
- * That is an OWNER DECISION, not an editorial liberty. Nothing else in the supplied copy is
- * altered, including punctuation and the mixed English role plurals ("CEOs i vlasnici
- * kompanija"), which are the client's own register.
+ * Nothing else is altered, including the mixed English role plurals and the client's own
+ * punctuation and register.
  *
- * ── Structure notes ─────────────────────────────────────────────────────────────
- * As in the English file, the [ZAŠTO PREUZETI E-KNJIGU] section's first block reads as the
- * section lead and is carried as `why.introTitle` / `why.introBody`; the remaining four are
- * `why.items`. The DOCX section markers are editorial labels, not visible copy.
- *
- * ── The e-book is English-only, and the page says so before the form ────────────
- * `form.languageNote` renders ABOVE the fields, not after submission. A Serbian visitor
- * must know the asset's language before handing over their details.
+ * ── The e-book is ENGLISH ───────────────────────────────────────────────────────
+ * A Serbian e-book was mentioned but NOT supplied: the attached PDF is byte-identical to
+ * the English one already in the repository. `form.languageNote` therefore still says the
+ * asset is in English, and it renders ABOVE both forms. A Serbian visitor must know that
+ * before handing over their details, not after.
  */
 
 import type { MythBustersDictionary } from '../dictionary'
 
 export const mythBusters: MythBustersDictionary = {
   metadata: {
-    // Verbatim. Ends in "| Infinus", so the route file passes it as title.absolute.
+    // From "srp. verzija.docx" — the newer LP document supplies no SEO metadata.
+    // Ends in "| Infinus", so the route file passes it as title.absolute.
     title: '10 mitova o SAP Cloud ERP-u | Besplatna e-knjiga | Infinus',
     description:
       'Preuzmite besplatnu e-knjigu i otkrijte činjenice iza 10 najčešćih mitova o troškovima, implementaciji, skalabilnosti i poslovnoj vrednosti SAP Cloud ERP rešenja.',
   },
 
-  hero: {
-    eyebrow: 'Besplatna e-knjiga | PDF | 15 minuta čitanja',
-    // The source's hero says "o SAP-u", not "o SAP Cloud ERP-u" as the SEO title does.
-    // Client's wording, kept as written.
-    titleLine1: '10 mitova o SAP-u.',
-    titleLine2: 'Novi pogled na rast.',
-    lede:
-      'Saznajte šta uspešne kompanije danas rade drugačije i kako SAP Cloud ERP podržava rast bez nepotrebne složenosti, nepredvidivih troškova i dugotrajnih projekata.',
-    bullets: [
-      'Deset najčešćih SAP Cloud ERP mitova',
-      'Činjenice zasnovane na aktuelnim mogućnostima rešenja',
-      'Konkretni primeri i rezultati kompanija',
-      'Praktični uvidi za donošenje ERP odluka',
-    ],
-    cta: 'Preuzmite besplatnu e-knjigu',
-  },
+  layout: {
+    variant: 'sr-conversion',
 
-  trustBar: [
-    'SAP Gold Partner',
-    '30+ SAP konsultanata',
-    '30+ zadovoljnih klijenata',
-    '70% konsultanata sa više od 10 godina SAP iskustva',
-  ],
+    hero: {
+      badge: 'Besplatan e-book | PDF | Odmah dostupan',
+      title: 'Donosite ERP odluke na osnovu činjenica – ne mitova',
+      subtitle: '10 najčešćih zabluda o SAP Cloud ERP-u – jasno objašnjeno.',
+      paragraphs: [
+        'Mnoge kompanije SAP Cloud ERP i dalje povezuju sa visokim troškovima, složenim projektima ili manjkom fleksibilnosti.',
+        'Ovaj e-book pokazuje koje od tih pretpostavki danas više ne važe i kako savremena SAP Cloud ERP rešenja pomažu kompanijama da efikasnije rastu i dugoročno grade održivo poslovanje.',
+      ],
+      benefitsHeading: 'Zašto vredi preuzeti e-book',
+      benefits: [
+        'Upoznajte 10 najčešćih mitova o SAP-u.',
+        'Donosite informisane ERP odluke na osnovu aktuelnih činjenica.',
+        'Otkrijte praktične pristupe za rast i skaliranje poslovanja.',
+      ],
+    },
 
-  why: {
-    introTitle: 'OD PRETPOSTAVKI DO BOLJIH ODLUKA',
-    introBody:
-      'Odluke o ERP transformaciji često se zasnivaju na iskustvima sa ranijim generacijama sistema. Ova e-knjiga pokazuje šta se promenilo i koje činjenice treba uzeti u obzir prilikom procene SAP Cloud ERP rešenja.',
-    items: [
-      {
-        title: 'REALNIJA PROCENA TROŠKOVA',
-        body:
-          'Saznajte kako subscription modeli i fit-to-standard pristup mogu učiniti troškove transparentnijim i predvidivijim.',
-      },
-      {
-        title: 'BRŽA I JEDNOSTAVNIJA IMPLEMENTACIJA',
-        body:
-          'Otkrijte kako unapred definisane najbolje prakse, automatizacija i SAP Activate metodologija ubrzavaju put do poslovne vrednosti.',
-      },
-      {
-        title: 'RAST BEZ DODATNE KOMPLEKSNOSTI',
-        body:
-          'Razumite kako modularna cloud arhitektura podržava širenje kompanije, ulazak na nova tržišta i povećanje obima poslovanja.',
-      },
-      {
-        title: 'DOKAZIVA POSLOVNA VREDNOST',
-        body:
-          'Pogledajte kako kompanije ostvaruju merljive rezultate kroz automatizaciju, analitiku i integrisane poslovne procese.',
-      },
-    ],
-  },
+    assetCard: {
+      title: '10 mitova o SAP Cloud ERP-u',
+      // The source offers "Executive vodič (ili: Praktični vodič)". The first option is used.
+      subtitle: 'Executive vodič',
+      whatYouGetHeading: 'Šta dobijate',
+      items: [
+        'PDF vodič',
+        'oko 15 minuta čitanja',
+        'Odmah dostupno za preuzimanje',
+        'Besplatno',
+      ],
+      coverAlt: 'Naslovna strana e-knjige „10 mitova o SAP Cloud ERP-u“',
+    },
 
-  myths: {
-    heading: 'Koje mitove razbijamo?',
-    items: [
-      'SAP je preskup.',
-      'SAP je namenjen samo velikim i multinacionalnim kompanijama.',
-      'Implementacija SAP rešenja traje predugo i previše je komplikovana.',
-      'SAP je teško razumeti i prilagoditi.',
-      'Integracija sa postojećim sistemima zahteva mnogo prilagođavanja.',
-      'SAP nije namenjen rastućim kompanijama.',
-      'SAP nije prilagođen našoj industriji.',
-      'Nema dovoljno dokaza o povratu investicije.',
-      'SAP je napredan, ali ne donosi dovoljno poslovne vrednosti.',
-      'Za njegovo korišćenje potreban je veliki interni SAP tim.',
+    formAssurances: [
+      'Odmah dostupno za preuzimanje',
+      'Bez spama',
+      'Vaši podaci se tretiraju poverljivo',
     ],
-    cta: 'Otkrijte svih 10 mitova',
-  },
 
-  audience: {
-    heading: 'Da li je ova e-knjiga za vas?',
-    body:
-      'E-knjiga je namenjena rukovodiocima i donosiocima odluka koji razmatraju modernizaciju ERP sistema, žele pouzdaniju osnovu za rast ili procenjuju poslovnu opravdanost prelaska na SAP Cloud ERP.',
-    roles: [
-      // The source uses the English plurals for the C-level roles. Client's register.
-      'CEOs i vlasnici kompanija',
-      'CFOs i finansijski rukovodioci',
-      'CIOs i IT rukovodioci',
-      'Direktori operacija',
-      'Rukovodioci digitalne transformacije',
-      'Donosioci odluka u rastućim srednjim kompanijama',
-    ],
+    trustBar: {
+      statement:
+        'Poverenje kompanija koje uspešno razvijaju svoju digitalnu transformaciju uz SAP',
+      // The badge sits beside the Infinus mark, with no adjacent text naming either, so both
+      // images are MEANINGFUL here and carry real alt text — unlike the homepage badge,
+      // which is decorative because a trust pill names the certification next to it.
+      sapLogoAlt: 'SAP Gold Partner',
+      infinusLogoAlt: 'Infinus',
+    },
+
+    audience: {
+      heading: 'Da li je ovaj vodič za vas?',
+      body:
+        'Ovaj e-book je namenjen kompanijama koje žele da modernizuju svoju ERP strategiju i obezbede održiv budući rast.',
+      rolesIntro: 'Posebno je koristan za:',
+      roles: [
+        'generalne i izvršne direktore',
+        'CFO rukovodioce',
+        'CIO rukovodioce',
+        'IT direktore i rukovodioce',
+        'rukovodioce digitalizacije i transformacije',
+        'srednje velike kompanije u fazi rasta',
+      ],
+    },
+
+    contents: {
+      heading: 'Šta vas očekuje u e-booku',
+      intro: 'U vodiču ćete saznati:',
+      items: [
+        'zašto je SAP Cloud ERP danas znatno fleksibilniji nego što se često pretpostavlja',
+        'kako kompanije mogu brže da sprovedu implementaciju',
+        'koje prednosti donose savremene cloud arhitekture',
+        'kako transparentni modeli troškova omogućavaju sigurnije planiranje',
+        'koji kriterijumi su zaista važni pri izboru ERP rešenja',
+      ],
+    },
+
+    preview: {
+      heading: 'Zavirite u e-book',
+      mythLabel: 'Mit',
+      factLabel: 'Činjenica',
+      // FOUR previews, exactly as supplied. This section replaces the old ten-myth list; it
+      // is NOT that list shortened, and no fifth pair may be invented for symmetry.
+      items: [
+        {
+          myth: 'SAP Cloud ERP je namenjen samo velikim kompanijama.',
+          fact:
+            'Savremena SAP Cloud ERP rešenja podržavaju kompanije različitih veličina i mogu da rastu zajedno sa njihovim potrebama.',
+        },
+        {
+          myth: 'SAP Cloud ERP je preskup.',
+          fact:
+            'Predvidivi subscription modeli donose veću transparentnost i pomažu u smanjenju investicionog rizika.',
+        },
+        {
+          myth: 'Implementacija traje godinama.',
+          fact: 'Standardizovane najbolje prakse danas omogućavaju znatno brže projekte.',
+        },
+        {
+          myth: 'Cloud znači manju fleksibilnost.',
+          fact:
+            'Savremena Cloud ERP rešenja kombinuju standardizaciju sa mogućnošću proširenja.',
+        },
+      ],
+      more: '...i još šest mitova u besplatnom vodiču.',
+    },
+
+    whyInfinus: {
+      heading: 'Zašto Infinus?',
+      paragraphs: [
+        'Infinus je SAP Gold Partner sa sedištem u Srbiji, fokusiran na SAP Business Suite rešenja, uključujući Cloud ERP, Business Data Cloud, Business AI i SAP Business Technology Platform.',
+        'Tim kombinuje SAP savetovanje, implementaciju, podršku i optimizaciju sa razumevanjem poslovnih procesa i industrija, kako bi kompleksne SAP inicijative pretvorio u jasne i merljive poslovne rezultate.',
+      ],
+      reasonsHeading: 'Zašto kompanije biraju Infinus',
+      reasons: [
+        'SAP Gold Partner',
+        '30+ iskusnih SAP konsultanata',
+        'End-to-end podrška: od savetovanja i implementacije do optimizacije',
+        // Already uses the approved "klijentima"; no terminology normalisation was needed.
+        'Lokalno prisustvo u Srbiji uz iskustvo na projektima i sa klijentima širom EU',
+      ],
+    },
+
+    whyNow: {
+      heading: 'Zašto baš sada?',
+      paragraphs: [
+        'Mnoge ERP odluke se i dalje donose na osnovu pretpostavki koje su odavno prevaziđene.',
+        'Ako danas procenjujete Cloud ERP, odluku treba zasnivati na aktuelnim činjenicama – ne na iskustvima iz prethodnih generacija ERP sistema.',
+        'Ovaj e-book će vam pomoći u tome.',
+      ],
+    },
+
+    faq: {
+      heading: 'Često postavljana pitanja',
+      // Genuine question/answer pairs, so this section — and ONLY this section — is also
+      // emitted as FAQPage structured data. The myth/fact previews are statements and are
+      // deliberately not marked up as FAQ.
+      items: [
+        { question: 'Da li je e-book besplatan?', answer: 'Da.' },
+        { question: 'Kada dobijam pristup e-booku?', answer: 'Odmah nakon slanja forme.' },
+        { question: 'U kom formatu je dokument?', answer: 'PDF.' },
+        {
+          question: 'Da li nakon toga moram da razgovaram sa prodajnim predstavnikom?',
+          answer: 'Ne. Najpre dobijate samo pristup e-booku.',
+        },
+        {
+          question: 'Kako se koriste moji podaci?',
+          answer:
+            'Vaši podaci se obrađuju isključivo u skladu sa našom Politikom privatnosti.',
+        },
+      ],
+    },
+
+    finalCta: {
+      heading: 'Spremni za ERP odluke zasnovane na činjenicama?',
+      body: 'Preuzmite besplatan e-book i saznajte koji mitovi o SAP-u danas više ne važe.',
+      button: 'Preuzmite e-book',
+      note: 'PDF • Besplatno • Odmah dostupan',
+    },
   },
 
   form: {
-    heading: 'Preuzmite besplatnu e-knjigu',
-    body: 'Popunite kratku formu i e-knjiga će vam odmah biti dostupna.',
-    nameLabel: 'Ime i prezime',
-    emailLabel: 'Poslovna email adresa',
-    companyLabel: 'Kompanija',
-    roleLabel: 'Funkcija ili pozicija – opciono',
-    submit: 'Preuzmite e-knjigu',
+    heading: 'Preuzmite e-book',
+    body: 'Popunite kratku formu i e-book će vam odmah biti dostupan.',
+    // The NEW source's four fields, in its order. It marks none of them optional, so all
+    // four are required — including Zemlja, which replaces the older source's optional
+    // "Funkcija ili pozicija". `key` is the API contract and is never translated.
+    fields: [
+      { key: 'name', label: 'Ime', required: true, validation: 'Unesite svoje ime.' },
+      {
+        key: 'email',
+        label: 'Poslovna e-mail adresa',
+        required: true,
+        validation: 'Unesite ispravnu poslovnu e-mail adresu.',
+      },
+      { key: 'company', label: 'Kompanija', required: true, validation: 'Unesite naziv kompanije.' },
+      { key: 'country', label: 'Zemlja', required: true, validation: 'Unesite zemlju.' },
+    ],
+    submit: 'Preuzmite e-book',
     submitting: 'Šalje se...',
-    validation: {
-      name: 'Unesite svoje ime i prezime.',
-      email: 'Unesite ispravnu poslovnu email adresu.',
-      company: 'Unesite naziv kompanije.',
-    },
     success: {
-      heading: 'Vaša e-knjiga je spremna',
-      body: 'Hvala vam. Preuzimanje bi trebalo da počne automatski — ako ne počne, koristite link ispod.',
-      downloadLabel: 'Preuzmite e-knjigu (PDF)',
+      eyebrow: 'Hvala na interesovanju!',
+      heading: 'Vaš e-book je spreman za preuzimanje.',
+      body: 'Hvala na interesovanju za naš vodič „10 mitova o SAP Cloud ERP-u“. Kliknite na dugme ispod da biste odmah preuzeli e-book.',
+      downloadLabel: 'Preuzmite e-book',
+      downloadNote: 'Preuzimanje počinje odmah nakon klika.',
+      // This promise is KEPT ONLY because the application actually sends that email — see
+      // sendEbookDeliveryEmail in lib/email.ts. Copy that promises a message the system does
+      // not send is a lie the visitor can catch.
+      emailHeading: 'Kopiju ćete dobiti i putem e-maila.',
+      emailBody:
+        'Ako želite da dokument ponovo otvorite kasnije, link za preuzimanje poslaćemo i na vašu poslovnu e-mail adresu.',
+      nextHeading: 'Šta je sledeće?',
+      nextBody:
+        'Da li birate novo ERP rešenje ili planirate sledeći korak digitalne transformacije? Infinus SAP stručnjaci mogu da vas podrže bez obzira na to da li ste tek u fazi evaluacije ili već imate definisane konkretne zahteve.',
+      // There is still NO scheduling integration, so this goes to the Serbian Contact page
+      // rather than promising a booking flow that does not exist.
+      expertCta: 'Razgovarajte sa SAP stručnjakom',
+      questionsHeading: 'Imate pitanja?',
+      questionsBody: 'Naš tim je tu da vam pomogne.',
+      contactCta: 'Kontaktirajte nas',
+      contactHref: '/sr/contact',
     },
     error: 'Došlo je do greške. Pokušajte ponovo.',
-    languageNote: 'E-knjiga je u PDF formatu i dostupna je na engleskom jeziku.',
-    // OWNER DECISION: the source read "...pročitali našu Privacy Policy". Replaced with the
-    // site's approved Serbian legal terminology. See this file's header.
+    // The supplied Serbian e-book was NOT actually delivered — the attached PDF is the
+    // English one. Until a real Serbian PDF arrives, this note stays and stays true.
+    languageNote: 'E-book je u PDF formatu i dostupan je na engleskom jeziku.',
+    // OWNER DECISION: the older source read "...pročitali našu Privacy Policy". Replaced
+    // with the site's approved Serbian legal terminology, which the new LP document's own
+    // FAQ independently uses. The new document does not repeat this acknowledgement, but a
+    // marketing document going quiet on a legal UI requirement does not remove it.
     privacy: {
       before: 'Slanjem formulara potvrđujete da ste pročitali našu ',
       linkText: 'Politiku privatnosti',
@@ -165,6 +276,7 @@ export const mythBusters: MythBustersDictionary = {
     breadcrumbHome: 'Početna',
     breadcrumbPage: '10 mitova o SAP Cloud ERP-u',
     mythListName: '10 mitova o SAP Cloud ERP-u',
+    // The ASSET's name. It is the English e-book, so its name is the English one.
     ebookName: '10 Myths About SAP Cloud ERP',
   },
 }
