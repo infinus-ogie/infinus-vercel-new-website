@@ -60,6 +60,20 @@ import { RECAPTCHA_FIELD } from "@/lib/security/fields";
  * error state — the visitor still gets the confirmation and the download.
  */
 
+/**
+ * The conversion card's own surface.
+ *
+ * ── Why it is stronger than the old `shadow-sm` ─────────────────────────────────
+ * This form now sits on navy in three places — both heroes and both closing sections — and a
+ * 1px border with a whisper of shadow made it read as a small utility widget floating on a
+ * dark panel rather than as the main object on the page. A real elevation and a hairline ring
+ * give it weight on dark grounds and still behave on the light ones.
+ *
+ * Presentation only: no field, id, validation or submission behaviour is affected.
+ */
+const CARD_SURFACE =
+  "rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_4px_rgba(0,0,0,.04),0_24px_48px_-24px_rgba(0,0,0,.45)] ring-1 ring-black/[0.04] sm:p-7"
+
 /** The public asset. Same file the success panel links to. */
 const EBOOK_HREF = "/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf";
 
@@ -216,7 +230,7 @@ export function EbookForm({
       <div
         data-testid={`ebook-success-${placement}`}
         data-email-delivered={emailDelivered ? "true" : "false"}
-        className={`rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 ${className ?? ""}`}
+        className={`${CARD_SURFACE} ${className ?? ""}`}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-[#0a6ed1]">{s.eyebrow}</p>
         <h2 className="mt-2 text-2xl font-semibold text-slate-900">{s.heading}</h2>
@@ -270,21 +284,30 @@ export function EbookForm({
   return (
     <div
       data-testid={`ebook-form-${placement}`}
-      className={`rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 ${className ?? ""}`}
+      className={`${CARD_SURFACE} ${className ?? ""}`}
     >
-      <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">{copy.heading}</h2>
-      <p className="mt-2 text-sm text-slate-600">{copy.body}</p>
+      <h2 className="text-[22px] font-semibold leading-snug tracking-tight text-slate-900 sm:text-2xl">
+        {copy.heading}
+      </h2>
+      <p className="mt-2.5 text-[15px] leading-relaxed text-slate-600">{copy.body}</p>
 
       {/* Stated BEFORE the fields. A Serbian visitor must know the asset is English-only
           before handing over their details, not after. */}
-      <p className="mt-4 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-600">
+      <p className="mt-5 rounded-xl border border-slate-200/70 bg-slate-50 px-4 py-3 text-[13px] leading-relaxed text-slate-600">
         {copy.languageNote}
       </p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-5 space-y-4">
+      <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-5">
         {copy.fields.map((field) => (
-          <div key={field.key} className="space-y-2">
-            <Label htmlFor={fieldId(field.key)}>{field.label}</Label>
+          <div key={field.key} className="space-y-1.5">
+            <Label
+              htmlFor={fieldId(field.key)}
+              className="text-[13px] font-semibold text-slate-800"
+            >
+              {field.label}
+            </Label>
+            {/* h-11 rather than the shared h-10: a taller target on a conversion form, applied
+                here only so the Contact and Careers forms keep the site-wide field height. */}
             <Input
               id={fieldId(field.key)}
               name={field.key}
@@ -293,9 +316,10 @@ export function EbookForm({
               onChange={handleChange}
               aria-invalid={errors[field.key] ? true : undefined}
               aria-describedby={errors[field.key] ? errorId(field.key) : undefined}
+              className="h-11 rounded-xl border-slate-300 bg-white text-[15px] focus-visible:ring-brand-sap aria-[invalid=true]:border-red-400"
             />
             {errors[field.key] && (
-              <p id={errorId(field.key)} className="text-sm text-red-600">
+              <p id={errorId(field.key)} className="text-[13px] font-medium text-red-600">
                 {errors[field.key]}
               </p>
             )}
@@ -303,22 +327,30 @@ export function EbookForm({
         ))}
 
         {errors.general && (
-          <p role="alert" className="text-sm text-red-600">
+          <p
+            role="alert"
+            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-medium text-red-700"
+          >
             {errors.general}
           </p>
         )}
 
         <HoneypotField id={fieldId("company-website")} />
 
-        <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
+        <Button
+          type="submit"
+          size="lg"
+          disabled={isSubmitting}
+          className="h-12 w-full text-[15px] font-semibold"
+        >
           {isSubmitting ? copy.submitting : copy.submit}
         </Button>
 
         {assurances && assurances.length > 0 && (
-          <ul className="space-y-1.5">
+          <ul className="flex flex-wrap gap-x-4 gap-y-2 pt-0.5">
             {assurances.map((line) => (
-              <li key={line} className="flex items-start gap-2 text-xs text-slate-600">
-                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden="true" />
+              <li key={line} className="flex items-center gap-1.5 text-xs text-slate-600">
+                <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden="true" />
                 <span>{line}</span>
               </li>
             ))}
@@ -328,7 +360,7 @@ export function EbookForm({
         {/* Informational acknowledgement, NOT the cookie-consent mechanism. Present beside
             BOTH form instances — a marketing document going quiet on a legal UI requirement
             does not remove it. The href is locale-owned. */}
-        <p className="text-xs text-slate-500">
+        <p className="border-t border-slate-100 pt-4 text-xs leading-relaxed text-slate-500">
           {copy.privacy.before}
           <a className="underline underline-offset-4 hover:text-slate-700" href={copy.privacy.href}>
             {copy.privacy.linkText}

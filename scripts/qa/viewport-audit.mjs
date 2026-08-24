@@ -64,15 +64,25 @@ for (const width of WIDTHS) {
   await context.close()
 }
 
-// ── The Serbian MythBusting page's two form instances ────────────────────────
-// The newer source asks for a form at the top AND the bottom. Two instances on one page
-// make DOM-id uniqueness a correctness requirement, not a nicety: duplicate ids would make
-// both labels focus the first input.
+// ── BOTH MythBusting pages' two form instances ───────────────────────────────
+// The Serbian source asked for a form at the top AND the bottom; the owner has since approved
+// the same conversion principle for English, so both pages now render two instances. Two
+// instances on one page make DOM-id uniqueness a correctness requirement, not a nicety:
+// duplicate ids would make both labels focus the first input.
+//
+// The Serbian page is checked for its own extra furniture (statement + two logos, five FAQ
+// rows, four myth/fact previews); the English page shares only the two-form contract.
+const MYTH_PAGES = [
+  { locale: 'sr', path: '/sr/insights/sap-mythbusters', full: true },
+  { locale: 'en', path: '/insights/sap-mythbusters', full: false },
+]
+
 const formChecks = []
 for (const width of [320, 430]) {
+ for (const target of MYTH_PAGES) {
   const context = await browser.newContext({ viewport: { width, height: 900 } })
   const page = await context.newPage()
-  await page.goto(BASE + '/sr/insights/sap-mythbusters', { waitUntil: 'networkidle' })
+  await page.goto(BASE + target.path, { waitUntil: 'networkidle' })
 
   const info = await page.evaluate(() => {
     const ids = Array.from(document.querySelectorAll('[id]')).map((el) => el.id)
@@ -96,12 +106,16 @@ for (const width of [320, 430]) {
       coverVisible: cover ? cover.getBoundingClientRect().width > 0 : false,
       sapLogo: !!document.querySelector('[data-section="mythbusters-trust"] img[alt="SAP Gold Partner"]'),
       infinusLogo: !!document.querySelector('[data-section="mythbusters-trust"] img[alt="Infinus"]'),
-      faq: document.querySelectorAll('[data-section="mythbusters-faq"] dt').length,
-      previews: document.querySelectorAll('[data-section="mythbusters-preview"] .grid > div').length,
+      // The FAQ is a real accordion now, so there are no `dt` elements to count; each row
+      // carries `data-faq-item`. The myth/fact previews carry `data-myth-item` rather than
+      // being counted as `.grid > div`, which coupled this audit to a layout class.
+      faq: document.querySelectorAll('[data-section="mythbusters-faq"] [data-faq-item]').length,
+      previews: document.querySelectorAll('[data-myth-item]').length,
     }
   })
-  formChecks.push({ width, ...info })
+  formChecks.push({ width, locale: target.locale, full: target.full, ...info })
   await context.close()
+ }
 }
 
 // The first-screen CTA and badge, homepage only, at the tightest viewport.
@@ -157,17 +171,16 @@ for (const c of ctaChecks) {
   )
 }
 
-console.log('\n── Serbian MythBusting: two form instances ──────────')
+console.log('\n── MythBusting: two form instances per locale ───────')
 for (const c of formChecks) {
-  const ok =
-    c.hero && c.closing && c.duplicates.length === 0 && c.escaped === 0 &&
-    c.coverVisible && c.sapLogo && c.infinusLogo && c.faq === 5 && c.previews === 4
+  const shared = c.hero && c.closing && c.duplicates.length === 0 && c.escaped === 0 && c.coverVisible
+  const srOnly = c.sapLogo && c.infinusLogo && c.faq === 5 && c.previews === 4
+  const ok = c.full ? shared && srOnly : shared
   if (!ok) failures++
   console.log(
-    `  ${ok ? '✓' : '✗'} ${String(c.width).padEnd(4)} hero=${c.hero} closing=${c.closing}` +
-      ` dupIds=${c.duplicates.length} escapedLabels=${c.escaped}` +
-      ` cover=${c.coverVisible} logos=${c.sapLogo && c.infinusLogo}` +
-      ` faq=${c.faq} previews=${c.previews}`
+    `  ${ok ? '✓' : '✗'} ${c.locale} ${String(c.width).padEnd(4)} hero=${c.hero} closing=${c.closing}` +
+      ` dupIds=${c.duplicates.length} escapedLabels=${c.escaped} cover=${c.coverVisible}` +
+      (c.full ? ` logos=${c.sapLogo && c.infinusLogo} faq=${c.faq} previews=${c.previews}` : '')
   )
   if (c.duplicates.length) console.log(`        duplicate ids: ${c.duplicates.join(', ')}`)
 }

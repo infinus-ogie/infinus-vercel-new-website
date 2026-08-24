@@ -75,19 +75,84 @@ describe('the English page is unchanged by the Serbian rework', () => {
     expect(rendered).toEqual([...enLayout.myths.items])
   })
 
+  /**
+   * Scoped to ONE instance now that the English page has two.
+   *
+   * A document-wide `getByLabelText` would throw on "found multiple elements", and loosening
+   * it to `getAllByLabelText` would stop proving the thing that matters — that each form
+   * carries the four approved English fields and no Country. So it asks a single instance.
+   */
   test('its form keeps Role and has no Country', () => {
-    render(<EnglishMythBusters />)
+    const { container } = render(<EnglishMythBusters />)
+    const form = container.querySelector('[data-testid="ebook-form-hero"]') as HTMLElement
 
-    expect(screen.getByLabelText('Full Name')).toBeInTheDocument()
-    expect(screen.getByLabelText('Business Email')).toBeInTheDocument()
-    expect(screen.getByLabelText('Company')).toBeInTheDocument()
-    expect(screen.getByLabelText('Role or Job Title – optional')).toBeInTheDocument()
-    expect(screen.queryByLabelText(/country|zemlja/i)).not.toBeInTheDocument()
+    expect(within(form).getByLabelText('Full Name')).toBeInTheDocument()
+    expect(within(form).getByLabelText('Business Email')).toBeInTheDocument()
+    expect(within(form).getByLabelText('Company')).toBeInTheDocument()
+    expect(within(form).getByLabelText('Role or Job Title – optional')).toBeInTheDocument()
+    expect(within(form).queryByLabelText(/country|zemlja/i)).not.toBeInTheDocument()
   })
 
-  test('renders ONE form — the second instance is a Serbian requirement', () => {
+  /**
+   * The English page now renders TWO instances, hero and closing.
+   *
+   * This assertion used to read "renders ONE form — the second instance is a Serbian
+   * requirement", which was true when only the Serbian source asked for a top form. The owner
+   * has since approved the same top-form conversion principle for English, so the old
+   * assertion encoded a superseded product decision rather than a regression guard.
+   *
+   * What replaces it is the property that actually needs protecting with two instances on a
+   * page: both are present, and their fields stay identical.
+   */
+  test('renders a form in the hero AND at the bottom', () => {
     const { container } = render(<EnglishMythBusters />)
-    expect(container.querySelectorAll('[data-testid^="ebook-form-"]')).toHaveLength(1)
+    expect(container.querySelector('[data-testid="ebook-form-hero"]')).not.toBeNull()
+    expect(container.querySelector('[data-testid="ebook-form-closing"]')).not.toBeNull()
+    expect(container.querySelectorAll('[data-testid^="ebook-form-"]')).toHaveLength(2)
+  })
+
+  test('no duplicate DOM ids across the two English instances', () => {
+    const { container } = render(<EnglishMythBusters />)
+    const ids = Array.from(container.querySelectorAll('[id]')).map((el) => el.id)
+    expect(ids.length).toBeGreaterThan(0)
+    expect(new Set(ids).size, `duplicate ids: ${ids.filter((id, i) => ids.indexOf(id) !== i)}`).toBe(
+      ids.length
+    )
+  })
+
+  test('every English label binds to an input inside its OWN form instance', () => {
+    const { container } = render(<EnglishMythBusters />)
+
+    for (const testid of ['ebook-form-hero', 'ebook-form-closing']) {
+      const form = container.querySelector(`[data-testid="${testid}"]`) as HTMLElement
+      const labels = Array.from(form.querySelectorAll('label'))
+      expect(labels.length, testid).toBeGreaterThan(0)
+
+      for (const label of labels) {
+        const target = label.htmlFor ? form.querySelector(`#${CSS.escape(label.htmlFor)}`) : null
+        expect(target, `${testid}: "${label.textContent}" escaped its own form`).not.toBeNull()
+      }
+    }
+  })
+
+  /**
+   * The mobile-only jump target.
+   *
+   * Desktop shows the form beside the copy, so the approved CTA is hidden there; below `lg` it
+   * scrolls to the hero form. The anchor is only correct if its target exists and is
+   * focusable — a bare `#id` jump moves the viewport but leaves focus on the link.
+   */
+  test('the mobile hero CTA targets the hero form, and that target can take focus', () => {
+    const { container } = render(<EnglishMythBusters />)
+
+    const cta = screen.getByRole('link', { name: enLayout.hero.cta })
+    expect(cta).toHaveAttribute('href', '#ebook-hero')
+
+    const target = container.querySelector('#ebook-hero') as HTMLElement
+    expect(target).not.toBeNull()
+    expect(target.tabIndex).toBe(-1)
+    // The hero form is what it points at, not the closing one.
+    expect(target.querySelector('[data-testid="ebook-form-hero"]')).not.toBeNull()
   })
 })
 
@@ -307,7 +372,11 @@ describe('the Serbian legal terminology decision', () => {
 
   test('the English page keeps "Privacy Policy" and the English URL', () => {
     render(<EnglishMythBusters />)
-    expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute('href', '/privacy')
+    // One per form instance, and the page now has two. EVERY one must point at /privacy —
+    // `getAllBy` plus a loop over all of them is a stronger check than the old single lookup.
+    const links = screen.getAllByRole('link', { name: 'Privacy Policy' })
+    expect(links).toHaveLength(2)
+    for (const link of links) expect(link).toHaveAttribute('href', '/privacy')
   })
 })
 
