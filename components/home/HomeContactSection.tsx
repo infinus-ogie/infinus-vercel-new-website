@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import type { HomeDictionary } from "@/content/dictionary";
+import { useRecaptcha } from "@/components/security/useRecaptcha";
+import { HoneypotField, appendHoneypot } from "@/components/security/HoneypotField";
+import { RECAPTCHA_FIELD } from "@/lib/security/fields";
 
 /**
  * The short business enquiry form on the homepage.
@@ -55,6 +58,7 @@ type FieldErrors = Partial<Record<keyof FormValues | "general", string>>;
 
 export function HomeContactSection({ copy }: { copy: HomeDictionary["contactShort"] }) {
   const schema = createSchema(copy.validation);
+  const recaptcha = useRecaptcha();
 
   const [values, setValues] = useState<FormValues>({
     name: "",
@@ -78,6 +82,8 @@ export function HomeContactSection({ copy }: { copy: HomeDictionary["contactShor
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Captured before any await: React pools the event and currentTarget is null afterwards.
+    const form = e.currentTarget as HTMLFormElement;
     setErrors({});
 
     const parsed = schema.safeParse(values);
@@ -100,6 +106,15 @@ export function HomeContactSection({ copy }: { copy: HomeDictionary["contactShor
       body.append("subject", INTERNAL_SUBJECT);
       body.append("message", parsed.data.message);
       if (parsed.data.company) body.append("company", parsed.data.company);
+
+      // A token, or nothing. The SERVER decides what a missing token means — a client that
+      // suppresses its own submission on a security failure is one that can be made to.
+      const token = await recaptcha.execute("contact");
+      if (token) body.append(RECAPTCHA_FIELD, token);
+
+      // Read out of the DOM explicitly: this payload is hand-built, so an input that is
+      // not appended here never reaches the server no matter how present it is.
+      appendHoneypot(body, form);
 
       const response = await fetch("/api/contact", { method: "POST", body });
       const result = await response.json();
@@ -211,6 +226,8 @@ export function HomeContactSection({ copy }: { copy: HomeDictionary["contactShor
             {errors.general}
           </p>
         )}
+
+        <HoneypotField id="home-contact-company-website" />
 
         <Button type="submit" size="lg" disabled={isSubmitting} className="w-full sm:w-auto">
           {isSubmitting ? copy.submitting : copy.submit}

@@ -36,7 +36,10 @@ class MockResizeObserver implements ResizeObserver {
 globalThis.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver
 globalThis.ResizeObserver = MockResizeObserver as unknown as typeof ResizeObserver
 
-if (!window.matchMedia) {
+// Server-side suites run under `@vitest-environment node`, where there is no window and
+// none of the DOM shims below mean anything. Guarding here keeps ONE setup file for both
+// kinds of test rather than splitting the config.
+if (typeof window !== 'undefined' && !window.matchMedia) {
   window.matchMedia = ((query: string) => ({
     matches: false,
     media: query,

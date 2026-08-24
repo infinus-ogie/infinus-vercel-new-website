@@ -187,8 +187,10 @@ describe('two form instances, one per the new source', () => {
 
     for (const testid of ['ebook-form-hero', 'ebook-form-closing']) {
       const form = container.querySelector(`[data-testid="${testid}"]`) as HTMLElement
+      // The visible fields plus the honeypot's own label, which is present in the DOM for
+      // bots and hidden from every real visitor — see components/security/HoneypotField.tsx.
       const labels = Array.from(form.querySelectorAll('label'))
-      expect(labels.length).toBe(srLayout ? sr.form.fields.length : 0)
+      expect(labels.length).toBe(sr.form.fields.length + 1)
 
       for (const label of labels) {
         const target = container.querySelector(`#${CSS.escape(label.htmlFor)}`)

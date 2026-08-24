@@ -41,3 +41,19 @@ GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
 npx tsx scripts/test-email.ts
 ```
 
+
+## Forms security (reCAPTCHA v3)
+
+Required for public form submissions. See `docs/FORMS-SECURITY.md`.
+
+```
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your-v3-site-key
+RECAPTCHA_SECRET_KEY=your-v3-secret-key
+# Optional, 0–1, defaults to 0.5
+RECAPTCHA_MIN_SCORE=0.5
+```
+
+`RECAPTCHA_SECRET_KEY` is server-only and must NOT use the `NEXT_PUBLIC_` prefix.
+
+In a deployed environment (Production and Preview) a missing secret makes every public form
+submission FAIL CLOSED. Set both keys on a Preview before doing form QA.

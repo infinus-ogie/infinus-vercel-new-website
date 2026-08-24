@@ -8,6 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 import { CheckCircle, Upload, Mail, MapPin, Globe } from "lucide-react";
 import type { ContactDictionary } from "@/content/dictionary";
+import { useRecaptcha } from "@/components/security/useRecaptcha";
+import { HoneypotField, appendHoneypot } from "@/components/security/HoneypotField";
+import { RECAPTCHA_FIELD } from "@/lib/security/fields";
 
 /**
  * The live contact form.
@@ -68,6 +71,7 @@ interface Contact2Props {
 export const Contact2 = ({ content }: Contact2Props) => {
   const { details, form, success, privacy } = content
   const contactFormSchema = createContactFormSchema(content.validation)
+  const recaptcha = useRecaptcha()
 
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
@@ -124,6 +128,8 @@ export const Contact2 = ({ content }: Contact2Props) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // Captured before any await: React pools the event and currentTarget is null afterwards.
+    const formElement = e.currentTarget as HTMLFormElement
     setIsSubmitting(true)
     setErrors({})
 
@@ -146,6 +152,10 @@ export const Contact2 = ({ content }: Contact2Props) => {
       }
 
       // Submit to API
+      const token = await recaptcha.execute("contact")
+      if (token) formDataToSend.append(RECAPTCHA_FIELD, token)
+      appendHoneypot(formDataToSend, formElement)
+
       const response = await fetch("/api/contact", {
         method: "POST",
         body: formDataToSend,
@@ -290,6 +300,8 @@ export const Contact2 = ({ content }: Contact2Props) => {
           </div>
           <div className="mx-auto flex max-w-screen-md flex-col gap-6 rounded-lg border p-10">
             <form onSubmit={handleSubmit} className="space-y-6">
+              <HoneypotField id="contact-page-company-website" />
+
               <div className="flex gap-4">
                 <div className="grid w-full items-center gap-1.5">
                   <Label htmlFor="name">{form.nameLabel}</Label>

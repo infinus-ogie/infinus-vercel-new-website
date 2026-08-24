@@ -26,28 +26,25 @@ const createTransporter = () => {
 }
 
 /**
- * Minimal HTML escaping for values that reach an email body.
+ * Every user-controlled value below is escaped before it reaches HTML.
  *
- * ── Why this appears now and not earlier ────────────────────────────────────────
- * Every existing template interpolates submitted values straight into HTML. Those all go to
- * the INFINUS inbox, so the blast radius of a crafted value was an ugly internal email.
+ * The templates used to interpolate submitted values raw — `${data.name}` straight into a
+ * tag — and the message field was turned into markup deliberately, with
+ * `.replace(/\n/g, '<br>')` on untouched input. So a contact form submission containing
+ * `<img src=x onerror=...>` produced live markup in the inbox of whoever opened it.
  *
- * The e-book DELIVERY email is the first template addressed to a member of the public, and
- * one of the values in it — their own name — is attacker-controlled in the general case. An
- * unescaped name there is markup injected into a message that carries the Infinus brand.
+ * `esc` is the shared escaper and `escLines` is the multi-line variant that escapes FIRST
+ * and inserts `<br>` after — the order the old code had backwards. Both come from
+ * lib/security/escape.ts so there is one strategy, not a per-template judgement call.
  *
- * The pre-existing templates are NOT retrofitted here: that is a change to live contact and
- * job-application mail, and it belongs to the security phase along with the captcha and rate
- * limiting. Carried forward as a finding, not silently half-fixed.
+ * Short fields also pass through `stripNewlines` where they reach a subject line, which is
+ * the header-injection vector.
  */
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
+import {
+  escapeHtml as esc,
+  escapeHtmlMultiline as escLines,
+  stripNewlines,
+} from './security/escape'
 
 /** Where the e-book lives. One literal, used by the delivery template. */
 const EBOOK_PATH = '/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf'
@@ -69,34 +66,36 @@ export const emailTemplates = {
     company?: string
     subject: string
     message: string
-    attachment?: File
+    /** Already validated and sanitised by the route — see lib/security/files.ts. */
+    attachment?: { file: File; safeFilename: string }
   }) => ({
-    subject: `New Contact Form Submission: ${data.subject}`,
+    // stripNewlines, because a subject is a HEADER: a CR/LF in it is header injection.
+    subject: `New Contact Form Submission: ${stripNewlines(data.subject)}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #2563eb;">New Contact Form Submission</h2>
         
         <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #1e40af; margin-top: 0;">Contact Information</h3>
-          <p><strong>Name:</strong> ${data.name}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ''}
-          ${data.company ? `<p><strong>Company:</strong> ${data.company}</p>` : ''}
+          <p><strong>Name:</strong> ${esc(data.name)}</p>
+          <p><strong>Email:</strong> ${esc(data.email)}</p>
+          ${data.phone ? `<p><strong>Phone:</strong> ${esc(data.phone)}</p>` : ''}
+          ${data.company ? `<p><strong>Company:</strong> ${esc(data.company)}</p>` : ''}
         </div>
         
         <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #1e40af; margin-top: 0;">Message Details</h3>
-          <p><strong>Subject:</strong> ${data.subject}</p>
+          <p><strong>Subject:</strong> ${esc(data.subject)}</p>
           <p><strong>Message:</strong></p>
           <div style="background-color: white; padding: 15px; border-radius: 4px; border-left: 4px solid #2563eb;">
-            ${data.message.replace(/\n/g, '<br>')}
+            ${escLines(data.message)}
           </div>
           ${data.attachment ? `
           <div style="background-color: #fef3c7; padding: 15px; border-radius: 4px; border-left: 4px solid #f59e0b; margin-top: 15px;">
             <h4 style="color: #92400e; margin-top: 0;">📎 Attachment Information</h4>
-            <p><strong>File:</strong> ${data.attachment.name}</p>
-            <p><strong>Size:</strong> ${(data.attachment.size / 1024).toFixed(2)} KB</p>
-            <p><strong>Type:</strong> ${data.attachment.type}</p>
+            <p><strong>File:</strong> ${esc(data.attachment.safeFilename)}</p>
+            <p><strong>Size:</strong> ${(data.attachment.file.size / 1024).toFixed(2)} KB</p>
+            <p><strong>Type:</strong> ${esc(data.attachment.file.type)}</p>
             <p style="color: #92400e; font-size: 14px; margin-bottom: 0;"><em>This attachment should be visible in your email client. If not, please contact the sender directly.</em></p>
           </div>
           ` : ''}
@@ -104,7 +103,7 @@ export const emailTemplates = {
         
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
           <p>This email was sent from the Infinus website contact form.</p>
-          <p>Reply directly to this email to respond to ${data.name}.</p>
+          <p>Reply directly to this email to respond to ${esc(data.name)}.</p>
         </div>
       </div>
     `,
@@ -122,9 +121,9 @@ Message Details:
 - Message: ${data.message}
 ${data.attachment ? `
 ATTACHMENT INFORMATION:
-- File: ${data.attachment.name}
-- Size: ${(data.attachment.size / 1024).toFixed(2)} KB
-- Type: ${data.attachment.type}
+- File: ${data.attachment.safeFilename}
+- Size: ${(data.attachment.file.size / 1024).toFixed(2)} KB
+- Type: ${data.attachment.file.type}
 - Note: This attachment should be visible in your email client. If not, please contact the sender directly.` : ''}
 
 This email was sent from the Infinus website contact form.
@@ -142,34 +141,37 @@ Reply directly to this email to respond to ${data.name}.
     utm_source?: string
     utm_medium?: string
     utm_campaign?: string
-    file?: File
+    /** Already validated and sanitised by the route — see lib/security/files.ts. */
+    file?: { file: File; safeFilename: string }
   }) => ({
-    subject: `New Job Application: ${data.subject}`,
+    subject: `New Job Application: ${stripNewlines(data.subject)}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #2563eb;">New Job Application</h2>
         
         <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #1e40af; margin-top: 0;">Applicant Information</h3>
-          <p><strong>Name:</strong> ${data.name}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ''}
-          ${data.linkedin ? `<p><strong>LinkedIn:</strong> <a href="${data.linkedin}">${data.linkedin}</a></p>` : ''}
+          <p><strong>Name:</strong> ${esc(data.name)}</p>
+          <p><strong>Email:</strong> ${esc(data.email)}</p>
+          ${data.phone ? `<p><strong>Phone:</strong> ${esc(data.phone)}</p>` : ''}
+          ${/* Escaped in BOTH the href and the text: an unescaped href here is one
+               javascript: URL away from clickable markup in a colleague's inbox. */ ''}
+          ${data.linkedin ? `<p><strong>LinkedIn:</strong> <a href="${esc(data.linkedin)}">${esc(data.linkedin)}</a></p>` : ''}
         </div>
         
         <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #1e40af; margin-top: 0;">Application Details</h3>
-          <p><strong>Position:</strong> ${data.subject}</p>
+          <p><strong>Position:</strong> ${esc(data.subject)}</p>
           <p><strong>Message:</strong></p>
           <div style="background-color: white; padding: 15px; border-radius: 4px; border-left: 4px solid #2563eb;">
-            ${data.message.replace(/\n/g, '<br>')}
+            ${escLines(data.message)}
           </div>
           ${data.file ? `
           <div style="background-color: #fef3c7; padding: 15px; border-radius: 4px; border-left: 4px solid #f59e0b; margin-top: 15px;">
             <h4 style="color: #92400e; margin-top: 0;">📎 Resume Attachment</h4>
-            <p><strong>File:</strong> ${data.file.name}</p>
-            <p><strong>Size:</strong> ${(data.file.size / 1024).toFixed(2)} KB</p>
-            <p><strong>Type:</strong> ${data.file.type}</p>
+            <p><strong>File:</strong> ${esc(data.file.safeFilename)}</p>
+            <p><strong>Size:</strong> ${(data.file.file.size / 1024).toFixed(2)} KB</p>
+            <p><strong>Type:</strong> ${esc(data.file.file.type)}</p>
             <p style="color: #92400e; font-size: 14px; margin-bottom: 0;"><em>This resume attachment should be visible in your email client.</em></p>
           </div>
           ` : ''}
@@ -178,15 +180,15 @@ Reply directly to this email to respond to ${data.name}.
         ${(data.utm_source || data.utm_medium || data.utm_campaign) ? `
         <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #1e40af; margin-top: 0;">UTM Tracking</h3>
-          ${data.utm_source ? `<p><strong>Source:</strong> ${data.utm_source}</p>` : ''}
-          ${data.utm_medium ? `<p><strong>Medium:</strong> ${data.utm_medium}</p>` : ''}
-          ${data.utm_campaign ? `<p><strong>Campaign:</strong> ${data.utm_campaign}</p>` : ''}
+          ${data.utm_source ? `<p><strong>Source:</strong> ${esc(data.utm_source)}</p>` : ''}
+          ${data.utm_medium ? `<p><strong>Medium:</strong> ${esc(data.utm_medium)}</p>` : ''}
+          ${data.utm_campaign ? `<p><strong>Campaign:</strong> ${esc(data.utm_campaign)}</p>` : ''}
         </div>
         ` : ''}
         
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
           <p>This email was sent from the Infinus website job application form.</p>
-          <p>Reply directly to this email to respond to ${data.name}.</p>
+          <p>Reply directly to this email to respond to ${esc(data.name)}.</p>
         </div>
       </div>
     `,
@@ -204,9 +206,9 @@ Application Details:
 - Message: ${data.message}
 ${data.file ? `
 RESUME ATTACHMENT:
-- File: ${data.file.name}
-- Size: ${(data.file.size / 1024).toFixed(2)} KB
-- Type: ${data.file.type}
+- File: ${data.file.safeFilename}
+- Size: ${(data.file.file.size / 1024).toFixed(2)} KB
+- Type: ${data.file.file.type}
 - Note: This resume attachment should be visible in your email client.` : ''}
 
 ${(data.utm_source || data.utm_medium || data.utm_campaign) ? `
@@ -238,12 +240,13 @@ Reply directly to this email to respond to ${data.name}.
     email: string
     company: string
     role?: string
+    country?: string
     locale?: string
     utm_source?: string
     utm_medium?: string
     utm_campaign?: string
   }) => ({
-    subject: `E-Book Download: ${data.company}`,
+    subject: `E-Book Download: ${stripNewlines(data.company)}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #2563eb;">New E-Book Download</h2>
@@ -251,25 +254,26 @@ Reply directly to this email to respond to ${data.name}.
 
         <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #1e40af; margin-top: 0;">Lead Details</h3>
-          <p><strong>Full Name:</strong> ${data.name}</p>
-          <p><strong>Business Email:</strong> ${data.email}</p>
-          <p><strong>Company:</strong> ${data.company}</p>
-          ${data.role ? `<p><strong>Role or Job Title:</strong> ${data.role}</p>` : ''}
-          ${data.locale ? `<p><strong>Page language:</strong> ${data.locale}</p>` : ''}
+          <p><strong>Full Name:</strong> ${esc(data.name)}</p>
+          <p><strong>Business Email:</strong> ${esc(data.email)}</p>
+          <p><strong>Company:</strong> ${esc(data.company)}</p>
+          ${data.role ? `<p><strong>Role or Job Title:</strong> ${esc(data.role)}</p>` : ''}
+          ${data.country ? `<p><strong>Country:</strong> ${esc(data.country)}</p>` : ''}
+          ${data.locale ? `<p><strong>Page language:</strong> ${esc(data.locale)}</p>` : ''}
         </div>
 
         ${(data.utm_source || data.utm_medium || data.utm_campaign) ? `
         <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #1e40af; margin-top: 0;">UTM Tracking</h3>
-          ${data.utm_source ? `<p><strong>Source:</strong> ${data.utm_source}</p>` : ''}
-          ${data.utm_medium ? `<p><strong>Medium:</strong> ${data.utm_medium}</p>` : ''}
-          ${data.utm_campaign ? `<p><strong>Campaign:</strong> ${data.utm_campaign}</p>` : ''}
+          ${data.utm_source ? `<p><strong>Source:</strong> ${esc(data.utm_source)}</p>` : ''}
+          ${data.utm_medium ? `<p><strong>Medium:</strong> ${esc(data.utm_medium)}</p>` : ''}
+          ${data.utm_campaign ? `<p><strong>Campaign:</strong> ${esc(data.utm_campaign)}</p>` : ''}
         </div>
         ` : ''}
 
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
           <p>This email was sent from the SAP MythBusting e-book landing page.</p>
-          <p>Reply directly to this email to respond to ${data.name}.</p>
+          <p>Reply directly to this email to respond to ${esc(data.name)}.</p>
         </div>
       </div>
     `,
@@ -360,27 +364,27 @@ export async function sendContactFormEmail(data: {
   company?: string
   subject: string
   message: string
-  attachment?: File
+  /** Validated and sanitised by the route before it gets here. */
+  attachment?: { file: File; safeFilename: string }
 }) {
   const template = emailTemplates.contactForm(data)
-  
+
   // Prepare attachments if any
   let attachments: Array<{ filename: string; content: Buffer; contentType?: string }> = []
-  if (data.attachment && data.attachment.size > 0) {
-    console.log('Processing attachment:', {
-      name: data.attachment.name,
-      size: data.attachment.size,
-      type: data.attachment.type
-    })
-    
+  if (data.attachment && data.attachment.file.size > 0) {
+    // Size only. The previous version logged the submitter's original filename on every
+    // send, which put an attacker-controlled string into the log for free.
+    console.log('[contact] processing attachment, bytes:', data.attachment.file.size)
+
     try {
-      const buffer = Buffer.from(await data.attachment.arrayBuffer())
+      const buffer = Buffer.from(await data.attachment.file.arrayBuffer())
       attachments.push({
-        filename: data.attachment.name,
+        // The SANITISED name: this reaches a MIME header, where a newline is header
+        // injection and a path separator is a filename nobody intended.
+        filename: data.attachment.safeFilename,
         content: buffer,
-        contentType: data.attachment.type
+        contentType: data.attachment.file.type
       })
-      console.log('Attachment processed successfully, size:', buffer.length)
     } catch (error) {
       console.error('Error processing attachment:', error)
       // Don't fail the entire email if attachment processing fails
@@ -415,27 +419,24 @@ export async function sendJoinTeamEmail(data: {
   utm_source?: string
   utm_medium?: string
   utm_campaign?: string
-  file?: File
+  /** Validated and sanitised by the route before it gets here. */
+  file?: { file: File; safeFilename: string }
 }) {
   const template = emailTemplates.joinTeam(data)
-  
+
   // Prepare attachments if any
   let attachments: Array<{ filename: string; content: Buffer; contentType?: string }> = []
-  if (data.file && data.file.size > 0) {
-    console.log('Processing join team attachment:', {
-      name: data.file.name,
-      size: data.file.size,
-      type: data.file.type
-    })
-    
+  if (data.file && data.file.file.size > 0) {
+    // Size only — a CV filename is personal data and an attacker-controlled string.
+    console.log('[careers] processing attachment, bytes:', data.file.file.size)
+
     try {
-      const buffer = Buffer.from(await data.file.arrayBuffer())
+      const buffer = Buffer.from(await data.file.file.arrayBuffer())
       attachments.push({
-        filename: data.file.name,
+        filename: data.file.safeFilename,
         content: buffer,
-        contentType: data.file.type
+        contentType: data.file.file.type
       })
-      console.log('Join team attachment processed successfully, size:', buffer.length)
     } catch (error) {
       console.error('Error processing join team attachment:', error)
       // Don't fail the entire email if attachment processing fails
@@ -469,6 +470,7 @@ export async function sendEbookLeadEmail(data: {
   email: string
   company: string
   role?: string
+  country?: string
   locale?: string
   utm_source?: string
   utm_medium?: string
@@ -540,7 +542,7 @@ export async function sendEbookDeliveryEmail(data: {
   const copy = EBOOK_DELIVERY_COPY[data.locale]
   const url = `${PUBLIC_ORIGIN}${EBOOK_PATH}`
   // Escaped: this is the one attacker-controlled value in a message sent to the public.
-  const name = escapeHtml(data.name)
+  const name = esc(data.name)
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #0f172a;">

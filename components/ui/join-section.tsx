@@ -15,6 +15,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CareersDictionary, HomeDictionary } from "@/content/dictionary";
+import { useRecaptcha } from "@/components/security/useRecaptcha";
+import { HoneypotField, appendHoneypot } from "@/components/security/HoneypotField";
+import { RECAPTCHA_FIELD } from "@/lib/security/fields";
 
 // ---------- schema ----------
 /**
@@ -72,6 +75,10 @@ export function JoinSection({
 }) {
   const { form: f, validation } = copy;
   const FormSchema = createFormSchema(validation);
+  const recaptcha = useRecaptcha();
+  // react-hook-form's handleSubmit does not hand the submit event to onSubmit, so the form
+  // element is captured by ref rather than from the event.
+  const formRef = useRef<HTMLFormElement>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [fileSize, setFileSize] = useState<string>("");
@@ -143,6 +150,10 @@ export function JoinSection({
       if (values.file) {
         formDataToSend.append('file', values.file);
       }
+
+      const token = await recaptcha.execute("careers");
+      if (token) formDataToSend.append(RECAPTCHA_FIELD, token);
+      appendHoneypot(formDataToSend, formRef.current);
 
       const response = await fetch("/api/join-team", {
         method: "POST",
@@ -235,7 +246,9 @@ export function JoinSection({
           {/* RIGHT: form card */}
           <div className="relative -mt-2">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
-              <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+              <form ref={formRef} onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+                <HoneypotField id="careers-company-website" />
+
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <Label htmlFor="name" className="text-sm font-medium text-slate-700 mb-2 block">

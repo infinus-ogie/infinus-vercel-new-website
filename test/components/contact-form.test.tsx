@@ -211,7 +211,17 @@ describe.each(LOCALE_CASES)('Contact2 — $locale', ({ locale, content }) => {
     expect(body.get('email')).toBe(VALID_INPUT.email)
     expect(body.get('subject')).toBe(VALID_INPUT.subject)
     expect(body.get('message')).toBe(VALID_INPUT.message)
-    expect(Array.from(body.keys()).sort()).toEqual(['email', 'message', 'name', 'subject'])
+    // The four content keys, plus the honeypot the security pass added. Asserted as an
+    // EXACT set on purpose: a new key appearing here should be a decision, not a surprise.
+    // `recaptcha_token` is absent because no site key is configured under test — the token
+    // is appended only when one exists, and the SERVER decides what its absence means.
+    expect(Array.from(body.keys()).sort()).toEqual([
+      'company_website',
+      'email',
+      'message',
+      'name',
+      'subject',
+    ])
   })
 
   it('shows the sending state and blocks double submission while in flight', async () => {

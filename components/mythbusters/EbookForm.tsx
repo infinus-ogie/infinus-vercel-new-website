@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { MythBustersDictionary, EbookFormField } from "@/content/dictionary";
 import type { Locale } from "@/lib/i18n";
+import { useRecaptcha } from "@/components/security/useRecaptcha";
+import { HoneypotField, appendHoneypot } from "@/components/security/HoneypotField";
+import { RECAPTCHA_FIELD } from "@/lib/security/fields";
 
 /**
  * The e-book download form.
@@ -102,6 +105,7 @@ export function EbookForm({
 }) {
   // One per mounted instance. This is what keeps two forms on one page from colliding.
   const uid = useId();
+  const recaptcha = useRecaptcha();
   const fieldId = (key: string) => `ebook-${uid}-${key}`;
   const errorId = (key: string) => `ebook-${uid}-${key}-error`;
 
@@ -135,6 +139,8 @@ export function EbookForm({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    // Captured before any await: React pools the event and currentTarget is null afterwards.
+    const form = event.currentTarget as HTMLFormElement;
     setErrors({});
 
     const parsed = schema.safeParse(values);
@@ -157,6 +163,13 @@ export function EbookForm({
         if (value) body.append(field.key, value);
       }
       body.append("locale", locale);
+
+      const token = await recaptcha.execute("ebook");
+      if (token) body.append(RECAPTCHA_FIELD, token);
+
+      // Scoped to THIS form: with two instances on the page, a document-wide lookup would
+      // read the hero form's honeypot even when the closing form was submitted.
+      appendHoneypot(body, form);
 
       if (typeof window !== "undefined") {
         const params = new URLSearchParams(window.location.search);
@@ -294,6 +307,8 @@ export function EbookForm({
             {errors.general}
           </p>
         )}
+
+        <HoneypotField id={fieldId("company-website")} />
 
         <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
           {isSubmitting ? copy.submitting : copy.submit}

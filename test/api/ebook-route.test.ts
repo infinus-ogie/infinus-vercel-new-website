@@ -22,10 +22,28 @@ vi.mock('@/lib/email', () => ({ sendEbookLeadEmail, sendEbookDeliveryEmail }))
 // project's module target.)
 import { POST } from '@/app/api/ebook/route'
 
-function request(fields: Record<string, string>) {
+/**
+ * A request that passes the shared security guard by default.
+ *
+ * These tests exercise the REAL guard rather than mocking it out, because "a rejected
+ * request sends no email" is the property most worth proving and mocking the guard away
+ * would prove nothing. Under NODE_ENV=test with no RECAPTCHA_SECRET_KEY the captcha layer
+ * skips (development behaviour); the honeypot, origin and rate-limit layers all run for
+ * real.
+ *
+ * `headers` lets a test override that — see the guard suite below.
+ */
+function request(
+  fields: Record<string, string>,
+  headers: Record<string, string> = { host: 'localhost:3000', origin: 'http://localhost:3000' }
+) {
   const body = new FormData()
   for (const [key, value] of Object.entries(fields)) body.append(key, value)
-  return { formData: async () => body } as unknown as Parameters<typeof POST>[0]
+  const headerMap = new Map(Object.entries(headers).map(([k, v]) => [k.toLowerCase(), v]))
+  return {
+    formData: async () => body,
+    headers: { get: (name: string) => headerMap.get(name.toLowerCase()) ?? null },
+  } as unknown as Parameters<typeof POST>[0]
 }
 
 const VALID = {

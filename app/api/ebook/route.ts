@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { sendEbookLeadEmail, sendEbookDeliveryEmail } from '@/lib/email'
+import { guardFormRequest } from '@/lib/security/guard'
+import { RECAPTCHA_ACTIONS } from '@/lib/security/recaptcha'
+import { FIELD_LIMITS } from '@/lib/security/limits'
 
 /**
  * The SAP MythBusting e-book lead endpoint.
@@ -40,9 +43,9 @@ import { sendEbookLeadEmail, sendEbookDeliveryEmail } from '@/lib/email'
  *   · one message per submission, sent only AFTER validation passes and only AFTER the lead
  *     has been filed, so no send happens without a corresponding internal record of it.
  *
- * What does NOT contain it, and is the next phase's work: there is still no captcha, no rate
- * limit and no honeypot — the same as every other public endpoint here. An incentivised
- * endpoint that also emails strangers should not be the last one done.
+ * That is why this endpoint is guarded before it does ANYTHING: honeypot, same-origin,
+ * rate limit and reCAPTCHA all run before the first email call. A rejected request sends no
+ * internal notification and no delivery email — see lib/security/guard.ts.
  */
 
 /**
@@ -53,17 +56,19 @@ import { sendEbookLeadEmail, sendEbookDeliveryEmail } from '@/lib/email'
 const baseSchema = z.object({
   // The same rules the client-side form enforces, restated here because a browser is not a
   // trust boundary and the form is not the only thing that can POST to this URL.
-  name: z.string().trim().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  company: z.string().trim().min(1, 'Company is required'),
+  // Ceilings as well as floors: without a maximum, a POST can carry a multi-megabyte
+  // "name" into a Zod parse, an email template and a mail server. See lib/security/limits.ts.
+  name: z.string().trim().min(2, 'Name must be at least 2 characters').max(FIELD_LIMITS.name),
+  email: z.string().email('Invalid email address').max(FIELD_LIMITS.email),
+  company: z.string().trim().min(1, 'Company is required').max(FIELD_LIMITS.company),
   // Present on the ENGLISH form, optional there. Never sent by the Serbian form.
-  role: z.string().optional(),
+  role: z.string().max(FIELD_LIMITS.role).optional(),
   // Present on the SERBIAN form and required there. Never sent by the English form.
-  country: z.string().optional(),
+  country: z.string().max(FIELD_LIMITS.country).optional(),
   locale: z.enum(['en', 'sr']).optional(),
-  utm_source: z.string().optional(),
-  utm_medium: z.string().optional(),
-  utm_campaign: z.string().optional(),
+  utm_source: z.string().max(FIELD_LIMITS.utm).optional(),
+  utm_medium: z.string().max(FIELD_LIMITS.utm).optional(),
+  utm_campaign: z.string().max(FIELD_LIMITS.utm).optional(),
 })
 
 /**
@@ -93,6 +98,16 @@ function optional(formData: FormData, key: string): string | undefined {
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
+
+    // Every abuse check, before any work. A rejection returns here having sent nothing —
+    // which is the whole point on the one endpoint that emails a user-supplied address.
+    const guard = await guardFormRequest({
+      request,
+      formData,
+      action: RECAPTCHA_ACTIONS.ebook,
+      rateLimitKind: 'ebook',
+    })
+    if (!guard.ok) return guard.response
 
     const body = {
       name: formData.get('name') as string,
