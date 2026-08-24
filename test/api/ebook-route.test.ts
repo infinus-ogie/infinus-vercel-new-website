@@ -14,7 +14,8 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 
 const sendEbookLeadEmail = vi.hoisted(() => vi.fn())
-vi.mock('@/lib/email', () => ({ sendEbookLeadEmail }))
+const sendEbookDeliveryEmail = vi.hoisted(() => vi.fn())
+vi.mock('@/lib/email', () => ({ sendEbookLeadEmail, sendEbookDeliveryEmail }))
 
 // A static import is fine: vi.mock is hoisted above it, so the handler picks up the mock.
 // (A top-level `await import` would work under Vitest but fails `tsc --noEmit` on this
@@ -37,6 +38,8 @@ describe('POST /api/ebook', () => {
   beforeEach(() => {
     sendEbookLeadEmail.mockReset()
     sendEbookLeadEmail.mockResolvedValue({ success: true, messageId: 'test' })
+    sendEbookDeliveryEmail.mockReset()
+    sendEbookDeliveryEmail.mockResolvedValue({ success: true, messageId: 'delivery' })
     vi.spyOn(console, 'error').mockImplementation(() => {})
   })
   afterEach(() => {
@@ -67,8 +70,16 @@ describe('POST /api/ebook', () => {
   })
 
   test('carries the locale and UTM attribution through', async () => {
+    // `country` is included because a Serbian submission now requires it — see the
+    // locale-aware validation suite below.
     await POST(
-      request({ ...VALID, locale: 'sr', utm_source: 'linkedin', utm_campaign: 'mythbusting' })
+      request({
+        ...VALID,
+        locale: 'sr',
+        country: 'Srbija',
+        utm_source: 'linkedin',
+        utm_campaign: 'mythbusting',
+      })
     )
     expect(sendEbookLeadEmail).toHaveBeenCalledWith(
       expect.objectContaining({ locale: 'sr', utm_source: 'linkedin', utm_campaign: 'mythbusting' })
@@ -91,6 +102,103 @@ describe('POST /api/ebook', () => {
     // The browser form enforces the same rules. A browser is not a trust boundary.
     const response = await POST(request({ name: 'A', email: 'a@b.co', company: 'X' }))
     expect(response.status).toBe(400)
+  })
+})
+
+describe('locale-aware validation', () => {
+  beforeEach(() => {
+    sendEbookLeadEmail.mockReset()
+    sendEbookLeadEmail.mockResolvedValue({ success: true, messageId: 'test' })
+    sendEbookDeliveryEmail.mockReset()
+    sendEbookDeliveryEmail.mockResolvedValue({ success: true, messageId: 'delivery' })
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  test('Serbian REQUIRES country — the newer SR source marks no field optional', async () => {
+    const response = await POST(request({ ...VALID, locale: 'sr' }))
+    expect(response.status).toBe(400)
+    expect(sendEbookLeadEmail).not.toHaveBeenCalled()
+  })
+
+  test('Serbian succeeds once country is supplied', async () => {
+    const response = await POST(request({ ...VALID, locale: 'sr', country: 'Srbija' }))
+    expect(response.status).toBe(200)
+    expect(sendEbookLeadEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ country: 'Srbija', locale: 'sr' })
+    )
+  })
+
+  test('English does NOT require country — its source never asks for one', async () => {
+    // The guard against forcing structural parity between two genuinely different forms.
+    const response = await POST(request({ ...VALID, locale: 'en' }))
+    expect(response.status).toBe(200)
+  })
+
+  test('English still does not require a role', async () => {
+    const response = await POST(request({ ...VALID, locale: 'en' }))
+    expect(response.status).toBe(200)
+    expect(sendEbookLeadEmail).toHaveBeenCalledWith(expect.objectContaining({ role: undefined }))
+  })
+
+  test('an unknown locale is rejected rather than silently defaulted', async () => {
+    const response = await POST(request({ ...VALID, locale: 'de' }))
+    expect(response.status).toBe(400)
+  })
+})
+
+describe('the delivery email sent to the visitor', () => {
+  beforeEach(() => {
+    sendEbookLeadEmail.mockReset()
+    sendEbookLeadEmail.mockResolvedValue({ success: true, messageId: 'test' })
+    sendEbookDeliveryEmail.mockReset()
+    sendEbookDeliveryEmail.mockResolvedValue({ success: true, messageId: 'delivery' })
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  test('goes to the submitted address, with only name/email/locale', async () => {
+    await POST(request({ ...VALID, locale: 'sr', country: 'Srbija' }))
+
+    expect(sendEbookDeliveryEmail).toHaveBeenCalledTimes(1)
+    // Exactly three values reach the template. Nothing else submitted can influence it.
+    expect(sendEbookDeliveryEmail).toHaveBeenCalledWith({
+      name: VALID.name,
+      email: VALID.email,
+      locale: 'sr',
+    })
+  })
+
+  test('is NOT sent when validation fails — no mail to an unvalidated address', async () => {
+    // The abuse case this guards: using the endpoint to push branded mail at arbitrary
+    // inboxes without leaving an internal record.
+    await POST(request({ ...VALID, email: 'not-an-email' }))
+    expect(sendEbookDeliveryEmail).not.toHaveBeenCalled()
+  })
+
+  test('is NOT sent when the internal lead notification failed', async () => {
+    sendEbookLeadEmail.mockResolvedValue({ success: false, error: 'SMTP down' })
+    await POST(request(VALID))
+    expect(sendEbookDeliveryEmail).not.toHaveBeenCalled()
+  })
+
+  test('a delivery failure does NOT fail the submission', async () => {
+    // The visitor already has the download on screen and the lead is already captured.
+    // Reporting failure would take away a file they can see, over a convenience copy.
+    sendEbookDeliveryEmail.mockResolvedValue({ success: false, error: 'mailbox full' })
+
+    const response = await POST(request(VALID))
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toMatchObject({ success: true })
+  })
+
+  test('exactly one message per submission', async () => {
+    await POST(request(VALID))
+    expect(sendEbookDeliveryEmail).toHaveBeenCalledTimes(1)
   })
 
   test('a failed send is a FAILED submission — never a silent lost lead', async () => {

@@ -25,6 +25,41 @@ const createTransporter = () => {
   return nodemailer.createTransport(EMAIL_CONFIG)
 }
 
+/**
+ * Minimal HTML escaping for values that reach an email body.
+ *
+ * ── Why this appears now and not earlier ────────────────────────────────────────
+ * Every existing template interpolates submitted values straight into HTML. Those all go to
+ * the INFINUS inbox, so the blast radius of a crafted value was an ugly internal email.
+ *
+ * The e-book DELIVERY email is the first template addressed to a member of the public, and
+ * one of the values in it — their own name — is attacker-controlled in the general case. An
+ * unescaped name there is markup injected into a message that carries the Infinus brand.
+ *
+ * The pre-existing templates are NOT retrofitted here: that is a change to live contact and
+ * job-application mail, and it belongs to the security phase along with the captcha and rate
+ * limiting. Carried forward as a finding, not silently half-fixed.
+ */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+/** Where the e-book lives. One literal, used by the delivery template. */
+const EBOOK_PATH = '/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf'
+
+/**
+ * The public origin, for links inside emails.
+ *
+ * Hardcoded to production rather than read from a request: an email is read outside the
+ * browser that produced it, so a localhost or preview URL in it is a dead link forever.
+ */
+const PUBLIC_ORIGIN = 'https://www.infinus.co'
+
 // Email templates
 export const emailTemplates = {
   contactForm: (data: {
@@ -448,4 +483,93 @@ export async function sendEbookLeadEmail(data: {
     template.text,
     data.email
   )
+}
+
+/**
+ * Copy for the e-book delivery email, per locale.
+ *
+ * SERVER-OWNED AND FIXED. Nothing a visitor submits reaches the subject, the sender, the
+ * recipient list or the body structure — their name is interpolated into one greeting, HTML-
+ * escaped, and their email address is used ONLY as the To: header.
+ *
+ * That constraint is the whole design. An endpoint that sends mail to a user-supplied
+ * address is one careless template away from being an open relay for whoever finds it.
+ *
+ * The Serbian wording follows the client's Thank You page; the English is its counterpart.
+ */
+const EBOOK_DELIVERY_COPY = {
+  en: {
+    subject: 'Your e-book: 10 Myths About SAP Cloud ERP',
+    greeting: 'Hello',
+    intro: 'Thank you for your interest in our guide "10 Myths About SAP Cloud ERP".',
+    cta: 'Download the e-book',
+    note: 'The e-book is provided in PDF format and is available in English.',
+    signoff: 'Infinus — Turning SAP expertise into business advantage.',
+  },
+  sr: {
+    subject: 'Vaš e-book: 10 mitova o SAP Cloud ERP-u',
+    greeting: 'Poštovani',
+    intro: 'Hvala na interesovanju za naš vodič „10 mitova o SAP Cloud ERP-u“.',
+    cta: 'Preuzmite e-book',
+    note: 'E-book je u PDF formatu i dostupan je na engleskom jeziku.',
+    signoff: 'Infinus — SAP ekspertiza pretvorena u poslovnu prednost.',
+  },
+} as const
+
+/**
+ * Send the e-book download link TO THE PERSON WHO ASKED FOR IT.
+ *
+ * The Serbian landing page promises this in as many words — "Kopiju ćete dobiti i putem
+ * e-maila" — so the application has to actually do it. Copy that promises a message the
+ * system never sends is a lie the visitor can catch by checking their inbox.
+ *
+ * ── What is deliberately NOT done ───────────────────────────────────────────────
+ *   · the PDF is NOT attached. It is 13MB and the link is sufficient; attaching it would
+ *     put 13MB into every lead's mailbox and many would bounce on size.
+ *   · nothing about this message is user-configurable. See EBOOK_DELIVERY_COPY.
+ *
+ * Sent in BOTH locales. Only the Serbian page promises it, but the behaviour is identical
+ * and one code path is materially simpler than two — and a download link arriving after a
+ * download form is expected rather than surprising.
+ */
+export async function sendEbookDeliveryEmail(data: {
+  name: string
+  email: string
+  locale: 'en' | 'sr'
+}) {
+  const copy = EBOOK_DELIVERY_COPY[data.locale]
+  const url = `${PUBLIC_ORIGIN}${EBOOK_PATH}`
+  // Escaped: this is the one attacker-controlled value in a message sent to the public.
+  const name = escapeHtml(data.name)
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #0f172a;">
+      <p>${copy.greeting} ${name},</p>
+      <p>${copy.intro}</p>
+      <p style="margin: 28px 0;">
+        <a href="${url}"
+           style="background-color: #0a6ed1; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">
+          ${copy.cta}
+        </a>
+      </p>
+      <p style="font-size: 14px; color: #475569;">${copy.note}</p>
+      <p style="font-size: 14px; color: #475569;">${url}</p>
+      <div style="margin-top: 32px; padding-top: 16px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 13px;">
+        <p>${copy.signoff}</p>
+      </div>
+    </div>
+  `
+
+  const text = `${copy.greeting} ${data.name},
+
+${copy.intro}
+
+${copy.cta}: ${url}
+
+${copy.note}
+
+${copy.signoff}
+`
+
+  return await sendEmail(data.email, copy.subject, html, text)
 }

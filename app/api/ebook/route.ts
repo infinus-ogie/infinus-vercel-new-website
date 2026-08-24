@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { sendEbookLeadEmail } from '@/lib/email'
+import { sendEbookLeadEmail, sendEbookDeliveryEmail } from '@/lib/email'
 
 /**
  * The SAP MythBusting e-book lead endpoint.
@@ -20,25 +20,61 @@ import { sendEbookLeadEmail } from '@/lib/email'
  * lib/email.ts because it is the kind of constraint that gets forgotten and then
  * accidentally "fixed" by adding a dependency.
  *
- * ── Not yet protected ───────────────────────────────────────────────────────────
- * No captcha, no rate limiting, no honeypot — the same as every other public endpoint on
- * this site. That is the NEXT phase's work, and this handler is on its list. An incentivised
- * endpoint (a free asset behind it) historically attracts more automated abuse than a plain
- * contact form, so it should not be the last one done.
+ * ── It now sends mail to a USER-SUPPLIED address, which raises the stakes ───────
+ * The Serbian page promises "Kopiju ćete dobiti i putem e-maila", so the handler actually
+ * sends it. That makes this the only endpoint on the site that emails a member of the
+ * public, and it changes its abuse profile: an attacker could try to use it to push
+ * Infinus-branded mail at arbitrary inboxes.
+ *
+ * What contains that, short of the security phase:
+ *   · the template is FIXED and server-owned — see EBOOK_DELIVERY_COPY in lib/email.ts.
+ *     Nothing submitted controls the sender, the subject, the body or any recipient beyond
+ *     the To: header, and the one interpolated value is HTML-escaped.
+ *   · one message per submission, sent only AFTER validation passes and only AFTER the lead
+ *     has been filed, so no send happens without a corresponding internal record of it.
+ *
+ * What does NOT contain it, and is the next phase's work: there is still no captcha, no rate
+ * limit and no honeypot — the same as every other public endpoint here. An incentivised
+ * endpoint that also emails strangers should not be the last one done.
  */
 
-const ebookLeadSchema = z.object({
+/**
+ * The fields BOTH locales send. `role` and `country` are locale-specific and are checked
+ * separately below, because "required" is not a property of the field — it is a property of
+ * the field IN A LOCALE.
+ */
+const baseSchema = z.object({
   // The same rules the client-side form enforces, restated here because a browser is not a
   // trust boundary and the form is not the only thing that can POST to this URL.
-  name: z.string().min(2, 'Name must be at least 2 characters'),
+  name: z.string().trim().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  company: z.string().min(1, 'Company is required'),
-  // Optional in the client's source document, so optional here too.
+  company: z.string().trim().min(1, 'Company is required'),
+  // Present on the ENGLISH form, optional there. Never sent by the Serbian form.
   role: z.string().optional(),
-  locale: z.string().optional(),
+  // Present on the SERBIAN form and required there. Never sent by the English form.
+  country: z.string().optional(),
+  locale: z.enum(['en', 'sr']).optional(),
   utm_source: z.string().optional(),
   utm_medium: z.string().optional(),
   utm_campaign: z.string().optional(),
+})
+
+/**
+ * Locale-aware validation, layered on top.
+ *
+ * The two landing pages ask for different things — the client wrote two different source
+ * documents — so requiring `country` from an English submission, or `role` from a Serbian
+ * one, would reject valid leads. The API KEYS stay untranslated either way; only which of
+ * them must be present varies.
+ */
+const ebookLeadSchema = baseSchema.superRefine((data, ctx) => {
+  if (data.locale === 'sr' && !data.country?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['country'],
+      message: 'Country is required',
+    })
+  }
 })
 
 /** FormData gives '' for an absent text field; treat that as absent, not as a value. */
@@ -56,6 +92,7 @@ export async function POST(request: NextRequest) {
       email: formData.get('email') as string,
       company: formData.get('company') as string,
       role: optional(formData, 'role'),
+      country: optional(formData, 'country'),
       locale: optional(formData, 'locale'),
       utm_source: optional(formData, 'utm_source'),
       utm_medium: optional(formData, 'utm_medium'),
@@ -74,6 +111,23 @@ export async function POST(request: NextRequest) {
         { success: false, message: 'Failed to send email notification' },
         { status: 500 }
       )
+    }
+
+    // ── The delivery email, sent to the visitor ──────────────────────────────────
+    // Only AFTER validation has passed and the lead has been recorded, so this endpoint
+    // cannot be used to send mail to an address without also filing a lead about it.
+    //
+    // A failure here does NOT fail the submission: the visitor already has their download on
+    // screen and the lead is already captured. Reporting failure would take away a file they
+    // can see, over a convenience copy.
+    const deliveryResult = await sendEbookDeliveryEmail({
+      name: validatedData.name,
+      email: validatedData.email,
+      locale: validatedData.locale ?? 'en',
+    })
+
+    if (!deliveryResult.success) {
+      console.error('E-book delivery email failed (lead was still captured):', deliveryResult.error)
     }
 
     return NextResponse.json(
