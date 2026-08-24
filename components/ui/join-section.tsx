@@ -18,19 +18,24 @@ import type { CareersDictionary, HomeDictionary } from "@/content/dictionary";
 import { useRecaptcha } from "@/components/security/useRecaptcha";
 import { HoneypotField, appendHoneypot } from "@/components/security/HoneypotField";
 import { RECAPTCHA_FIELD } from "@/lib/security/fields";
+import { isHttpsWebUrl } from "@/lib/security/url";
 
 // ---------- schema ----------
 /**
  * Built from locale-specific messages. A factory rather than a module constant because the
  * WORDING differs per locale while the RULES must not: min 2 / min 10 characters, email
- * format, valid URL, the three accepted MIME types and the 5MB ceiling are all unchanged.
+ * format, HTTPS-only LinkedIn URL, the three accepted MIME types and the 5MB ceiling are
+ * all unchanged.
  */
 function createFormSchema(messages: CareersDictionary["validation"]) {
   return z.object({
     name: z.string().min(2, messages.name),
     phone: z.string().optional(),
     email: z.string().email(messages.email),
-    linkedin: z.string().url(messages.linkedin).optional().or(z.literal("")),
+    // Same rule as the server, from the same module: HTTPS only, because `.url()` accepts
+    // `javascript:` and `data:`. Shared so a valid candidate sees the localised message here
+    // rather than a generic failure after submitting. See lib/security/url.ts.
+    linkedin: z.string().refine(isHttpsWebUrl, messages.linkedin).optional().or(z.literal("")),
     subject: z.string().min(2, messages.subject),
     message: z.string().min(10, messages.message),
     file: z

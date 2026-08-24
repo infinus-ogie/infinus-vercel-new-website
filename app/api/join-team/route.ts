@@ -5,6 +5,7 @@ import { guardFormRequest } from '@/lib/security/guard'
 import { RECAPTCHA_ACTIONS } from '@/lib/security/recaptcha'
 import { FIELD_LIMITS, FILE_LIMITS } from '@/lib/security/limits'
 import { checkUploadedFile, CAREERS_FILE_TYPES } from '@/lib/security/files'
+import { isHttpsWebUrl } from '@/lib/security/url'
 
 /**
  * The job-application endpoint, used by /careers and /sr/careers.
@@ -32,11 +33,18 @@ const joinTeamFormSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(FIELD_LIMITS.name),
   email: z.string().email('Invalid email address').max(FIELD_LIMITS.email),
   phone: z.string().max(FIELD_LIMITS.phone).optional(),
-  // A URL or nothing. The empty-string branch is how the form submits an untouched field.
+  // An HTTPS URL or nothing. The empty-string branch is how the form submits an untouched
+  // field.
+  //
+  // `.url()` alone is NOT enough here: it accepts `javascript:`, `data:`, `file:` and
+  // `ftp:`, all of which are valid URLs by `new URL()`'s definition. This value becomes the
+  // `href` of an anchor in the internal application email, where escaping stops it breaking
+  // out of the attribute but says nothing about what the attribute points at.
+  // See lib/security/url.ts.
   linkedin: z
     .string()
-    .url('Invalid LinkedIn URL')
     .max(FIELD_LIMITS.linkedin)
+    .refine(isHttpsWebUrl, 'LinkedIn must be an https:// URL')
     .optional()
     .or(z.literal('')),
   subject: z.string().trim().min(5, 'Subject must be at least 5 characters').max(FIELD_LIMITS.subject),

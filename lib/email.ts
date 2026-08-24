@@ -299,26 +299,52 @@ Reply directly to this email to respond to ${data.name}.
   })
 }
 
-// Send email function
+/**
+ * Which template is being sent. Present ONLY so the logs below can say something useful
+ * without naming a person: "a careers application went out" rather than an address.
+ */
+export type MailKind = 'contact' | 'careers' | 'ebook-lead' | 'ebook-delivery'
+
+/**
+ * Send one message.
+ *
+ * ── What this deliberately does NOT log ─────────────────────────────────────────
+ * The previous version logged, on every single send: the recipient list, the Reply-To (which
+ * is the submitter's own address), the subject line (which carries user-supplied text), and
+ * and the length of the SMTP app password.
+ *
+ * The password length is gone entirely, and nothing here reports whether a password is set
+ * or how long it is. It answered no question worth answering and it described a secret.
+ *
+ * The addresses and the subject are gone for a different reason: they are personal data
+ * accumulating in a log for no operational purpose. Knowing that an `ebook-delivery` was
+ * sent, and its message id, is enough to diagnose the mail path; knowing WHO it went to is
+ * only needed when something failed, and the failure branch still carries the provider's
+ * own text.
+ *
+ * What is left is operational metadata: the template kind, the attachment count, the
+ * outcome, and the provider's message id.
+ *
+ * ── The error branch is unchanged in strength ───────────────────────────────────
+ * The provider's message and stack still reach the SERVER log, because an SMTP failure is
+ * undiagnosable without them. Neither is returned to a browser: `error` on the result is for
+ * the caller's own log, and every route turns it into its own generic message.
+ */
 export async function sendEmail(
   to: string,
   subject: string,
   html: string,
   text: string,
   replyTo?: string,
-  attachments?: Array<{ filename: string; content: Buffer; contentType?: string }>
+  attachments?: Array<{ filename: string; content: Buffer; contentType?: string }>,
+  kind: MailKind | 'unspecified' = 'unspecified'
 ) {
   try {
-    console.log('Attempting to send email to:', to)
-    console.log('Email config user:', EMAIL_CONFIG.auth.user)
-    console.log('Email config pass length:', EMAIL_CONFIG.auth.pass?.length)
-    
     const transporter = createTransporter()
-    
+
     // Verify connection
     await transporter.verify()
-    console.log('SMTP connection verified successfully')
-    
+
     const mailOptions = {
       from: `"Infinus Website" <${EMAIL_CONFIG.auth.user}>`,
       to: to,
@@ -328,27 +354,16 @@ export async function sendEmail(
       text: text,
       attachments: attachments || []
     }
-    
-    console.log('Sending email with options:', {
-      from: mailOptions.from,
-      to: mailOptions.to,
-      replyTo: mailOptions.replyTo,
-      subject: mailOptions.subject,
-      html: '[HTML content]',
-      text: '[Text content]',
-      attachments: mailOptions.attachments ? mailOptions.attachments.map(att => ({
-        filename: att.filename,
-        contentType: att.contentType,
-        size: att.content ? att.content.length : 0
-      })) : []
-    })
-    
+
+    console.log('[mail] sending', { kind, attachments: mailOptions.attachments.length })
+
     const result = await transporter.sendMail(mailOptions)
-    console.log('Email sent successfully:', result.messageId)
+    console.log('[mail] sent', { kind, messageId: result.messageId })
     return { success: true, messageId: result.messageId }
   } catch (error) {
-    console.error('Error sending email:', error)
-    console.error('Error details:', {
+    // SERVER-SIDE ONLY. Callers return their own generic text to the browser.
+    console.error('[mail] send failed', {
+      kind,
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined
     })
@@ -404,7 +419,8 @@ export async function sendContactFormEmail(data: {
     template.html,
     template.text,
     data.email,
-    attachments
+    attachments,
+    'contact'
   )
 }
 
@@ -450,7 +466,8 @@ export async function sendJoinTeamEmail(data: {
     template.html,
     template.text,
     data.email,
-    attachments
+    attachments,
+    'careers'
   )
 }
 
@@ -483,7 +500,9 @@ export async function sendEbookLeadEmail(data: {
     template.subject,
     template.html,
     template.text,
-    data.email
+    data.email,
+    undefined,
+    'ebook-lead'
   )
 }
 
@@ -573,5 +592,5 @@ ${copy.note}
 ${copy.signoff}
 `
 
-  return await sendEmail(data.email, copy.subject, html, text)
+  return await sendEmail(data.email, copy.subject, html, text, undefined, undefined, 'ebook-delivery')
 }

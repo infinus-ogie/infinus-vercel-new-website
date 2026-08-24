@@ -89,6 +89,19 @@ const ebookLeadSchema = baseSchema.superRefine((data, ctx) => {
   }
 })
 
+/**
+ * The one thing a rejected submission is told, matching /api/contact and /api/join-team.
+ *
+ * The previous version returned `errors: error.errors` — Zod's issue array — which named
+ * every failing field back to whoever was probing. It carried no secret and no stack, but it
+ * was a free map of the schema, and it was the only public endpoint that answered differently
+ * from the other two. One shape, one message.
+ *
+ * The client does not need the detail: EbookForm runs its own Zod parse and renders its own
+ * per-field messages before it ever POSTs.
+ */
+const GENERIC_REJECTION = 'We could not process this submission. Please try again.'
+
 /** FormData gives '' for an absent text field; treat that as absent, not as a value. */
 function optional(formData: FormData, key: string): string | undefined {
   const value = formData.get(key)
@@ -171,18 +184,14 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    console.error('E-book form error:', error)
-
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid form data', errors: error.errors },
-        { status: 400 }
-      )
+      // Field PATHS only, never the values — a submitted business email and company name are
+      // personal data, and there is no debugging question that needs them in a log.
+      console.warn('[ebook] validation failed:', error.errors.map((e) => e.path.join('.')))
+      return NextResponse.json({ success: false, message: GENERIC_REJECTION }, { status: 400 })
     }
 
-    return NextResponse.json(
-      { success: false, message: 'An error occurred while processing your request' },
-      { status: 500 }
-    )
+    console.error('[ebook] unexpected error:', error)
+    return NextResponse.json({ success: false, message: GENERIC_REJECTION }, { status: 500 })
   }
 }

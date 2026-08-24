@@ -3,8 +3,17 @@ import { test, expect, Page } from '@playwright/test';
 /**
  * GA4 + D&B VI tracking smoke test.
  *
- * Runs against a deployed origin by default; override with BASE_URL, e.g.
- *   BASE_URL=http://127.0.0.1:3100 npm run qa:ga
+ * Runs against the LOCAL build by default. Point it elsewhere with BASE_URL, e.g.
+ *   BASE_URL=https://www.infinus.co npm run qa:ga
+ *
+ * ── Why the default is local ────────────────────────────────────────────────────
+ * It used to default to https://www.infinus.co, so a bare `npm run qa:ga` — the obvious
+ * thing to type — drove a browser against LIVE PRODUCTION. It granted cookie consent there,
+ * clicked download links and read /vi-debug, and its failures described production rather
+ * than the branch under test, which is both alarming and useless.
+ *
+ * A test default must not be able to touch production by omission. Hitting production is
+ * still supported, but it now takes saying so.
  *
  * ── Updated for consent gating ──────────────────────────────────────────────────
  * Analytics no longer loads on page load. The site now requires explicit consent
@@ -21,8 +30,25 @@ import { test, expect, Page } from '@playwright/test';
  * this file stays focused on GA/D&B functionality.
  */
 
-// Base URL configuration
-const BASE_URL = process.env.BASE_URL || 'https://www.infinus.co';
+/**
+ * The target origin. Defaults to the local server, matching scripts/qa/viewport-audit.mjs
+ * and scripts/qa/link-and-locale-audit.mjs, which both use this same local default.
+ *
+ * NEVER give this a remote fallback. See the note above.
+ */
+const LOCAL_DEFAULT = 'http://localhost:3000';
+const BASE_URL = process.env.BASE_URL || LOCAL_DEFAULT;
+
+/**
+ * Say out loud when the target is not local.
+ *
+ * Explicit intent is the env var; this line is so that intent is visible in the output
+ * afterwards, and so a stray BASE_URL in a shell profile cannot point a "local" run at a
+ * deployed origin without anyone noticing.
+ */
+if (!/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(new URL(BASE_URL).origin)) {
+  console.warn(`\n⚠  GA smoke is targeting a NON-LOCAL origin: ${BASE_URL}\n`);
+}
 const GA4_MEASUREMENT_ID = 'G-S0YZ6MZWK1';
 const CONSENT_COOKIE = 'infinus_consent';
 

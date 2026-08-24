@@ -19,6 +19,23 @@
  *     is deliberately kept outside that system so no refactor can rewrite it.
  *
  * Only presentation is owned by the renderer (headings, lists, spacing, anchors).
+ *
+ * ── AMENDMENT, 24 August 2026 — PENDING LEGAL REVIEW ───────────────────────────
+ * One paragraph was ADDED to section 2 of EACH document ("Koje podatke obrađujemo i
+ * zašto" / "Data we process and why"), on the owner's explicit written instruction,
+ * disclosing that public forms are protected by Google reCAPTCHA.
+ *
+ * It is required because the forms security phase made form submission contact Google:
+ * reCAPTCHA is a functional anti-abuse dependency, loaded only when a form is actually
+ * submitted, and deliberately NOT behind the cookie-consent gate. The processing was
+ * therefore real and undisclosed.
+ *
+ * These two paragraphs are the ONLY text in this file that did not come from the source
+ * .docx, so the SHA-256 above no longer covers the file as it now stands. Nothing else was
+ * reworded, reordered or removed, and no consent language was added.
+ *
+ * FLAGGED FOR DEJAN'S REVIEW. Until signed off, treat these two paragraphs — and only
+ * these two — as draft legal copy.
  */
 
 export type LegalInline =
@@ -248,6 +265,15 @@ export const PRIVACY_POLICY_DOCUMENTS: readonly LegalDocument[] = [
           {
             "t": "text",
             "v": "Polja označena zvezdicom neophodna su da bismo odgovorili na upit ili razmotrili prijavu. Ostali podaci su dobrovoljni."
+          }
+        ]
+      },
+      {
+        "t": "p",
+        "c": [
+          {
+            "t": "text",
+            "v": "Javne forme su zaštićene Google reCAPTCHA mehanizmom radi sprečavanja spama i automatizovanih zloupotreba. Prilikom slanja forme, određeni podaci mogu biti obrađeni od strane Google-a u ovu bezbednosnu svrhu, u skladu sa važećim Google pravilima privatnosti."
           }
         ]
       },
@@ -665,6 +691,15 @@ export const PRIVACY_POLICY_DOCUMENTS: readonly LegalDocument[] = [
           {
             "t": "text",
             "v": "Fields marked with an asterisk are required for us to respond to your enquiry or consider your application. Other information is optional."
+          }
+        ]
+      },
+      {
+        "t": "p",
+        "c": [
+          {
+            "t": "text",
+            "v": "Public forms are protected by Google reCAPTCHA to prevent spam and automated abuse. When a form is submitted, data may be processed by Google for this security purpose in accordance with Google’s applicable privacy terms."
           }
         ]
       },

@@ -121,6 +121,32 @@ describe('POST /api/ebook', () => {
     const response = await POST(request({ name: 'A', email: 'a@b.co', company: 'X' }))
     expect(response.status).toBe(400)
   })
+
+  /**
+   * This endpoint used to answer a validation failure with `errors: error.errors` — Zod's
+   * issue array — while /api/contact and /api/join-team both returned one generic message.
+   * The detail carried no secret, but it named every failing field back to whoever was
+   * probing, and being the only endpoint that answered differently is itself a signal.
+   */
+  test('a validation failure returns the SAME generic shape as the other endpoints', async () => {
+    const response = await POST(request({ ...VALID, email: 'not-an-email' }))
+    const body = await response.json()
+
+    expect(body).not.toHaveProperty('errors')
+    expect(body).toEqual({
+      success: false,
+      message: 'We could not process this submission. Please try again.',
+    })
+  })
+
+  test('the rejection names no field, rule or library', async () => {
+    const response = await POST(request({ name: 'A', email: 'nope', company: '' }))
+    const serialised = JSON.stringify(await response.json())
+
+    for (const leak of ['email', 'company', 'name', 'zod', 'invalid_string', 'too_small']) {
+      expect(serialised.toLowerCase()).not.toContain(leak)
+    }
+  })
 })
 
 describe('locale-aware validation', () => {

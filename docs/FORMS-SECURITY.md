@@ -44,7 +44,7 @@ expected to exercise them. `localhost` is included automatically for local devel
 | Response hygiene | Active |
 | **Durable rate limiting** | **NOT ACTIVE — see below** |
 
-## Rate limiting is BLOCKED ON INFRASTRUCTURE
+## Rate limiting is BLOCKED ON INFRA
 
 There is no durable store in this project: no Vercel KV, no Upstash, no Redis. On Vercel's
 serverless runtime an in-memory counter resets per instance, so it would enforce a limit by
@@ -53,8 +53,6 @@ pretend: with no backend it returns `enforced: false`, and `rateLimitStatus()` r
 `active: false`.
 
 The budgets, the pseudonymised key derivation and the single call site are all in place.
-Enabling it means implementing `RateLimitBackend` against whichever store is provisioned and
-returning it from `resolveBackend()` — roughly twenty lines, and no endpoint changes.
 
 Budgets that would apply, per IP:
 
@@ -64,7 +62,77 @@ Budgets that would apply, per IP:
 | `/api/join-team` | 3 / 15 min |
 | `/api/ebook` | 5 / 10 min |
 
-Until then, the site is **not rate-limited**, and no report should say otherwise.
+Until a backend exists, the site is **not rate-limited**, and no report should say otherwise.
+
+### What enabling it takes
+
+Two things: credentials, and an adapter. Nothing else — no endpoint changes, no schema, no
+migration. The guard already calls `consumeRateLimit()` on every submission.
+
+**Recommended store: Upstash Redis.** It is the serverless-appropriate choice here because it
+speaks HTTP rather than the Redis wire protocol, so it needs no connection pooling and no
+persistent socket — which is exactly what a per-invocation serverless function cannot keep.
+Vercel KV is the same product under Vercel's own branding and works identically. A
+self-managed Redis over TCP is the option to avoid: connection churn per invocation is the
+failure mode serverless Redis exists to solve.
+
+**Env contract** — add whichever pair the provider gives you:
+
+| Variable | Provider | Notes |
+|---|---|---|
+| `UPSTASH_REDIS_REST_URL` | Upstash | Server-only. Never `NEXT_PUBLIC_`. |
+| `UPSTASH_REDIS_REST_TOKEN` | Upstash | Server-only. Never `NEXT_PUBLIC_`. |
+| `KV_REST_API_URL` | Vercel KV | The same two values under Vercel's names. |
+| `KV_REST_API_TOKEN` | Vercel KV | |
+
+Vercel's KV integration injects its pair automatically when the store is linked to the
+project; Upstash's are copied from its console.
+
+**The adapter.** `resolveBackend()` in `lib/security/rate-limit.ts` currently returns `null`.
+Replace that with the following. It uses Upstash's REST API directly, so it adds **no
+dependency**:
+
+```ts
+function resolveBackend(): RateLimitBackend | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN
+  if (!url || !token) return null
+
+  return {
+    name: 'upstash-redis',
+    async hit(key, limit, windowSeconds) {
+      // INCR then EXPIRE ... NX: the first hit in a window starts the clock, later hits in
+      // the same window leave it alone, so the window is fixed rather than sliding forward
+      // on every request. Pipelined into one round-trip.
+      const response = await fetch(`${url}/pipeline`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([
+          ['INCR', key],
+          ['EXPIRE', key, String(windowSeconds), 'NX'],
+        ]),
+        signal: AbortSignal.timeout(3000),
+      })
+
+      if (!response.ok) throw new Error(`rate-limit store HTTP ${response.status}`)
+
+      const [incr] = (await response.json()) as Array<{ result: number }>
+      return { allowed: incr.result <= limit }
+    },
+  }
+}
+```
+
+That is the whole change. `rateLimitStatus()` then reports `active: true` on its own, because
+it asks `resolveBackend()` rather than being told.
+
+**Fail-honest either way.** With no credentials the adapter returns `null` and the status
+stays `BLOCKED ON INFRA`. If the store is configured but unreachable, `consumeRateLimit()`
+catches, logs, and allows the request through with `enforced: false` — a store outage must not
+take the forms down, and the captcha and origin checks are still in force.
 
 ## Privacy consequence to record
 
@@ -77,11 +145,37 @@ The script is injected only when a form is actually submitted, so it never appea
 prerendered HTML and never loads for a visitor who does not use a form. That keeps
 `scripts/seo/assert-consent-safety.ts` green.
 
-**The Privacy Policy should mention that form submissions are processed through Google
-reCAPTCHA.** That is a content change for the owner, not a code change.
+**The Privacy Policy now discloses this.** One paragraph was added to section 2 of BOTH
+legal documents — `content/legal/politika-privatnosti.ts` — on the owner's instruction. That
+file is otherwise mechanically transcribed approved copy, so the addition is marked in its
+header and is **flagged for Dejan's legal review**. It states the fact and nothing more: no
+consent language, and no suggestion that reCAPTCHA is analytics.
+
+## QA safety
+
+`npm run qa:ga` used to default to `BASE_URL=https://www.infinus.co`, so the bare command
+drove a browser against live production — granting consent there, clicking downloads, and
+reporting production's state as if it were the branch under test. It now defaults to
+`http://localhost:3000`, matching `viewport-audit.mjs` and `link-and-locale-audit.mjs`, and
+warns loudly when pointed at a non-local origin. Hitting production is still supported; it
+just has to be asked for:
+
+```
+BASE_URL=https://www.infinus.co npm run qa:ga
+```
+
+`test/security/hardening.test.ts` asserts the fallback can never become a remote origin
+again.
 
 ## Deliberately not done in this pass
 
 - `/api/projectpulse/pdf` is a `GET` that streams a static file with no user input. It is a
   download, not a write, and is left alone.
 - Existing operational recipients (`PRODUCTION_EMAIL`, `RECIPIENT_EMAILS`) are unchanged.
+- `/vi-debug` is left in code as it is. It already returns 404 unless
+  `NEXT_PUBLIC_DNB_VI_DEBUG === "true"`, and everything it reports is a `NEXT_PUBLIC_*` value
+  that is in the client bundle anyway — so there is nothing to fix in the handler. It is
+  currently ENABLED in Production, which is untidy rather than dangerous.
+  **Manual action, Vercel Production scope: unset `NEXT_PUBLIC_DNB_VI_DEBUG`** so the route
+  returns 404 there. Deliberately not solved in code: gating a debug endpoint on a hardcoded
+  environment check would remove the operator's ability to turn it on when they need it.
