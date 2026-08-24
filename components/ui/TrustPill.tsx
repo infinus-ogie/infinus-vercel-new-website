@@ -1,16 +1,35 @@
 "use client";
 import * as React from "react";
 
+/**
+ * One trust item.
+ *
+ * ── `mark` replaces the icon disc, and only the homepage hero passes it ─────────
+ * The homepage used to stack a standalone SAP Gold Partner image ABOVE a pill whose text
+ * already read "SAP Gold Partner" — the same certification twice, as two unrelated visual
+ * layers. Folding the artwork into this item makes it ONE object: the official mark and the
+ * words that name it, sitting in the same row as the other two proof points.
+ *
+ * When `mark` is supplied it is rendered instead of the icon disc, and the item is given
+ * roomier padding so the certification artwork stays READABLE rather than being forced into
+ * the 24px disc the icons use. In a stretch grid that lifts the whole row's height, which is
+ * what keeps it reading as one unified row rather than one odd tall pill.
+ *
+ * Everything about the default icon path is unchanged, because ~15 pages render it.
+ */
 export function TrustPill({
   icon: Icon,
   children,
   tone = "blue", // "blue" | "gold"
   variant = "light", // "light" | "dark"
+  mark,
 }: { 
   icon: React.ElementType<{ className?: string }>; 
   children: React.ReactNode; 
   tone?: "blue"|"gold"; 
   variant?: "light"|"dark";
+  /** Official artwork shown in place of the icon. Homepage hero only. */
+  mark?: React.ReactNode;
 }) {
   const cls =
     variant === "dark"
@@ -29,7 +48,9 @@ export function TrustPill({
   return (
     <span
       className={
-        "relative inline-flex items-center justify-center gap-2 rounded-full border px-2 py-1.5 text-sm font-medium " +
+        "relative inline-flex items-center justify-center gap-2 rounded-full border text-sm font-medium " +
+        // A supplied mark needs breathing room the icon disc does not.
+        (mark ? "px-3.5 py-2 sm:gap-2.5 " : "px-2 py-1.5 ") +
         cls
       }
     >
@@ -49,15 +70,21 @@ export function TrustPill({
           }}
         />
       )}
-      <span className={
-        "inline-grid place-items-center size-6 rounded-full " + 
-        (variant === "dark" 
-          ? "bg-black/20 border border-white/10" 
-          : "bg-white/80"
-        ) + " " + iconCls
-      }>
-        <Icon className={"h-4 w-4 " + iconCls} />
-      </span>
+      {mark ? (
+        // Sized by the caller. `shrink-0` so no flex parent can squash the artwork, and the
+        // aspect ratio is the badge component's own responsibility.
+        <span className="relative z-[1] inline-flex shrink-0 items-center">{mark}</span>
+      ) : (
+        <span className={
+          "inline-grid place-items-center size-6 rounded-full " + 
+          (variant === "dark" 
+            ? "bg-black/20 border border-white/10" 
+            : "bg-white/80"
+          ) + " " + iconCls
+        }>
+          <Icon className={"h-4 w-4 " + iconCls} />
+        </span>
+      )}
       <span className="relative z-[1]">{children}</span>
     </span>
   );

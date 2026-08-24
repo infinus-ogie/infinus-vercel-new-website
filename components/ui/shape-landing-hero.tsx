@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { HeroPartnerBadge } from "./HeroPartnerBadge";
-import { SapGoldPartnerBadge } from "./SapGoldPartnerBadge";
 import { TrustStrip } from "./TrustStrip";
 import { getDictionary } from "@/content/dictionary";
 import type { HomeDictionary } from "@/content/dictionary";
@@ -212,36 +211,32 @@ function HeroGeometric({
                         animate="visible"
                         className="flex justify-center"
                     >
+                        {/* `shadow-lg` on white over #00144a rendered as a large soft white
+                            glow, which is what made this button look dropped onto a finished
+                            hero. The emphasis now comes from the ground, the width and a
+                            defined hover — the same language the rest of the site uses.
+                            A hairline ring holds the edge against the navy without haloing. */}
                         <Button
                             asChild
                             size="lg"
-                            className="bg-white text-[#00144a] hover:bg-slate-100 focus-visible:ring-white focus-visible:ring-offset-[#00144a] shadow-lg"
+                            className="bg-white px-9 text-[15px] font-semibold text-[#00144a] ring-1 ring-inset ring-white/70 transition-colors hover:bg-blue-50 hover:text-[#001a5e] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00144a] md:px-10"
                         >
                             <Link href={hero.ctaHref}>{hero.ctaLabel}</Link>
                         </Button>
                     </motion.div>
 
-                    {/* The SAP Gold Partner certification, on the first screen where the
-                        client asked for it: directly above the trust pills, one of which
-                        names the same certification in words — which is why the image is
-                        decorative rather than announced twice. */}
+                    {/* The certification now lives INSIDE the first trust pill.
+                        It used to be a standalone image here, between the CTA and a pill whose
+                        text already read "SAP Gold Partner" — so the hero ended
+                        headline -> CTA -> logo -> the same logo's name again, three unrelated
+                        layers claiming the same thing. One trust row, announced once. */}
                     <motion.div
                         custom={4}
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
-                        className="mt-5 md:mt-8 flex justify-center"
                     >
-                        <SapGoldPartnerBadge />
-                    </motion.div>
-
-                    <motion.div
-                        custom={5}
-                        variants={fadeUpVariants}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        <TrustStrip trust={trust} />
+                        <TrustStrip trust={trust} certificationMark />
                     </motion.div>
                 </div>
             </div>
