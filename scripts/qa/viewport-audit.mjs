@@ -64,6 +64,46 @@ for (const width of WIDTHS) {
   await context.close()
 }
 
+// ── The Serbian MythBusting page's two form instances ────────────────────────
+// The newer source asks for a form at the top AND the bottom. Two instances on one page
+// make DOM-id uniqueness a correctness requirement, not a nicety: duplicate ids would make
+// both labels focus the first input.
+const formChecks = []
+for (const width of [320, 430]) {
+  const context = await browser.newContext({ viewport: { width, height: 900 } })
+  const page = await context.newPage()
+  await page.goto(BASE + '/sr/insights/sap-mythbusters', { waitUntil: 'networkidle' })
+
+  const info = await page.evaluate(() => {
+    const ids = Array.from(document.querySelectorAll('[id]')).map((el) => el.id)
+    const duplicates = ids.filter((id, i) => ids.indexOf(id) !== i)
+
+    // Every label must resolve to an input INSIDE its own form instance.
+    let escaped = 0
+    for (const form of Array.from(document.querySelectorAll('[data-testid^="ebook-form-"]'))) {
+      for (const label of Array.from(form.querySelectorAll('label'))) {
+        const target = label.htmlFor ? document.getElementById(label.htmlFor) : null
+        if (!target || !form.contains(target)) escaped++
+      }
+    }
+
+    const cover = document.querySelector('img[src*="sap-mythbusting-ebook-cover"]')
+    return {
+      hero: !!document.querySelector('[data-testid="ebook-form-hero"]'),
+      closing: !!document.querySelector('[data-testid="ebook-form-closing"]'),
+      duplicates: Array.from(new Set(duplicates)),
+      escaped,
+      coverVisible: cover ? cover.getBoundingClientRect().width > 0 : false,
+      sapLogo: !!document.querySelector('[data-section="mythbusters-trust"] img[alt="SAP Gold Partner"]'),
+      infinusLogo: !!document.querySelector('[data-section="mythbusters-trust"] img[alt="Infinus"]'),
+      faq: document.querySelectorAll('[data-section="mythbusters-faq"] dt').length,
+      previews: document.querySelectorAll('[data-section="mythbusters-preview"] .grid > div').length,
+    }
+  })
+  formChecks.push({ width, ...info })
+  await context.close()
+}
+
 // The first-screen CTA and badge, homepage only, at the tightest viewport.
 const ctaChecks = []
 for (const [path, label] of [['/', 'Contact Us'], ['/sr', 'Kontaktirajte nas']]) {
@@ -115,6 +155,21 @@ for (const c of ctaChecks) {
       ` | badge bottom=${c.badgeBottom}px ${badgeOk ? 'ok' : 'BELOW THE FOLD'}` +
       ` | viewport=${c.viewport}px`
   )
+}
+
+console.log('\n── Serbian MythBusting: two form instances ──────────')
+for (const c of formChecks) {
+  const ok =
+    c.hero && c.closing && c.duplicates.length === 0 && c.escaped === 0 &&
+    c.coverVisible && c.sapLogo && c.infinusLogo && c.faq === 5 && c.previews === 4
+  if (!ok) failures++
+  console.log(
+    `  ${ok ? '✓' : '✗'} ${String(c.width).padEnd(4)} hero=${c.hero} closing=${c.closing}` +
+      ` dupIds=${c.duplicates.length} escapedLabels=${c.escaped}` +
+      ` cover=${c.coverVisible} logos=${c.sapLogo && c.infinusLogo}` +
+      ` faq=${c.faq} previews=${c.previews}`
+  )
+  if (c.duplicates.length) console.log(`        duplicate ids: ${c.duplicates.join(', ')}`)
 }
 
 console.log(`\n${failures === 0 ? 'PASS' : `FAIL — ${failures} problem(s)`}\n`)

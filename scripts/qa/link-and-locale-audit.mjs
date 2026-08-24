@@ -51,8 +51,20 @@ for (const path of PAGES) {
     if (!href || href === '#' || href.startsWith('mailto:') || href.startsWith('http')) continue
     const target = href.split('#')[0] || '/'
     if (seen.has(target)) continue
-    const res = await page.request.get(BASE + target)
-    seen.set(target, res.status())
+    // Generous timeout plus one retry: a cold `next start` can take a while on the first
+    // hit for a route, and a flaky timeout reported as a broken link would train people to
+    // ignore this audit.
+    let status = 0
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await page.request.get(BASE + target, { timeout: 60000 })
+        status = res.status()
+        break
+      } catch (error) {
+        if (attempt === 1) status = -1
+      }
+    }
+    seen.set(target, status)
   }
 }
 await context.close()
