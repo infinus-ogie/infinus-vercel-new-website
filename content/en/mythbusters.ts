@@ -24,9 +24,10 @@
  * The section markers in the DOCX ([HERO SECTION], [TRUST BAR], …) are editorial labels, not
  * visible copy, and are not carried across.
  *
- * ── The e-book is English-only ──────────────────────────────────────────────────
- * Which, on this page, needs no caveat at all — but the note is stated anyway because the
- * source states it.
+ * ── One e-book, in English, for both landing pages ──────────────────────────────
+ * The site is bilingual; the ASSET is not, by design. There is one canonical English PDF
+ * and both locales link to it. On this page that needs no caveat at all, but the note is
+ * stated anyway because the source states it — and its Serbian counterpart does need it.
  */
 
 import type { MythBustersDictionary } from '../dictionary'
@@ -155,6 +156,7 @@ export const mythBusters: MythBustersDictionary = {
       downloadNote: 'The download starts as soon as you click.',
       emailHeading: 'A copy is on its way by email.',
       emailBody: 'We are also sending the download link to your business email address.',
+      emailFallback: 'You can download the e-book immediately using the button below.',
       nextHeading: 'What happens next?',
       nextBody:
         'Whether you are still evaluating ERP options or already have concrete requirements, our SAP specialists can help.',

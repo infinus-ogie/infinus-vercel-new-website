@@ -36,11 +36,14 @@
  * Nothing else is altered, including the mixed English role plurals and the client's own
  * punctuation and register.
  *
- * ── The e-book is ENGLISH ───────────────────────────────────────────────────────
- * A Serbian e-book was mentioned but NOT supplied: the attached PDF is byte-identical to
- * the English one already in the repository. `form.languageNote` therefore still says the
- * asset is in English, and it renders ABOVE both forms. A Serbian visitor must know that
- * before handing over their details, not after.
+ * ── The e-book is ENGLISH, and that is the intended architecture ────────────────
+ * OWNER DECISION, final: there is ONE canonical English PDF and both landing pages link to
+ * it. The landing page is bilingual; the downloadable asset is not. No Serbian PDF is
+ * missing, expected, or to be fabricated under a translated filename.
+ *
+ * What that obliges on this side: `form.languageNote` says the asset is in English, and it
+ * renders ABOVE both forms. A Serbian visitor must know that before handing over their
+ * details, not after.
  */
 
 import type { MythBustersDictionary } from '../dictionary'
@@ -75,8 +78,9 @@ export const mythBusters: MythBustersDictionary = {
 
     assetCard: {
       title: '10 mitova o SAP Cloud ERP-u',
-      // The source offers "Executive vodič (ili: Praktični vodič)". The first option is used.
-      subtitle: 'Executive vodič',
+      // The source offers "Executive vodič (ili: Praktični vodič)" — an author's alternative,
+      // not two strings. The owner chose the second.
+      subtitle: 'Praktični vodič',
       whatYouGetHeading: 'Šta dobijate',
       items: [
         'PDF vodič',
@@ -240,11 +244,13 @@ export const mythBusters: MythBustersDictionary = {
       downloadLabel: 'Preuzmite e-book',
       downloadNote: 'Preuzimanje počinje odmah nakon klika.',
       // This promise is KEPT ONLY because the application actually sends that email — see
-      // sendEbookDeliveryEmail in lib/email.ts. Copy that promises a message the system does
-      // not send is a lie the visitor can catch.
+      // sendEbookDeliveryEmail in lib/email.ts — AND it is rendered only when that send
+      // actually succeeded. `emailFallback` below replaces it when it did not. Copy that
+      // promises a message the system did not send is a lie the visitor can catch.
       emailHeading: 'Kopiju ćete dobiti i putem e-maila.',
       emailBody:
         'Ako želite da dokument ponovo otvorite kasnije, link za preuzimanje poslaćemo i na vašu poslovnu e-mail adresu.',
+      emailFallback: 'E-book možete odmah preuzeti pomoću dugmeta ispod.',
       nextHeading: 'Šta je sledeće?',
       nextBody:
         'Da li birate novo ERP rešenje ili planirate sledeći korak digitalne transformacije? Infinus SAP stručnjaci mogu da vas podrže bez obzira na to da li ste tek u fazi evaluacije ili već imate definisane konkretne zahteve.',
@@ -257,8 +263,8 @@ export const mythBusters: MythBustersDictionary = {
       contactHref: '/sr/contact',
     },
     error: 'Došlo je do greške. Pokušajte ponovo.',
-    // The supplied Serbian e-book was NOT actually delivered — the attached PDF is the
-    // English one. Until a real Serbian PDF arrives, this note stays and stays true.
+    // The asset is English by design — see this file's header. The note is what keeps the
+    // Serbian page honest about it, and it is shown before submission, not after.
     languageNote: 'E-book je u PDF formatu i dostupan je na engleskom jeziku.',
     // OWNER DECISION: the older source read "...pročitali našu Privacy Policy". Replaced
     // with the site's approved Serbian legal terminology, which the new LP document's own

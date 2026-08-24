@@ -1194,9 +1194,23 @@ export interface MythBustersDictionary {
       readonly body: string
       readonly downloadLabel: string
       readonly downloadNote: string
-      /** Empty when this locale does not promise an emailed copy — see the SR file. */
+      /**
+       * Shown ONLY when the delivery email actually went out.
+       *
+       * The endpoint reports `emailDelivered`, and the success panel keys off it. Telling a
+       * visitor a copy is in their inbox when the send failed is a claim they can check and
+       * find false, so these two strings are gated rather than always rendered.
+       */
       readonly emailHeading: string
       readonly emailBody: string
+      /**
+       * The replacement when delivery FAILED.
+       *
+       * Deliberately not an error: the submission succeeded, the lead was captured and the
+       * download is right there. Only the secondary convenience copy did not arrive, and a
+       * scary red state over that would misrepresent what happened.
+       */
+      readonly emailFallback: string
       readonly nextHeading: string
       readonly nextBody: string
       readonly expertCta: string

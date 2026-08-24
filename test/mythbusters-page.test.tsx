@@ -15,7 +15,10 @@ import { render, screen, within } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
 import EnglishMythBusters from '../app/(en)/(site)/insights/sap-mythbusters/page'
 import SerbianMythBusters from '../app/(sr)/sr/insights/sap-mythbusters/page'
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import { getDictionary, enMythBustersLayout, srMythBustersLayout } from '@/content/dictionary'
+import { buildMythBustersJsonLd } from '@/lib/mythbusters-jsonld'
 
 const en = getDictionary('en').mythBusters
 const sr = getDictionary('sr').mythBusters
@@ -150,7 +153,8 @@ describe('the Serbian page follows the new conversion structure', () => {
     // Derived from page 1 of the actual download, not a stand-in.
     expect(decodeURIComponent(cover.src)).toContain('sap-mythbusting-ebook-cover')
     expect(screen.getByText(srLayout.assetCard.title)).toBeInTheDocument()
-    expect(screen.getByText('Executive vodič')).toBeInTheDocument()
+    // The subtitle wording is asserted in its own suite below.
+    expect(screen.getByText(srLayout.assetCard.subtitle)).toBeInTheDocument()
   })
 
   test('carries the final CTA and the why-Infinus reasons', () => {
@@ -219,16 +223,64 @@ describe('two form instances, one per the new source', () => {
   })
 })
 
-describe('truthfulness about the e-book language', () => {
-  test('BOTH locales state the e-book is English, above the form', () => {
-    // A Serbian e-book was announced but not supplied: the attached PDF is byte-identical to
-    // the English one. Until a real Serbian PDF arrives this note must stay, and must stay
-    // true.
+describe('one English e-book, served and described identically by both locales', () => {
+  const EBOOK = '/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf'
+
+  test('the SERBIAN page states the e-book is English, before submission', () => {
+    // The architecture is deliberate: a bilingual landing page over a single English asset.
+    // This note is what keeps the Serbian half honest about it, and it renders above the
+    // fields rather than on the success screen.
     expect(sr.form.languageNote).toContain('engleskom jeziku')
     expect(en.form.languageNote).toContain('available in English')
 
+    const { container } = render(<SerbianMythBusters />)
+    for (const testid of ['ebook-form-hero', 'ebook-form-closing']) {
+      const form = container.querySelector(`[data-testid="${testid}"]`) as HTMLElement
+      expect(within(form).getByText(sr.form.languageNote)).toBeInTheDocument()
+    }
+  })
+
+  test('no Serbian-named or translated PDF asset was invented', () => {
+    // There is one canonical file. A "-sr" or "-srp" variant would be a fabricated asset.
+    const files = readdirSync(join(process.cwd(), 'public/downloads'))
+    const ebooks = files.filter((f) => /mythbusting/i.test(f) && f.endsWith('.pdf'))
+    expect(ebooks).toEqual(['SAP_Mythbusting_Campaign_E-Book_Infinus.pdf'])
+  })
+
+  test('BOTH landing pages describe the asset as inLanguage "en"', () => {
+    for (const locale of ['en', 'sr'] as const) {
+      const nodes = JSON.parse(buildMythBustersJsonLd(locale)) as Array<Record<string, unknown>>
+      const document = nodes.find((node) => node['@type'] === 'DigitalDocument')
+
+      expect(document, `${locale}: no DigitalDocument node`).toBeDefined()
+      expect(document!.inLanguage, locale).toBe('en')
+      expect(document!.encodingFormat, locale).toBe('application/pdf')
+
+      // And both point at the same file.
+      const media = document!.associatedMedia as Record<string, string>
+      expect(media.contentUrl, locale).toContain(EBOOK)
+    }
+  })
+
+  test('the page itself is still described in its own language', () => {
+    // The asset is English on both halves; the PAGE is not. Conflating the two would
+    // describe the Serbian document as English to crawlers.
+    const srNodes = JSON.parse(buildMythBustersJsonLd('sr')) as Array<Record<string, unknown>>
+    const webPage = srNodes.find((node) => node['@type'] === 'WebPage')
+    expect(webPage!.inLanguage).toBe('sr-Latn-RS')
+  })
+})
+
+describe('the asset card wording', () => {
+  test('uses "Praktični vodič" — the owner picked the second of the two offered', () => {
     render(<SerbianMythBusters />)
-    expect(screen.getAllByText(sr.form.languageNote).length).toBeGreaterThan(0)
+    expect(screen.getByText('Praktični vodič')).toBeInTheDocument()
+  })
+
+  test('"Executive vodič" appears nowhere on the Serbian page or in its copy', () => {
+    const { container } = render(<SerbianMythBusters />)
+    expect(container.textContent).not.toContain('Executive vodič')
+    expect(JSON.stringify(sr)).not.toContain('Executive vodič')
   })
 })
 

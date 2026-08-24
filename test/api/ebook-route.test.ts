@@ -196,6 +196,46 @@ describe('the delivery email sent to the visitor', () => {
     await expect(response.json()).resolves.toMatchObject({ success: true })
   })
 
+  test('reports emailDelivered=true when the copy actually went out', async () => {
+    const response = await POST(request(VALID))
+    await expect(response.json()).resolves.toMatchObject({
+      success: true,
+      emailDelivered: true,
+    })
+  })
+
+  test('reports emailDelivered=false when it did not', async () => {
+    // Two independent outcomes in one response: the submission succeeded, the convenience
+    // copy did not. The success UI needs to tell them apart so it does not claim an email
+    // was sent when none was.
+    sendEbookDeliveryEmail.mockResolvedValue({ success: false, error: 'mailbox full' })
+
+    const response = await POST(request(VALID))
+    const body = await response.json()
+    expect(body.success).toBe(true)
+    expect(body.emailDelivered).toBe(false)
+  })
+
+  test('emailDelivered leaks NO provider, SMTP or address detail', async () => {
+    // The provider's error text can carry the SMTP host, the authenticated sender, the
+    // recipient or a stack. None of that belongs in a browser response.
+    sendEbookDeliveryEmail.mockResolvedValue({
+      success: false,
+      error: 'Invalid login: 535-5.7.8 Username and Password not accepted for smtp.gmail.com',
+    })
+
+    const response = await POST(request(VALID))
+    const body = await response.json()
+
+    expect(typeof body.emailDelivered).toBe('boolean')
+    const serialised = JSON.stringify(body)
+    for (const secret of ['smtp', 'gmail', '535', 'Username', 'Invalid login', '@']) {
+      expect(serialised.toLowerCase(), `leaked "${secret}"`).not.toContain(secret.toLowerCase())
+    }
+    // The whole response is just the three known fields.
+    expect(Object.keys(body).sort()).toEqual(['emailDelivered', 'message', 'success'])
+  })
+
   test('exactly one message per submission', async () => {
     await POST(request(VALID))
     expect(sendEbookDeliveryEmail).toHaveBeenCalledTimes(1)

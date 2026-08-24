@@ -14,6 +14,13 @@ import { sendEbookLeadEmail, sendEbookDeliveryEmail } from '@/lib/email'
  * What IS reused is everything that matters: lib/email.ts, its transport and its recipient
  * list. There is one mail path on this site, not three.
  *
+ * ── Two independent outcomes, one response ──────────────────────────────────────
+ * A submission and a delivery email can succeed independently, so the response reports both:
+ * `success` for the submission and `emailDelivered` for the convenience copy. The success UI
+ * keys off the second to decide whether it may claim an email was sent.
+ *
+ * `emailDelivered` is a boolean and carries no diagnostic detail — see the response itself.
+ *
  * ── Storage: none, deliberately ─────────────────────────────────────────────────
  * No CRM, no database, no third-party form backend. The owner's decision for this phase is
  * that the notification email IS the record of the lead. Stated here as well as in
@@ -127,11 +134,25 @@ export async function POST(request: NextRequest) {
     })
 
     if (!deliveryResult.success) {
+      // Logged server-side with the provider's message. Deliberately NOT returned — see the
+      // response below.
       console.error('E-book delivery email failed (lead was still captured):', deliveryResult.error)
     }
 
+    // `emailDelivered` is a BOOLEAN and nothing else.
+    //
+    // The success panel needs to know whether it may say "a copy is on its way", because
+    // claiming that when the send failed is a promise the visitor can check and find false.
+    // But it needs ONLY that. The provider's error text can carry the SMTP host, the
+    // authenticated sender, the recipient, a bounce reason or a stack — none of which a
+    // browser has any business seeing. So the boolean crosses the wire and the detail stays
+    // in the server log.
     return NextResponse.json(
-      { success: true, message: 'Thank you. Your e-book is ready to download.' },
+      {
+        success: true,
+        emailDelivered: deliveryResult.success === true,
+        message: 'Thank you. Your e-book is ready to download.',
+      },
       { status: 200 }
     )
   } catch (error) {

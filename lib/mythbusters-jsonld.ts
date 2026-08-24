@@ -26,16 +26,17 @@ import { pairPath } from './growth-routes'
  * as Q&A to win a rich result is the kind of mismatched markup that earns a manual action.
  * The English page has no FAQ section at all, so it emits none.
  *
- * ── inLanguage on the e-book is 'en' on BOTH halves ─────────────────────────────
- * The page is bilingual; the PDF is not. A Serbian e-book was announced but NOT delivered —
- * the file supplied alongside that message is byte-identical to the English one already in
- * the repository. Both halves therefore serve, and describe, an English asset.
+ * ── inLanguage on the e-book is 'en' on BOTH halves, by design ──────────────────
+ * The page is bilingual; the ASSET is not. There is ONE canonical English PDF and both
+ * landing pages link to it — an owner decision, not a gap waiting to be filled. No Serbian
+ * PDF is missing or expected.
  *
- * When a real Serbian PDF arrives this becomes locale-dependent. Until then, marking the
- * Serbian download as `sr` would advertise a document that does not exist.
+ * So both halves describe an English document, because that is the document they serve.
+ * Marking the Serbian one `sr` would advertise a translation that does not exist and is not
+ * planned.
  *
  * The page's own `inLanguage` still follows the locale, so the Serbian document is correctly
- * described as Serbian while the file it offers is described as English.
+ * described as Serbian while the file it offers is correctly described as English.
  *
  * Like the homepage's, this is injected client-side via next/script and so does not appear
  * in the server-rendered HTML — the separately logged SSR issue, carried across rather than

@@ -46,6 +46,15 @@ import type { Locale } from "@/lib/i18n";
  * ── The gate is a marketing gate, not a security boundary ───────────────────────
  * The PDF sits in public/ and is publicly addressable. That is the approved model: no
  * signed URLs, no auth, no expiring tokens.
+ *
+ * ── ONE English PDF, both locales ───────────────────────────────────────────────
+ * EBOOK_HREF is the same file on both landing pages, by design: the page is bilingual, the
+ * asset is not. The Serbian page says so above the fields.
+ *
+ * ── The success panel only claims what actually happened ────────────────────────
+ * /api/ebook reports `emailDelivered`, and the "a copy is on its way" block renders only
+ * when it is true. A failed convenience copy does not turn a successful submission into an
+ * error state — the visitor still gets the confirmation and the download.
  */
 
 /** The public asset. Same file the success panel links to. */
@@ -106,6 +115,16 @@ export function EbookForm({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  /**
+   * Whether the convenience copy actually reached the visitor's inbox.
+   *
+   * Reported by /api/ebook as a plain boolean. The success panel shows the "a copy is on its
+   * way" copy only when this is true — claiming it otherwise is a promise the visitor can
+   * check and find false.
+   *
+   * Defaults to FALSE, so a malformed or older response understates rather than overstates.
+   */
+  const [emailDelivered, setEmailDelivered] = useState(false);
   const downloadRef = React.useRef<HTMLAnchorElement | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,6 +174,7 @@ export function EbookForm({
         return;
       }
 
+      setEmailDelivered(result.emailDelivered === true);
       setIsDone(true);
 
       if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
@@ -182,6 +202,7 @@ export function EbookForm({
     return (
       <div
         data-testid={`ebook-success-${placement}`}
+        data-email-delivered={emailDelivered ? "true" : "false"}
         className={`rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 ${className ?? ""}`}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-[#0a6ed1]">{s.eyebrow}</p>
@@ -199,9 +220,19 @@ export function EbookForm({
         </a>
         <p className="mt-2 text-xs text-slate-500">{s.downloadNote}</p>
 
+        {/* Only claimed when it actually happened. When the send failed the submission is
+            still a success — the lead is captured and the download is right above — so this
+            is a neutral restatement of where the file is, not an error. A red state here
+            would misrepresent what went wrong and to whom it matters. */}
         <div className="mt-6 rounded-xl bg-slate-50 p-4">
-          <p className="text-sm font-semibold text-slate-900">{s.emailHeading}</p>
-          <p className="mt-1 text-sm text-slate-600">{s.emailBody}</p>
+          {emailDelivered ? (
+            <>
+              <p className="text-sm font-semibold text-slate-900">{s.emailHeading}</p>
+              <p className="mt-1 text-sm text-slate-600">{s.emailBody}</p>
+            </>
+          ) : (
+            <p className="text-sm text-slate-600">{s.emailFallback}</p>
+          )}
         </div>
 
         <div className="mt-6 border-t border-slate-200 pt-6">
