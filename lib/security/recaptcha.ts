@@ -19,7 +19,12 @@
  *   score            the actual bot signal, compared against a configurable floor
  *   hostname         the token was issued on a page we serve, where Google tells us
  *
- * ── FAIL CLOSED in production ───────────────────────────────────────────────────
+ * ── TEMPORARILY DISABLED ────────────────────────────────────────────────────────
+ * `RECAPTCHA_ENFORCEMENT_ENABLED` in ./enforcement.ts is currently `false`, so
+ * `verifyRecaptcha` returns a skipped pass before doing anything else. Everything below still
+ * describes how it behaves once that flips back to `true`; none of it is dead code.
+ *
+ * ── FAIL CLOSED in production (when enforcement is ON) ───────────────────────────
  * If the secret is missing, a production deployment REJECTS public submissions. The
  * alternative — quietly accepting everything because an env var was forgotten — is how a
  * site ends up with no protection at all while its code says otherwise.
@@ -27,6 +32,8 @@
  * Development and test are allowed through with a loud warning, so a contributor without
  * keys can still run the forms locally.
  */
+
+import { RECAPTCHA_ENFORCEMENT_ENABLED } from './enforcement'
 
 /** Google's verification endpoint. */
 const VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
@@ -111,6 +118,17 @@ export async function verifyRecaptcha({
   ip?: string | null
   expectedHostnames?: readonly string[]
 }): Promise<RecaptchaResult> {
+  // TEMPORARY: reCAPTCHA enforcement disabled by owner until post-vacation security setup.
+  // Re-enable before final security sign-off.
+  //
+  // Checked FIRST, before the secret is even read, so a deployment with no keys behaves
+  // identically to one with keys: no Google call, no token requirement, no rejection. This is
+  // the single server-side place that decision is made - the guard and the three routes below
+  // it are unchanged and still run every other control.
+  if (!RECAPTCHA_ENFORCEMENT_ENABLED) {
+    return { ok: true, score: null, skipped: true }
+  }
+
   const secret = process.env.RECAPTCHA_SECRET_KEY
 
   if (!secret) {

@@ -1,5 +1,30 @@
 # Forms security
 
+> ## ⚠ reCAPTCHA enforcement is TEMPORARILY DISABLED
+>
+> `RECAPTCHA_ENFORCEMENT_ENABLED` in `lib/security/enforcement.ts` is `false`, on the owner's
+> decision, for roughly ten days while they are on vacation.
+>
+> **What that means right now**
+>
+> * no Google script is loaded, no token is minted, no verification request is made
+> * `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` and `RECAPTCHA_SECRET_KEY` are **not required** on
+>   localhost, Preview or Production
+> * forms submit normally on a deployment with no captcha configuration at all
+> * the implementation is fully intact and re-enables with one edit
+>
+> **What still protects the endpoints:** honeypot, same-origin, Zod validation, field-length
+> ceilings, HTML escaping, fixed recipient lists, and the upload MIME / extension / signature
+> checks. All unchanged.
+>
+> **What does not:** reCAPTCHA (this switch) and durable rate limiting (BLOCKED ON INFRA,
+> unrelated). Treat the current posture as *reduced*, not complete.
+>
+> The Privacy Policy's reCAPTCHA disclosure has been withdrawn for the same period, because
+> it would otherwise describe processing that is not happening. The wording is preserved in
+> `RECAPTCHA_PRIVACY_DISCLOSURE` and must be restored in the same edit that re-enables
+> enforcement. See the post-vacation checklist at the end of this document.
+
 What protects the public submission endpoints, what does not yet, and exactly what has to be
 configured before a Preview is usable for form QA.
 
@@ -7,14 +32,20 @@ configured before a Preview is usable for form QA.
 
 | Variable | Where | Required | Purpose |
 |---|---|---|---|
-| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Client | Yes | Mints the reCAPTCHA v3 token. Public by design. |
-| `RECAPTCHA_SECRET_KEY` | **Server only** | Yes | Verifies the token with Google. |
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Client | **Not while disabled** | Mints the reCAPTCHA v3 token. Public by design. |
+| `RECAPTCHA_SECRET_KEY` | **Server only** | **Not while disabled** | Verifies the token with Google. |
 | `RECAPTCHA_MIN_SCORE` | Server only | No | Score floor, `0`–`1`. Defaults to `0.5`. |
+
+While `RECAPTCHA_ENFORCEMENT_ENABLED` is `false`, none of the three is read and none is
+required. The "Yes" in that column returns when enforcement does.
 
 `RECAPTCHA_SECRET_KEY` must never carry the `NEXT_PUBLIC_` prefix — that prefix is what
 inlines a value into the client bundle. It is never logged and never returned by an API.
 
-### Fail-closed behaviour
+### Fail-closed behaviour (suspended while enforcement is off)
+
+The rest of this section describes behaviour that resumes when the switch is `true`. Right now
+`verifyRecaptcha()` returns a skipped pass before reading any of it.
 
 With `NODE_ENV=production` — which is both Vercel Production **and** Vercel Preview — a
 missing `RECAPTCHA_SECRET_KEY` causes every public submission to be **rejected**. A
@@ -23,7 +54,8 @@ deployment that forgot the variable refuses forms rather than silently accepting
 In development and test, a missing secret **skips** the captcha with a warning, so the forms
 work locally without keys.
 
-**A Preview must therefore have both keys set before form QA**, or every form will fail.
+**A Preview must therefore have both keys set before form QA**, or every form will fail —
+*once enforcement is back on*. While it is off, a Preview needs no captcha keys and forms work.
 
 ### Getting the keys
 
@@ -35,7 +67,7 @@ expected to exercise them. `localhost` is included automatically for local devel
 
 | Layer | Status |
 |---|---|
-| reCAPTCHA v3, verified server-side | Active once keys are set |
+| reCAPTCHA v3, verified server-side | **TEMPORARILY DISABLED** — see the banner |
 | Honeypot | Active |
 | Same-origin | Active |
 | Input length ceilings | Active |
@@ -136,7 +168,9 @@ take the forms down, and the captcha and origin checks are still in force.
 
 ## Privacy consequence to record
 
-Submitting any public form now contacts `google.com` to mint and verify a reCAPTCHA token.
+Submitting a public form contacts `google.com` to mint and verify a reCAPTCHA token — **but
+not while enforcement is disabled**, during which no request reaches Google and the Privacy
+Policy disclosure is withdrawn to match.
 That is a functional security dependency, not analytics, and it is deliberately **not** behind
 the cookie-consent gate: putting it there would mean "decline cookies" also means "the form
 stops working".
@@ -179,3 +213,24 @@ again.
   **Manual action, Vercel Production scope: unset `NEXT_PUBLIC_DNB_VI_DEBUG`** so the route
   returns 404 there. Deliberately not solved in code: gating a debug endpoint on a hardcoded
   environment check would remove the operator's ability to turn it on when they need it.
+
+## POST-VACATION SECURITY TODO
+
+Not done tonight, deliberately. All of it belongs to one pass:
+
+1. Re-enable the shared switch: `RECAPTCHA_ENFORCEMENT_ENABLED = true` in
+   `lib/security/enforcement.ts`.
+2. Create / configure the real Google reCAPTCHA v3 property, registered for the production
+   domain and `vercel.app`.
+3. Set the keys on Preview **and** Production:
+   * `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`
+   * `RECAPTCHA_SECRET_KEY`
+4. Restore the Privacy Policy disclosure from `RECAPTCHA_PRIVACY_DISCLOSURE`
+   (`content/legal/politika-privatnosti.ts`) into section 2 of both documents, in the same
+   edit as step 1. `test/security/hardening.test.ts` fails if one is done without the other.
+5. Enable durable serverless rate limiting (Redis / Vercel KV / Upstash) and lift
+   `BLOCKED ON INFRA`.
+6. Remove the temporary captcha-disabled state: the banner above, the `vi.mock` pins in
+   `test/security/recaptcha.test.ts` and `guard.test.ts`, and
+   `test/security/recaptcha-disabled.test.ts`.
+7. Re-run the full forms and security QA before final security sign-off.

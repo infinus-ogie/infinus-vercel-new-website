@@ -11,7 +11,8 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { isHttpsWebUrl } from '@/lib/security/url'
-import { PRIVACY_POLICY_DOCUMENTS, type LegalBlock } from '@/content/legal/politika-privatnosti'
+import { RECAPTCHA_ENFORCEMENT_ENABLED } from '@/lib/security/enforcement'
+import { PRIVACY_POLICY_DOCUMENTS, RECAPTCHA_PRIVACY_DISCLOSURE, type LegalBlock } from '@/content/legal/politika-privatnosti'
 
 // ──────────────────────────────────────────────────────────────────────────────
 // 1. LinkedIn: HTTPS web URLs only
@@ -212,43 +213,57 @@ function documentText(blocks: LegalBlock[]): string {
   return parts.join('\n')
 }
 
-describe('the Privacy Policy reCAPTCHA disclosure', () => {
-  const bySection = (lang: string) => {
+/**
+ * The Privacy Policy must NOT claim reCAPTCHA protection while enforcement is off.
+ *
+ * These tests used to assert the opposite: that both documents disclosed Google reCAPTCHA
+ * processing. With `RECAPTCHA_ENFORCEMENT_ENABLED` set to `false` no script loads, no token is
+ * minted and no request reaches Google - so that sentence described processing that does not
+ * happen, which in a privacy policy is a materially false statement rather than a stale one.
+ *
+ * The wording itself is preserved in RECAPTCHA_PRIVACY_DISCLOSURE for restoration in the same
+ * edit that turns enforcement back on, and this suite is what will fail if someone restores
+ * one without the other.
+ */
+describe('the Privacy Policy and the reCAPTCHA disclosure', () => {
+  const textFor = (lang: string) => {
     const doc = PRIVACY_POLICY_DOCUMENTS.find((d) => d.lang === lang)
     expect(doc, `no privacy document for ${lang}`).toBeDefined()
     return documentText(doc!.blocks)
   }
 
-  test('the Serbian document discloses it, in Serbian', () => {
-    const text = bySection('sr-Latn')
-    expect(text).toContain('Google reCAPTCHA')
-    expect(text).toContain('sprečavanja spama')
-    expect(text).toContain('automatizovanih zloupotreba')
-    // Not the English sentence in the Serbian document.
-    expect(text).not.toContain('Public forms are protected')
-  })
+  test('neither document claims reCAPTCHA protection while it is disabled', () => {
+    expect(RECAPTCHA_ENFORCEMENT_ENABLED, 'this suite assumes enforcement is off').toBe(false)
 
-  test('the English document discloses it, in English', () => {
-    const text = bySection('en')
-    expect(text).toContain('Google reCAPTCHA')
-    expect(text).toContain('prevent spam and automated abuse')
-    expect(text).not.toContain('Javne forme su zaštićene')
-  })
-
-  test('both documents carry exactly ONE reCAPTCHA paragraph', () => {
     for (const doc of PRIVACY_POLICY_DOCUMENTS) {
-      const hits = documentText(doc.blocks).split('reCAPTCHA').length - 1
-      expect(hits, `${doc.lang} should mention reCAPTCHA once`).toBe(1)
+      expect(documentText(doc.blocks), `${doc.lang} still claims reCAPTCHA`).not.toContain(
+        'reCAPTCHA'
+      )
     }
   })
 
-  test('no consent language was smuggled in with it', () => {
-    // The disclosure is about a functional security dependency. It must not imply the
-    // visitor consented to it, or that it is analytics.
-    for (const doc of PRIVACY_POLICY_DOCUMENTS) {
-      const text = documentText(doc.blocks)
-      const sentence = text.split('\n').find((l) => l.includes('reCAPTCHA')) ?? ''
+  test('the withdrawn wording is preserved verbatim, in both languages', () => {
+    expect(RECAPTCHA_PRIVACY_DISCLOSURE.sr).toContain('Google reCAPTCHA')
+    expect(RECAPTCHA_PRIVACY_DISCLOSURE.sr).toContain('sprečavanja spama')
+    expect(RECAPTCHA_PRIVACY_DISCLOSURE.en).toContain('Google reCAPTCHA')
+    expect(RECAPTCHA_PRIVACY_DISCLOSURE.en).toContain('prevent spam and automated abuse')
+  })
+
+  test('the preserved wording still smuggles in no consent language', () => {
+    // It is a functional security dependency, not analytics, and must not imply the visitor
+    // consented to it. Asserted on the preserved copy so the check survives the withdrawal.
+    for (const sentence of Object.values(RECAPTCHA_PRIVACY_DISCLOSURE)) {
       expect(sentence).not.toMatch(/pristanak|consent|analitik|analytic|marketing/i)
     }
+  })
+
+  test('nothing else in the documents changed with the withdrawal', () => {
+    // The two paragraphs were the only non-source text in the file. With them out, the
+    // documents are the approved .docx content again.
+    for (const doc of PRIVACY_POLICY_DOCUMENTS) {
+      const text = documentText(doc.blocks)
+      expect(text.length, `${doc.lang} looks truncated`).toBeGreaterThan(2000)
+    }
+    expect(PRIVACY_POLICY_DOCUMENTS).toHaveLength(2)
   })
 })

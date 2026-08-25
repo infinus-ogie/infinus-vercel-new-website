@@ -34,8 +34,15 @@
  * .docx, so the SHA-256 above no longer covers the file as it now stands. Nothing else was
  * reworded, reordered or removed, and no consent language was added.
  *
- * FLAGGED FOR DEJAN'S REVIEW. Until signed off, treat these two paragraphs — and only
- * these two — as draft legal copy.
+ * FLAGGED FOR DEJAN'S REVIEW. Until signed off, treat these two paragraphs - and only
+ * these two - as draft legal copy.
+ *
+ * ── WITHDRAWN, for now ─────────────────────────────────────────────────────────
+ * reCAPTCHA enforcement is temporarily disabled (lib/security/enforcement.ts), so those two
+ * paragraphs would describe processing that is not happening. They are NOT rendered while
+ * that is the case, and are preserved verbatim in RECAPTCHA_PRIVACY_DISCLOSURE below. The
+ * documents are otherwise byte-for-byte the approved source text again, which is what the
+ * SHA-256 above covers.
  */
 
 export type LegalInline =
@@ -61,6 +68,28 @@ export interface LegalDocument {
 }
 
 /** The approved source document's own last-updated date. */
+/**
+ * WITHDRAWN WHILE reCAPTCHA IS OFF - the exact copy, kept for restoration.
+ *
+ * These two paragraphs disclosed that public forms are protected by Google reCAPTCHA. That
+ * became FALSE the moment `RECAPTCHA_ENFORCEMENT_ENABLED` (lib/security/enforcement.ts) was
+ * set to `false`: no Google script is loaded, no token is minted and no verification request
+ * is made, so no form data reaches Google for that purpose at all.
+ *
+ * A privacy policy that describes processing which is not happening is a materially false
+ * statement about data handling, so they are not rendered while enforcement is off. They are
+ * not deleted either - the wording was drafted on the owner's written instruction and is still
+ * pending Dejan's review.
+ *
+ * TO RESTORE: put each entry back as a `p` block at the end of section 2 of its document
+ * ("Koje podatke obrađujemo i zašto" / "Data we process and why"), in the same edit that sets
+ * `RECAPTCHA_ENFORCEMENT_ENABLED` back to `true`.
+ */
+export const RECAPTCHA_PRIVACY_DISCLOSURE = {
+  sr: 'Javne forme su zaštićene Google reCAPTCHA mehanizmom radi sprečavanja spama i automatizovanih zloupotreba. Prilikom slanja forme, određeni podaci mogu biti obrađeni od strane Google-a u ovu bezbednosnu svrhu, u skladu sa važećim Google pravilima privatnosti.',
+  en: 'Public forms are protected by Google reCAPTCHA to prevent spam and automated abuse. When a form is submitted, data may be processed by Google for this security purpose in accordance with Google’s applicable privacy terms.',
+} as const
+
 export const PRIVACY_POLICY_UPDATED = '2026-08-10' as const
 
 export const PRIVACY_POLICY_DOCUMENTS: readonly LegalDocument[] = [
@@ -265,15 +294,6 @@ export const PRIVACY_POLICY_DOCUMENTS: readonly LegalDocument[] = [
           {
             "t": "text",
             "v": "Polja označena zvezdicom neophodna su da bismo odgovorili na upit ili razmotrili prijavu. Ostali podaci su dobrovoljni."
-          }
-        ]
-      },
-      {
-        "t": "p",
-        "c": [
-          {
-            "t": "text",
-            "v": "Javne forme su zaštićene Google reCAPTCHA mehanizmom radi sprečavanja spama i automatizovanih zloupotreba. Prilikom slanja forme, određeni podaci mogu biti obrađeni od strane Google-a u ovu bezbednosnu svrhu, u skladu sa važećim Google pravilima privatnosti."
           }
         ]
       },
@@ -691,15 +711,6 @@ export const PRIVACY_POLICY_DOCUMENTS: readonly LegalDocument[] = [
           {
             "t": "text",
             "v": "Fields marked with an asterisk are required for us to respond to your enquiry or consider your application. Other information is optional."
-          }
-        ]
-      },
-      {
-        "t": "p",
-        "c": [
-          {
-            "t": "text",
-            "v": "Public forms are protected by Google reCAPTCHA to prevent spam and automated abuse. When a form is submitted, data may be processed by Google for this security purpose in accordance with Google’s applicable privacy terms."
           }
         ]
       },

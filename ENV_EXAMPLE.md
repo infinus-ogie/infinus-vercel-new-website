@@ -1,3 +1,8 @@
+> **reCAPTCHA is TEMPORARILY DISABLED.** `RECAPTCHA_ENFORCEMENT_ENABLED` in
+> `lib/security/enforcement.ts` is `false` until the owner's post-vacation security pass, so
+> the two reCAPTCHA variables below are **not required** on localhost, Preview or Production.
+> Forms submit without them. See docs/FORMS-SECURITY.md.
+
 # Environment Variables Template
 
 Kopiraj ove linije u tvoj `.env.local` fajl:

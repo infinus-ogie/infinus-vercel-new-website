@@ -16,6 +16,14 @@ import {
 } from '@/lib/security/guard'
 import { RECAPTCHA_ACTIONS } from '@/lib/security/recaptcha'
 
+/*
+ * The reCAPTCHA implementation is TEMPORARILY not enforced (see lib/security/enforcement.ts),
+ * but it is not removed, and these tests are what will prove it still works when it is turned
+ * back on. So they pin the switch to ON and go on exercising the verification logic exactly as
+ * before. The DISABLED behaviour is covered separately in test/security/recaptcha-disabled.test.ts.
+ */
+vi.mock('@/lib/security/enforcement', () => ({ RECAPTCHA_ENFORCEMENT_ENABLED: true }))
+
 const ORIGINAL_ENV = { ...process.env }
 
 function makeRequest(

@@ -111,7 +111,28 @@ describe('a successful submission downloads the PDF', () => {
     expect(within(panel).getByText(sr.success.heading)).toBeInTheDocument()
     expect(within(panel).getByText(sr.success.nextHeading)).toBeInTheDocument()
     expect(within(panel).getByRole('link', { name: sr.success.expertCta })).toBeInTheDocument()
-    expect(within(panel).getByRole('link', { name: sr.success.contactCta })).toBeInTheDocument()
+  })
+
+  /**
+   * The panel ends after the SAP-specialist step.
+   *
+   * A second block - "Imate pitanja?" / "Naš tim je tu da vam pomogne" / "Kontaktirajte nas" -
+   * used to follow it, pointing at the same contact page with the same intent as the CTA
+   * directly above. Two next-step sections, one next step. The copy stays in the dictionary.
+   */
+  test('the redundant second contact block is gone', async () => {
+    await submitSerbian()
+    const panel = screen.getByTestId('ebook-success-hero')
+
+    expect(within(panel).queryByText(sr.success.questionsHeading)).toBeNull()
+    expect(within(panel).queryByText(sr.success.questionsBody)).toBeNull()
+    expect(within(panel).queryByRole('link', { name: sr.success.contactCta })).toBeNull()
+
+    // and the one that remains still points where it did
+    expect(within(panel).getByRole('link', { name: sr.success.expertCta })).toHaveAttribute(
+      'href',
+      sr.success.contactHref
+    )
   })
 
   test('the manual button remains, as a fallback for a blocked download', async () => {

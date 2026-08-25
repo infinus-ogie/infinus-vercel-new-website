@@ -342,13 +342,12 @@ export function EbookForm({
           </Button>
         </div>
 
-        <div className="mt-6 border-t border-slate-200 pt-6">
-          <h3 className="text-base font-semibold text-slate-900">{s.questionsHeading}</h3>
-          <p className="mt-1 text-sm text-slate-600">{s.questionsBody}</p>
-          <Button asChild variant="outline" className="mt-4">
-            <a href={s.contactHref}>{s.contactCta}</a>
-          </Button>
-        </div>
+        {/* The panel ends after the SAP-specialist step.
+
+            A second block - "Imate pitanja?" / "Naš tim je tu da vam pomogne" / "Kontaktirajte
+            nas" - used to follow it, pointing at the same contact page with the same intent as
+            the CTA directly above. Two next-step sections, one next step. The copy is kept in
+            the dictionary so it can be reused if a genuinely different destination appears. */}
       </div>
     );
   }

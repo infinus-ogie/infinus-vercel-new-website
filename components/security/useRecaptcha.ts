@@ -2,6 +2,8 @@
 
 import { useCallback, useRef } from "react";
 
+import { RECAPTCHA_ENFORCEMENT_ENABLED } from "@/lib/security/enforcement";
+
 /**
  * Client-side reCAPTCHA v3, loaded ON DEMAND.
  *
@@ -26,6 +28,11 @@ import { useCallback, useRef } from "react";
  *
  * The privacy consequence is real and belongs in the Privacy Policy: submitting a form
  * contacts Google. Flagged in the security report rather than decided here.
+ *
+ * ── TEMPORARILY DISABLED ────────────────────────────────────────────────────────
+ * `RECAPTCHA_ENFORCEMENT_ENABLED` is currently `false`, so `execute` returns null immediately
+ * and nothing below runs: no script tag, no `grecaptcha.execute`, no network call to Google.
+ * The code is preserved verbatim for reactivation.
  *
  * ── Failure is the server's problem, not the visitor's ──────────────────────────
  * If the script cannot load or execute, this returns null and the form submits without a
@@ -86,6 +93,14 @@ export function useRecaptcha() {
 
   const execute = useCallback(
     async (action: string): Promise<string | null> => {
+      // TEMPORARY: reCAPTCHA enforcement disabled by owner until post-vacation security setup.
+      // Re-enable before final security sign-off.
+      //
+      // Returning before `loadScript` is the point: with enforcement off no google.com script
+      // is injected, `grecaptcha.execute` is never called, and a submission cannot stall
+      // waiting for a token that the server no longer wants.
+      if (!RECAPTCHA_ENFORCEMENT_ENABLED) return null;
+
       if (!siteKey) return null;
 
       try {
