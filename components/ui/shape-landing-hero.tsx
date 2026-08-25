@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { HeroPartnerBadge } from "./HeroPartnerBadge";
-import { SapGoldPartnerBadge } from "@/components/ui/SapGoldPartnerBadge";
 import { TrustStrip } from "./TrustStrip";
 import { getDictionary } from "@/content/dictionary";
 import type { HomeDictionary } from "@/content/dictionary";
@@ -170,31 +169,10 @@ function HeroGeometric({
                         animate="visible"
                         className="mb-4 md:mb-12 mt-2 md:mt-4 lg:mt-6"
                     >
+                        {/* Infinus and the SAP credential as ONE lockup - see
+                            HeroPartnerBadge. They were two stacked objects here, which read as
+                            unrelated rather than as a brand and its certification. */}
                         <HeroPartnerBadge logoAlt={hero.logoAlt} />
-
-                        {/*
-                          The SAP Gold Partner credential, as part of the BRAND stack rather
-                          than the proof row.
-
-                          It used to sit inside the first trust pill, in the same system as
-                          "30+ consultants" and "30+ clients" - which flattened the difference
-                          between a certification and a count. Here it reads the way it should:
-                          Infinus, then who Infinus is certified by, then the headline.
-
-                          Deliberately no pill, border or card, and no caption: the artwork
-                          already sets the words, so `alt` carries the credential and nothing
-                          repeats it visually. Sized well below the Infinus mark above it and
-                          well below the headline under it, so it stays secondary to both.
-                        */}
-                        <div className="mt-2.5 flex justify-center sm:mt-4">
-                            <SapGoldPartnerBadge
-                                alt="SAP Gold Partner"
-                                /* Stepped down at the smallest widths for the same reason the
-                                   Infinus mark above it is: every pixel here pushes the proof
-                                   row further past a 568px first screen. */
-                                className="h-auto w-[62px] sm:w-[78px] md:w-[88px]"
-                            />
-                        </div>
                     </motion.div>
 
                     <motion.div
