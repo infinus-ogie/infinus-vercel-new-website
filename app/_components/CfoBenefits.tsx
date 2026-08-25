@@ -19,7 +19,7 @@ const cfoBenefits = [
   {
     number: 1,
     title: "Jedinstvena „single source of truth“",
-    body: "Integrisani finansije, prodaja, nabavka, logistika i operacije — bez excel ostrva, duplih unosa i verzija istog podatka.",
+    body: "Integrisani finansije, prodaja, nabavka, logistika i operacije, bez excel ostrva, duplih unosa i verzija istog podatka.",
     icon: Database
   },
   {
@@ -49,7 +49,7 @@ const cfoBenefits = [
   {
     number: 6,
     title: `Rolling forecast i „what-if" scenariji`,
-    body: "Plan povezan sa operativnim podacima — agilne korekcije budžeta i investicija.",
+    body: "Plan povezan sa operativnim podacima: agilne korekcije budžeta i investicija.",
     icon: AreaChart
   },
   {

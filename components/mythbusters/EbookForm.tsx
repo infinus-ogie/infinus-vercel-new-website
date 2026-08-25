@@ -54,17 +54,16 @@ import { RECAPTCHA_FIELD } from "@/lib/security/fields";
  * EBOOK_HREF is the same file on both landing pages, by design: the page is bilingual, the
  * asset is not. The Serbian page says so above the fields.
  *
- * ── The success panel only claims what actually happened ────────────────────────
- * /api/ebook reports `emailDelivered`, and the "a copy is on its way" block renders only
- * when it is true. A failed convenience copy does not turn a successful submission into an
- * error state — the visitor still gets the confirmation and the download.
+ * ── The panel promises nothing about email ──────────────────────────────────────
+ * It used to say a copy was on its way, gated on an `emailDelivered` flag from /api/ebook.
+ * The owner withdrew the delivery email entirely, so the flag, the strings and the block that
+ * rendered them are gone rather than left to describe something that no longer happens.
  *
- * ── Submitting is not downloading ───────────────────────────────────────────────
- * A valid submission captures the lead, sends the copy by email, and shows the success panel.
- * It does NOT start a download. The panel's button is the only thing that does, and the
- * `download_resource` event fires from that button — so the number means what it says. The
- * form used to auto-click the anchor the instant the panel mounted and then offer the same
- * button underneath it, which downloaded the file twice over.
+ * ── Submitting IS downloading ───────────────────────────────────────────────────
+ * A valid submission captures the lead, starts the PDF download, and shows the Thank You
+ * panel. The visitor is not asked to click anything to receive the file and is not waiting on
+ * an inbox. The panel's button is a fallback for a blocked or interrupted download, and for
+ * anyone who wants the file again — see the effect and its two guards below.
  */
 
 /**
@@ -180,7 +179,6 @@ export function EbookForm({
    *
    * Defaults to FALSE, so a malformed or older response understates rather than overstates.
    */
-  const [emailDelivered, setEmailDelivered] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -238,10 +236,9 @@ export function EbookForm({
         return;
       }
 
-      setEmailDelivered(result.emailDelivered === true);
       setIsDone(true);
-      // No analytics here. `download_resource` fires on the download button — see
-      // `trackDownload` below — because a submission is not a download.
+      // No analytics here. `download_resource` fires when the download actually starts —
+      // see the effect below — not when the form is submitted.
     } catch {
       setErrors({ general: copy.error });
     } finally {
@@ -250,29 +247,42 @@ export function EbookForm({
   };
 
   /**
-   * The e-book download event.
+   * Start the download, and count it once.
    *
-   * ── Why it lives on the button and not on submit ───────────────────────────────
-   * It used to fire the moment the submission succeeded, next to a `useEffect` that
-   * synthetically clicked the download anchor as soon as the success panel mounted. So the
-   * browser downloaded the PDF on its own AND then offered a download button for the same
-   * file — two routes to one download — and the analytics counted the submission, not the
-   * download.
+   * ── The flow the owner settled on ──────────────────────────────────────────────
+   * Submit -> the PDF starts downloading -> the Thank You panel appears. The visitor is not
+   * asked to click anything to get the file, and no email is sent. The button in the panel is
+   * a FALLBACK for the case a browser blocks or interrupts the automatic download, and for
+   * anyone who wants the file again.
    *
-   * The client's Serbian LP/Thank-You source is explicit: the e-book is ready, the user
-   * CLICKS, the download begins. The auto-click is gone and this fires from the anchor's
-   * onClick, so a `download_resource` event now means somebody actually took the file.
+   * Two guards, for two different mistakes:
+   *
+   *   `autoStarted`  stops the automatic download firing twice. React runs effects twice in
+   *                  development StrictMode, and a double `.click()` is a second file in the
+   *                  downloads folder — visible, and exactly what the previous version of
+   *                  this component was criticised for.
+   *
+   *   `counted`      stops the analytics double-counting. The automatic download and the
+   *                  fallback button are the same anchor, so the programmatic click runs the
+   *                  same handler a human click would. One successful submission is one
+   *                  `download_resource`, whether or not the visitor also uses the button.
    *
    * `typeof window.gtag === "function"` IS the consent gate, not a defensive check:
    * components/consent/AnalyticsGate.tsx only injects gtag once analytics consent is granted,
    * so without consent there is no function and nothing is sent. Kept verbatim rather than
    * reimplemented, so the gating cannot drift from the rest of the site.
    */
+  const downloadRef = React.useRef<HTMLAnchorElement | null>(null);
+  const autoStarted = React.useRef(false);
+  const counted = React.useRef(false);
+
   const trackDownload = () => {
+    if (counted.current) return;
     if (typeof window === "undefined") return;
     const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
     if (typeof gtag !== "function") return;
 
+    counted.current = true;
     gtag("event", "download_resource", {
       id: "sap_mythbusters_ebook",
       title: "10 Myths About SAP Cloud ERP",
@@ -280,22 +290,30 @@ export function EbookForm({
     });
   };
 
+  React.useEffect(() => {
+    if (!isDone || autoStarted.current) return;
+    autoStarted.current = true;
+    // The anchor is in the DOM by now: this effect runs after the success panel renders.
+    downloadRef.current?.click();
+  }, [isDone]);
+
   if (isDone) {
     const s = copy.success;
     return (
       <div
         data-testid={`ebook-success-${placement}`}
-        data-email-delivered={emailDelivered ? "true" : "false"}
         className={`${CARD_SURFACE} ${className ?? ""}`}
       >
         <p className="text-sm font-semibold uppercase tracking-wide text-[#0a6ed1]">{s.eyebrow}</p>
         <h2 className="mt-2 text-2xl font-semibold text-slate-900">{s.heading}</h2>
         <p className="mt-3 text-slate-600">{s.body}</p>
 
-        {/* The ONLY thing that starts a browser download. Still a plain anchor with `download`
-            — the tracking rides along with the navigation rather than replacing it, so the
-            download works identically whether or not analytics is loaded. */}
+        {/* Both the automatic download and the fallback. The effect above clicks this same
+            anchor, so there is one download path rather than two that can drift apart, and
+            the tracking rides along with the navigation instead of replacing it — the file
+            downloads identically whether or not analytics is loaded. */}
         <a
+          ref={downloadRef}
           href={EBOOK_HREF}
           download
           onClick={trackDownload}
@@ -305,21 +323,6 @@ export function EbookForm({
           {s.downloadLabel}
         </a>
         <p className="mt-2 text-xs text-slate-500">{s.downloadNote}</p>
-
-        {/* Only claimed when it actually happened. When the send failed the submission is
-            still a success — the lead is captured and the download is right above — so this
-            is a neutral restatement of where the file is, not an error. A red state here
-            would misrepresent what went wrong and to whom it matters. */}
-        <div className="mt-6 rounded-xl bg-slate-50 p-4">
-          {emailDelivered ? (
-            <>
-              <p className="text-sm font-semibold text-slate-900">{s.emailHeading}</p>
-              <p className="mt-1 text-sm text-slate-600">{s.emailBody}</p>
-            </>
-          ) : (
-            <p className="text-sm text-slate-600">{s.emailFallback}</p>
-          )}
-        </div>
 
         <div className="mt-6 border-t border-slate-200 pt-6">
           <h3 className="text-lg font-semibold text-slate-900">{s.nextHeading}</h3>

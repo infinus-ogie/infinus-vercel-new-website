@@ -1,5 +1,5 @@
 import Script from "next/script"
-import { CheckCircle2 } from "lucide-react"
+import { BookOpen, CheckCircle2 } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { EbookForm } from "@/components/mythbusters/EbookForm"
 import { EbookFaq } from "@/components/mythbusters/EbookFaq"
@@ -140,7 +140,10 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
           {layout.hero.paragraphs.map((paragraph) => (
             <p
               key={paragraph}
-              className="text-pretty text-lg leading-relaxed text-slate-600 md:text-xl md:leading-relaxed"
+              /* `text-lg`, the same body size as every other prose section on this page.
+                 It was `md:text-xl`, which made this block the largest body copy on the page
+                 and set it apart from the sections it introduces. */
+              className="text-pretty text-lg leading-relaxed text-slate-600"
             >
               {paragraph}
             </p>
@@ -150,7 +153,9 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
 
       {/* ── Da li je ovaj vodič za vas? ──────────────────────────────────────── */}
       <Section surface="surface-0" data-section="mythbusters-audience">
-        <div className="mx-auto max-w-4xl">
+        {/* `max-w-3xl`, the measure the English audience section and every other prose block
+            on both pages uses. It was `max-w-4xl` for no reason the content asked for. */}
+        <div className="mx-auto max-w-3xl">
           <h2 className="text-pretty text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl lg:text-5xl">
             {layout.audience.heading}
           </h2>
@@ -160,12 +165,11 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
 
           <p className="mt-10 font-semibold text-slate-900">{layout.audience.rolesIntro}</p>
           {/* A compact grid, not six cards: this supports the pitch, it is not an event. */}
-          <ul className="mt-5 grid gap-x-10 gap-y-3 sm:grid-cols-2">
+          <ul className="mt-5 grid gap-x-10 gap-y-4 sm:grid-cols-2">
             {layout.audience.roles.map((role) => (
-              <li
-                key={role}
-                className="flex items-start gap-3 border-t border-slate-100 pt-3 text-slate-700"
-              >
+              /* No per-item rule here: the English list of the same roles has none, and six
+                 hairlines in a two-column grid read as an unfinished table. */
+              <li key={role} className="flex items-start gap-3 text-slate-700">
                 <CheckCircle2
                   className="mt-1 h-4 w-4 shrink-0 text-brand-sap"
                   aria-hidden="true"
@@ -227,14 +231,18 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
           ))}
         </div>
 
-        {/* The bridge back to conversion. It was tiny centred grey text under the grid; it is
-            the sentence that turns four previews into a reason to download, so it gets to
-            look like one. */}
-        <div className="mx-auto mt-10 max-w-5xl">
-          <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 px-6 py-5 text-center text-lg font-medium text-slate-800">
-            {layout.preview.more}
-          </p>
-        </div>
+        {/*
+          The bridge back to conversion, as a sentence rather than a control.
+
+          It was a full-width dashed-border pill, which is the shape of a disabled button: it
+          invited a click and there is nothing to click. It is editorial copy, so it is set as
+          editorial copy - centred, medium weight, with the book mark the section already uses
+          for its accent.
+        */}
+        <p className="mx-auto mt-10 flex max-w-3xl items-center justify-center gap-2.5 text-center text-lg font-medium text-slate-700">
+          <BookOpen className="h-5 w-5 shrink-0 text-brand-sap" aria-hidden="true" />
+          <span>{layout.preview.more}</span>
+        </p>
       </Section>
 
       {/* ── Zašto Infinus? ───────────────────────────────────────────────────── */}
@@ -256,17 +264,32 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
             </div>
           </div>
 
-          {/* An authority moment rather than another bulleted list: the four approved reasons
-              as proof points on a rule, with the certification mark anchoring the first one.
-              No invented numbers, no six generic cards. */}
+          {/*
+            The four approved reasons as real proof items.
+
+            They were four pieces of text separated by nothing but a thin blue vertical line,
+            which read as an unfinished list rather than as the page's authority moment. Each
+            now sits on the same quiet tinted panel the rest of the site uses for supporting
+            tiles: a small marked icon, the statement at readable size, equal weight across
+            all four, no shadow and no heavy border.
+
+            Four across only at `lg`, 2x2 at `sm`, stacked below that - the Serbian statements
+            are long enough that four narrow columns would set them three lines deep.
+          */}
           <div className="mt-12 border-t border-slate-200 pt-10">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
               {layout.whyInfinus.reasonsHeading}
             </p>
-            <ul className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {layout.whyInfinus.reasons.map((reason) => (
-                <li key={reason} className="border-l-2 border-brand-sap/30 pl-4">
-                  <span className="text-[17px] font-semibold leading-snug text-slate-900">
+                <li
+                  key={reason}
+                  className="flex h-full flex-col gap-3 rounded-xl border border-slate-200/80 bg-slate-50/70 p-5"
+                >
+                  <span className="inline-grid size-9 shrink-0 place-items-center rounded-lg border border-slate-200 bg-white">
+                    <CheckCircle2 className="h-[18px] w-[18px] text-brand-sap" aria-hidden="true" />
+                  </span>
+                  <span className="text-[15px] font-semibold leading-snug text-slate-900">
                     {reason}
                   </span>
                 </li>

@@ -230,7 +230,7 @@ export const growth: GrowthDictionary = {
     metadata: {
       title: 'SAP for CFOs | Infinus',
       description:
-        'SAP Cloud ERP + Business AI — 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup.',
+        'SAP Cloud ERP + Business AI: 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup.',
       ogImageAlt: 'SAP for CFOs',
     },
     hero: {
@@ -305,7 +305,7 @@ export const growth: GrowthDictionary = {
     metadata: {
       title: 'SAP for CEOs | Infinus',
       description:
-        'SAP Cloud ERP + Business AI iz CEO perspektive — kako lider brzorastuće kompanije dobija jedinstven izvor istine, brže odluke i spremnost za rast.',
+        'SAP Cloud ERP + Business AI iz CEO perspektive: kako lider brzorastuće kompanije dobija jedinstven izvor istine, brže odluke i spremnost za rast.',
       ogImageAlt: 'SAP for CEOs',
     },
     hero: {

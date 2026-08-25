@@ -1195,23 +1195,14 @@ export interface MythBustersDictionary {
       readonly body: string
       readonly downloadLabel: string
       readonly downloadNote: string
-      /**
-       * Shown ONLY when the delivery email actually went out.
+      /*
+       * There are deliberately no email-delivery strings here.
        *
-       * The endpoint reports `emailDelivered`, and the success panel keys off it. Telling a
-       * visitor a copy is in their inbox when the send failed is a claim they can check and
-       * find false, so these two strings are gated rather than always rendered.
+       * The campaign no longer sends the visitor a copy — the PDF downloads directly on a
+       * successful submission — so `emailHeading`, `emailBody` and `emailFallback` were
+       * removed rather than left unused. A promise the system cannot keep is worse in a
+       * dictionary than in a component: it looks approved.
        */
-      readonly emailHeading: string
-      readonly emailBody: string
-      /**
-       * The replacement when delivery FAILED.
-       *
-       * Deliberately not an error: the submission succeeded, the lead was captured and the
-       * download is right there. Only the secondary convenience copy did not arrive, and a
-       * scary red state over that would misrepresent what happened.
-       */
-      readonly emailFallback: string
       readonly nextHeading: string
       readonly nextBody: string
       readonly expertCta: string

@@ -45,7 +45,13 @@ export interface MythBustersPageProps {
   jsonLd: string
 }
 
-/** Where the mobile hero CTA jumps to. Also the focus target — see the wrapper below. */
+/**
+ * A stable id for the hero form.
+ *
+ * It used to be the target of a mobile "Download the Free E-Book" button, which has been
+ * removed as a duplicate CTA. The id stays because it is a legitimate anchor for anything
+ * linking to the form from outside the page, and because the wrapper below still uses it.
+ */
 const HERO_FORM_ID = "ebook-hero"
 
 export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProps) {
@@ -83,20 +89,14 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
               <ValuePoints items={layout.hero.bullets} />
             </div>
 
-            {/* MOBILE ONLY. On desktop the form sits in the column beside this copy, so a
-                button promising the same thing would be a second, weaker route to something
-                already on screen. Below `lg` the form is under the cover, so the jump is
-                genuinely useful — it targets the HERO form, not the closing one. */}
-            <div className="mt-9 lg:hidden">
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/35 bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00144a]"
-              >
-                <a href={`#${HERO_FORM_ID}`}>{layout.hero.cta}</a>
-              </Button>
-            </div>
+            {/*
+              There is deliberately no download CTA here.
+
+              A "Download the Free E-Book" button used to sit below these points on mobile,
+              jumping to the form that is already the next thing on the page - so before
+              submitting anything the visitor saw two download CTAs, one of which only
+              scrolled. The form's own submit button is the conversion action, at every width.
+            */}
           </div>
         }
         conversion={
@@ -108,11 +108,11 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
             cover={<EbookCover priority />}
             form={
               /*
-                `tabIndex={-1}` with `scroll-mt-24` is what makes the mobile CTA correct rather
+                `tabIndex={-1}` with `scroll-mt-24` makes any jump to this form correct rather
                 than merely functional: a bare `#id` jump moves the viewport but leaves focus
                 on the link, so a keyboard or screen-reader user lands nowhere. Focusing the
-                wrapper puts them at the top of the form they asked for, and the scroll margin
-                keeps the heading clear of the fixed navbar.
+                wrapper puts them at the top of the form, and the scroll margin keeps its
+                heading clear of the fixed navbar.
               */
               <div id={HERO_FORM_ID} tabIndex={-1} className="scroll-mt-24 focus:outline-none">
                 {/* Compact: two fields per row instead of four stacked. The card was taller

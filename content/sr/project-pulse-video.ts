@@ -28,12 +28,12 @@ export const projectPulseVideo: ProjectPulseVideoDictionary = {
   metadata: {
     title: 'ProjectPulse video | Infinus',
     description:
-      'Pogledajte pregled rešenja ProjectPulse — SAP Qualified Partner-Packaged Solution kompanije Infinus za kompanije iz oblasti profesionalnih usluga.',
+      'Pogledajte pregled rešenja ProjectPulse, SAP Qualified Partner-Packaged Solution kompanije Infinus za kompanije iz oblasti profesionalnih usluga.',
   },
   closeAriaLabel: 'Zatvori video',
   closeLabel: 'Zatvori',
   videoFallback: 'Vaš pregledač ne podržava prikaz videa.',
-  title: 'ProjectPulse — video pregled',
+  title: 'ProjectPulse - video pregled',
   caption:
     'Kratak pregled rešenja ProjectPulse, SAP Qualified Partner-Packaged Solution kompanije Infinus',
   // The English recording, shared deliberately — see the KNOWN CONTENT GAP note above.

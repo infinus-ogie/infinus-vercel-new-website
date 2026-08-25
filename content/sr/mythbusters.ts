@@ -62,7 +62,10 @@ export const mythBusters: MythBustersDictionary = {
 
     hero: {
       badge: 'Besplatan e-book | PDF | Odmah dostupan',
-      title: 'Donosite ERP odluke na osnovu činjenica – ne mitova',
+      // OWNER-APPROVED localisation polish, not a change of message. The literal
+      // "Donosite ERP odluke na osnovu činjenica - ne mitova" reads as translated Serbian;
+      // this is how the same claim is phrased natively. Flagged for Dejan in the handover.
+      title: 'ERP odluke zasnovane na činjenicama, ne mitovima',
       subtitle: '10 najčešćih zabluda o SAP Cloud ERP-u – jasno objašnjeno.',
       paragraphs: [
         'Mnoge kompanije SAP Cloud ERP i dalje povezuju sa visokim troškovima, složenim projektima ili manjkom fleksibilnosti.',
@@ -245,14 +248,6 @@ export const mythBusters: MythBustersDictionary = {
       body: 'Hvala na interesovanju za naš vodič „10 mitova o SAP Cloud ERP-u“. Kliknite na dugme ispod da biste odmah preuzeli e-book.',
       downloadLabel: 'Preuzmite e-book',
       downloadNote: 'Preuzimanje počinje odmah nakon klika.',
-      // This promise is KEPT ONLY because the application actually sends that email — see
-      // sendEbookDeliveryEmail in lib/email.ts — AND it is rendered only when that send
-      // actually succeeded. `emailFallback` below replaces it when it did not. Copy that
-      // promises a message the system did not send is a lie the visitor can catch.
-      emailHeading: 'Kopiju ćete dobiti i putem e-maila.',
-      emailBody:
-        'Ako želite da dokument ponovo otvorite kasnije, link za preuzimanje poslaćemo i na vašu poslovnu e-mail adresu.',
-      emailFallback: 'E-book možete odmah preuzeti pomoću dugmeta ispod.',
       nextHeading: 'Šta je sledeće?',
       nextBody:
         'Da li birate novo ERP rešenje ili planirate sledeći korak digitalne transformacije? Infinus SAP stručnjaci mogu da vas podrže bez obzira na to da li ste tek u fazi evaluacije ili već imate definisane konkretne zahteve.',

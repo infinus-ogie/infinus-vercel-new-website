@@ -98,21 +98,33 @@ describe('the FAQ accordion', () => {
   })
 
   /**
-   * `forceMount` is the reason the answers survive in the markup while closed — which is what
-   * lets test/mythbusters-page.test.tsx assert the client's approved copy actually shipped,
-   * and what a crawler or a find-in-page reads.
+   * Closed answers UNMOUNT, and that is the fix rather than a regression.
+   *
+   * They used to be force-mounted and hidden with CSS so a test could assert the approved copy
+   * was in the markup. Radix drives its open/close animation by mounting and unmounting, so
+   * force-mounting disabled it: answers appeared and vanished instantly and the layout jumped.
+   *
+   * Nothing about the client's copy depends on the DOM. The FAQPage structured data is built
+   * from the dictionary in lib/mythbusters-jsonld.ts, which the SEO suite covers, so the
+   * schema carries all five answers whether or not any of them is on screen.
    */
-  test('every answer stays in the DOM while its item is closed', () => {
-    const { container } = render(<EbookFaq items={items} />)
+  test('only the OPEN answer is mounted', () => {
+    render(<EbookFaq items={items} />)
 
-    const closed = Array.from(container.querySelectorAll('[data-faq-item]')).filter(
-      (item) => item.getAttribute('data-state') === 'closed'
-    )
-    expect(closed.length, 'four of the five start closed').toBe(4)
-
-    for (const item of items) {
-      expect(screen.getByText(item.answer)).toBeInTheDocument()
+    // The first item is open on load, so its answer is the one in the document.
+    expect(screen.getByText(items[0].answer)).toBeInTheDocument()
+    for (const item of items.slice(1)) {
+      expect(screen.queryByText(item.answer), item.question).toBeNull()
     }
+  })
+
+  test('opening another item mounts its answer and unmounts the previous one', () => {
+    render(<EbookFaq items={items} />)
+
+    fireEvent.click(triggers()[2])
+
+    expect(screen.getByText(items[2].answer)).toBeInTheDocument()
+    expect(screen.queryByText(items[0].answer), 'the first answer unmounted').toBeNull()
   })
 
   test('each trigger points at its own answer region, with no duplicate ids', () => {

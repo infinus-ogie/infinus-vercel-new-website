@@ -88,7 +88,7 @@ export const growth: GrowthDictionary = {
       zipLabel: 'Download the full pack (ZIP)',
       defaultTitle: 'Materials for fast-growing companies',
       defaultDescription:
-        'Download free materials explaining how finance can become a driver of growth — and see, through concrete examples, how SAP Cloud ERP supports scaling a business.',
+        'Download free materials explaining how finance can become a driver of growth, and see, through concrete examples, how SAP Cloud ERP supports scaling a business.',
     },
   },
 
@@ -219,7 +219,7 @@ export const growth: GrowthDictionary = {
     metadata: {
       title: 'SAP for CFOs | Infinus',
       description:
-        'SAP Cloud ERP + Business AI — 10 long-term advantages from a CFO perspective, compared with the traditional "ERP + Excel" approach.',
+        'SAP Cloud ERP + Business AI: 10 long-term advantages from a CFO perspective, compared with the traditional "ERP + Excel" approach.',
       ogImageAlt: 'SAP for CFOs',
     },
     hero: {
@@ -294,7 +294,7 @@ export const growth: GrowthDictionary = {
     metadata: {
       title: 'SAP for CEOs | Infinus',
       description:
-        'SAP Cloud ERP + Business AI from a CEO perspective — how the leader of a fast-growing company gains a single source of truth, faster decisions and readiness for growth.',
+        'SAP Cloud ERP + Business AI from a CEO perspective: how the leader of a fast-growing company gains a single source of truth, faster decisions and readiness for growth.',
       ogImageAlt: 'SAP for CEOs',
     },
     hero: {

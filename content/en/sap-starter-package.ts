@@ -56,13 +56,13 @@ export const sapStarterPackage: SapStarterPackageDictionary = {
     lines: [
       "As companies grow, systems often don't keep up.",
       "Financial data is delayed, reports don't match, and teams spend too much time on manual work.",
-      'You lose visibility into profitability, inventory, and cash flow — exactly when you need it most.',
+      'You lose visibility into profitability, inventory, and cash flow, exactly when you need it most.',
     ],
   },
 
   solution: {
     heading: 'The solution',
-    body: 'SAP Starter Package brings your core processes into one system — finance, sales, procurement, and operations.',
+    body: 'SAP Starter Package brings your core processes into one system: finance, sales, procurement, and operations.',
     highlight: 'One system. One source of truth. Real-time insight.',
     sub: 'A structured, low-risk approach to implementing SAP Cloud ERP.',
   },

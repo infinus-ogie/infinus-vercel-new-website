@@ -46,17 +46,6 @@ import {
   stripNewlines,
 } from './security/escape'
 
-/** Where the e-book lives. One literal, used by the delivery template. */
-const EBOOK_PATH = '/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf'
-
-/**
- * The public origin, for links inside emails.
- *
- * Hardcoded to production rather than read from a request: an email is read outside the
- * browser that produced it, so a localhost or preview URL in it is a dead link forever.
- */
-const PUBLIC_ORIGIN = 'https://www.infinus.co'
-
 // Email templates
 export const emailTemplates = {
   contactForm: (data: {
@@ -303,7 +292,7 @@ Reply directly to this email to respond to ${data.name}.
  * Which template is being sent. Present ONLY so the logs below can say something useful
  * without naming a person: "a careers application went out" rather than an address.
  */
-export type MailKind = 'contact' | 'careers' | 'ebook-lead' | 'ebook-delivery'
+export type MailKind = 'contact' | 'careers' | 'ebook-lead'
 
 /**
  * Send one message.
@@ -317,10 +306,10 @@ export type MailKind = 'contact' | 'careers' | 'ebook-lead' | 'ebook-delivery'
  * or how long it is. It answered no question worth answering and it described a secret.
  *
  * The addresses and the subject are gone for a different reason: they are personal data
- * accumulating in a log for no operational purpose. Knowing that an `ebook-delivery` was
- * sent, and its message id, is enough to diagnose the mail path; knowing WHO it went to is
- * only needed when something failed, and the failure branch still carries the provider's
- * own text.
+ * accumulating in a log for no operational purpose. Knowing that an `ebook-lead` was sent,
+ * and its message id, is enough to diagnose the mail path; knowing WHO it went to is only
+ * needed when something failed, and the failure branch still carries the provider's own
+ * text.
  *
  * What is left is operational metadata: the template kind, the attachment count, the
  * outcome, and the provider's message id.
@@ -506,91 +495,18 @@ export async function sendEbookLeadEmail(data: {
   )
 }
 
-/**
- * Copy for the e-book delivery email, per locale.
+/*
+ * There is deliberately NO e-book delivery email here any more.
  *
- * SERVER-OWNED AND FIXED. Nothing a visitor submits reaches the subject, the sender, the
- * recipient list or the body structure — their name is interpolated into one greeting, HTML-
- * escaped, and their email address is used ONLY as the To: header.
+ * `sendEbookDeliveryEmail` and its EBOOK_DELIVERY_COPY sent the download link to the address
+ * a visitor typed into the form. The owner withdrew that flow: the PDF now downloads directly
+ * on a successful submission, which removes the campaign's dependency on a separate mailbox
+ * and app password.
  *
- * That constraint is the whole design. An endpoint that sends mail to a user-supplied
- * address is one careless template away from being an open relay for whoever finds it.
+ * It also removes a security surface worth naming. This module no longer has ANY path that
+ * sends mail to a user-supplied recipient — every remaining send goes to RECIPIENT_EMAILS,
+ * which is a fixed server-owned list. See docs/ for the updated risk note.
  *
- * The Serbian wording follows the client's Thank You page; the English is its counterpart.
+ * `sendEbookLeadEmail` above is unchanged: the internal notification is how the lead is
+ * recorded, and it still goes only to the operational recipients.
  */
-const EBOOK_DELIVERY_COPY = {
-  en: {
-    subject: 'Your e-book: 10 Myths About SAP Cloud ERP',
-    greeting: 'Hello',
-    intro: 'Thank you for your interest in our guide "10 Myths About SAP Cloud ERP".',
-    cta: 'Download the e-book',
-    note: 'The e-book is provided in PDF format and is available in English.',
-    signoff: 'Infinus — Turning SAP expertise into business advantage.',
-  },
-  sr: {
-    subject: 'Vaš e-book: 10 mitova o SAP Cloud ERP-u',
-    greeting: 'Poštovani',
-    intro: 'Hvala na interesovanju za naš vodič „10 mitova o SAP Cloud ERP-u“.',
-    cta: 'Preuzmite e-book',
-    note: 'E-book je u PDF formatu i dostupan je na engleskom jeziku.',
-    signoff: 'Infinus — SAP ekspertiza pretvorena u poslovnu prednost.',
-  },
-} as const
-
-/**
- * Send the e-book download link TO THE PERSON WHO ASKED FOR IT.
- *
- * The Serbian landing page promises this in as many words — "Kopiju ćete dobiti i putem
- * e-maila" — so the application has to actually do it. Copy that promises a message the
- * system never sends is a lie the visitor can catch by checking their inbox.
- *
- * ── What is deliberately NOT done ───────────────────────────────────────────────
- *   · the PDF is NOT attached. It is 13MB and the link is sufficient; attaching it would
- *     put 13MB into every lead's mailbox and many would bounce on size.
- *   · nothing about this message is user-configurable. See EBOOK_DELIVERY_COPY.
- *
- * Sent in BOTH locales. Only the Serbian page promises it, but the behaviour is identical
- * and one code path is materially simpler than two — and a download link arriving after a
- * download form is expected rather than surprising.
- */
-export async function sendEbookDeliveryEmail(data: {
-  name: string
-  email: string
-  locale: 'en' | 'sr'
-}) {
-  const copy = EBOOK_DELIVERY_COPY[data.locale]
-  const url = `${PUBLIC_ORIGIN}${EBOOK_PATH}`
-  // Escaped: this is the one attacker-controlled value in a message sent to the public.
-  const name = esc(data.name)
-
-  const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #0f172a;">
-      <p>${copy.greeting} ${name},</p>
-      <p>${copy.intro}</p>
-      <p style="margin: 28px 0;">
-        <a href="${url}"
-           style="background-color: #0a6ed1; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">
-          ${copy.cta}
-        </a>
-      </p>
-      <p style="font-size: 14px; color: #475569;">${copy.note}</p>
-      <p style="font-size: 14px; color: #475569;">${url}</p>
-      <div style="margin-top: 32px; padding-top: 16px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 13px;">
-        <p>${copy.signoff}</p>
-      </div>
-    </div>
-  `
-
-  const text = `${copy.greeting} ${data.name},
-
-${copy.intro}
-
-${copy.cta}: ${url}
-
-${copy.note}
-
-${copy.signoff}
-`
-
-  return await sendEmail(data.email, copy.subject, html, text, undefined, undefined, 'ebook-delivery')
-}

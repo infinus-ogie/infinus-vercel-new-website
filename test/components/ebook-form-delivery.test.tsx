@@ -1,17 +1,22 @@
 /**
- * What the e-book success panel is allowed to CLAIM.
+ * How the visitor actually GETS the e-book.
  *
- * A submission and its convenience email are two independent outcomes, and the panel must
- * not blur them. Two failure modes matter here and they pull in opposite directions:
+ * ── The flow, and the two it replaced ──────────────────────────────────────────
+ * Submit -> the PDF starts downloading -> the Thank You panel appears. No email is sent to
+ * the visitor, and nothing is required of them to receive the file.
  *
- *   · claiming "a copy is on its way" when the send failed is a promise the visitor can
- *     check against their inbox and find false
- *   · turning a failed convenience copy into an error state misrepresents what happened —
- *     the lead was captured, the download is right there, and nothing the visitor did went
- *     wrong
+ * Two earlier versions failed in opposite directions and both are pinned here so neither can
+ * come back:
  *
- * So the panel is gated on the endpoint's `emailDelivered` boolean, and both branches are
- * asserted: what appears, and what must not.
+ *   · the first auto-clicked the download anchor AND offered a download button for the same
+ *     file, so one submission produced two downloads;
+ *   · the second removed the auto-click entirely, which made the download a second manual
+ *     step and left the analytics counting submissions rather than downloads.
+ *
+ * The owner then withdrew the delivery email as well, so the panel's "a copy is on its way"
+ * claim, the `emailDelivered` flag behind it and the whole gated block are gone. The tests
+ * that asserted that gating went with them: a promise the product no longer makes is not a
+ * contract worth protecting.
  */
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -21,6 +26,8 @@ import { getDictionary } from '@/content/dictionary'
 
 const sr = getDictionary('sr').mythBusters.form
 const en = getDictionary('en').mythBusters.form
+
+const EBOOK_HREF = '/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf'
 
 function mockEndpoint(body: Record<string, unknown>) {
   vi.stubGlobal(
@@ -42,7 +49,7 @@ function fillSerbian() {
   })
 }
 
-async function submitSerbian(body: Record<string, unknown>) {
+async function submitSerbian(body: Record<string, unknown> = { success: true }) {
   mockEndpoint(body)
   const result = render(<EbookForm copy={sr} locale="sr" placement="hero" />)
   fillSerbian()
@@ -53,205 +60,70 @@ async function submitSerbian(body: Record<string, unknown>) {
   return result
 }
 
-describe('when the delivery email succeeded', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn())
+async function submitEnglish(placement: 'hero' | 'closing' = 'closing') {
+  mockEndpoint({ success: true })
+  render(<EbookForm copy={en} locale="en" placement={placement} />)
+  fireEvent.change(screen.getByLabelText('Full Name'), {
+    target: { name: 'name', value: 'Ann Example' },
   })
-  afterEach(() => {
-    vi.unstubAllGlobals()
-    vi.restoreAllMocks()
+  fireEvent.change(screen.getByLabelText('Business Email'), {
+    target: { name: 'email', value: 'ann@example.com' },
   })
-
-  test('the panel may say a copy was sent', async () => {
-    await submitSerbian({ success: true, emailDelivered: true })
-
-    const panel = screen.getByTestId('ebook-success-hero')
-    expect(panel).toHaveAttribute('data-email-delivered', 'true')
-    expect(within(panel).getByText(sr.success.emailHeading)).toBeInTheDocument()
-    expect(within(panel).getByText(sr.success.emailBody)).toBeInTheDocument()
-    expect(within(panel).queryByText(sr.success.emailFallback)).not.toBeInTheDocument()
+  fireEvent.change(screen.getByLabelText('Company'), {
+    target: { name: 'company', value: 'Example Ltd' },
   })
-})
-
-describe('when the delivery email failed', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn())
+  fireEvent.click(screen.getByRole('button', { name: en.submit }))
+  await waitFor(() => {
+    expect(screen.getByTestId(`ebook-success-${placement}`)).toBeInTheDocument()
   })
-  afterEach(() => {
-    vi.unstubAllGlobals()
-    vi.restoreAllMocks()
-  })
+}
 
-  test('the submission is still a SUCCESS, not an error', async () => {
-    await submitSerbian({ success: true, emailDelivered: false })
-
-    const panel = screen.getByTestId('ebook-success-hero')
-    expect(within(panel).getByText(sr.success.heading)).toBeInTheDocument()
-    // No error styling, no alert, nothing implying the visitor did something wrong.
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
-    expect(within(panel).queryByText(sr.error)).not.toBeInTheDocument()
-  })
-
-  test('it does NOT claim an email was sent', async () => {
-    await submitSerbian({ success: true, emailDelivered: false })
-
-    const panel = screen.getByTestId('ebook-success-hero')
-    expect(panel).toHaveAttribute('data-email-delivered', 'false')
-    expect(within(panel).queryByText(sr.success.emailHeading)).not.toBeInTheDocument()
-    expect(within(panel).queryByText(sr.success.emailBody)).not.toBeInTheDocument()
-    // Belt and braces: the promise must not survive anywhere in the rendered panel.
-    expect(panel.textContent).not.toContain('putem e-maila')
-  })
-
-  test('it shows the neutral fallback instead', async () => {
-    await submitSerbian({ success: true, emailDelivered: false })
-
-    const panel = screen.getByTestId('ebook-success-hero')
-    expect(within(panel).getByText(sr.success.emailFallback)).toBeInTheDocument()
-    expect(sr.success.emailFallback).toBe('E-book možete odmah preuzeti pomoću dugmeta ispod.')
-  })
-
-  test('the download is still offered, and still points at the English PDF', async () => {
-    await submitSerbian({ success: true, emailDelivered: false })
-
-    const link = screen.getByRole('link', { name: sr.success.downloadLabel })
-    expect(link).toHaveAttribute(
-      'href',
-      '/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf'
-    )
-    expect(link).toHaveAttribute('download')
-  })
-})
-
-describe('a malformed or older response understates rather than overstates', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn())
-  })
-  afterEach(() => {
-    vi.unstubAllGlobals()
-    vi.restoreAllMocks()
-  })
-
-  test('a missing emailDelivered field is treated as NOT delivered', async () => {
-    // The safe default: never claim the email went out on the strength of an absent field.
-    await submitSerbian({ success: true })
-
-    const panel = screen.getByTestId('ebook-success-hero')
-    expect(panel).toHaveAttribute('data-email-delivered', 'false')
-    expect(within(panel).getByText(sr.success.emailFallback)).toBeInTheDocument()
-  })
-
-  test('a truthy non-boolean does not count as delivered', async () => {
-    await submitSerbian({ success: true, emailDelivered: 'yes' })
-    expect(screen.getByTestId('ebook-success-hero')).toHaveAttribute(
-      'data-email-delivered',
-      'false'
-    )
-  })
-})
-
-describe('the English half behaves the same way', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn())
-  })
-  afterEach(() => {
-    vi.unstubAllGlobals()
-    vi.restoreAllMocks()
-  })
-
-  test('English also gates its email claim on actual delivery', async () => {
-    mockEndpoint({ success: true, emailDelivered: false })
-    render(<EbookForm copy={en} locale="en" placement="closing" />)
-
-    fireEvent.change(screen.getByLabelText('Full Name'), {
-      target: { name: 'name', value: 'Ada Lovelace' },
-    })
-    fireEvent.change(screen.getByLabelText('Business Email'), {
-      target: { name: 'email', value: 'ada@example.com' },
-    })
-    fireEvent.change(screen.getByLabelText('Company'), {
-      target: { name: 'company', value: 'Analytical Engines' },
-    })
-    fireEvent.click(screen.getByRole('button', { name: en.submit }))
-
-    await waitFor(() => {
-      expect(screen.getByTestId('ebook-success-closing')).toBeInTheDocument()
-    })
-
-    const panel = screen.getByTestId('ebook-success-closing')
-    expect(within(panel).queryByText(en.success.emailHeading)).not.toBeInTheDocument()
-    expect(within(panel).getByText(en.success.emailFallback)).toBeInTheDocument()
-    expect(en.success.emailFallback).toBe(
-      'You can download the e-book immediately using the button below.'
-    )
-  })
-})
-
-/**
- * WHEN the PDF is allowed to leave the browser, and what gets counted when it does.
- *
- * ── The bug this suite exists for ──────────────────────────────────────────────
- * Submitting used to download the file twice over. A `useEffect` synthetically clicked the
- * success panel's anchor the moment the panel mounted, so the browser saved the PDF on its
- * own — and then the same panel offered a "Download the E-Book" button for the identical
- * file. The client's Serbian LP/Thank-You source describes one flow: the e-book is ready, the
- * user clicks, the download starts.
- *
- * The analytics had the matching problem. `download_resource` fired inside the submit handler,
- * so it counted submissions and would have counted them even if nobody ever took the file.
- *
- * These assert the corrected sequence from both ends: nothing downloads until the button is
- * clicked, and nothing is counted until something downloads.
- */
-describe('the download is user-initiated, not automatic', () => {
+describe('a successful submission downloads the PDF', () => {
   /**
-   * Every PROGRAMMATIC anchor click — `element.click()`.
+   * Programmatic anchor clicks - `element.click()`.
    *
-   * `fireEvent.click` dispatches a MouseEvent without going through `.click()`, so a real
-   * user click never touches this spy. That asymmetry is exactly what makes it a clean probe
-   * for the bug: it sees the code clicking the link for the user, and nothing else.
+   * `fireEvent.click` dispatches a MouseEvent without going through `.click()`, so a human
+   * click never reaches this spy. That asymmetry is what makes it a clean probe: it counts
+   * only the downloads the COMPONENT starts.
    */
-  let anchorClicks: MockInstance<[], void>
+  let autoClicks: MockInstance<[], void>
   let gtag: Mock
 
   beforeEach(() => {
-    anchorClicks = vi.spyOn(HTMLAnchorElement.prototype, 'click')
+    autoClicks = vi.spyOn(HTMLAnchorElement.prototype, 'click')
     gtag = vi.fn()
     vi.stubGlobal('gtag', gtag)
   })
   afterEach(() => {
-    anchorClicks.mockRestore()
+    autoClicks.mockRestore()
     vi.unstubAllGlobals()
   })
 
-  test('a valid submit shows the success panel but starts NO download', async () => {
-    await submitSerbian({ success: true, emailDelivered: true })
-
-    expect(screen.getByTestId('ebook-success-hero')).toBeInTheDocument()
-    // The regression, stated directly: nothing may click the anchor on our behalf.
-    expect(anchorClicks, 'submitting must not trigger a download').not.toHaveBeenCalled()
+  test('the download starts automatically, exactly once', async () => {
+    await submitSerbian()
+    expect(autoClicks, 'one submission, one automatic download').toHaveBeenCalledTimes(1)
   })
 
-  test('and counts no download event on submit', async () => {
-    await submitSerbian({ success: true, emailDelivered: true })
+  test('the Thank You panel renders alongside it', async () => {
+    await submitSerbian()
+    const panel = screen.getByTestId('ebook-success-hero')
 
-    expect(
-      gtag.mock.calls.filter(([, name]) => name === 'download_resource'),
-      'a submission is not a download'
-    ).toHaveLength(0)
+    expect(within(panel).getByText(sr.success.heading)).toBeInTheDocument()
+    expect(within(panel).getByText(sr.success.nextHeading)).toBeInTheDocument()
+    expect(within(panel).getByRole('link', { name: sr.success.expertCta })).toBeInTheDocument()
+    expect(within(panel).getByRole('link', { name: sr.success.contactCta })).toBeInTheDocument()
   })
 
-  test('the success panel offers a real download link', async () => {
-    await submitSerbian({ success: true, emailDelivered: true })
+  test('the manual button remains, as a fallback for a blocked download', async () => {
+    await submitSerbian()
     const link = screen.getByRole('link', { name: sr.success.downloadLabel })
 
-    expect(link).toHaveAttribute('href', '/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf')
+    expect(link).toHaveAttribute('href', EBOOK_HREF)
     expect(link).toHaveAttribute('download')
   })
 
-  test('clicking it fires download_resource exactly once, with the placement', async () => {
-    await submitSerbian({ success: true, emailDelivered: true })
-    fireEvent.click(screen.getByRole('link', { name: sr.success.downloadLabel }))
+  test('the automatic download fires download_resource once', async () => {
+    await submitSerbian()
 
     const events = gtag.mock.calls.filter(([, name]) => name === 'download_resource')
     expect(events).toHaveLength(1)
@@ -259,102 +131,156 @@ describe('the download is user-initiated, not automatic', () => {
     expect(events[0][2]).toMatchObject({ id: 'sap_mythbusters_ebook', placement: 'hero' })
   })
 
-  test('two clicks are two real downloads, so two events — never a double-fire from one', async () => {
-    await submitSerbian({ success: true, emailDelivered: true })
+  /**
+   * The fallback is a re-download, not a second conversion. One submission is one counted
+   * download however many times the visitor uses the button afterwards.
+   */
+  test('using the fallback button does NOT count a second download', async () => {
+    await submitSerbian()
     const link = screen.getByRole('link', { name: sr.success.downloadLabel })
 
     fireEvent.click(link)
-    expect(gtag.mock.calls.filter(([, n]) => n === 'download_resource')).toHaveLength(1)
     fireEvent.click(link)
-    expect(gtag.mock.calls.filter(([, n]) => n === 'download_resource')).toHaveLength(2)
+
+    expect(gtag.mock.calls.filter(([, n]) => n === 'download_resource')).toHaveLength(1)
   })
 
-  test('the closing form reports its own placement', async () => {
-    mockEndpoint({ success: true, emailDelivered: true })
+  test('the closing instance reports its own placement', async () => {
+    mockEndpoint({ success: true })
     render(<EbookForm copy={sr} locale="sr" placement="closing" />)
     fillSerbian()
     fireEvent.click(screen.getByRole('button', { name: sr.submit }))
     await waitFor(() => expect(screen.getByTestId('ebook-success-closing')).toBeInTheDocument())
 
-    fireEvent.click(screen.getByRole('link', { name: sr.success.downloadLabel }))
     const events = gtag.mock.calls.filter(([, name]) => name === 'download_resource')
     expect(events[0][2]).toMatchObject({ placement: 'closing' })
   })
 
-  test('the truthful fallback still governs the panel, download unaffected', async () => {
-    await submitSerbian({ success: true, emailDelivered: false })
-    const panel = screen.getByTestId('ebook-success-hero')
+  test('a failed submission downloads nothing and counts nothing', async () => {
+    mockEndpoint({ success: false })
+    render(<EbookForm copy={sr} locale="sr" placement="hero" />)
+    fillSerbian()
+    fireEvent.click(screen.getByRole('button', { name: sr.submit }))
 
-    expect(panel).toHaveAttribute('data-email-delivered', 'false')
-    expect(within(panel).getByText(sr.success.emailFallback)).toBeInTheDocument()
-    // A failed convenience copy must not take the download away.
-    expect(within(panel).getByRole('link', { name: sr.success.downloadLabel })).toHaveAttribute(
-      'download'
-    )
-    expect(anchorClicks).not.toHaveBeenCalled()
+    await waitFor(() => {
+      expect(screen.getByText(sr.error)).toBeInTheDocument()
+    })
+    expect(screen.queryByTestId('ebook-success-hero')).toBeNull()
+    expect(autoClicks).not.toHaveBeenCalled()
+    expect(gtag.mock.calls.filter(([, n]) => n === 'download_resource')).toHaveLength(0)
   })
 })
 
 /**
- * Consent gating, asserted rather than assumed.
+ * The panel must not promise an email, because none is sent.
  *
- * components/consent/AnalyticsGate.tsx only injects gtag once analytics consent is granted, so
- * `typeof window.gtag === 'function'` is the gate itself. With consent withheld there is no
- * function — and clicking download must still download, silently.
+ * Asserted as absence of the WORDS a visitor would act on, not just absence of a removed
+ * dictionary key: someone could reintroduce the sentence as a literal and every type-level
+ * check would still pass.
  */
-describe('with analytics consent withheld', () => {
-  beforeEach(() => {
-    vi.unstubAllGlobals()
-  })
+describe('nothing claims the e-book was emailed', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
   })
 
-  test('the download works and nothing is sent', async () => {
-    await submitSerbian({ success: true, emailDelivered: true })
-    expect((window as unknown as { gtag?: unknown }).gtag).toBeUndefined()
+  test('the Serbian panel makes no email promise', async () => {
+    await submitSerbian()
+    const text = screen.getByTestId('ebook-success-hero').textContent ?? ''
 
-    const link = screen.getByRole('link', { name: sr.success.downloadLabel })
-    // Must not throw: the tracking is a side effect of the click, not a precondition for it.
-    expect(() => fireEvent.click(link)).not.toThrow()
-    expect(link).toHaveAttribute('download')
+    expect(text).not.toContain('e-mail')
+    // Diacritic-free substring on purpose: it matches the withdrawn sentence whether or not
+    // someone reintroduces it with different accents or casing.
+    expect(text).not.toMatch(/Kopiju/i)
+  })
+
+  test('the English panel makes no email promise', async () => {
+    await submitEnglish()
+    const text = screen.getByTestId('ebook-success-closing').textContent ?? ''
+
+    expect(text).not.toMatch(/email/i)
+    expect(text).not.toMatch(/on its way/i)
+  })
+
+  test('the success copy carries no email strings at all', () => {
+    for (const [name, copy] of [
+      ['sr', sr.success],
+      ['en', en.success],
+    ] as const) {
+      const keys = Object.keys(copy)
+      expect(keys, `${name} success copy`).not.toContain('emailHeading')
+      expect(keys, `${name} success copy`).not.toContain('emailBody')
+      expect(keys, `${name} success copy`).not.toContain('emailFallback')
+    }
+  })
+
+  /**
+   * The panel used to key off `emailDelivered` from the endpoint. Nothing may depend on it
+   * again: a response that still carries the field must change nothing at all.
+   */
+  test('an endpoint response carrying emailDelivered changes nothing', async () => {
+    await submitSerbian({ success: true, emailDelivered: false })
+    const panel = screen.getByTestId('ebook-success-hero')
+
+    expect(panel).not.toHaveAttribute('data-email-delivered')
+    expect(within(panel).getByRole('link', { name: sr.success.downloadLabel })).toBeInTheDocument()
+    expect(within(panel).getByText(sr.success.heading)).toBeInTheDocument()
   })
 })
 
 /**
  * One asset, both locales. The page is bilingual; the e-book is not.
  */
-describe('the PDF is the same English file on both pages', () => {
+describe('the same English PDF on both pages', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
   })
 
-  test('Serbian and English success panels link to the identical href', async () => {
-    await submitSerbian({ success: true, emailDelivered: true })
-    const srHref = screen
-      .getByRole('link', { name: sr.success.downloadLabel })
-      .getAttribute('href')
+  test('Serbian and English download links are the identical href', async () => {
+    await submitSerbian()
+    const srHref = screen.getByRole('link', { name: sr.success.downloadLabel }).getAttribute('href')
 
     vi.unstubAllGlobals()
-    mockEndpoint({ success: true, emailDelivered: true })
-    render(<EbookForm copy={en} locale="en" placement="closing" />)
-    fireEvent.change(screen.getByLabelText('Full Name'), {
-      target: { name: 'name', value: 'Ann Example' },
-    })
-    fireEvent.change(screen.getByLabelText('Business Email'), {
-      target: { name: 'email', value: 'ann@example.com' },
-    })
-    fireEvent.change(screen.getByLabelText('Company'), {
-      target: { name: 'company', value: 'Example Ltd' },
-    })
-    fireEvent.click(screen.getByRole('button', { name: en.submit }))
-    await waitFor(() => expect(screen.getByTestId('ebook-success-closing')).toBeInTheDocument())
-
-    const enHref = screen
-      .getByRole('link', { name: en.success.downloadLabel })
-      .getAttribute('href')
+    await submitEnglish()
+    const enHref = screen.getByRole('link', { name: en.success.downloadLabel }).getAttribute('href')
 
     expect(enHref).toBe(srHref)
-    expect(enHref).toBe('/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf')
+    expect(enHref).toBe(EBOOK_HREF)
+  })
+
+  test('the Serbian form still states the asset is English, before the fields', () => {
+    mockEndpoint({ success: true })
+    const { container } = render(<EbookForm copy={sr} locale="sr" placement="hero" />)
+
+    const note = screen.getByText(sr.languageNote)
+    const form = container.querySelector('form') as HTMLElement
+    expect(note).toBeInTheDocument()
+    expect(
+      note.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING,
+      'the note must precede the fields'
+    ).toBeTruthy()
+  })
+})
+
+/**
+ * With analytics consent withheld there is no `gtag`, and the download must still happen.
+ * The tracking is a side effect of the download, never a precondition for it.
+ */
+describe('with analytics consent withheld', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  test('the automatic download still runs and nothing is sent', async () => {
+    const autoClicks = vi.spyOn(HTMLAnchorElement.prototype, 'click')
+    try {
+      await submitSerbian()
+      expect((window as unknown as { gtag?: unknown }).gtag).toBeUndefined()
+      expect(autoClicks).toHaveBeenCalledTimes(1)
+      expect(screen.getByRole('link', { name: sr.success.downloadLabel })).toHaveAttribute(
+        'download'
+      )
+    } finally {
+      autoClicks.mockRestore()
+    }
   })
 })

@@ -75,7 +75,7 @@ const cfoItems = [
   {
     title: "1) Jedinstvena „single source of truth“",
     body:
-      "Integrisani finansije, prodaja, nabavka, logistika i operacije — bez excel ostrva,\nduplih unosa i verzija istog podatka.",
+      "Integrisani finansije, prodaja, nabavka, logistika i operacije, bez excel ostrva,\nduplih unosa i verzija istog podatka.",
   },
   {
     title: "2) Brže i pouzdanije mesečno zatvaranje",
@@ -100,7 +100,7 @@ const cfoItems = [
   {
     title: "6) Rolling forecast i „what-if“ scenariji",
     body:
-      "Plan povezan sa operativnim podacima — agilne korekcije budžeta i investicija.",
+      "Plan povezan sa operativnim podacima: agilne korekcije budžeta i investicija.",
   },
   {
     title: "7) Ugrađena analitika i Business AI (Joule)",
@@ -110,7 +110,7 @@ const cfoItems = [
   {
     title: "8) Niži TCO i predvidljiv OPEX",
     body:
-      "Bez lokalnih servera, bez velikih „verzijskih projekata“ — automatska ažuriranja u\ncloudu.",
+      "Bez lokalnih servera, bez velikih „verzijskih projekata“: automatska ažuriranja u\ncloudu.",
   },
   {
     title: "9) Sigurnost, dostupnost i kontrola pristupa",

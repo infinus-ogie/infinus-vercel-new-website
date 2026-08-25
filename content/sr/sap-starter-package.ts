@@ -84,7 +84,7 @@ export const sapStarterPackage: SapStarterPackageDictionary = {
 
   solution: {
     heading: 'Rešenje',
-    body: 'SAP Starter Package objedinjuje vaše osnovne procese u jedan sistem — finansije, prodaju, nabavku i operacije.',
+    body: 'SAP Starter Package objedinjuje vaše osnovne procese u jedan sistem: finansije, prodaju, nabavku i operacije.',
     highlight: 'Jedan sistem. Jedinstven izvor pouzdanih podataka. Uvid u realnom vremenu.',
     sub: 'Strukturisan pristup implementaciji SAP Cloud ERP-a uz nizak rizik.',
   },

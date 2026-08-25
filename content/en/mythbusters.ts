@@ -154,9 +154,6 @@ export const mythBusters: MythBustersDictionary = {
       body: 'Use the button below to download the e-book.',
       downloadLabel: 'Download the E-Book (PDF)',
       downloadNote: 'The download starts as soon as you click.',
-      emailHeading: 'A copy is on its way by email.',
-      emailBody: 'We are also sending the download link to your business email address.',
-      emailFallback: 'You can download the e-book immediately using the button below.',
       nextHeading: 'What happens next?',
       nextBody:
         'Whether you are still evaluating ERP options or already have concrete requirements, our SAP specialists can help.',

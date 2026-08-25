@@ -2,13 +2,13 @@ import { Metadata } from "next";
 import { SiteChrome } from "@/components/shell/SiteChrome";
 
 export const metadata: Metadata = {
-  title: "SAP for CFOs — Infinus",
+  title: "SAP for CFOs - Infinus",
   description:
-    "SAP Cloud ERP + Business AI — 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup",
+    "SAP Cloud ERP + Business AI: 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup",
   openGraph: {
-    title: "SAP for CFOs — Infinus",
+    title: "SAP for CFOs - Infinus",
     description:
-      "SAP Cloud ERP + Business AI — 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup",
+      "SAP Cloud ERP + Business AI: 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup",
     url: "/cfo",
     siteName: "Infinus",
     images: [
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "SAP for CFOs — Infinus",
+    title: "SAP for CFOs - Infinus",
     description:
-      "SAP Cloud ERP + Business AI — 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup",
+      "SAP Cloud ERP + Business AI: 10 dugoročnih prednosti iz CFO perspektive u odnosu na tradicionalni „ERP + Excel“ pristup",
     images: ["/og-default.png"],
   },
   alternates: {

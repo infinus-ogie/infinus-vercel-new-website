@@ -62,7 +62,9 @@ describe('client-supplied copy is reproduced verbatim', () => {
   })
 
   test('the Serbian hero is the NEW document, not the old one', () => {
-    expect(srLayout.hero.title).toBe('Donosite ERP odluke na osnovu činjenica – ne mitova')
+    // OWNER-APPROVED localisation polish. The literal earlier wording read as translated
+    // Serbian; this is the same claim phrased natively, and it is pinned so it cannot drift.
+    expect(srLayout.hero.title).toBe('ERP odluke zasnovane na činjenicama, ne mitovima')
     expect(srLayout.hero.badge).toBe('Besplatan e-book | PDF | Odmah dostupan')
     // The superseded hero headline must not survive anywhere.
     expect(JSON.stringify(sr)).not.toContain('10 mitova o SAP-u.')
@@ -199,16 +201,35 @@ describe('the English page is unchanged by the Serbian rework', () => {
    * scrolls to the hero form. The anchor is only correct if its target exists and is
    * focusable — a bare `#id` jump moves the viewport but leaves focus on the link.
    */
-  test('the mobile hero CTA targets the hero form, and that target can take focus', () => {
+  /**
+   * The hero shows ONE download call to action, and it is the form's own submit button.
+   *
+   * A separate "Download the Free E-Book" button used to sit under the value points on
+   * mobile, jumping to the form immediately below it. Two download CTAs before the visitor
+   * has submitted anything, one of which only scrolled.
+   */
+  test('the hero carries no standalone download CTA, only the form submit', () => {
     const { container } = render(<EnglishMythBusters />)
+    const hero = container.querySelector('[data-section="mythbusters-hero"]') as HTMLElement
 
-    const cta = screen.getByRole('link', { name: enLayout.hero.cta })
-    expect(cta).toHaveAttribute('href', '#ebook-hero')
+    expect(
+      within(hero).queryByRole('link', { name: enLayout.hero.cta }),
+      'the duplicate CTA'
+    ).toBeNull()
+    // Nothing in the hero jumps to the form that is already in the hero.
+    expect(hero.querySelector('a[href="#ebook-hero"]')).toBeNull()
+
+    // The conversion action itself is untouched.
+    const form = hero.querySelector('[data-testid="ebook-form-hero"]') as HTMLElement
+    expect(within(form).getByRole('button', { name: en.form.submit })).toBeInTheDocument()
+  })
+
+  test('the hero form is still a focusable jump target for links from elsewhere', () => {
+    const { container } = render(<EnglishMythBusters />)
 
     const target = container.querySelector('#ebook-hero') as HTMLElement
     expect(target).not.toBeNull()
     expect(target.tabIndex).toBe(-1)
-    // The hero form is what it points at, not the closing one.
     expect(target.querySelector('[data-testid="ebook-form-hero"]')).not.toBeNull()
   })
 })
@@ -235,6 +256,66 @@ describe('the English page is unchanged by the Serbian rework', () => {
  * This asserts the SHAPE is shared and the STRINGS are each locale's own, which is the
  * distinction the brief draws: visual parity, not copy parity.
  */
+/**
+ * The four myth/fact cards.
+ *
+ * Two things were wrong and both are pinned here. The cards sized their own halves, so a card
+ * whose myth wrapped to one line put its rule - and its ČINJENICA - at a different height from
+ * the card beside it. And a circular down-arrow sat on that rule, which is the shape of a
+ * control on cards that are not interactive at all.
+ */
+describe('the myth/fact cards', () => {
+  test('render all four approved pairs, unchanged', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const cards = Array.from(container.querySelectorAll('[data-myth-item]'))
+
+    expect(cards).toHaveLength(4)
+    cards.forEach((card, i) => {
+      const item = srLayout.preview.items[i]
+      expect(within(card as HTMLElement).getByText(item.myth)).toBeInTheDocument()
+      expect(within(card as HTMLElement).getByText(item.fact)).toBeInTheDocument()
+    })
+  })
+
+  test('every card has the same two-part structure', () => {
+    const { container } = render(<SerbianMythBusters />)
+
+    for (const card of Array.from(container.querySelectorAll('[data-myth-item]'))) {
+      // Exactly two halves, which is what lets the row share its track heights.
+      expect(card.children).toHaveLength(2)
+      expect(within(card as HTMLElement).getByText(srLayout.preview.mythLabel)).toBeInTheDocument()
+      expect(within(card as HTMLElement).getByText(srLayout.preview.factLabel)).toBeInTheDocument()
+    }
+  })
+
+  /**
+   * Nothing in a card may look or behave like a control. These are statements, not accordions,
+   * and the removed arrow invited a click that did nothing.
+   */
+  test('carries no interactive affordance', () => {
+    const { container } = render(<SerbianMythBusters />)
+
+    for (const card of Array.from(container.querySelectorAll('[data-myth-item]'))) {
+      expect(card.querySelectorAll('button, a, [role="button"]')).toHaveLength(0)
+      expect(card.querySelectorAll('svg'), 'no arrow or icon mark').toHaveLength(0)
+      expect(card.getAttribute('tabindex')).toBeNull()
+    }
+  })
+
+  /**
+   * The bridge sentence is editorial copy, not a call to action. It used to be a full-width
+   * dashed pill, which is the shape of a disabled button.
+   */
+  test('the closing sentence is text, not a button', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const section = container.querySelector('[data-section="mythbusters-preview"]') as HTMLElement
+
+    const sentence = within(section).getByText(srLayout.preview.more)
+    expect(sentence).toBeInTheDocument()
+    expect(sentence.closest('button, a, [role="button"]')).toBeNull()
+  })
+})
+
 describe('the trust band is one shared system', () => {
   test('both locales render four cells, in the same structure', () => {
     const enBar = render(<EnglishMythBusters />).container.querySelector(
@@ -451,13 +532,28 @@ describe('the Serbian page follows the new conversion structure', () => {
     expect(srLayout.preview.items).toHaveLength(4)
   })
 
-  test('renders the FAQ as visible question and answer pairs', () => {
+  /**
+   * Every question renders; only the OPEN answer is mounted.
+   *
+   * This used to assert all five answers were in the DOM, which held only because the
+   * accordion force-mounted them - and force-mounting is what disabled Radix's open/close
+   * animation and made the section jump. Closed answers unmount now.
+   *
+   * The approved answer COPY is still pinned, twice over: the schema suite asserts the
+   * FAQPage JSON-LD carries all five, and test/components/ebook-faq.test.tsx asserts each one
+   * mounts when its question is opened. Neither depends on collapsed content staying visible.
+   */
+  test('renders every FAQ question, with the first answer open', () => {
     const { container } = render(<SerbianMythBusters />)
     const faq = container.querySelector('[data-section="mythbusters-faq"]') as HTMLElement
 
     for (const item of srLayout.faq.items) {
       expect(within(faq).getByText(item.question)).toBeInTheDocument()
-      expect(within(faq).getByText(item.answer)).toBeInTheDocument()
+    }
+
+    expect(within(faq).getByText(srLayout.faq.items[0].answer)).toBeInTheDocument()
+    for (const item of srLayout.faq.items.slice(1)) {
+      expect(within(faq).queryByText(item.answer), item.question).toBeNull()
     }
   })
 
@@ -645,7 +741,7 @@ describe('the Serbian page is Serbian throughout', () => {
     render(<SerbianMythBusters />)
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Donosite ERP odluke na osnovu činjenica'
+      'ERP odluke zasnovane na činjenicama, ne mitovima'
     )
     expect(screen.queryByText('Which Myths Are We Busting?')).not.toBeInTheDocument()
     expect(screen.queryByText(/Download the Free E-Book/)).not.toBeInTheDocument()

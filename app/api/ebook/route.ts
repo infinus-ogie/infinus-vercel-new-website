@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { sendEbookLeadEmail, sendEbookDeliveryEmail } from '@/lib/email'
+import { sendEbookLeadEmail } from '@/lib/email'
 import { guardFormRequest } from '@/lib/security/guard'
 import { RECAPTCHA_ACTIONS } from '@/lib/security/recaptcha'
 import { FIELD_LIMITS } from '@/lib/security/limits'
@@ -17,12 +17,9 @@ import { FIELD_LIMITS } from '@/lib/security/limits'
  * What IS reused is everything that matters: lib/email.ts, its transport and its recipient
  * list. There is one mail path on this site, not three.
  *
- * ── Two independent outcomes, one response ──────────────────────────────────────
- * A submission and a delivery email can succeed independently, so the response reports both:
- * `success` for the submission and `emailDelivered` for the convenience copy. The success UI
- * keys off the second to decide whether it may claim an email was sent.
- *
- * `emailDelivered` is a boolean and carries no diagnostic detail — see the response itself.
+ * ── One outcome, one response ───────────────────────────────────────────────────
+ * `success` and a message. Nothing about mail crosses the wire, because the only send left
+ * is internal and the visitor's download does not depend on it.
  *
  * ── Storage: none, deliberately ─────────────────────────────────────────────────
  * No CRM, no database, no third-party form backend. The owner's decision for this phase is
@@ -30,22 +27,19 @@ import { FIELD_LIMITS } from '@/lib/security/limits'
  * lib/email.ts because it is the kind of constraint that gets forgotten and then
  * accidentally "fixed" by adding a dependency.
  *
- * ── It now sends mail to a USER-SUPPLIED address, which raises the stakes ───────
- * The Serbian page promises "Kopiju ćete dobiti i putem e-maila", so the handler actually
- * sends it. That makes this the only endpoint on the site that emails a member of the
- * public, and it changes its abuse profile: an attacker could try to use it to push
- * Infinus-branded mail at arbitrary inboxes.
+ * ── It no longer emails a USER-SUPPLIED address ─────────────────────────────────
+ * It used to. The Serbian page promised "Kopiju ćete dobiti i putem e-maila", so the handler
+ * sent the download link to whatever address was submitted — which made this the only
+ * endpoint on the site that emailed a member of the public, and gave it the abuse profile
+ * that goes with that: someone could try to push Infinus-branded mail at arbitrary inboxes.
  *
- * What contains that, short of the security phase:
- *   · the template is FIXED and server-owned — see EBOOK_DELIVERY_COPY in lib/email.ts.
- *     Nothing submitted controls the sender, the subject, the body or any recipient beyond
- *     the To: header, and the one interpolated value is HTML-escaped.
- *   · one message per submission, sent only AFTER validation passes and only AFTER the lead
- *     has been filed, so no send happens without a corresponding internal record of it.
+ * The owner withdrew the delivery email, so that surface is GONE rather than mitigated. Every
+ * send this route can still cause goes to RECIPIENT_EMAILS, a fixed server-owned list.
  *
- * That is why this endpoint is guarded before it does ANYTHING: honeypot, same-origin,
- * rate limit and reCAPTCHA all run before the first email call. A rejected request sends no
- * internal notification and no delivery email — see lib/security/guard.ts.
+ * The guards remain and are not weakened by that: honeypot, same-origin, rate limit and
+ * reCAPTCHA all still run before the first email call, because the internal notification is
+ * itself worth protecting from flooding. A rejected request sends nothing at all — see
+ * lib/security/guard.ts. Durable (cross-instance) rate limiting is still outstanding.
  */
 
 /**
@@ -148,39 +142,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // ── The delivery email, sent to the visitor ──────────────────────────────────
-    // Only AFTER validation has passed and the lead has been recorded, so this endpoint
-    // cannot be used to send mail to an address without also filing a lead about it.
+    // ── No delivery email ────────────────────────────────────────────────────────
+    // This endpoint used to send the download link to the address the visitor typed in, and
+    // reported the outcome as `emailDelivered` so the success panel knew whether it could
+    // claim a copy was on its way. That flow is withdrawn: the browser downloads the PDF
+    // directly once this responds, so there is nothing to promise and nothing to report.
     //
-    // A failure here does NOT fail the submission: the visitor already has their download on
-    // screen and the lead is already captured. Reporting failure would take away a file they
-    // can see, over a convenience copy.
-    const deliveryResult = await sendEbookDeliveryEmail({
-      name: validatedData.name,
-      email: validatedData.email,
-      locale: validatedData.locale ?? 'en',
-    })
-
-    if (!deliveryResult.success) {
-      // Logged server-side with the provider's message. Deliberately NOT returned — see the
-      // response below.
-      console.error('E-book delivery email failed (lead was still captured):', deliveryResult.error)
-    }
-
-    // `emailDelivered` is a BOOLEAN and nothing else.
-    //
-    // The success panel needs to know whether it may say "a copy is on its way", because
-    // claiming that when the send failed is a promise the visitor can check and find false.
-    // But it needs ONLY that. The provider's error text can carry the SMTP host, the
-    // authenticated sender, the recipient, a bounce reason or a stack — none of which a
-    // browser has any business seeing. So the boolean crosses the wire and the detail stays
-    // in the server log.
+    // Worth stating plainly, because it changes this route's risk profile: it no longer
+    // sends mail to ANY user-supplied recipient. The one send left is the internal lead
+    // notification above, which goes to a fixed server-owned recipient list.
     return NextResponse.json(
-      {
-        success: true,
-        emailDelivered: deliveryResult.success === true,
-        message: 'Thank you. Your e-book is ready to download.',
-      },
+      { success: true, message: 'Thank you. Your e-book is ready to download.' },
       { status: 200 }
     )
   } catch (error) {

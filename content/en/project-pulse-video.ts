@@ -21,7 +21,7 @@ export const projectPulseVideo: ProjectPulseVideoDictionary = {
   metadata: {
     title: 'ProjectPulse Video | Infinus',
     description:
-      'Watch the ProjectPulse overview — an SAP Qualified Partner-Packaged Solution by Infinus for Professional Services firms.',
+      'Watch the ProjectPulse overview, an SAP Qualified Partner-Packaged Solution by Infinus for Professional Services firms.',
   },
   closeAriaLabel: 'Close video',
   closeLabel: 'Close',

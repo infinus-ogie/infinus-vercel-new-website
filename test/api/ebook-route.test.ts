@@ -14,8 +14,7 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 
 const sendEbookLeadEmail = vi.hoisted(() => vi.fn())
-const sendEbookDeliveryEmail = vi.hoisted(() => vi.fn())
-vi.mock('@/lib/email', () => ({ sendEbookLeadEmail, sendEbookDeliveryEmail }))
+vi.mock('@/lib/email', () => ({ sendEbookLeadEmail }))
 
 // A static import is fine: vi.mock is hoisted above it, so the handler picks up the mock.
 // (A top-level `await import` would work under Vitest but fails `tsc --noEmit` on this
@@ -56,8 +55,6 @@ describe('POST /api/ebook', () => {
   beforeEach(() => {
     sendEbookLeadEmail.mockReset()
     sendEbookLeadEmail.mockResolvedValue({ success: true, messageId: 'test' })
-    sendEbookDeliveryEmail.mockReset()
-    sendEbookDeliveryEmail.mockResolvedValue({ success: true, messageId: 'delivery' })
     vi.spyOn(console, 'error').mockImplementation(() => {})
   })
   afterEach(() => {
@@ -153,8 +150,6 @@ describe('locale-aware validation', () => {
   beforeEach(() => {
     sendEbookLeadEmail.mockReset()
     sendEbookLeadEmail.mockResolvedValue({ success: true, messageId: 'test' })
-    sendEbookDeliveryEmail.mockReset()
-    sendEbookDeliveryEmail.mockResolvedValue({ success: true, messageId: 'delivery' })
     vi.spyOn(console, 'error').mockImplementation(() => {})
   })
   afterEach(() => {
@@ -193,99 +188,64 @@ describe('locale-aware validation', () => {
   })
 })
 
-describe('the delivery email sent to the visitor', () => {
+/**
+ * What this endpoint is allowed to SEND, now that the delivery email is gone.
+ *
+ * It used to email the download link to whatever address the form carried, which made it the
+ * only endpoint on the site that mailed a member of the public and gave it a corresponding
+ * abuse profile. The owner withdrew that flow: the browser downloads the PDF directly.
+ *
+ * These assert the removal as a PROPERTY of the module rather than as the absence of one
+ * call - the mocked `@/lib/email` exposes only `sendEbookLeadEmail`, so a reintroduced
+ * delivery import would fail to resolve rather than quietly start mailing again.
+ */
+describe('no mail reaches a user-supplied address', () => {
   beforeEach(() => {
     sendEbookLeadEmail.mockReset()
     sendEbookLeadEmail.mockResolvedValue({ success: true, messageId: 'test' })
-    sendEbookDeliveryEmail.mockReset()
-    sendEbookDeliveryEmail.mockResolvedValue({ success: true, messageId: 'delivery' })
-    vi.spyOn(console, 'error').mockImplementation(() => {})
-  })
-  afterEach(() => {
-    vi.restoreAllMocks()
   })
 
-  test('goes to the submitted address, with only name/email/locale', async () => {
-    await POST(request({ ...VALID, locale: 'sr', country: 'Srbija' }))
+  test('a valid submission sends the internal notification and nothing else', async () => {
+    const response = await POST(request(VALID))
 
-    expect(sendEbookDeliveryEmail).toHaveBeenCalledTimes(1)
-    // Exactly three values reach the template. Nothing else submitted can influence it.
-    expect(sendEbookDeliveryEmail).toHaveBeenCalledWith({
+    expect(response.status).toBe(200)
+    expect(sendEbookLeadEmail).toHaveBeenCalledTimes(1)
+    // The lead notification carries the submitted data; it goes to RECIPIENT_EMAILS, which
+    // lib/email.ts owns. Nothing here chooses a recipient.
+    expect(sendEbookLeadEmail).toHaveBeenCalledWith(expect.objectContaining({
       name: VALID.name,
       email: VALID.email,
-      locale: 'sr',
-    })
+    }))
   })
 
-  test('is NOT sent when validation fails — no mail to an unvalidated address', async () => {
-    // The abuse case this guards: using the endpoint to push branded mail at arbitrary
-    // inboxes without leaving an internal record.
-    await POST(request({ ...VALID, email: 'not-an-email' }))
-    expect(sendEbookDeliveryEmail).not.toHaveBeenCalled()
+  test('the email module exposes no delivery function to call', async () => {
+    const mod = await import('@/lib/email')
+    expect('sendEbookDeliveryEmail' in mod, 'the withdrawn delivery path').toBe(false)
+    expect(typeof mod.sendEbookLeadEmail, 'the internal notification stays').toBe('function')
   })
 
-  test('is NOT sent when the internal lead notification failed', async () => {
-    sendEbookLeadEmail.mockResolvedValue({ success: false, error: 'SMTP down' })
-    await POST(request(VALID))
-    expect(sendEbookDeliveryEmail).not.toHaveBeenCalled()
-  })
-
-  test('a delivery failure does NOT fail the submission', async () => {
-    // The visitor already has the download on screen and the lead is already captured.
-    // Reporting failure would take away a file they can see, over a convenience copy.
-    sendEbookDeliveryEmail.mockResolvedValue({ success: false, error: 'mailbox full' })
-
-    const response = await POST(request(VALID))
-    expect(response.status).toBe(200)
-    await expect(response.json()).resolves.toMatchObject({ success: true })
-  })
-
-  test('reports emailDelivered=true when the copy actually went out', async () => {
-    const response = await POST(request(VALID))
-    await expect(response.json()).resolves.toMatchObject({
-      success: true,
-      emailDelivered: true,
-    })
-  })
-
-  test('reports emailDelivered=false when it did not', async () => {
-    // Two independent outcomes in one response: the submission succeeded, the convenience
-    // copy did not. The success UI needs to tell them apart so it does not claim an email
-    // was sent when none was.
-    sendEbookDeliveryEmail.mockResolvedValue({ success: false, error: 'mailbox full' })
-
-    const response = await POST(request(VALID))
-    const body = await response.json()
-    expect(body.success).toBe(true)
-    expect(body.emailDelivered).toBe(false)
-  })
-
-  test('emailDelivered leaks NO provider, SMTP or address detail', async () => {
-    // The provider's error text can carry the SMTP host, the authenticated sender, the
-    // recipient or a stack. None of that belongs in a browser response.
-    sendEbookDeliveryEmail.mockResolvedValue({
-      success: false,
-      error: 'Invalid login: 535-5.7.8 Username and Password not accepted for smtp.gmail.com',
-    })
-
+  test('the response says nothing about email at all', async () => {
     const response = await POST(request(VALID))
     const body = await response.json()
 
-    expect(typeof body.emailDelivered).toBe('boolean')
-    const serialised = JSON.stringify(body)
-    for (const secret of ['smtp', 'gmail', '535', 'Username', 'Invalid login', '@']) {
-      expect(serialised.toLowerCase(), `leaked "${secret}"`).not.toContain(secret.toLowerCase())
+    expect(Object.keys(body).sort()).toEqual(['message', 'success'])
+    expect(body).not.toHaveProperty('emailDelivered')
+
+    // And it still leaks no provider detail, which was the original reason this was a boolean.
+    const serialised = JSON.stringify(body).toLowerCase()
+    for (const secret of ['smtp', 'gmail', 'username', 'invalid login', '@']) {
+      expect(serialised, `leaked "${secret}"`).not.toContain(secret)
     }
-    // The whole response is just the three known fields.
-    expect(Object.keys(body).sort()).toEqual(['emailDelivered', 'message', 'success'])
   })
 
-  test('exactly one message per submission', async () => {
-    await POST(request(VALID))
-    expect(sendEbookDeliveryEmail).toHaveBeenCalledTimes(1)
+  test('a rejected request sends no mail whatsoever', async () => {
+    const response = await POST(request({ ...VALID, email: 'not-an-email' }))
+
+    expect(response.status).toBe(400)
+    expect(sendEbookLeadEmail).not.toHaveBeenCalled()
   })
 
-  test('a failed send is a FAILED submission — never a silent lost lead', async () => {
+  test('a failed internal send is a FAILED submission - never a silent lost lead', async () => {
     sendEbookLeadEmail.mockResolvedValue({ success: false, error: 'SMTP down' })
 
     const response = await POST(request(VALID))
