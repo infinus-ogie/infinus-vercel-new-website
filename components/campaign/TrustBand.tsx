@@ -1,5 +1,6 @@
 import * as React from "react"
-import { Award, Globe2, ShieldCheck, Users2, type LucideIcon } from "lucide-react"
+import { Award, Globe2, Users2, type LucideIcon } from "lucide-react"
+import { SapGoldPartnerBadge } from "@/components/ui/SapGoldPartnerBadge"
 
 /**
  * The trust band under both campaign heroes.
@@ -10,32 +11,49 @@ import { Award, Globe2, ShieldCheck, Users2, type LucideIcon } from "lucide-reac
  *
  *   SR  a statement — "Poverenje kompanija koje…" — beside the SAP Gold Partner and Infinus
  *       marks. Its newer source replaced the old four-stat row with exactly this.
- *   EN  four metrics, including the 70% consultant-experience claim.
+ *   EN  four metrics, the first of which IS the SAP Gold Partner credential.
  *
- * Everything around that content is now identical: ground, both borders, height, padding,
- * alignment, type scale, mark containers and breakpoint. Previously the two bands only
- * happened to look similar, and drifted apart every time either was touched.
+ * Everything around that content is identical: ground, both rules, minimum height, padding,
+ * vertical centring, type scale, mark size and breakpoint. Previously the two bands only
+ * happened to look similar and drifted apart every time either was touched.
  *
- * ── Restrained on purpose ──────────────────────────────────────────────────────
- * A cool near-white ground picking up the navy above it, a hairline top and bottom rule, and
- * space. No cards, no shadows, no oversized logos. The band's job is to carry the hero's
- * credibility across into the white page below it, not to be a second hero.
+ * ── The shell's job is the transition ──────────────────────────────────────────
+ * It sits between a navy hero and a white page, so it is neither: a very pale blue that
+ * carries a memory of the hero at its top edge and resolves to near-white at its bottom, with
+ * a hairline rule on both sides. No card, no shadow, no rounded container around the strip —
+ * those would make it a third section competing with the two it joins. Space and one tint.
  */
 export function TrustBand({
   statement,
   proof,
   ...rest
 }: {
-  /** The Serbian statement. Omitted on English, whose proof is the metric list itself. */
+  /** The Serbian statement. Omitted on English, whose proof is the metric row itself. */
   statement?: string
   /** Logos (SR) or metrics (EN). */
   proof: React.ReactNode
 } & React.ComponentPropsWithoutRef<"section">) {
   return (
-    <section className="border-y border-slate-200/80 bg-[#F6F9FE]" {...rest}>
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-7 text-center sm:px-6 md:py-8 lg:flex-row lg:justify-between lg:gap-12 lg:px-8 lg:text-left">
+    <section
+      className="border-y border-slate-200/70 bg-gradient-to-b from-[#EDF3FC] to-[#FAFCFE]"
+      {...rest}
+    >
+      {/*
+        `lg:min-h-[10.25rem]` is what makes the two locales the same band rather than two bands
+        that happen to share a colour. English stacks a mark over a figure over a descriptor;
+        Serbian sets a sentence beside two marks. Left alone those resolve to 204px and 122px,
+        and switching locale shows the jump. The floor holds both at 160px on desktop, the
+        English column is tuned to fit inside it, and everything centres.
+
+        164px rather than a round 160: that is the English row's own content height once
+        compressed, measured. Setting the floor to exactly it makes the Serbian band resolve to
+        the same 166px including rules, so switching locale moves nothing. Rounding down to
+        160 left English 4px taller — invisible in isolation, visible when the two are compared,
+        which is the whole point of the shared shell.
+      */}
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-6 px-4 py-7 text-center sm:px-6 md:py-8 lg:min-h-[10.25rem] lg:flex-row lg:justify-between lg:gap-12 lg:px-8 lg:text-left">
         {statement ? (
-          <p className="max-w-lg text-[15px] font-medium leading-relaxed text-slate-700">
+          <p className="max-w-[38ch] text-[15px] font-medium leading-relaxed text-slate-700 md:text-base">
             {statement}
           </p>
         ) : null}
@@ -46,24 +64,25 @@ export function TrustBand({
 }
 
 /**
- * Icons for the metric list. Positional and `aria-hidden`: the approved metric strings are
- * never interpreted, they are simply given an anchor so a row of four claims reads as four
- * things rather than one run of text.
+ * Icons for the metrics that are numbers.
+ *
+ * Positional and `aria-hidden`: the approved strings are never interpreted, they are only
+ * given an anchor so a row of claims reads as separate things rather than one run of text.
+ * Index 0 is absent because the first English item is the partner credential, which brings
+ * its own mark — see {@link TrustMetrics}.
  */
-const METRIC_ICONS: readonly LucideIcon[] = [ShieldCheck, Users2, Globe2, Award]
+const METRIC_ICONS: Readonly<Record<number, LucideIcon>> = { 1: Users2, 2: Globe2, 3: Award }
 
 /**
  * Split a metric into its leading credential and the rest.
  *
  * "30+ SAP Consultants" -> "30+" / "SAP Consultants"
  * "70% of Consultants with 10+ Years of SAP Experience" -> "70%" / "of Consultants with…"
- * "SAP Gold Partner" -> no leading figure; rendered whole.
+ * "SAP Gold Partner" -> no leading figure.
  *
  * This is a LINE BREAK, not an edit. Every word of the approved metric is rendered, in the
  * approved order — the split only decides which of them gets the larger type, so a scanning
- * reader sees "30+" before they see what it counts. A metric with no leading figure falls
- * through and renders exactly as written, which is why the first item still reads
- * "SAP Gold Partner" on one line.
+ * reader sees "30+" before they see what it counts.
  */
 function splitMetric(value: string): { figure: string | null; label: string } {
   const match = /^(\d[\d.,]*\s*[%+]?\+?)\s+(.+)$/.exec(value)
@@ -71,49 +90,61 @@ function splitMetric(value: string): { figure: string | null; label: string } {
   return { figure: match[1].trim(), label: match[2].trim() }
 }
 
-/** The English metric list, as the band's proof slot. */
+/**
+ * The English proof row.
+ *
+ * ── Vertical, not a sentence ───────────────────────────────────────────────────
+ * Each item reads mark → credential → descriptor down the page. Set horizontally, "70%" and
+ * "of Consultants with 10+ Years of SAP Experience" ran together into a line of prose that
+ * had to be read rather than scanned, which is what made the old band feel utilitarian.
+ *
+ * ── The partner mark appears ONCE ──────────────────────────────────────────────
+ * "SAP Gold Partner" is the first approved metric AND the band used to print the certification
+ * badge next to the row, so the same credential was on screen twice — once as artwork and once
+ * as a shield icon with the words beside it. Now the badge IS that item's mark and the approved
+ * string is its accessible name: the artwork already sets the words, so repeating them under it
+ * would be the duplication in a different form. Screen readers get the string from `alt`;
+ * test/mythbusters-page.test.tsx asserts all four strings survive on that basis.
+ */
 export function TrustMetrics({ items }: { items: readonly string[] }) {
   return (
-    /*
-      Two-up on phones, four across from `sm`, a single divided row at `lg`.
-      Stacked one-per-line the four English metrics made the band 381px tall on a 390px
-      screen — nearly double the Serbian band beside it, which is the opposite of the shared
-      shell this is supposed to be. Two columns halves that and keeps the pairs aligned.
-    */
-    <ul className="grid grid-cols-2 items-center gap-x-4 gap-y-5 sm:grid-cols-4 lg:flex lg:flex-nowrap lg:items-stretch lg:justify-end lg:gap-x-0">
+    <ul className="grid grid-cols-2 items-start gap-x-5 gap-y-6 sm:grid-cols-4 lg:flex lg:flex-nowrap lg:items-center lg:justify-end lg:gap-x-0">
       {items.map((item, index) => {
-        const Icon = METRIC_ICONS[index % METRIC_ICONS.length]
+        const Icon = METRIC_ICONS[index]
         const { figure, label } = splitMetric(item)
         return (
           <li
             key={item}
-            /* The dividers belong to the single-row layout only — inside a two-column grid a
-               left rule on every other item reads as an accident, not a separator. */
-            className="flex min-w-0 items-center gap-3 lg:border-l lg:border-slate-200 lg:px-5 lg:first:border-l-0 lg:first:pl-0 lg:last:pr-0"
+            /* Separators belong to the single row only: inside a two-column grid a left rule
+               on every other item reads as an accident rather than a divider. */
+            className="flex min-w-0 flex-col items-center justify-start gap-2 text-center lg:border-l lg:border-slate-200/80 lg:px-6 lg:first:border-l-0 lg:first:pl-0 lg:last:pr-0"
           >
-            <span className="inline-grid size-9 shrink-0 place-items-center rounded-full border border-slate-200 bg-white">
-              <Icon className="h-[18px] w-[18px] text-brand-sap" aria-hidden="true" />
-            </span>
-            <span className="min-w-0 text-left">
-              {figure ? (
-                <>
-                  <span className="block text-lg font-bold leading-none tracking-tight text-slate-900">
-                    {figure}
-                  </span>{" "}
-                  {/* The space is deliberate. Two block spans concatenate in `textContent`
-                      with nothing between them — "30+SAP Consultants" — which is what anyone
-                      copying the line, or any tool reading the node's text, would get. It has
-                      no visual effect: the spans are block-level and break anyway. */}
-                  <span className="mt-1 block text-[12.5px] font-medium leading-snug text-slate-600">
-                    {label}
-                  </span>
-                </>
-              ) : (
-                <span className="block text-[13px] font-semibold leading-snug text-slate-900">
-                  {label}
+            {/* One fixed-height slot for every mark, so four items whose marks differ in kind
+                still sit on one baseline. */}
+            <span className="flex h-9 items-center justify-center">
+              {Icon ? (
+                <span className="inline-grid size-9 place-items-center rounded-full border border-slate-200 bg-white">
+                  <Icon className="h-[18px] w-[18px] text-brand-sap" aria-hidden="true" />
                 </span>
+              ) : (
+                <SapGoldPartnerBadge className="h-9 w-auto" alt={item} />
               )}
             </span>
+
+            {figure ? (
+              <span className="flex min-w-0 flex-col">
+                <span className="text-xl font-bold leading-none tracking-tight text-slate-900">
+                  {figure}
+                </span>{" "}
+                {/* The space is deliberate: two block-level spans concatenate in `textContent`
+                    with nothing between them — "30+SAP Consultants" — which is what anyone
+                    copying the line, or any tool reading the node, would get. No visual
+                    effect, since the spans break anyway. */}
+                <span className="mt-1 max-w-[20ch] text-[12px] font-medium leading-[1.35] text-slate-600">
+                  {label}
+                </span>
+              </span>
+            ) : null}
           </li>
         )
       })}
@@ -122,21 +153,22 @@ export function TrustMetrics({ items }: { items: readonly string[] }) {
 }
 
 /**
- * The Serbian proof slot: the two marks in matching containers.
+ * The Serbian proof slot: the two marks, with a hairline between them.
  *
- * Same container, same height, same border as the metric icons opposite them on the English
- * band — which is what stops "logos" and "metrics" reading as two different components. Big
- * enough to be credentials, small enough not to compete with the hero.
+ * Given real presence — these are the page's credentials, not footer decoration — while
+ * staying inside the band's height so the two locales match. The rule between them is the
+ * same weight as the separators on the English row opposite.
  */
 export function TrustLogos({ children }: { children: React.ReactNode }) {
-  return <div className="flex items-center gap-4 sm:gap-5">{children}</div>
+  return (
+    <div className="flex items-center gap-5 sm:gap-7 [&>*+*]:border-l [&>*+*]:border-slate-200/80 [&>*+*]:pl-5 sm:[&>*+*]:pl-7">
+      {children}
+    </div>
+  )
 }
 
-/** One mark, in the shared container. */
+/** One mark. No container: on this pale ground a white box around a logo is a card, and the
+ *  band is deliberately not made of cards. */
 export function TrustLogo({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex h-14 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 sm:px-5">
-      {children}
-    </span>
-  )
+  return <span className="inline-flex items-center justify-center">{children}</span>
 }

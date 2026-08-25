@@ -9,8 +9,13 @@ import * as React from "react"
  * by side halves that height and makes the two read as ONE module: this is the document, and
  * these are the four fields that get it.
  *
- * Roughly 38/62. The cover has to stay large enough to be read as a real document rather than
- * a thumbnail, and the form has to stay wide enough for two fields per row.
+ * Roughly 34/66, and the 66 is the half doing the work: the form has four labelled fields to
+ * place and the cover has one job. Every point given back to the form is what buys the field
+ * grid its second column — see EbookForm, which switches on its OWN width rather than on the
+ * viewport's, so this ratio and that decision cannot drift apart.
+ *
+ * `xl:items-start` is what makes the pair read as composed rather than floated: the cover's
+ * top edge sits on the form card's top edge, so the two share a baseline.
  *
  * ── It splits at `xl`, NOT at `lg` ─────────────────────────────────────────────
  * The outer hero goes two-column at `lg` (1024). If this module split at the same breakpoint,
@@ -32,7 +37,7 @@ export function ConversionModule({
   form: React.ReactNode
 }) {
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,38%)_minmax(0,1fr)] xl:items-start xl:gap-7">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,34%)_minmax(0,1fr)] xl:items-start xl:gap-6">
       {/* Centred while stacked so the cover sits under the middle of the copy on phones;
           left-aligned once it has its own column. */}
       <div className="flex justify-center xl:block">{aside}</div>

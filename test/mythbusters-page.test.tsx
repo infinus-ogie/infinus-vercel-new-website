@@ -60,25 +60,51 @@ describe('the English page is unchanged by the Serbian rework', () => {
   })
 
   /**
-   * The band now renders each metric's leading figure larger than the words after it, so
-   * "30+ Satisfied Clients" is two elements rather than one text node.
+   * All four approved strings must ship, in order — but they are no longer all plain text.
    *
-   * That is a LINE BREAK, not an edit, and this asserts exactly that: the four approved
-   * strings must survive whole and in order once the item's text is normalised. It is a
-   * stronger check than the old single-node lookup — it would catch a split that dropped or
-   * reordered a word, which the previous assertion could not.
+   * Two things changed in the band. Each metric's leading figure is now set larger than the
+   * words after it, so "30+ Satisfied Clients" is two elements rather than one text node; that
+   * is a LINE BREAK, not an edit. And "SAP Gold Partner" is rendered as the certification
+   * badge, because the band used to show that credential twice — once as artwork beside the
+   * row and once as words inside it. Its approved string is the image's accessible name now.
+   *
+   * So this reads each item the way a user agent would: its text if it has any, otherwise the
+   * accessible name of the mark that replaces it. That is a stronger assertion than the old
+   * single-node lookup — it catches a split that drops or reorders a word, AND it fails if the
+   * badge ever loses the alt that carries the credential to a screen reader.
    */
   test('keeps its four-metric trust bar, including the 70% claim', () => {
     const { container } = render(<EnglishMythBusters />)
     const bar = container.querySelector('[data-section="mythbusters-trust"]') as HTMLElement
 
-    const rendered = Array.from(bar.querySelectorAll('li')).map((li) =>
-      (li.textContent ?? '').replace(/\s+/g, ' ').trim()
-    )
+    const rendered = Array.from(bar.querySelectorAll('li')).map((li) => {
+      const text = (li.textContent ?? '').replace(/\s+/g, ' ').trim()
+      if (text) return text
+      // No text: the item is carried by a mark, whose alt is the approved string.
+      return (li.querySelector('img')?.getAttribute('alt') ?? '').trim()
+    })
 
     expect(rendered).toEqual([...enLayout.trustBar])
     expect(rendered).toContain('70% of Consultants with 10+ Years of SAP Experience')
     expect(rendered).toContain('30+ Satisfied Clients')
+  })
+
+  /**
+   * The de-duplication itself, asserted directly: exactly ONE element on the page announces
+   * the SAP Gold Partner credential. Without this the badge and a text item could drift back
+   * into both being rendered and every other assertion here would still pass.
+   */
+  test('announces the SAP Gold Partner credential exactly once', () => {
+    const { container } = render(<EnglishMythBusters />)
+    const bar = container.querySelector('[data-section="mythbusters-trust"]') as HTMLElement
+
+    const mentions = Array.from(bar.querySelectorAll('img, li')).filter((el) => {
+      const name = el.tagName === 'IMG' ? el.getAttribute('alt') : el.textContent
+      return (name ?? '').trim() === 'SAP Gold Partner'
+    })
+
+    expect(mentions).toHaveLength(1)
+    expect(mentions[0].tagName, 'the credential should be the badge, not a text row').toBe('IMG')
   })
 
   test('still lists all ten myths, in the source order', () => {
@@ -169,6 +195,57 @@ describe('the English page is unchanged by the Serbian rework', () => {
     expect(target.tabIndex).toBe(-1)
     // The hero form is what it points at, not the closing one.
     expect(target.querySelector('[data-testid="ebook-form-hero"]')).not.toBeNull()
+  })
+})
+
+/**
+ * Where the two approved Serbian hero paragraphs are rendered.
+ *
+ * The brief moved the second one out of the hero for hierarchy reasons — six things competed
+ * above the fold before the reader reached the form. The risk in a move like that is quiet
+ * loss: a paragraph that gets summarised, trimmed to fit, or simply dropped when someone later
+ * tidies the section it landed in. These lock the placement AND the wording.
+ */
+describe('the relocated Serbian hero paragraph', () => {
+  const [opening, explanatory] = srLayout.hero.paragraphs
+
+  test('the hero keeps the first paragraph and NOT the second', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const hero = container.querySelector('[data-section="mythbusters-hero"]') as HTMLElement
+
+    expect(within(hero).getByText(opening)).toBeInTheDocument()
+    expect(within(hero).queryByText(explanatory), 'the second paragraph moved out').toBeNull()
+  })
+
+  test('the second paragraph is rendered VERBATIM in its own section', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const section = container.querySelector('[data-section="mythbusters-context"]') as HTMLElement
+
+    expect(section, 'the relocation target must exist').not.toBeNull()
+    // getByText is exact by default: a summarised or re-punctuated copy fails here.
+    expect(within(section).getByText(explanatory)).toBeInTheDocument()
+  })
+
+  test('it sits between the trust band and the audience section', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const order = Array.from(container.querySelectorAll('[data-section]')).map((el) =>
+      el.getAttribute('data-section')
+    )
+
+    const band = order.indexOf('mythbusters-trust')
+    const moved = order.indexOf('mythbusters-context')
+    const audience = order.indexOf('mythbusters-audience')
+
+    expect(moved, 'relocated paragraph must follow the trust band').toBeGreaterThan(band)
+    expect(moved, 'and precede "Da li je ovaj vodič za vas?"').toBeLessThan(audience)
+  })
+
+  test('the paragraph appears exactly once on the page', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const hits = Array.from(container.querySelectorAll('p')).filter(
+      (el) => (el.textContent ?? '').trim() === explanatory.trim()
+    )
+    expect(hits).toHaveLength(1)
   })
 })
 

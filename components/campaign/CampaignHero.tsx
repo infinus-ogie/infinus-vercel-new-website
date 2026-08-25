@@ -14,10 +14,10 @@ import { cn } from "@/lib/utils"
  * ratio and the vertical rhythm. Each locale fills the two slots with its own approved copy.
  *
  * ── The ratio ──────────────────────────────────────────────────────────────────
- * `minmax(0,1fr)` for the editorial column and `minmax(380px,44%)` for the conversion column.
- * The 380px floor is what stops the form and cover being squeezed into the narrow strip that
- * made the previous Serbian hero feel like a utility widget; `minmax(0,…)` on the left is
- * what lets long Serbian words wrap instead of forcing the grid wider than its container.
+ * Roughly 49/51 at `xl`, where the conversion column holds the cover and the form side by
+ * side and therefore needs real width. `minmax(0,…)` on the left is what lets long Serbian
+ * words wrap instead of forcing the grid wider than its container; the `420px` floor on the
+ * right is what stops the form being squeezed into the utility strip it used to sit in.
  *
  * Below `lg` the columns stack, so mobile gets a single ordered read rather than a squeezed
  * two-column layout — see the page components for that order.
@@ -58,19 +58,30 @@ export function CampaignHero({
       />
 
       {/*
-        `pt-32 md:pt-44` — the campaign content used to start at 112/128px, which put the
-        eyebrow almost against the fixed navbar. This is +16 on mobile and +48 on desktop, so
-        the hero has a deliberate starting position below the chrome rather than beginning
-        wherever the nav happens to end. The bottom padding is unchanged: the extra room is
-        wanted at the top, not everywhere.
+        Top spacing is ONE system for both locales, which is why it lives here and not in
+        either page.
+
+        `pt-36 md:pt-52` — 144px / 208px. The fixed navbar is ~80px tall, so this leaves a
+        deliberate 64/128px of navy between the chrome and the eyebrow: enough that the hero
+        reads as its own surface rather than as the continuation of the header, and short of
+        the dead band you get when a hero is pushed toward the fold for its own sake.
+
+        Bottom padding is unchanged. The room was wanted under the nav, not everywhere.
       */}
-      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-32 sm:px-6 md:pb-20 md:pt-44 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-36 sm:px-6 md:pb-20 md:pt-52 lg:px-8">
         {/*
-          The conversion column widens at `xl` so the cover and the form can sit side by side
-          inside it — see ConversionModule, which is what actually splits. At `lg` it keeps
-          the narrower 46% and the module stays stacked.
+          ── The outer ratio ──────────────────────────────────────────────────────────
+          The conversion column carries TWO objects side by side at `xl` — the cover and the
+          form — so it cannot be the narrow sidebar a 44/56 split made it. At `xl` the columns
+          are 1 : 1.06, which lands at roughly 49/51: the editorial keeps the visual lead a
+          left column should have, and the conversion side gets the width its contents need
+          instead of having to compress them.
+
+          At `lg` the module inside is still stacked (see ConversionModule), so the column only
+          has to hold a full-width form: `minmax(420px,50%)` gives it a floor that a long
+          Serbian label cannot push it below.
         */}
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(400px,46%)] lg:gap-14 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.18fr)] xl:gap-16">
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(420px,50%)] lg:gap-14 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.06fr)] xl:gap-14">
           <div>{editorial}</div>
           {/* `lg:sticky` keeps the conversion column beside the copy on tall desktop heroes
               without any scroll listener. Harmless when the column is the taller of the two. */}

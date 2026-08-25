@@ -79,21 +79,20 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
             </p>
 
             {/*
-              Both approved paragraphs are kept — none of the client's prose is dropped — but
-              they are set one step quieter than the subtitle above and the tiles below. The
-              Serbian hero carries more words than the English one because its source does;
-              the fix for "too much competing at once" is hierarchy, not deletion.
+              ONE explanatory paragraph in the hero — `paragraphs[0]`, which sets up the
+              problem the e-book answers.
+
+              `paragraphs[1]` is not deleted and not rewritten: it is rendered verbatim in its
+              own editorial block below the trust band (search for `heroContext` in this file).
+              With both here the hero asked the reader for eyebrow, headline, subtitle, two
+              paragraphs and three value points before it showed them the form — six things
+              competing above the fold. The second paragraph is the one that explains what the
+              document DOES, which is a better fit immediately before "Da li je ovaj vodič za
+              vas?" than stacked behind the headline.
             */}
-            <div className="mt-5 space-y-3.5">
-              {layout.hero.paragraphs.map((paragraph) => (
-                <p
-                  key={paragraph}
-                  className="max-w-[52ch] text-[15px] leading-relaxed text-slate-300/85"
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+            <p className="mt-5 max-w-[52ch] text-[15px] leading-relaxed text-slate-300/85">
+              {layout.hero.paragraphs[0]}
+            </p>
 
             <div className="mt-8">
               <ValuePoints items={layout.hero.benefits} heading={layout.hero.benefitsHeading} />
@@ -126,10 +125,12 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
           /* Both marks are MEANINGFUL here: no adjacent text names either, unlike the
              homepage badge which now sits inside a pill that says "SAP Gold Partner".
              The containers are the shared ones the English band uses for its metric marks. */
+          /* Sized to be credentials rather than footer icons, and to the same 40px mark
+             height the English band gives its metric marks — see TrustMetrics. */
           <TrustLogos>
             <TrustLogo>
               <SapGoldPartnerBadge
-                className="h-9 w-auto shrink-0"
+                className="h-11 w-auto shrink-0"
                 alt={layout.trustBar.sapLogoAlt}
               />
             </TrustLogo>
@@ -139,12 +140,29 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
                 alt={layout.trustBar.infinusLogoAlt}
                 width={250}
                 height={75}
-                className="h-7 w-auto shrink-0"
+                className="h-9 w-auto shrink-0"
               />
             </TrustLogo>
           </TrustLogos>
         }
       />
+
+      {/*
+        ── The paragraph moved out of the hero ────────────────────────────────
+        `layout.hero.paragraphs[1]`, verbatim. It reads as the page's opening statement here:
+        the band above has just made the credibility claim, and this says what the document
+        does with it — which is the question "Da li je ovaj vodič za vas?" then answers.
+
+        Set at lede scale rather than hero-body scale, because in the hero it was the quietest
+        thing on a dark ground and here it is the first thing on a light one.
+      */}
+      <Section surface="surface-0" data-section="mythbusters-context">
+        <div className="mx-auto max-w-3xl">
+          <p className="text-pretty text-lg leading-relaxed text-slate-600 md:text-xl md:leading-relaxed">
+            {layout.hero.paragraphs[1]}
+          </p>
+        </div>
+      </Section>
 
       {/* ── Da li je ovaj vodič za vas? ──────────────────────────────────────── */}
       <Section surface="surface-0" data-section="mythbusters-audience">

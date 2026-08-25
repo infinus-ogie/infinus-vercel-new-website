@@ -355,3 +355,59 @@
     margin-top: 16pt; 
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   The e-book form's field grid.
+
+   ── Why a container query and not a breakpoint ────────────────────────────────
+   This form renders at four very different widths on one page: full-bleed on a phone,
+   ~600px in the stacked tablet hero, ~500px in the `lg` hero column, and ~390px once the
+   cover moves in beside it at `xl`. A viewport breakpoint cannot tell those apart — at
+   1024px wide the old `sm:grid-cols-2` was still in force while the form itself had only
+   ~440px, which is what produced two 200px fields and the cramped 2×2 the brief describes.
+
+   So the decision belongs to the FORM's own width. `container-type: inline-size` on the
+   <form> makes it the query container; the grid inside asks how much room it actually has.
+   Two columns only above 27rem of form width, one column below it — which is the brief's
+   "switch the form itself to one column rather than squeezing fields", expressed as a rule
+   that holds at every width rather than at the handful I happened to test.
+
+   26rem/416px is measured, not guessed. The longest label in either locale is
+   "Role or Job Title – optional" at 165px (Serbian's longest, "Poslovna e-mail adresa", is
+   146px). Two columns plus the 1rem gap leave 200px per field at this threshold: the label
+   clears its line with 35px to spare, and 200px is still a usable width to type an email into
+   — a column sized to the label alone would fit the text and fail the typing.
+
+   Below it the form drops to one column. At the `xl` hero, where the cover sits beside the
+   form, the form is 312px — two columns there would be 148px each, narrower than the label,
+   so it would wrap and carry its input out of line. That is the misalignment §6 asks to
+   remove, and the reason the widest layout is the one that stays single-column.
+   ───────────────────────────────────────────────────────────────────────────── */
+.ebook-formq {
+  container-type: inline-size;
+  container-name: ebookform;
+}
+
+.ebook-fieldgrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* `start` so a field carrying a validation message cannot stretch its neighbour's input. */
+  align-items: start;
+  gap: 1rem;
+}
+
+@container ebookform (min-width: 26rem) {
+  .ebook-fieldgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1rem;
+    row-gap: 1.125rem;
+  }
+}
+
+/* Browsers without container queries get the single column, which is the safe layout
+   rather than the degraded one. */
+@supports not (container-type: inline-size) {
+  @media (min-width: 1024px) {
+    .ebook-fieldgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+}

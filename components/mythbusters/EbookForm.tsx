@@ -71,6 +71,15 @@ import { RECAPTCHA_FIELD } from "@/lib/security/fields";
  *
  * Presentation only: no field, id, validation or submission behaviour is affected.
  */
+/**
+ * The card the form sits on.
+ *
+ * It has to look like the most important object in a navy hero without looking like an admin
+ * panel — so: one soft lift rather than a hard border, a hairline ring for definition on white
+ * sections, and padding that stays generous at the top where the heading is. `p-6 sm:p-7` is
+ * unchanged; what changed is everything inside it, which now has its own margins instead of
+ * inheriting a single grid gap.
+ */
 const CARD_SURFACE =
   "rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_4px_rgba(0,0,0,.04),0_24px_48px_-24px_rgba(0,0,0,.45)] ring-1 ring-black/[0.04] sm:p-7"
 
@@ -121,9 +130,11 @@ export function EbookForm({
   /**
    * PRESENTATION ONLY — how tightly the fields are packed.
    *
-   * `compact` puts them in a two-column grid from `sm` up. Four fields stacked in one column
-   * made a card tall enough to dominate the hero it was supposed to sit beside; two rows of
-   * two is the same form at roughly half the height.
+   * `compact` lays the fields out in a grid that is two columns whenever the FORM is at least
+   * 27rem wide and one column when it is not — a container query, so a form squeezed into a
+   * narrow hero column drops to one column on its own instead of holding a 2×2 it cannot
+   * afford. Four fields stacked made a card tall enough to dominate the hero it sits beside;
+   * two rows of two is the same form at roughly half the height, where there is room for it.
    *
    * Field order, names, types, validation and submission are identical in both densities.
    */
@@ -139,8 +150,6 @@ export function EbookForm({
   // One per mounted instance. This is what keeps two forms on one page from colliding.
   const uid = useId();
   const isCompact = density === "compact";
-  /** In the compact grid everything below the fields runs the full width. */
-  const span = isCompact ? "sm:col-span-2" : "";
   const recaptcha = useRecaptcha();
   const fieldId = (key: string) => `ebook-${uid}-${key}`;
   const errorId = (key: string) => `ebook-${uid}-${key}-error`;
@@ -310,10 +319,10 @@ export function EbookForm({
     >
       {showIntro && (
         <>
-          <h2 className="text-[22px] font-semibold leading-snug tracking-tight text-slate-900 sm:text-2xl">
+          <h2 className="text-pretty text-[21px] font-semibold leading-snug tracking-tight text-slate-900 sm:text-[22px]">
             {copy.heading}
           </h2>
-          <p className="mt-2.5 text-[15px] leading-relaxed text-slate-600">{copy.body}</p>
+          <p className="mt-2 text-[14.5px] leading-relaxed text-slate-600">{copy.body}</p>
         </>
       )}
 
@@ -330,43 +339,63 @@ export function EbookForm({
         {copy.languageNote}
       </p>
 
+      {/*
+        `ebook-formq` makes this element a query container; `ebook-fieldgrid` inside it is one
+        or two columns depending on the width THIS form actually got, not the width of the
+        window. Both are defined in app/globals.css, where the 27rem threshold is explained.
+
+        Everything below the field grid — error, button, assurances, privacy — is an ordinary
+        block sibling now. It used to be a grid child carrying `sm:col-span-2`, which meant the
+        button's full width depended on the same breakpoint the fields did; at `lg`, where the
+        fields were wrongly two-up, so was everything else.
+      */}
       <form
         onSubmit={handleSubmit}
         noValidate
-        className={isCompact ? "mt-5 grid gap-x-4 gap-y-4 sm:grid-cols-2" : "mt-6 space-y-5"}
+        className={isCompact ? "ebook-formq mt-5" : "mt-6"}
       >
-        {copy.fields.map((field) => (
-          <div key={field.key} className={isCompact ? "space-y-1.5" : "space-y-1.5"}>
-            <Label
-              htmlFor={fieldId(field.key)}
-              className="text-[13px] font-semibold text-slate-800"
-            >
-              {field.label}
-            </Label>
-            {/* h-11 rather than the shared h-10: a taller target on a conversion form, applied
-                here only so the Contact and Careers forms keep the site-wide field height. */}
-            <Input
-              id={fieldId(field.key)}
-              name={field.key}
-              type={field.key === "email" ? "email" : "text"}
-              value={values[field.key] ?? ""}
-              onChange={handleChange}
-              aria-invalid={errors[field.key] ? true : undefined}
-              aria-describedby={errors[field.key] ? errorId(field.key) : undefined}
-              className="h-11 rounded-xl border-slate-300 bg-white text-[15px] focus-visible:ring-brand-sap aria-[invalid=true]:border-red-400"
-            />
-            {errors[field.key] && (
-              <p id={errorId(field.key)} className="text-[13px] font-medium text-red-600">
-                {errors[field.key]}
-              </p>
-            )}
-          </div>
-        ))}
+        <div className={isCompact ? "ebook-fieldgrid" : "space-y-5"}>
+          {copy.fields.map((field) => (
+            <div key={field.key} className="min-w-0">
+              {/*
+                `min-h-[1.125rem]` reserves exactly one line for every label, so the four
+                inputs in a 2×2 sit on two clean baselines. The long optional label is the
+                reason: at a width where it wrapped it would carry its own input 18px below
+                its neighbour's, which is the uneven look §6 describes. The grid threshold
+                stops it wrapping; this keeps the row honest if it ever does.
+              */}
+              <Label
+                htmlFor={fieldId(field.key)}
+                className="block min-h-[1.125rem] text-[13px] font-semibold leading-[1.125rem] text-slate-800"
+              >
+                {field.label}
+              </Label>
+              {/* h-11 rather than the shared h-10: a taller target on a conversion form,
+                  applied here only so the Contact and Careers forms keep the site-wide
+                  field height. */}
+              <Input
+                id={fieldId(field.key)}
+                name={field.key}
+                type={field.key === "email" ? "email" : "text"}
+                value={values[field.key] ?? ""}
+                onChange={handleChange}
+                aria-invalid={errors[field.key] ? true : undefined}
+                aria-describedby={errors[field.key] ? errorId(field.key) : undefined}
+                className="mt-1.5 h-11 w-full rounded-xl border-slate-300 bg-white text-[15px] focus-visible:ring-brand-sap aria-[invalid=true]:border-red-400"
+              />
+              {errors[field.key] && (
+                <p id={errorId(field.key)} className="mt-1.5 text-[13px] font-medium text-red-600">
+                  {errors[field.key]}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
 
         {errors.general && (
           <p
             role="alert"
-            className={`rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-medium text-red-700 ${span}`}
+            className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-medium text-red-700"
           >
             {errors.general}
           </p>
@@ -378,13 +407,13 @@ export function EbookForm({
           type="submit"
           size="lg"
           disabled={isSubmitting}
-          className={`h-12 w-full text-[15px] font-semibold ${span}`}
+          className="mt-5 h-12 w-full text-[15px] font-semibold"
         >
           {isSubmitting ? copy.submitting : copy.submit}
         </Button>
 
         {assurances && assurances.length > 0 && (
-          <ul className={`flex flex-wrap gap-x-4 gap-y-2 pt-0.5 ${span}`}>
+          <ul className="mt-3.5 flex flex-wrap gap-x-4 gap-y-2">
             {assurances.map((line) => (
               <li key={line} className="flex items-center gap-1.5 text-xs text-slate-600">
                 <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden="true" />
@@ -398,7 +427,7 @@ export function EbookForm({
             BOTH form instances — a marketing document going quiet on a legal UI requirement
             does not remove it. The href is locale-owned. */}
         <p
-          className={`flex items-start gap-2.5 rounded-xl bg-slate-50 px-3.5 py-3 text-[11.5px] leading-relaxed text-slate-500 ${span}`}
+          className="mt-4 flex items-start gap-2.5 rounded-xl bg-slate-50 px-3.5 py-3 text-[11.5px] leading-relaxed text-slate-500"
         >
           <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden="true" />
           <span>

@@ -2,7 +2,6 @@ import Script from "next/script"
 import { CheckCircle2 } from "lucide-react"
 import { Section } from "@/components/ui/section"
 import { Button } from "@/components/ui/button"
-import { SapGoldPartnerBadge } from "@/components/ui/SapGoldPartnerBadge"
 import { EbookForm } from "@/components/mythbusters/EbookForm"
 import {
   CampaignHero,
@@ -10,7 +9,7 @@ import {
   CampaignHeading,
 } from "@/components/campaign/CampaignHero"
 import { EbookCover } from "@/components/campaign/EbookCover"
-import { TrustBand, TrustMetrics, TrustLogo } from "@/components/campaign/TrustBand"
+import { TrustBand, TrustMetrics } from "@/components/campaign/TrustBand"
 import { ValuePoints } from "@/components/campaign/ValuePoints"
 import { ClosingSection } from "@/components/campaign/ClosingSection"
 import { ConversionModule } from "@/components/campaign/ConversionModule"
@@ -130,16 +129,11 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
       {/* ── Trust band ───────────────────────────────────────────────────────── */}
       <TrustBand
         data-section="mythbusters-trust"
-        proof={
-          <div className="flex flex-col items-center gap-6 lg:flex-row lg:gap-8">
-            {/* Decorative: the first metric beside it reads "SAP Gold Partner". The container
-                is the same one the Serbian band puts its two marks in. */}
-            <TrustLogo>
-              <SapGoldPartnerBadge className="h-9 w-auto shrink-0" />
-            </TrustLogo>
-            <TrustMetrics items={layout.trustBar} />
-          </div>
-        }
+        /* The certification badge used to sit here as a separate mark while "SAP Gold Partner"
+           also ran as the first metric — the same credential twice, once as artwork and once
+           as words. The badge is now that metric's own mark inside TrustMetrics, so it appears
+           once and at a size where it can actually be read. */
+        proof={<TrustMetrics items={layout.trustBar} />}
       />
 
       {/* ── Why download ─────────────────────────────────────────────────────── */}
