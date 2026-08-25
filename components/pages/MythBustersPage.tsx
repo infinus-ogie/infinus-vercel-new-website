@@ -9,7 +9,7 @@ import {
   CampaignHeading,
 } from "@/components/campaign/CampaignHero"
 import { EbookCover } from "@/components/campaign/EbookCover"
-import { TrustBand, TrustMetrics } from "@/components/campaign/TrustBand"
+import { TrustBand } from "@/components/campaign/TrustBand"
 import { ValuePoints } from "@/components/campaign/ValuePoints"
 import { ClosingSection } from "@/components/campaign/ClosingSection"
 import { ConversionModule } from "@/components/campaign/ConversionModule"
@@ -101,13 +101,11 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
         }
         conversion={
           <ConversionModule
-            aside={
-              /* Decorative: the form heading and the eyebrow beside it already name the
-                 document, and the English dictionary carries no cover copy to use as alt. */
-              <div className="w-[min(14rem,55vw)] sm:w-[min(16rem,42vw)] xl:w-full">
-                <EbookCover priority />
-              </div>
-            }
+            /* Decorative, and deliberately unlike the Serbian call: that locale has approved
+               alt copy naming the document and this one does not, so inventing an English
+               string here would be writing client copy. The sizing is ConversionModule's now,
+               which is what actually holds the two heroes to the same composition. */
+            cover={<EbookCover priority />}
             form={
               /*
                 `tabIndex={-1}` with `scroll-mt-24` is what makes the mobile CTA correct rather
@@ -127,14 +125,8 @@ export function MythBustersPage({ content, layout, jsonLd }: MythBustersPageProp
       />
 
       {/* ── Trust band ───────────────────────────────────────────────────────── */}
-      <TrustBand
-        data-section="mythbusters-trust"
-        /* The certification badge used to sit here as a separate mark while "SAP Gold Partner"
-           also ran as the first metric — the same credential twice, once as artwork and once
-           as words. The badge is now that metric's own mark inside TrustMetrics, so it appears
-           once and at a size where it can actually be read. */
-        proof={<TrustMetrics items={layout.trustBar} />}
-      />
+      {/* Identical to the Serbian call: one band, four approved proofs, no locale branch. */}
+      <TrustBand data-section="mythbusters-trust" items={layout.trustBar} />
 
       {/* ── Why download ─────────────────────────────────────────────────────── */}
       <Section surface="surface-0" data-section="mythbusters-why">

@@ -58,6 +58,13 @@ import { RECAPTCHA_FIELD } from "@/lib/security/fields";
  * /api/ebook reports `emailDelivered`, and the "a copy is on its way" block renders only
  * when it is true. A failed convenience copy does not turn a successful submission into an
  * error state — the visitor still gets the confirmation and the download.
+ *
+ * ── Submitting is not downloading ───────────────────────────────────────────────
+ * A valid submission captures the lead, sends the copy by email, and shows the success panel.
+ * It does NOT start a download. The panel's button is the only thing that does, and the
+ * `download_resource` event fires from that button — so the number means what it says. The
+ * form used to auto-click the anchor the instant the panel mounted and then offer the same
+ * button underneath it, which downloaded the file twice over.
  */
 
 /**
@@ -174,7 +181,6 @@ export function EbookForm({
    * Defaults to FALSE, so a malformed or older response understates rather than overstates.
    */
   const [emailDelivered, setEmailDelivered] = useState(false);
-  const downloadRef = React.useRef<HTMLAnchorElement | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -234,14 +240,8 @@ export function EbookForm({
 
       setEmailDelivered(result.emailDelivered === true);
       setIsDone(true);
-
-      if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
-        (window as any).gtag("event", "download_resource", {
-          id: "sap_mythbusters_ebook",
-          title: "10 Myths About SAP Cloud ERP",
-          placement,
-        });
-      }
+      // No analytics here. `download_resource` fires on the download button — see
+      // `trackDownload` below — because a submission is not a download.
     } catch {
       setErrors({ general: copy.error });
     } finally {
@@ -249,11 +249,36 @@ export function EbookForm({
     }
   };
 
-  // Fire the download once the success panel exists, so the anchor is in the DOM. The
-  // visible link is the reliable path; the click is the convenience.
-  React.useEffect(() => {
-    if (isDone) downloadRef.current?.click();
-  }, [isDone]);
+  /**
+   * The e-book download event.
+   *
+   * ── Why it lives on the button and not on submit ───────────────────────────────
+   * It used to fire the moment the submission succeeded, next to a `useEffect` that
+   * synthetically clicked the download anchor as soon as the success panel mounted. So the
+   * browser downloaded the PDF on its own AND then offered a download button for the same
+   * file — two routes to one download — and the analytics counted the submission, not the
+   * download.
+   *
+   * The client's Serbian LP/Thank-You source is explicit: the e-book is ready, the user
+   * CLICKS, the download begins. The auto-click is gone and this fires from the anchor's
+   * onClick, so a `download_resource` event now means somebody actually took the file.
+   *
+   * `typeof window.gtag === "function"` IS the consent gate, not a defensive check:
+   * components/consent/AnalyticsGate.tsx only injects gtag once analytics consent is granted,
+   * so without consent there is no function and nothing is sent. Kept verbatim rather than
+   * reimplemented, so the gating cannot drift from the rest of the site.
+   */
+  const trackDownload = () => {
+    if (typeof window === "undefined") return;
+    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+    if (typeof gtag !== "function") return;
+
+    gtag("event", "download_resource", {
+      id: "sap_mythbusters_ebook",
+      title: "10 Myths About SAP Cloud ERP",
+      placement,
+    });
+  };
 
   if (isDone) {
     const s = copy.success;
@@ -267,10 +292,13 @@ export function EbookForm({
         <h2 className="mt-2 text-2xl font-semibold text-slate-900">{s.heading}</h2>
         <p className="mt-3 text-slate-600">{s.body}</p>
 
+        {/* The ONLY thing that starts a browser download. Still a plain anchor with `download`
+            — the tracking rides along with the navigation rather than replacing it, so the
+            download works identically whether or not analytics is loaded. */}
         <a
-          ref={downloadRef}
           href={EBOOK_HREF}
           download
+          onClick={trackDownload}
           className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary-700 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
         >
           <Download className="h-4 w-4" aria-hidden="true" />

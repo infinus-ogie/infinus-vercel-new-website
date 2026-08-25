@@ -15,6 +15,7 @@
  */
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
+import type { Mock, MockInstance } from 'vitest'
 import { EbookForm } from '@/components/mythbusters/EbookForm'
 import { getDictionary } from '@/content/dictionary'
 
@@ -183,5 +184,177 @@ describe('the English half behaves the same way', () => {
     expect(en.success.emailFallback).toBe(
       'You can download the e-book immediately using the button below.'
     )
+  })
+})
+
+/**
+ * WHEN the PDF is allowed to leave the browser, and what gets counted when it does.
+ *
+ * ── The bug this suite exists for ──────────────────────────────────────────────
+ * Submitting used to download the file twice over. A `useEffect` synthetically clicked the
+ * success panel's anchor the moment the panel mounted, so the browser saved the PDF on its
+ * own — and then the same panel offered a "Download the E-Book" button for the identical
+ * file. The client's Serbian LP/Thank-You source describes one flow: the e-book is ready, the
+ * user clicks, the download starts.
+ *
+ * The analytics had the matching problem. `download_resource` fired inside the submit handler,
+ * so it counted submissions and would have counted them even if nobody ever took the file.
+ *
+ * These assert the corrected sequence from both ends: nothing downloads until the button is
+ * clicked, and nothing is counted until something downloads.
+ */
+describe('the download is user-initiated, not automatic', () => {
+  /**
+   * Every PROGRAMMATIC anchor click — `element.click()`.
+   *
+   * `fireEvent.click` dispatches a MouseEvent without going through `.click()`, so a real
+   * user click never touches this spy. That asymmetry is exactly what makes it a clean probe
+   * for the bug: it sees the code clicking the link for the user, and nothing else.
+   */
+  let anchorClicks: MockInstance<[], void>
+  let gtag: Mock
+
+  beforeEach(() => {
+    anchorClicks = vi.spyOn(HTMLAnchorElement.prototype, 'click')
+    gtag = vi.fn()
+    vi.stubGlobal('gtag', gtag)
+  })
+  afterEach(() => {
+    anchorClicks.mockRestore()
+    vi.unstubAllGlobals()
+  })
+
+  test('a valid submit shows the success panel but starts NO download', async () => {
+    await submitSerbian({ success: true, emailDelivered: true })
+
+    expect(screen.getByTestId('ebook-success-hero')).toBeInTheDocument()
+    // The regression, stated directly: nothing may click the anchor on our behalf.
+    expect(anchorClicks, 'submitting must not trigger a download').not.toHaveBeenCalled()
+  })
+
+  test('and counts no download event on submit', async () => {
+    await submitSerbian({ success: true, emailDelivered: true })
+
+    expect(
+      gtag.mock.calls.filter(([, name]) => name === 'download_resource'),
+      'a submission is not a download'
+    ).toHaveLength(0)
+  })
+
+  test('the success panel offers a real download link', async () => {
+    await submitSerbian({ success: true, emailDelivered: true })
+    const link = screen.getByRole('link', { name: sr.success.downloadLabel })
+
+    expect(link).toHaveAttribute('href', '/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf')
+    expect(link).toHaveAttribute('download')
+  })
+
+  test('clicking it fires download_resource exactly once, with the placement', async () => {
+    await submitSerbian({ success: true, emailDelivered: true })
+    fireEvent.click(screen.getByRole('link', { name: sr.success.downloadLabel }))
+
+    const events = gtag.mock.calls.filter(([, name]) => name === 'download_resource')
+    expect(events).toHaveLength(1)
+    expect(events[0][0]).toBe('event')
+    expect(events[0][2]).toMatchObject({ id: 'sap_mythbusters_ebook', placement: 'hero' })
+  })
+
+  test('two clicks are two real downloads, so two events — never a double-fire from one', async () => {
+    await submitSerbian({ success: true, emailDelivered: true })
+    const link = screen.getByRole('link', { name: sr.success.downloadLabel })
+
+    fireEvent.click(link)
+    expect(gtag.mock.calls.filter(([, n]) => n === 'download_resource')).toHaveLength(1)
+    fireEvent.click(link)
+    expect(gtag.mock.calls.filter(([, n]) => n === 'download_resource')).toHaveLength(2)
+  })
+
+  test('the closing form reports its own placement', async () => {
+    mockEndpoint({ success: true, emailDelivered: true })
+    render(<EbookForm copy={sr} locale="sr" placement="closing" />)
+    fillSerbian()
+    fireEvent.click(screen.getByRole('button', { name: sr.submit }))
+    await waitFor(() => expect(screen.getByTestId('ebook-success-closing')).toBeInTheDocument())
+
+    fireEvent.click(screen.getByRole('link', { name: sr.success.downloadLabel }))
+    const events = gtag.mock.calls.filter(([, name]) => name === 'download_resource')
+    expect(events[0][2]).toMatchObject({ placement: 'closing' })
+  })
+
+  test('the truthful fallback still governs the panel, download unaffected', async () => {
+    await submitSerbian({ success: true, emailDelivered: false })
+    const panel = screen.getByTestId('ebook-success-hero')
+
+    expect(panel).toHaveAttribute('data-email-delivered', 'false')
+    expect(within(panel).getByText(sr.success.emailFallback)).toBeInTheDocument()
+    // A failed convenience copy must not take the download away.
+    expect(within(panel).getByRole('link', { name: sr.success.downloadLabel })).toHaveAttribute(
+      'download'
+    )
+    expect(anchorClicks).not.toHaveBeenCalled()
+  })
+})
+
+/**
+ * Consent gating, asserted rather than assumed.
+ *
+ * components/consent/AnalyticsGate.tsx only injects gtag once analytics consent is granted, so
+ * `typeof window.gtag === 'function'` is the gate itself. With consent withheld there is no
+ * function — and clicking download must still download, silently.
+ */
+describe('with analytics consent withheld', () => {
+  beforeEach(() => {
+    vi.unstubAllGlobals()
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  test('the download works and nothing is sent', async () => {
+    await submitSerbian({ success: true, emailDelivered: true })
+    expect((window as unknown as { gtag?: unknown }).gtag).toBeUndefined()
+
+    const link = screen.getByRole('link', { name: sr.success.downloadLabel })
+    // Must not throw: the tracking is a side effect of the click, not a precondition for it.
+    expect(() => fireEvent.click(link)).not.toThrow()
+    expect(link).toHaveAttribute('download')
+  })
+})
+
+/**
+ * One asset, both locales. The page is bilingual; the e-book is not.
+ */
+describe('the PDF is the same English file on both pages', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  test('Serbian and English success panels link to the identical href', async () => {
+    await submitSerbian({ success: true, emailDelivered: true })
+    const srHref = screen
+      .getByRole('link', { name: sr.success.downloadLabel })
+      .getAttribute('href')
+
+    vi.unstubAllGlobals()
+    mockEndpoint({ success: true, emailDelivered: true })
+    render(<EbookForm copy={en} locale="en" placement="closing" />)
+    fireEvent.change(screen.getByLabelText('Full Name'), {
+      target: { name: 'name', value: 'Ann Example' },
+    })
+    fireEvent.change(screen.getByLabelText('Business Email'), {
+      target: { name: 'email', value: 'ann@example.com' },
+    })
+    fireEvent.change(screen.getByLabelText('Company'), {
+      target: { name: 'company', value: 'Example Ltd' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: en.submit }))
+    await waitFor(() => expect(screen.getByTestId('ebook-success-closing')).toBeInTheDocument())
+
+    const enHref = screen
+      .getByRole('link', { name: en.success.downloadLabel })
+      .getAttribute('href')
+
+    expect(enHref).toBe(srHref)
+    expect(enHref).toBe('/downloads/SAP_Mythbusting_Campaign_E-Book_Infinus.pdf')
   })
 })

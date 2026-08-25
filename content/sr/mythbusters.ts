@@ -97,15 +97,17 @@ export const mythBusters: MythBustersDictionary = {
       'Vaši podaci se tretiraju poverljivo',
     ],
 
-    trustBar: {
-      statement:
-        'Poverenje kompanija koje uspešno razvijaju svoju digitalnu transformaciju uz SAP',
-      // The badge sits beside the Infinus mark, with no adjacent text naming either, so both
-      // images are MEANINGFUL here and carry real alt text — unlike the homepage badge,
-      // which is decorative because a trust pill names the certification next to it.
-      sapLogoAlt: 'SAP Gold Partner',
-      infinusLogoAlt: 'Infinus',
-    },
+    // Restored from the FIRST approved Serbian document (see 3d852ad~1), where this page
+    // carried the same four-metric bar as the English one. The newer source replaced it with
+    // a one-line statement beside two logos; the owner has withdrawn that, so both locales
+    // show the same four proofs again. This is the earlier approved wording verbatim — not a
+    // translation of the English strings, and not a new claim.
+    trustBar: [
+      'SAP Gold Partner',
+      '30+ SAP konsultanata',
+      '30+ zadovoljnih klijenata',
+      '70% konsultanata sa više od 10 godina SAP iskustva',
+    ],
 
     audience: {
       heading: 'Da li je ovaj vodič za vas?',

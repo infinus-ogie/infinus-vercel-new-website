@@ -70,8 +70,12 @@ for (const width of WIDTHS) {
 // instances on one page make DOM-id uniqueness a correctness requirement, not a nicety:
 // duplicate ids would make both labels focus the first input.
 //
-// The Serbian page is checked for its own extra furniture (statement + two logos, five FAQ
-// rows, four myth/fact previews); the English page shares only the two-form contract.
+// The Serbian page is checked for its own extra furniture (five FAQ rows, four myth/fact
+// previews); the English page shares only the two-form contract.
+//
+// The band's SAP mark is now checked on BOTH locales — they render the same four-cell trust
+// band, so it stopped being Serbian-only furniture. The Infinus mark is no longer part of that
+// band at all, which is why nothing asserts it here any more.
 const MYTH_PAGES = [
   { locale: 'sr', path: '/sr/insights/sap-mythbusters', full: true },
   { locale: 'en', path: '/insights/sap-mythbusters', full: false },
@@ -105,7 +109,9 @@ for (const width of [320, 430]) {
       escaped,
       coverVisible: cover ? cover.getBoundingClientRect().width > 0 : false,
       sapLogo: !!document.querySelector('[data-section="mythbusters-trust"] img[alt="SAP Gold Partner"]'),
+      // The band must NOT carry the Infinus mark any more; kept as a check, inverted.
       infinusLogo: !!document.querySelector('[data-section="mythbusters-trust"] img[alt="Infinus"]'),
+      trustCells: document.querySelectorAll('[data-section="mythbusters-trust"] li').length,
       // The FAQ is a real accordion now, so there are no `dt` elements to count; each row
       // carries `data-faq-item`. The myth/fact previews carry `data-myth-item` rather than
       // being counted as `.grid > div`, which coupled this audit to a layout class.
@@ -173,14 +179,24 @@ for (const c of ctaChecks) {
 
 console.log('\n── MythBusting: two form instances per locale ───────')
 for (const c of formChecks) {
-  const shared = c.hero && c.closing && c.duplicates.length === 0 && c.escaped === 0 && c.coverVisible
-  const srOnly = c.sapLogo && c.infinusLogo && c.faq === 5 && c.previews === 4
+  const shared =
+    c.hero &&
+    c.closing &&
+    c.duplicates.length === 0 &&
+    c.escaped === 0 &&
+    c.coverVisible &&
+    // Both locales now render the same band: the SAP mark present, Infinus gone, four cells.
+    c.sapLogo &&
+    !c.infinusLogo &&
+    c.trustCells === 4
+  const srOnly = c.faq === 5 && c.previews === 4
   const ok = c.full ? shared && srOnly : shared
   if (!ok) failures++
   console.log(
     `  ${ok ? '✓' : '✗'} ${c.locale} ${String(c.width).padEnd(4)} hero=${c.hero} closing=${c.closing}` +
       ` dupIds=${c.duplicates.length} escapedLabels=${c.escaped} cover=${c.coverVisible}` +
-      (c.full ? ` logos=${c.sapLogo && c.infinusLogo} faq=${c.faq} previews=${c.previews}` : '')
+      ` sapMark=${c.sapLogo} infinusInBand=${c.infinusLogo} cells=${c.trustCells}` +
+      (c.full ? ` faq=${c.faq} previews=${c.previews}` : '')
   )
   if (c.duplicates.length) console.log(`        duplicate ids: ${c.duplicates.join(', ')}`)
 }

@@ -4,43 +4,45 @@ import * as React from "react"
  * The hero's conversion area: the product on the left, the form on the right.
  *
  * ── Why they are side by side ──────────────────────────────────────────────────
- * Stacked — cover above form — the conversion column became one very tall vertical block
- * that outweighed the copy beside it, however compact the form itself got. Setting them side
- * by side halves that height and makes the two read as ONE module: this is the document, and
- * these are the four fields that get it.
+ * Stacked — cover above form — the conversion column became one very tall vertical block that
+ * outweighed the copy beside it, however compact the form itself got. Side by side halves that
+ * height and makes the two read as ONE module: this is the document, and these are the four
+ * fields that get it.
  *
- * Roughly 34/66, and the 66 is the half doing the work: the form has four labelled fields to
- * place and the cover has one job. Every point given back to the form is what buys the field
- * grid its second column — see EbookForm, which switches on its OWN width rather than on the
- * viewport's, so this ratio and that decision cannot drift apart.
+ * ── The cover column is FIXED, and that is the point ───────────────────────────
+ * 180px at `xl`, not a percentage. The form's width is what decides whether its fields sit two
+ * per row, and a percentage cover takes a share of every pixel the column gains — so the form
+ * could never quite reach the threshold. Pinning the cover hands every remaining pixel to the
+ * form, which is the half that has four labelled fields to place. 180px is still a legible
+ * document rather than a thumbnail.
  *
- * `xl:items-start` is what makes the pair read as composed rather than floated: the cover's
- * top edge sits on the form card's top edge, so the two share a baseline.
+ * The sizing lives HERE rather than at the two call sites. Both locales previously wrapped
+ * their own cover in their own width classes, which is exactly the kind of duplicated
+ * presentation that let the English and Serbian heroes drift apart.
  *
  * ── It splits at `xl`, NOT at `lg` ─────────────────────────────────────────────
- * The outer hero goes two-column at `lg` (1024). If this module split at the same breakpoint,
- * at 1024 the conversion column is around 470px and a 38/62 split leaves the form near 280px
- * — two fields per row at 130px each, which is a cramped form nobody wants to fill in.
- *
- * So the module stays stacked through `lg` and only goes side by side at `xl`, where there is
- * genuinely room. Between 1024 and 1280 the hero is two-column with a stacked conversion
- * area, which is the correct trade: a readable form beats a clever composition.
+ * The outer hero goes two-column at `lg` (1024), where the conversion column is around 500px.
+ * Splitting there would leave the form ~300px — one column, and a tall card. So the module
+ * stays stacked through `lg`, where the form gets the column's full width and its fields go
+ * two per row, and only goes side by side at `xl` where there is room for both.
  *
  * Below `lg` everything stacks: copy, then cover, then form.
  */
 export function ConversionModule({
-  aside,
+  cover,
   form,
 }: {
-  /** The cover, plus whatever asset metadata the locale's source supplies. */
-  aside: React.ReactNode
+  /** The e-book cover. Sized by this component — pass the bare image. */
+  cover: React.ReactNode
   form: React.ReactNode
 }) {
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,34%)_minmax(0,1fr)] xl:items-start xl:gap-6">
+    <div className="grid gap-6 xl:grid-cols-[180px_minmax(0,1fr)] xl:items-start xl:gap-6">
       {/* Centred while stacked so the cover sits under the middle of the copy on phones;
-          left-aligned once it has its own column. */}
-      <div className="flex justify-center xl:block">{aside}</div>
+          its own fixed column once the module splits. */}
+      <div className="flex justify-center xl:block">
+        <div className="w-[min(14rem,55vw)] sm:w-[min(16rem,42vw)] xl:w-full">{cover}</div>
+      </div>
       <div className="min-w-0">{form}</div>
     </div>
   )

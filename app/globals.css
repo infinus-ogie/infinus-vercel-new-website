@@ -372,16 +372,16 @@
    "switch the form itself to one column rather than squeezing fields", expressed as a rule
    that holds at every width rather than at the handful I happened to test.
 
-   26rem/416px is measured, not guessed. The longest label in either locale is
+   25rem/400px is measured, not guessed. The longest label in either locale is
    "Role or Job Title – optional" at 165px (Serbian's longest, "Poslovna e-mail adresa", is
-   146px). Two columns plus the 1rem gap leave 200px per field at this threshold: the label
-   clears its line with 35px to spare, and 200px is still a usable width to type an email into
+   146px). Two columns plus the 1rem gap leave 192px per field at this threshold: the label
+   clears its line with 27px to spare, and 192px is still a usable width to type an email into
    — a column sized to the label alone would fit the text and fail the typing.
 
-   Below it the form drops to one column. At the `xl` hero, where the cover sits beside the
-   form, the form is 312px — two columns there would be 148px each, narrower than the label,
-   so it would wrap and carry its input out of line. That is the misalignment §6 asks to
-   remove, and the reason the widest layout is the one that stays single-column.
+   The threshold moved 26rem -> 25rem when the hero gave the conversion column 57%: the form
+   lands near 410px there, and 416px would have missed a 2x2 by six pixels. Below the
+   threshold the form drops to one column rather than wrapping labels out of line, which is
+   still what happens on a phone and in any narrow container this form is dropped into.
    ───────────────────────────────────────────────────────────────────────────── */
 .ebook-formq {
   container-type: inline-size;
@@ -396,7 +396,7 @@
   gap: 1rem;
 }
 
-@container ebookform (min-width: 26rem) {
+@container ebookform (min-width: 25rem) {
   .ebook-fieldgrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 1rem;

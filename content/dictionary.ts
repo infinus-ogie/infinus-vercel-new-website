@@ -1109,11 +1109,12 @@ export interface SrMythBustersLayout {
   }
   /** Reassurances printed under the form's CTA. */
   readonly formAssurances: readonly [string, string, string]
-  readonly trustBar: {
-    readonly statement: string
-    readonly sapLogoAlt: string
-    readonly infinusLogoAlt: string
-  }
+  /**
+   * The same four-metric shape as {@link EnMythBustersLayout}. The Serbian page briefly used a
+   * statement plus two logos instead; that presentation is withdrawn and both locales now
+   * share one trust band, so the two variants agree on this field again.
+   */
+  readonly trustBar: readonly [string, string, string, string]
   readonly audience: {
     readonly heading: string
     readonly body: string

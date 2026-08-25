@@ -61,27 +61,34 @@ export function CampaignHero({
         Top spacing is ONE system for both locales, which is why it lives here and not in
         either page.
 
-        `pt-36 md:pt-52` — 144px / 208px. The fixed navbar is ~80px tall, so this leaves a
-        deliberate 64/128px of navy between the chrome and the eyebrow: enough that the hero
+        `pt-40 md:pt-56` — 160px / 224px. The fixed navbar is ~80px tall, so this leaves a
+        deliberate 80/144px of navy between the chrome and the eyebrow: enough that the hero
         reads as its own surface rather than as the continuation of the header, and short of
         the dead band you get when a hero is pushed toward the fold for its own sake.
 
         Bottom padding is unchanged. The room was wanted under the nav, not everywhere.
       */}
-      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-36 sm:px-6 md:pb-20 md:pt-52 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-40 sm:px-6 md:pb-20 md:pt-56 lg:px-8">
         {/*
           ── The outer ratio ──────────────────────────────────────────────────────────
-          The conversion column carries TWO objects side by side at `xl` — the cover and the
-          form — so it cannot be the narrow sidebar a 44/56 split made it. At `xl` the columns
-          are 1 : 1.06, which lands at roughly 49/51: the editorial keeps the visual lead a
-          left column should have, and the conversion side gets the width its contents need
-          instead of having to compress them.
+          1 : 1.32 at `xl`, which is roughly 43/57.
 
-          At `lg` the module inside is still stacked (see ConversionModule), so the column only
-          has to hold a full-width form: `minmax(420px,50%)` gives it a floor that a long
-          Serbian label cannot push it below.
+          This is the ratio the whole pass turns on. The conversion column has to hold the
+          cover AND a form wide enough for two fields per row; at the previous 49/51 the form
+          resolved to 312px and dropped to a single column, so the desktop hero showed four
+          stacked fields next to a cover. Giving the right column 57% puts the form near 410px,
+          which is over the line where its grid goes 2×2 — see EbookForm, which decides on its
+          own width rather than on the viewport's.
+
+          The editorial side loses nothing that matters: it carries an eyebrow, a headline, a
+          subtitle and three or four value points, and 43% of this container is still a
+          comfortable measure for all of them.
+
+          At `lg` the module inside is still stacked, so the column only has to hold a
+          full-width form: `minmax(440px,52%)` is a floor a long Serbian label cannot push
+          it below.
         */}
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(420px,50%)] lg:gap-14 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.06fr)] xl:gap-14">
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(440px,52%)] lg:gap-12 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.32fr)] xl:gap-10">
           <div>{editorial}</div>
           {/* `lg:sticky` keeps the conversion column beside the copy on tall desktop heroes
               without any scroll listener. Harmless when the column is the taller of the two. */}

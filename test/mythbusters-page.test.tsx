@@ -25,6 +25,26 @@ const sr = getDictionary('sr').mythBusters
 const enLayout = enMythBustersLayout(en)
 const srLayout = srMythBustersLayout(sr)
 
+/**
+ * Read the trust band as a user agent would: each cell's text, or — when the cell is carried
+ * by a mark instead of words — that mark's accessible name.
+ *
+ * The SAP Gold Partner cell is artwork. Its approved string lives in the image's `alt` rather
+ * than in a caption underneath, because the badge already sets those words and printing them
+ * again is the duplication the band was asked to stop. So `textContent` alone would report an
+ * empty first cell and prove nothing; this reports what is actually announced.
+ *
+ * Shared by both locales, which is itself part of the contract — the two bands are now one
+ * component and must read identically.
+ */
+function readBandCells(bar: HTMLElement): string[] {
+  return Array.from(bar.querySelectorAll('li')).map((cell) => {
+    const text = (cell.textContent ?? '').replace(/\s+/g, ' ').trim()
+    if (text) return text
+    return (cell.querySelector('img')?.getAttribute('alt') ?? '').trim()
+  })
+}
+
 describe('client-supplied copy is reproduced verbatim', () => {
   test('the English SEO title and description are the source strings', () => {
     expect(en.metadata.title).toBe('10 Myths About SAP Cloud ERP | Free E-Book | Infinus')
@@ -77,12 +97,7 @@ describe('the English page is unchanged by the Serbian rework', () => {
     const { container } = render(<EnglishMythBusters />)
     const bar = container.querySelector('[data-section="mythbusters-trust"]') as HTMLElement
 
-    const rendered = Array.from(bar.querySelectorAll('li')).map((li) => {
-      const text = (li.textContent ?? '').replace(/\s+/g, ' ').trim()
-      if (text) return text
-      // No text: the item is carried by a mark, whose alt is the approved string.
-      return (li.querySelector('img')?.getAttribute('alt') ?? '').trim()
-    })
+    const rendered = readBandCells(bar)
 
     expect(rendered).toEqual([...enLayout.trustBar])
     expect(rendered).toContain('70% of Consultants with 10+ Years of SAP Experience')
@@ -201,32 +216,116 @@ describe('the English page is unchanged by the Serbian rework', () => {
 /**
  * Where the two approved Serbian hero paragraphs are rendered.
  *
- * The brief moved the second one out of the hero for hierarchy reasons — six things competed
- * above the fold before the reader reached the form. The risk in a move like that is quiet
- * loss: a paragraph that gets summarised, trimmed to fit, or simply dropped when someone later
- * tidies the section it landed in. These lock the placement AND the wording.
+ * BOTH are now out of the hero — the owner's final call, after the hero still read as too
+ * dense with one of them left behind. The hero keeps eyebrow, headline, subtitle and value
+ * points; the prose reads below the trust band.
+ *
+ * The risk in a move like that is quiet loss: a paragraph that gets summarised, trimmed to
+ * fit, or simply dropped when someone later tidies the section it landed in. These lock the
+ * placement AND the wording, which is why they compare against the dictionary rather than
+ * against a string typed into the test.
  */
-describe('the relocated Serbian hero paragraph', () => {
-  const [opening, explanatory] = srLayout.hero.paragraphs
+/**
+ * One trust band, two pages.
+ *
+ * The locales used to render genuinely different components here — metrics on one side,
+ * a statement plus two logos on the other — and they drifted apart every time either was
+ * touched. They are now the same component with the same shape, and only the strings differ.
+ *
+ * This asserts the SHAPE is shared and the STRINGS are each locale's own, which is the
+ * distinction the brief draws: visual parity, not copy parity.
+ */
+describe('the trust band is one shared system', () => {
+  test('both locales render four cells, in the same structure', () => {
+    const enBar = render(<EnglishMythBusters />).container.querySelector(
+      '[data-section="mythbusters-trust"]'
+    ) as HTMLElement
+    const enCells = readBandCells(enBar)
 
-  test('the hero keeps the first paragraph and NOT the second', () => {
+    const srBar = render(<SerbianMythBusters />).container.querySelector(
+      '[data-section="mythbusters-trust"]'
+    ) as HTMLElement
+    const srCells = readBandCells(srBar)
+
+    expect(enCells).toHaveLength(4)
+    expect(srCells).toHaveLength(4)
+    expect(enCells).toEqual([...enLayout.trustBar])
+    expect(srCells).toEqual([...srLayout.trustBar])
+  })
+
+  test('the first cell is the SAP artwork on BOTH pages, and the figures line up', () => {
+    for (const [name, Page, items] of [
+      ['en', EnglishMythBusters, enLayout.trustBar],
+      ['sr', SerbianMythBusters, srLayout.trustBar],
+    ] as const) {
+      const bar = render(<Page />).container.querySelector(
+        '[data-section="mythbusters-trust"]'
+      ) as HTMLElement
+      const cells = Array.from(bar.querySelectorAll('li'))
+
+      expect(cells[0].querySelector('img'), `${name}: cell 1 is the badge`).not.toBeNull()
+      expect(items[0]).toBe('SAP Gold Partner')
+
+      // Cells 2-4 lead with their figure, which is what makes the row scannable.
+      for (const index of [1, 2, 3]) {
+        const text = (cells[index].textContent ?? '').trim()
+        expect(text, `${name}: cell ${index + 1} leads with a figure`).toMatch(/^(30\+|70%)/)
+      }
+    }
+  })
+
+  test('no generic decorative icons survive in either band', () => {
+    for (const [name, Page] of [
+      ['en', EnglishMythBusters],
+      ['sr', SerbianMythBusters],
+    ] as const) {
+      const bar = render(<Page />).container.querySelector(
+        '[data-section="mythbusters-trust"]'
+      ) as HTMLElement
+      // The badge is an <img>; the retired lucide icons rendered as inline <svg>.
+      expect(bar.querySelectorAll('svg'), `${name}: no icon noise`).toHaveLength(0)
+    }
+  })
+})
+
+describe('the Serbian hero prose, relocated below the trust band', () => {
+  const paragraphs = srLayout.hero.paragraphs
+
+  test('the hero renders NEITHER paragraph', () => {
     const { container } = render(<SerbianMythBusters />)
     const hero = container.querySelector('[data-section="mythbusters-hero"]') as HTMLElement
 
-    expect(within(hero).getByText(opening)).toBeInTheDocument()
-    expect(within(hero).queryByText(explanatory), 'the second paragraph moved out').toBeNull()
+    for (const paragraph of paragraphs) {
+      expect(within(hero).queryByText(paragraph), paragraph.slice(0, 40)).toBeNull()
+    }
   })
 
-  test('the second paragraph is rendered VERBATIM in its own section', () => {
+  test('the hero editorial is down to eyebrow, headline, subtitle and value points', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const hero = container.querySelector('[data-section="mythbusters-hero"]') as HTMLElement
+
+    expect(within(hero).getByText(srLayout.hero.badge)).toBeInTheDocument()
+    expect(within(hero).getByRole('heading', { level: 1 })).toHaveTextContent(srLayout.hero.title)
+    expect(within(hero).getByText(srLayout.hero.subtitle)).toBeInTheDocument()
+    for (const benefit of srLayout.hero.benefits) {
+      expect(within(hero).getByText(benefit)).toBeInTheDocument()
+    }
+  })
+
+  test('both paragraphs render VERBATIM, in source order, in the context section', () => {
     const { container } = render(<SerbianMythBusters />)
     const section = container.querySelector('[data-section="mythbusters-context"]') as HTMLElement
 
     expect(section, 'the relocation target must exist').not.toBeNull()
-    // getByText is exact by default: a summarised or re-punctuated copy fails here.
-    expect(within(section).getByText(explanatory)).toBeInTheDocument()
+
+    const rendered = Array.from(section.querySelectorAll('p')).map((p) =>
+      (p.textContent ?? '').trim()
+    )
+    // Exact equality, in order: a summarised, re-punctuated or reordered copy fails here.
+    expect(rendered).toEqual(paragraphs.map((p) => p.trim()))
   })
 
-  test('it sits between the trust band and the audience section', () => {
+  test('the context block sits between the trust band and the audience section', () => {
     const { container } = render(<SerbianMythBusters />)
     const order = Array.from(container.querySelectorAll('[data-section]')).map((el) =>
       el.getAttribute('data-section')
@@ -236,16 +335,65 @@ describe('the relocated Serbian hero paragraph', () => {
     const moved = order.indexOf('mythbusters-context')
     const audience = order.indexOf('mythbusters-audience')
 
-    expect(moved, 'relocated paragraph must follow the trust band').toBeGreaterThan(band)
+    expect(moved, 'relocated prose must follow the trust band').toBeGreaterThan(band)
     expect(moved, 'and precede "Da li je ovaj vodič za vas?"').toBeLessThan(audience)
   })
 
-  test('the paragraph appears exactly once on the page', () => {
+  test('each paragraph appears exactly once on the page', () => {
     const { container } = render(<SerbianMythBusters />)
-    const hits = Array.from(container.querySelectorAll('p')).filter(
-      (el) => (el.textContent ?? '').trim() === explanatory.trim()
-    )
-    expect(hits).toHaveLength(1)
+    for (const paragraph of paragraphs) {
+      const hits = Array.from(container.querySelectorAll('p')).filter(
+        (el) => (el.textContent ?? '').trim() === paragraph.trim()
+      )
+      expect(hits, paragraph.slice(0, 40)).toHaveLength(1)
+    }
+  })
+})
+
+/**
+ * The redundant asset metadata is gone from the Serbian hero.
+ *
+ * The right-hand column used to print the e-book title, a subtitle, a "Šta dobijate" heading
+ * and four metadata items UNDER the cover — so the hero named the same product three times:
+ * as artwork, as a metadata panel, and as the form that hands it over. Only the cover and the
+ * form remain.
+ *
+ * The dictionary copy is deliberately NOT deleted, so this asserts on what renders rather than
+ * on what exists.
+ */
+describe('the Serbian hero conversion column', () => {
+  test('shows the cover but none of the asset-metadata copy', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const hero = container.querySelector('[data-section="mythbusters-hero"]') as HTMLElement
+    const card = srLayout.assetCard
+
+    const cover = within(hero).getByAltText(card.coverAlt) as HTMLImageElement
+    expect(decodeURIComponent(cover.src)).toContain('sap-mythbusting-ebook-cover')
+
+    for (const gone of [card.title, card.subtitle, card.whatYouGetHeading, ...card.items]) {
+      expect(within(hero).queryByText(gone), gone).toBeNull()
+    }
+  })
+
+  test('drops the three reassurance lines from the hero form', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const hero = container.querySelector('[data-section="mythbusters-hero"]') as HTMLElement
+
+    for (const line of srLayout.formAssurances) {
+      expect(within(hero).queryByText(line), line).toBeNull()
+    }
+  })
+
+  test('but keeps the privacy acknowledgement and the English-asset note', () => {
+    const { container } = render(<SerbianMythBusters />)
+    const hero = container.querySelector('[data-section="mythbusters-hero"]') as HTMLElement
+
+    // Commitments, not reassurance decoration — removing these would be a legal/clarity
+    // regression rather than a simplification.
+    expect(within(hero).getByText(sr.form.languageNote)).toBeInTheDocument()
+    expect(
+      within(hero).getByRole('link', { name: sr.form.privacy.linkText })
+    ).toBeInTheDocument()
   })
 })
 
@@ -267,17 +415,27 @@ describe('the Serbian page follows the new conversion structure', () => {
     }
   })
 
-  test('the trust bar is the new statement plus two logos, NOT the old four metrics', () => {
+  /**
+   * The trust band's content decision was reversed by the owner.
+   *
+   * This page briefly showed a one-line statement beside the SAP and Infinus marks; it now
+   * shows the same four proofs as the English page, in the wording of the FIRST approved
+   * Serbian document (restored from 3d852ad~1 — not a fresh translation of the English).
+   * The previous version of this test asserted the opposite, which is why it is rewritten
+   * rather than extended.
+   */
+  test('the trust bar is the four approved metrics, NOT the statement and two logos', () => {
     const { container } = render(<SerbianMythBusters />)
     const bar = container.querySelector('[data-section="mythbusters-trust"]') as HTMLElement
 
-    expect(within(bar).getByText(srLayout.trustBar.statement)).toBeInTheDocument()
-    expect(within(bar).getByAltText('SAP Gold Partner')).toBeInTheDocument()
-    expect(within(bar).getByAltText('Infinus')).toBeInTheDocument()
+    expect(readBandCells(bar)).toEqual([...srLayout.trustBar])
 
-    // The superseded metrics must not reappear on this page.
-    expect(within(bar).queryByText(/70%/)).not.toBeInTheDocument()
-    expect(within(bar).queryByText(/30\+/)).not.toBeInTheDocument()
+    // The superseded presentation must not come back alongside it.
+    expect(
+      within(bar).queryByText(/Poverenje kompanija/),
+      'the withdrawn statement'
+    ).not.toBeInTheDocument()
+    expect(within(bar).queryByAltText('Infinus'), 'the Infinus mark').not.toBeInTheDocument()
   })
 
   test('shows the FOUR myth/fact previews, not the ten-myth list', () => {
@@ -303,16 +461,16 @@ describe('the Serbian page follows the new conversion structure', () => {
     }
   })
 
-  test('shows the asset card with the real e-book cover', () => {
+  /* The title/subtitle assertions that used to live here moved out with the asset-metadata
+     panel itself — see "the Serbian hero conversion column", which asserts that copy is now
+     absent. What survives is the part that still matters: the real cover, from the real PDF. */
+  test('shows the real e-book cover', () => {
     render(<SerbianMythBusters />)
 
     const cover = screen.getByAltText(srLayout.assetCard.coverAlt) as HTMLImageElement
     expect(cover).toBeInTheDocument()
     // Derived from page 1 of the actual download, not a stand-in.
     expect(decodeURIComponent(cover.src)).toContain('sap-mythbusting-ebook-cover')
-    expect(screen.getByText(srLayout.assetCard.title)).toBeInTheDocument()
-    // The subtitle wording is asserted in its own suite below.
-    expect(screen.getByText(srLayout.assetCard.subtitle)).toBeInTheDocument()
   })
 
   test('carries the final CTA and the why-Infinus reasons', () => {
@@ -432,9 +590,18 @@ describe('one English e-book, served and described identically by both locales',
 })
 
 describe('the asset card wording', () => {
-  test('uses "Praktični vodič" — the owner picked the second of the two offered', () => {
-    render(<SerbianMythBusters />)
-    expect(screen.getByText('Praktični vodič')).toBeInTheDocument()
+  /**
+   * The asset-metadata panel no longer renders — the hero was naming the same product three
+   * times — so this asserts the DICTIONARY rather than the page.
+   *
+   * The choice it protects is still live: offered "Executive vodič" and "Praktični vodič", the
+   * owner picked the second. Keeping the assertion on the copy means the decision survives
+   * even while the string is off-screen, and it comes back correct if the panel is ever
+   * restored. Asserting the rendered page instead would have quietly deleted the record of a
+   * decision the owner actually made.
+   */
+  test('the copy keeps "Praktični vodič" — the owner picked the second of the two offered', () => {
+    expect(srLayout.assetCard.subtitle).toBe('Praktični vodič')
   })
 
   test('"Executive vodič" appears nowhere on the Serbian page or in its copy', () => {

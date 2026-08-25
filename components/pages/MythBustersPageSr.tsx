@@ -1,17 +1,15 @@
 import Script from "next/script"
-import Image from "next/image"
 import { CheckCircle2 } from "lucide-react"
 import { Section } from "@/components/ui/section"
-import { SapGoldPartnerBadge } from "@/components/ui/SapGoldPartnerBadge"
 import { EbookForm } from "@/components/mythbusters/EbookForm"
-import { EbookAssetCard } from "@/components/mythbusters/EbookAssetCard"
 import { EbookFaq } from "@/components/mythbusters/EbookFaq"
 import {
   CampaignHero,
   CampaignEyebrow,
   CampaignHeading,
 } from "@/components/campaign/CampaignHero"
-import { TrustBand, TrustLogos, TrustLogo } from "@/components/campaign/TrustBand"
+import { EbookCover } from "@/components/campaign/EbookCover"
+import { TrustBand } from "@/components/campaign/TrustBand"
 import { MythFactItem } from "@/components/campaign/MythFactItem"
 import { ValuePoints, ClosingPoints } from "@/components/campaign/ValuePoints"
 import { ClosingSection } from "@/components/campaign/ClosingSection"
@@ -79,21 +77,18 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
             </p>
 
             {/*
-              ONE explanatory paragraph in the hero — `paragraphs[0]`, which sets up the
-              problem the e-book answers.
+              NO explanatory paragraph in the hero.
 
-              `paragraphs[1]` is not deleted and not rewritten: it is rendered verbatim in its
-              own editorial block below the trust band (search for `heroContext` in this file).
-              With both here the hero asked the reader for eyebrow, headline, subtitle, two
-              paragraphs and three value points before it showed them the form — six things
-              competing above the fold. The second paragraph is the one that explains what the
-              document DOES, which is a better fit immediately before "Da li je ovaj vodič za
-              vas?" than stacked behind the headline.
+              Both approved paragraphs now render verbatim in the `mythbusters-context` block
+              below the trust band. Neither is deleted, summarised or reworded — this is
+              placement only. The hero was asking the reader for an eyebrow, a headline, a
+              subtitle, prose and three value points before it showed them the form, and the
+              prose is the part that reads at leisure on a light ground rather than competing
+              above the fold.
+
+              What is left is the four things the owner named: eyebrow, headline, subtitle,
+              value points.
             */}
-            <p className="mt-5 max-w-[52ch] text-[15px] leading-relaxed text-slate-300/85">
-              {layout.hero.paragraphs[0]}
-            </p>
-
             <div className="mt-8">
               <ValuePoints items={layout.hero.benefits} heading={layout.hero.benefitsHeading} />
             </div>
@@ -101,66 +96,55 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
         }
         conversion={
           <ConversionModule
-            aside={<EbookAssetCard copy={layout.assetCard} />}
+            /*
+              The cover alone. The asset card that used to sit here printed the title, a
+              subtitle, a "Šta dobijate" heading and four metadata items — so the hero named
+              the same product three times over: once as artwork, once as a metadata panel and
+              once as the form that hands it over. The cover identifies the document and the
+              form identifies the action; the panel in between was the redundant one.
+
+              The alt stays meaningful precisely BECAUSE that text is gone: nothing beside the
+              image names the asset any more.
+            */
+            cover={<EbookCover alt={layout.assetCard.coverAlt} priority />}
             form={
               /* Compact, for the same reason as the English hero: four stacked fields made a
-                 card taller than the pitch it sits beside. */
-              <EbookForm
-                copy={content.form}
-                locale="sr"
-                placement="hero"
-                assurances={layout.formAssurances}
-                density="compact"
-              />
+                 card taller than the pitch it sits beside.
+
+                 No `assurances`: "Odmah dostupno za preuzimanje", "Bez spama" and "Vaši podaci
+                 se tretiraju poverljivo" are removed from THIS instance. The privacy
+                 acknowledgement and the English-asset note stay — those are commitments, not
+                 reassurance decoration. The closing section still shows the three lines beside
+                 its own headline. */
+              <EbookForm copy={content.form} locale="sr" placement="hero" density="compact" />
             }
           />
         }
       />
 
       {/* ── Trust band ───────────────────────────────────────────────────────── */}
-      <TrustBand
-        data-section="mythbusters-trust"
-        statement={layout.trustBar.statement}
-        proof={
-          /* Both marks are MEANINGFUL here: no adjacent text names either, unlike the
-             homepage badge which now sits inside a pill that says "SAP Gold Partner".
-             The containers are the shared ones the English band uses for its metric marks. */
-          /* Sized to be credentials rather than footer icons, and to the same 40px mark
-             height the English band gives its metric marks — see TrustMetrics. */
-          <TrustLogos>
-            <TrustLogo>
-              <SapGoldPartnerBadge
-                className="h-11 w-auto shrink-0"
-                alt={layout.trustBar.sapLogoAlt}
-              />
-            </TrustLogo>
-            <TrustLogo>
-              <Image
-                src="/infinus-new-logo.webp"
-                alt={layout.trustBar.infinusLogoAlt}
-                width={250}
-                height={75}
-                className="h-9 w-auto shrink-0"
-              />
-            </TrustLogo>
-          </TrustLogos>
-        }
-      />
+      {/* The same four proofs the English page shows, in the wording the first approved
+          Serbian document used. The statement-plus-two-logos presentation is withdrawn. */}
+      <TrustBand data-section="mythbusters-trust" items={layout.trustBar} />
 
       {/*
-        ── The paragraph moved out of the hero ────────────────────────────────
-        `layout.hero.paragraphs[1]`, verbatim. It reads as the page's opening statement here:
-        the band above has just made the credibility claim, and this says what the document
-        does with it — which is the question "Da li je ovaj vodič za vas?" then answers.
-
-        Set at lede scale rather than hero-body scale, because in the hero it was the quietest
-        thing on a dark ground and here it is the first thing on a light one.
+        ── The prose moved out of the hero ────────────────────────────────────
+        BOTH approved paragraphs, verbatim and in source order. They read as the page's opening
+        statement here: the band above has just made the credibility claim, these say what the
+        document does with it, and "Da li je ovaj vodič za vas?" below then answers who it is
+        for. Set at lede scale — in the hero they were the quietest thing on a dark ground;
+        here they are the first thing on a light one.
       */}
       <Section surface="surface-0" data-section="mythbusters-context">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-pretty text-lg leading-relaxed text-slate-600 md:text-xl md:leading-relaxed">
-            {layout.hero.paragraphs[1]}
-          </p>
+        <div className="mx-auto max-w-3xl space-y-5">
+          {layout.hero.paragraphs.map((paragraph) => (
+            <p
+              key={paragraph}
+              className="text-pretty text-lg leading-relaxed text-slate-600 md:text-xl md:leading-relaxed"
+            >
+              {paragraph}
+            </p>
+          ))}
         </div>
       </Section>
 
