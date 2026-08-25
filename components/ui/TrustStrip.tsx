@@ -11,11 +11,11 @@ import type { HomeDictionary } from "@/content/dictionary";
  */
 export function TrustStrip({
   trust,
-  certificationMark = false,
+  goldPartner = true,
 }: {
   trust: HomeDictionary["trust"];
   /** Forwarded to StatPills. The homepage hero is the only caller that sets it. */
-  certificationMark?: boolean;
+  goldPartner?: boolean;
 }) {
   return (
     <motion.div 
@@ -25,7 +25,7 @@ export function TrustStrip({
       viewport={{ once: true, amount: 0.2 }}
       className="flex justify-center mt-5 md:mt-8"
     >
-      <StatPills variant="dark" trust={trust} certificationMark={certificationMark} />
+      <StatPills variant="dark" trust={trust} goldPartner={goldPartner} />
     </motion.div>
   );
 }

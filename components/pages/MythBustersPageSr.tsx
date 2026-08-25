@@ -11,7 +11,7 @@ import {
 import { EbookCover } from "@/components/campaign/EbookCover"
 import { TrustBand } from "@/components/campaign/TrustBand"
 import { MythFactItem } from "@/components/campaign/MythFactItem"
-import { ValuePoints, ClosingPoints } from "@/components/campaign/ValuePoints"
+import { ValuePoints } from "@/components/campaign/ValuePoints"
 import { ClosingSection } from "@/components/campaign/ClosingSection"
 import { ConversionModule } from "@/components/campaign/ConversionModule"
 import type { MythBustersDictionary, SrMythBustersLayout } from "@/content/dictionary"
@@ -333,11 +333,15 @@ export function MythBustersPageSr({ content, layout, jsonLd }: MythBustersPageSr
         data-section="mythbusters-form"
         heading={layout.finalCta.heading}
         body={layout.finalCta.body}
+        /*
+          Heading, one supporting sentence, one metadata line. No `points`.
+
+          The column used to carry the note AND the three reassurances beside it - "Odmah
+          dostupno za preuzimanje", "Bez spama", "Vaši podaci se tretiraju poverljivo" - which
+          restated the note and each other. Data handling belongs next to the fields that
+          collect the data, and the form's Privacy Policy acknowledgement is untouched.
+        */
         note={layout.finalCta.note}
-        /* The reassurances move out of the card and up beside the headline. Inside the form
-           they were fine print under a button; here they are part of the closing argument,
-           and the card gets shorter for it. */
-        points={<ClosingPoints items={layout.formAssurances} />}
       >
         <EbookForm
           copy={content.form}

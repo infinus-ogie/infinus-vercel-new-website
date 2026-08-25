@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { HeroPartnerBadge } from "./HeroPartnerBadge";
+import { SapGoldPartnerBadge } from "@/components/ui/SapGoldPartnerBadge";
 import { TrustStrip } from "./TrustStrip";
 import { getDictionary } from "@/content/dictionary";
 import type { HomeDictionary } from "@/content/dictionary";
@@ -170,6 +171,30 @@ function HeroGeometric({
                         className="mb-4 md:mb-12 mt-2 md:mt-4 lg:mt-6"
                     >
                         <HeroPartnerBadge logoAlt={hero.logoAlt} />
+
+                        {/*
+                          The SAP Gold Partner credential, as part of the BRAND stack rather
+                          than the proof row.
+
+                          It used to sit inside the first trust pill, in the same system as
+                          "30+ consultants" and "30+ clients" - which flattened the difference
+                          between a certification and a count. Here it reads the way it should:
+                          Infinus, then who Infinus is certified by, then the headline.
+
+                          Deliberately no pill, border or card, and no caption: the artwork
+                          already sets the words, so `alt` carries the credential and nothing
+                          repeats it visually. Sized well below the Infinus mark above it and
+                          well below the headline under it, so it stays secondary to both.
+                        */}
+                        <div className="mt-2.5 flex justify-center sm:mt-4">
+                            <SapGoldPartnerBadge
+                                alt="SAP Gold Partner"
+                                /* Stepped down at the smallest widths for the same reason the
+                                   Infinus mark above it is: every pixel here pushes the proof
+                                   row further past a 568px first screen. */
+                                className="h-auto w-[62px] sm:w-[78px] md:w-[88px]"
+                            />
+                        </div>
                     </motion.div>
 
                     <motion.div
@@ -211,32 +236,42 @@ function HeroGeometric({
                         animate="visible"
                         className="flex justify-center"
                     >
-                        {/* `shadow-lg` on white over #00144a rendered as a large soft white
-                            glow, which is what made this button look dropped onto a finished
-                            hero. The emphasis now comes from the ground, the width and a
-                            defined hover — the same language the rest of the site uses.
-                            A hairline ring holds the edge against the navy without haloing. */}
+                        {/*
+                          A flat white surface, not a lit one.
+
+                          Two things were making it read as a floating luminous object: the
+                          Button default variant's `shadow-card`, and a white inset ring on a
+                          white background, which adds no edge but does soften it outward.
+                          `shadow-none` drops the first; the ring is now a navy hairline, which
+                          actually defines the edge against #00144a instead of blurring it.
+
+                          What is left is the site's ordinary button language: flat ground,
+                          navy text, a defined hover, and a white focus ring on a navy offset
+                          so keyboard focus is unmistakable on this background.
+                        */}
                         <Button
                             asChild
                             size="lg"
-                            className="bg-white px-9 text-[15px] font-semibold text-[#00144a] ring-1 ring-inset ring-white/70 transition-colors hover:bg-blue-50 hover:text-[#001a5e] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00144a] md:px-10"
+                            className="bg-white px-9 text-[15px] font-semibold text-[#00144a] shadow-none ring-1 ring-[#00144a]/15 transition-colors hover:bg-slate-100 hover:text-[#00144a] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00144a] md:px-10"
                         >
                             <Link href={hero.ctaHref}>{hero.ctaLabel}</Link>
                         </Button>
                     </motion.div>
 
-                    {/* The certification now lives INSIDE the first trust pill.
-                        It used to be a standalone image here, between the CTA and a pill whose
-                        text already read "SAP Gold Partner" — so the hero ended
-                        headline -> CTA -> logo -> the same logo's name again, three unrelated
-                        layers claiming the same thing. One trust row, announced once. */}
+                    {/* Two matched proof points, and nothing else.
+
+                        The SAP credential moved up into the brand stack under the Infinus
+                        mark, so this row is no longer one certification wearing the same pill
+                        as two counts. `goldPartner={false}` is set HERE and nowhere else -
+                        every other page that renders this row has no SAP artwork near it and
+                        keeps the pill. */}
                     <motion.div
                         custom={4}
                         variants={fadeUpVariants}
                         initial="hidden"
                         animate="visible"
                     >
-                        <TrustStrip trust={trust} certificationMark />
+                        <TrustStrip trust={trust} goldPartner={false} />
                     </motion.div>
                 </div>
             </div>

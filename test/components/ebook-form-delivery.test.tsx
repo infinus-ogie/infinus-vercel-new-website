@@ -172,6 +172,89 @@ describe('a successful submission downloads the PDF', () => {
 })
 
 /**
+ * What the Thank You panel SAYS, now that the download is automatic.
+ *
+ * The panel used to read "Your e-book is ready" / "Use the button below to download", which
+ * described the manual flow. By the time a visitor reads it the file is already downloading,
+ * so that wording was not merely stale - it was wrong about something they could check in
+ * their downloads folder.
+ */
+describe('the Thank You panel acknowledges the download already started', () => {
+  beforeEach(() => {
+    vi.stubGlobal('gtag', vi.fn())
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  test('Serbian says the download has been started', async () => {
+    await submitSerbian()
+    const panel = screen.getByTestId('ebook-success-hero')
+
+    expect(within(panel).getByText('Preuzimanje e-booka je pokrenuto.')).toBeInTheDocument()
+    expect(
+      within(panel).getByText('E-book bi trebalo automatski da se preuzme na vaš uređaj.')
+    ).toBeInTheDocument()
+    expect(within(panel).getByRole('link', { name: 'Preuzmite ponovo' })).toBeInTheDocument()
+  })
+
+  test('English says the download has started', async () => {
+    await submitEnglish()
+    const panel = screen.getByTestId('ebook-success-closing')
+
+    expect(within(panel).getByText('Your e-book download has started.')).toBeInTheDocument()
+    expect(
+      within(panel).getByText('The e-book should download automatically to your device.')
+    ).toBeInTheDocument()
+    expect(within(panel).getByRole('link', { name: 'Download Again' })).toBeInTheDocument()
+  })
+
+  test('the superseded manual-download wording is gone from the copy', () => {
+    const gone = [
+      'Vaš e-book je spreman za preuzimanje.',
+      'Kliknite na dugme ispod',
+      'Preuzimanje počinje odmah nakon klika.',
+      'Your e-book is ready',
+      'Use the button below to download',
+      'The download starts as soon as you click.',
+    ]
+    const serialised = JSON.stringify([sr.success, en.success])
+    for (const phrase of gone) {
+      expect(serialised, `still describes the old manual flow: "${phrase}"`).not.toContain(phrase)
+    }
+  })
+
+  /**
+   * The helper sentence says "the button below", so it has to actually be above the button.
+   * Copy and layout agreeing is the whole point of rewriting both together.
+   */
+  test('the fallback helper is rendered before the button it refers to', async () => {
+    await submitSerbian()
+    const panel = screen.getByTestId('ebook-success-hero')
+
+    const helper = within(panel).getByText(sr.success.downloadNote)
+    const button = within(panel).getByRole('link', { name: sr.success.downloadLabel })
+    expect(
+      helper.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING,
+      'the helper must precede the button'
+    ).toBeTruthy()
+  })
+
+  /**
+   * De-emphasised, not hidden. The conversion is complete; this is a recovery path.
+   */
+  test('the fallback button is present and reachable, not a primary CTA', async () => {
+    await submitSerbian()
+    const button = screen.getByRole('link', { name: sr.success.downloadLabel })
+
+    expect(button).toBeVisible()
+    expect(button).toHaveAttribute('download')
+    // Outlined rather than filled: no primary fill class survives on it.
+    expect(button.className).not.toMatch(/bg-primary/)
+  })
+})
+
+/**
  * The panel must not promise an email, because none is sent.
  *
  * Asserted as absence of the WORDS a visitor would act on, not just absence of a removed

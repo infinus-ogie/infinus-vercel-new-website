@@ -2,7 +2,6 @@
 import * as React from "react";
 import { ShieldCheck, Users2, Globe2 } from "lucide-react";
 import { TrustPill } from "@/components/ui/TrustPill";
-import { SapGoldPartnerBadge } from "@/components/ui/SapGoldPartnerBadge";
 import type { HomeDictionary } from "@/content/dictionary";
 
 /**
@@ -22,44 +21,43 @@ import type { HomeDictionary } from "@/content/dictionary";
  *
  * The icons are presentation and stay here — they carry no language.
  *
- * ── `certificationMark` is OPT-IN, and that is deliberate ──────────────────────
- * The homepage hero needs the official SAP Gold Partner artwork INSIDE the first pill, so the
- * certification is one object instead of a floating logo above a pill that repeats it in
- * words. Every other caller must keep the shield icon.
+ * ── `goldPartner` is OPT-OUT, and only the homepage opts out ────────────────────
+ * The certification used to render as the first pill, with the official artwork tucked inside
+ * it on the homepage. Putting a piece of brand artwork into the same pill system as two
+ * numeric proof points never sat right: one of the three is a credential and the other two
+ * are counts, and the pill flattened that difference.
  *
- * This component is rendered by roughly fifteen pages. Making the badge unconditional would
- * put a certification mark into every trust row on the site to fix one hero — the same
- * over-reach the badge component's own notes warn about. So it defaults to false and exactly
- * one call site turns it on.
+ * On the homepage the credential is now its own mark under the Infinus logo (see
+ * shape-landing-hero.tsx), so this row is two matched pills that genuinely belong together.
+ *
+ * Everywhere ELSE the pill stays. Roughly five other pages render this row and none of them
+ * shows the SAP artwork anywhere near it, so dropping the pill there would quietly remove a
+ * credential to solve a homepage-only composition problem. Hence opt-out rather than removal,
+ * with exactly one caller opting out.
  */
 export function StatPills({
   variant = "light",
   trust,
-  certificationMark = false,
+  goldPartner = true,
 }: {
   variant?: "light" | "dark";
   trust: HomeDictionary["trust"];
-  /** Homepage hero only: render the official badge in place of the first pill's icon. */
-  certificationMark?: boolean;
+  /** Homepage hero only: it shows the certification as its own mark instead. */
+  goldPartner?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-4xl mx-auto">
-      <TrustPill
-        icon={ShieldCheck}
-        tone="gold"
-        variant={variant}
-        mark={
-          certificationMark ? (
-            // DECORATIVE: the pill's own text names this certification, so announcing the
-            // image too would read it out twice in a row. Sized for legibility rather than
-            // squeezed into the 24px icon disc — a certification nobody can make out is not
-            // a trust signal.
-            <SapGoldPartnerBadge alt="" className="h-8 w-auto sm:h-9 md:h-10" />
-          ) : undefined
-        }
-      >
-        {trust.goldPartner}
-      </TrustPill>
+    /* Column count follows the pill count, so two pills centre as a balanced pair rather than
+       sitting in the left two thirds of a three-column grid. */
+    <div
+      className={`mx-auto grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 ${
+        goldPartner ? "lg:grid-cols-3" : "lg:max-w-2xl"
+      }`}
+    >
+      {goldPartner ? (
+        <TrustPill icon={ShieldCheck} tone="gold" variant={variant}>
+          {trust.goldPartner}
+        </TrustPill>
+      ) : null}
       <TrustPill icon={Users2} tone="blue" variant={variant}>{trust.consultants}</TrustPill>
       <TrustPill icon={Globe2} tone="blue" variant={variant}>{trust.customers}</TrustPill>
     </div>

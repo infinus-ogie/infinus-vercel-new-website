@@ -50,26 +50,9 @@ export function ValuePoints({
   )
 }
 
-/**
- * The closing section's inline reassurances, on a dark ground.
- *
- * Same idea at a smaller scale: a horizontal run under the headline rather than a stacked
- * list, so the closing column stays short enough to sit beside the form card.
+/*
+ * `ClosingPoints` used to live here: the closing column's three inline reassurances on the
+ * dark ground. The owner removed those from the closing section as repetition - the metadata
+ * line beside them already said the same thing - and nothing else rendered them, so the
+ * component went with them rather than staying as an unused export.
  */
-export function ClosingPoints({ items }: { items: readonly string[] }) {
-  return (
-    <ul className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-x-7 sm:gap-y-3">
-      {items.map((item, index) => {
-        const Icon = ICONS[index % ICONS.length]
-        return (
-          <li key={item} className="flex items-center gap-2.5 text-[14px] text-slate-300">
-            <span className="inline-grid size-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/10">
-              <Icon className="h-[15px] w-[15px] text-blue-200" aria-hidden="true" />
-            </span>
-            <span>{item}</span>
-          </li>
-        )
-      })}
-    </ul>
-  )
-}

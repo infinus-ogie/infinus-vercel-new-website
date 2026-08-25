@@ -148,12 +148,14 @@ export const mythBusters: MythBustersDictionary = {
     ],
     submit: 'Download the E-Book',
     submitting: 'Sending...',
+    // Same OWNER-APPROVED correction as the Serbian side: the download is automatic now, so
+    // the panel acknowledges it rather than asking for a click that already happened.
     success: {
-      eyebrow: 'Thank you',
-      heading: 'Your e-book is ready',
-      body: 'Use the button below to download the e-book.',
-      downloadLabel: 'Download the E-Book (PDF)',
-      downloadNote: 'The download starts as soon as you click.',
+      eyebrow: 'Thank you for your interest!',
+      heading: 'Your e-book download has started.',
+      body: 'The e-book should download automatically to your device.',
+      downloadLabel: 'Download Again',
+      downloadNote: 'If the download did not start, you can try again using the button below.',
       nextHeading: 'What happens next?',
       nextBody:
         'Whether you are still evaluating ERP options or already have concrete requirements, our SAP specialists can help.',

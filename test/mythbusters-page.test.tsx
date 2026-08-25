@@ -15,6 +15,8 @@ import { render, screen, within } from '@testing-library/react'
 import { describe, test, expect } from 'vitest'
 import EnglishMythBusters from '../app/(en)/(site)/insights/sap-mythbusters/page'
 import SerbianMythBusters from '../app/(sr)/sr/insights/sap-mythbusters/page'
+import EnglishHome from '../app/(en)/(site)/page'
+import SerbianHome from '../app/(sr)/sr/page'
 import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { getDictionary, enMythBustersLayout, srMythBustersLayout } from '@/content/dictionary'
@@ -314,6 +316,54 @@ describe('the myth/fact cards', () => {
     expect(sentence).toBeInTheDocument()
     expect(sentence.closest('button, a, [role="button"]')).toBeNull()
   })
+})
+
+/**
+ * The homepage hero's brand and proof hierarchy.
+ *
+ * The SAP Gold Partner credential used to render as the first of three trust pills, with the
+ * official artwork tucked inside it - a certification wearing the same shape as two numeric
+ * counts. It is now its own mark under the Infinus logo, and the proof row is the two counts.
+ */
+describe('the homepage hero', () => {
+  for (const [name, Page, locale] of [
+    ['en', EnglishHome, 'en'],
+    ['sr', SerbianHome, 'sr'],
+  ] as const) {
+    const trust = getDictionary(locale).home.trust
+
+    test(`${name}: the SAP credential is a mark, not a pill`, () => {
+      const { container } = render(<Page />)
+
+      const badge = container.querySelector('img[alt="SAP Gold Partner"]')
+      expect(badge, 'the artwork carries the credential itself').not.toBeNull()
+
+      // And it is not repeated as words anywhere in the hero.
+      const pills = Array.from(container.querySelectorAll('*')).filter(
+        (el) => el.children.length === 0 && el.textContent?.trim() === trust.goldPartner
+      )
+      expect(pills, 'no visible "SAP Gold Partner" caption').toHaveLength(0)
+    })
+
+    test(`${name}: the proof row is the two counts`, () => {
+      render(<Page />)
+
+      expect(screen.getByText(trust.consultants)).toBeInTheDocument()
+      expect(screen.getByText(trust.customers)).toBeInTheDocument()
+    })
+
+    test(`${name}: the SAP mark sits between the Infinus mark and the headline`, () => {
+      const { container } = render(<Page />)
+
+      const infinus = container.querySelector('img[src*="infinus-logo"]') as HTMLElement
+      const sap = container.querySelector('img[alt="SAP Gold Partner"]') as HTMLElement
+      const headline = container.querySelector('h1') as HTMLElement
+
+      expect(infinus).not.toBeNull()
+      expect(sap.compareDocumentPosition(infinus) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
+      expect(sap.compareDocumentPosition(headline) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    })
+  }
 })
 
 describe('the trust band is one shared system', () => {

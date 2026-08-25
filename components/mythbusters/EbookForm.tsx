@@ -308,21 +308,31 @@ export function EbookForm({
         <h2 className="mt-2 text-2xl font-semibold text-slate-900">{s.heading}</h2>
         <p className="mt-3 text-slate-600">{s.body}</p>
 
+        {/*
+          The helper comes BEFORE the button, because the copy says "the button below".
+
+          And the button is deliberately secondary now: outlined rather than filled. The
+          conversion is already complete by the time this panel renders and the file is
+          already downloading, so a solid primary button here would read as one more required
+          step. It stays full-size, focusable and obvious - it is the recovery path when a
+          browser blocks the automatic download - just not the loudest thing on the panel.
+        */}
+        <p className="mt-4 text-[13px] leading-relaxed text-slate-500">{s.downloadNote}</p>
+
         {/* Both the automatic download and the fallback. The effect above clicks this same
             anchor, so there is one download path rather than two that can drift apart, and
-            the tracking rides along with the navigation instead of replacing it — the file
+            the tracking rides along with the navigation instead of replacing it: the file
             downloads identically whether or not analytics is loaded. */}
         <a
           ref={downloadRef}
           href={EBOOK_HREF}
           download
           onClick={trackDownload}
-          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary-700 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+          className="mt-3 inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-800 transition-colors hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
         >
           <Download className="h-4 w-4" aria-hidden="true" />
           {s.downloadLabel}
         </a>
-        <p className="mt-2 text-xs text-slate-500">{s.downloadNote}</p>
 
         <div className="mt-6 border-t border-slate-200 pt-6">
           <h3 className="text-lg font-semibold text-slate-900">{s.nextHeading}</h3>

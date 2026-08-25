@@ -219,7 +219,10 @@ export const mythBusters: MythBustersDictionary = {
       heading: 'Spremni za ERP odluke zasnovane na činjenicama?',
       body: 'Preuzmite besplatan e-book i saznajte koji mitovi o SAP-u danas više ne važe.',
       button: 'Preuzmite e-book',
-      note: 'PDF • Besplatno • Odmah dostupan',
+      // One quiet metadata line for the whole closing column. "Odmah dostupan" said the same
+      // thing as the three reassurance points that used to sit beside it, so the reading time
+      // (already approved on the asset card) replaces it and the points are gone.
+      note: 'PDF • Besplatno • 15 minuta čitanja',
     },
   },
 
@@ -242,12 +245,18 @@ export const mythBusters: MythBustersDictionary = {
     ],
     submit: 'Preuzmite e-book',
     submitting: 'Šalje se...',
+    // OWNER-APPROVED rewrite of the Thank You state. The download now starts on its own the
+    // moment the submission succeeds, so the previous wording - "Vaš e-book je spreman za
+    // preuzimanje", "Kliknite na dugme ispod...", "Preuzimanje počinje odmah nakon klika" -
+    // described a manual flow that no longer exists and was, by the time a visitor read it,
+    // factually wrong. These sentences acknowledge what already happened and treat the button
+    // as the fallback it now is.
     success: {
       eyebrow: 'Hvala na interesovanju!',
-      heading: 'Vaš e-book je spreman za preuzimanje.',
-      body: 'Hvala na interesovanju za naš vodič „10 mitova o SAP Cloud ERP-u“. Kliknite na dugme ispod da biste odmah preuzeli e-book.',
-      downloadLabel: 'Preuzmite e-book',
-      downloadNote: 'Preuzimanje počinje odmah nakon klika.',
+      heading: 'Preuzimanje e-booka je pokrenuto.',
+      body: 'E-book bi trebalo automatski da se preuzme na vaš uređaj.',
+      downloadLabel: 'Preuzmite ponovo',
+      downloadNote: 'Ako preuzimanje nije počelo, možete ga pokrenuti ponovo pomoću dugmeta ispod.',
       nextHeading: 'Šta je sledeće?',
       nextBody:
         'Da li birate novo ERP rešenje ili planirate sledeći korak digitalne transformacije? Infinus SAP stručnjaci mogu da vas podrže bez obzira na to da li ste tek u fazi evaluacije ili već imate definisane konkretne zahteve.',
