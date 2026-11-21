@@ -96,6 +96,7 @@ export const footer: FooterDictionary = {
         { kind: 'link', label: 'SAP for CFO', href: '/grow' },
         { kind: 'link', label: 'SAP for Professional Services', href: '/professional-services' },
         { kind: 'link', label: 'SAP MythBusting', href: '/insights/sap-mythbusters' },
+        { kind: 'link', label: 'SAP vs Microsoft', href: '/insights/sap-vs-microsoft' },
       ],
     },
 

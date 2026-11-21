@@ -59,6 +59,9 @@ const DARK_HERO_PATHS = [
   // The MythBusting pair opens on a #00144a hero, like the campaign pages.
   '/insights/sap-mythbusters',
   '/sr/insights/sap-mythbusters',
+  // The SAP vs Microsoft pair opens on the same campaign navy.
+  '/insights/sap-vs-microsoft',
+  '/sr/insights/sap-vs-microsoft',
   '/grow',
   '/grow/cfo',
   '/grow/ceo',

@@ -1403,6 +1403,114 @@
       "types": []
     }
   },
+  "/insights/sap-vs-microsoft": {
+    "htmlLang": "en",
+    "title": "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Thinking about moving from Microsoft Navision? See where SAP Cloud ERP goes further in AI, processes, finance, group operations and manufacturing."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Thinking about moving from Microsoft Navision? See where SAP Cloud ERP goes further in AI, processes, finance, group operations and manufacturing."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Thinking about moving from Microsoft Navision? See where SAP Cloud ERP goes further in AI, processes, finance, group operations and manufacturing."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "en_US"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/insights/sap-vs-microsoft"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/insights/sap-vs-microsoft",
+        "sr-Latn => https://www.infinus.co/sr/insights/sap-vs-microsoft",
+        "x-default => https://www.infinus.co/insights/sap-vs-microsoft"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/insights/sap-vs-microsoft"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
   "/privacy": {
     "htmlLang": "en",
     "title": "Privacy Policy | Infinus",
@@ -3404,6 +3512,114 @@
       ],
       "canonical": [
         "https://www.infinus.co/sr/insights/sap-mythbusters"
+      ],
+      "icon": [
+        "/favicon.ico"
+      ],
+      "manifest": [
+        "/manifest.json"
+      ]
+    },
+    "jsonLd": {
+      "ssrElementCount": 0,
+      "types": []
+    }
+  },
+  "/sr/insights/sap-vs-microsoft": {
+    "htmlLang": "sr-Latn",
+    "title": "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus",
+    "meta": {
+      "name:author": [
+        "Infinus Team"
+      ],
+      "name:creator": [
+        "Infinus"
+      ],
+      "name:description": [
+        "Razmišljate o prelasku sa Microsoft Navisiona? Pogledajte gde SAP Cloud ERP ide korak dalje: AI, procesi, finansije, upravljanje grupom i proizvodnja."
+      ],
+      "name:format-detection": [
+        "telephone=no, address=no, email=no"
+      ],
+      "name:google-site-verification": [
+        "your-google-verification-code"
+      ],
+      "name:og:image:alt": [
+        "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus"
+      ],
+      "name:og:image:height": [
+        "630"
+      ],
+      "name:og:image:width": [
+        "1200"
+      ],
+      "name:publisher": [
+        "Infinus"
+      ],
+      "name:robots": [
+        "index,follow"
+      ],
+      "name:theme-color": [
+        "#1e40af"
+      ],
+      "name:twitter:card": [
+        "summary_large_image"
+      ],
+      "name:twitter:description": [
+        "Razmišljate o prelasku sa Microsoft Navisiona? Pogledajte gde SAP Cloud ERP ide korak dalje: AI, procesi, finansije, upravljanje grupom i proizvodnja."
+      ],
+      "name:twitter:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "name:twitter:title": [
+        "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus"
+      ],
+      "name:viewport": [
+        "width=device-width, initial-scale=1",
+        "width=device-width, initial-scale=1"
+      ],
+      "property:og:description": [
+        "Razmišljate o prelasku sa Microsoft Navisiona? Pogledajte gde SAP Cloud ERP ide korak dalje: AI, procesi, finansije, upravljanje grupom i proizvodnja."
+      ],
+      "property:og:image": [
+        "https://www.infinus.co/og-default.png"
+      ],
+      "property:og:image:alt": [
+        "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus"
+      ],
+      "property:og:image:height": [
+        "630"
+      ],
+      "property:og:image:width": [
+        "1200"
+      ],
+      "property:og:locale": [
+        "sr_RS"
+      ],
+      "property:og:site_name": [
+        "Infinus"
+      ],
+      "property:og:title": [
+        "SAP ERP vs Microsoft Dynamics 365 Business Central | Infinus"
+      ],
+      "property:og:type": [
+        "website"
+      ],
+      "property:og:url": [
+        "https://www.infinus.co/sr/insights/sap-vs-microsoft"
+      ]
+    },
+    "links": {
+      "alternate": [
+        "en => https://www.infinus.co/insights/sap-vs-microsoft",
+        "sr-Latn => https://www.infinus.co/sr/insights/sap-vs-microsoft",
+        "x-default => https://www.infinus.co/insights/sap-vs-microsoft"
+      ],
+      "apple-touch-icon": [
+        "/apple-touch-icon.png"
+      ],
+      "canonical": [
+        "https://www.infinus.co/sr/insights/sap-vs-microsoft"
       ],
       "icon": [
         "/favicon.ico"

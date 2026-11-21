@@ -72,6 +72,8 @@ import { growth as enGrowth } from './en/growth'
 import { growth as srGrowth } from './sr/growth'
 import { mythBusters as enMythBusters } from './en/mythbusters'
 import { mythBusters as srMythBusters } from './sr/mythbusters'
+import { sapVsMicrosoft as enSapVsMicrosoft } from './en/sap-vs-microsoft'
+import { sapVsMicrosoft as srSapVsMicrosoft } from './sr/sap-vs-microsoft'
 
 /**
  * Chrome strings that are not specific to any one page.
@@ -1260,6 +1262,71 @@ export function enMythBustersLayout(content: MythBustersDictionary): EnMythBuste
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+ * SAP VS MICROSOFT — /insights/sap-vs-microsoft
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * One run of inline text, as the client's document styles it.
+ *
+ * The source documents mix bold phrases and hyperlinks into running sentences, and rule 5
+ * above forbids markup inside a string. So a paragraph is a list of runs rather than one
+ * string: the copy stays plain text, and the component decides how a `strong` or a `link`
+ * looks. Concatenating every `text` in order reproduces the paragraph exactly, which is what
+ * test/sap-vs-microsoft-page.test.tsx checks against.
+ *
+ * `break` is the document's manual line break inside a paragraph.
+ */
+export type InlineRun =
+  | { readonly kind: 'text'; readonly text: string }
+  | { readonly kind: 'strong'; readonly text: string }
+  | { readonly kind: 'link'; readonly text: string; readonly href: string }
+  | { readonly kind: 'break' }
+
+export type RichText = readonly InlineRun[]
+
+export interface SapVsMicrosoftGroup {
+  /** "AI", "Processes", "Finance and group operations", … */
+  readonly heading: string
+  /** One bulleted capability per entry: a bold term, a hyphen, its description. */
+  readonly items: readonly RichText[]
+}
+
+/**
+ * The SAP vs Microsoft Insights article.
+ *
+ * Both locales were written by the client as separate documents with the SAME structure, so
+ * unlike `mythBusters` this namespace is one shape for both and stays under the key-parity
+ * test.
+ */
+export interface SapVsMicrosoftDictionary {
+  readonly metadata: {
+    readonly title: string
+    readonly description: string
+  }
+  /** Structured data only; never rendered. */
+  readonly schema: {
+    readonly breadcrumbHome: string
+    readonly breadcrumbPage: string
+  }
+  /** The page's h1. */
+  readonly title: string
+  readonly intro: {
+    readonly heading: string
+    readonly paragraphs: readonly RichText[]
+  }
+  readonly comparison: {
+    readonly heading: string
+    readonly groups: readonly SapVsMicrosoftGroup[]
+  }
+  readonly closing: {
+    readonly heading: string
+    readonly body: RichText
+    /** The document's final bold line, rendered as the button that scrolls to the form. */
+    readonly cta: string
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
  * CONSENT UI — the cookie banner and the settings dialog
  * ─────────────────────────────────────────────────────────────────────────── */
 
@@ -1541,6 +1608,7 @@ export interface Dictionary {
   readonly consent: ConsentDictionary
   readonly growth: GrowthDictionary
   readonly mythBusters: MythBustersDictionary
+  readonly sapVsMicrosoft: SapVsMicrosoftDictionary
 }
 
 /**
@@ -1564,6 +1632,7 @@ export const dictionaries = {
     consent: enConsent,
     growth: enGrowth,
     mythBusters: enMythBusters,
+    sapVsMicrosoft: enSapVsMicrosoft,
   },
   sr: {
     common: srCommon,
@@ -1581,6 +1650,7 @@ export const dictionaries = {
     consent: srConsent,
     growth: srGrowth,
     mythBusters: srMythBusters,
+    sapVsMicrosoft: srSapVsMicrosoft,
   },
 } as const satisfies Record<Locale, Dictionary>
 
@@ -1611,6 +1681,7 @@ export const DICTIONARY_NAMESPACES = [
   'consent',
   'growth',
   'mythBusters',
+  'sapVsMicrosoft',
 ] as const
 
 export type DictionaryNamespace = (typeof DICTIONARY_NAMESPACES)[number]

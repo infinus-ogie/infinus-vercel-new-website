@@ -51,6 +51,8 @@ export const COMPLETE_PAIRS: readonly LocalePairFixture[] = [
   // SAP MythBusting e-book landing page.
   { en: '/careers', sr: '/sr/careers' },
   { en: '/insights/sap-mythbusters', sr: '/sr/insights/sap-mythbusters' },
+  // The SAP vs Microsoft Insights article.
+  { en: '/insights/sap-vs-microsoft', sr: '/sr/insights/sap-vs-microsoft' },
 ]
 
 /**

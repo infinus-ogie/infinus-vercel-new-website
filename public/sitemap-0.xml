@@ -15,6 +15,7 @@
 <url><loc>https://www.infinus.co/contact</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 <url><loc>https://www.infinus.co/sr/careers</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://www.infinus.co/insights/sap-mythbusters</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.infinus.co/insights/sap-vs-microsoft</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://www.infinus.co/sap-packaged-solutions/sap-starter-package</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://www.infinus.co/sr/case-study/manufacturing1</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://www.infinus.co/grow</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
@@ -33,6 +34,7 @@
 <url><loc>https://www.infinus.co/sr/sap-packaged-solutions/sap-starter-package</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://www.infinus.co/grow/cfo</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 <url><loc>https://www.infinus.co/sr/insights/sap-mythbusters</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.infinus.co/sr/insights/sap-vs-microsoft</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://www.infinus.co/sr/projectpulse</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://www.infinus.co/sr</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 <url><loc>https://www.infinus.co/sr/professional-services</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>

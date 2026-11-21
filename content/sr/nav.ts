@@ -85,6 +85,8 @@ export const nav: NavDictionary = {
       { kind: 'link', label: 'SAP za Professional Services', href: '/sr/professional-services' },
       // A campaign name, like ProjectPulse and GROW with SAP: kept untranslated.
       { kind: 'link', label: 'SAP MythBusting', href: '/sr/insights/sap-mythbusters' },
+      // The client's own menu label, identical in both documents.
+      { kind: 'link', label: 'SAP vs Microsoft', href: '/sr/insights/sap-vs-microsoft' },
     ],
   },
 

@@ -147,13 +147,14 @@ describe('A. the legal pair is navigable but not indexable', () => {
     expect(validateRoutePairs()).toEqual([])
   })
 
-  test('indexable pairs are 18 and navigable pairs 19, and the legal one is the difference', () => {
+  test('indexable pairs are 19 and navigable pairs 20, and the legal one is the difference', () => {
     // The distinction the owner asked to keep separate in tests as well as in the model.
-    // H4 added four indexable pairs; the legal pair is still the only navigable-not-indexable
-    // one, which is the invariant this test actually protects.
-    expect(COMPLETE_PAIRS.length).toBe(18)
+    // H4 added four indexable pairs and the SAP vs Microsoft article one more; the legal pair
+    // is still the only navigable-not-indexable one, which is the invariant this test
+    // actually protects.
+    expect(COMPLETE_PAIRS.length).toBe(19)
     expect(LOCALE_LINKED_PAIRS.length).toBe(1)
-    expect(NAVIGABLE_PAIRS.length).toBe(19)
+    expect(NAVIGABLE_PAIRS.length).toBe(20)
     // Every indexable pair is navigable; not every navigable pair is indexable.
     for (const p of COMPLETE_PAIRS) expect(isTranslatablePath(p.en)).toBe(true)
     for (const p of LOCALE_LINKED_PAIRS) expect(isTranslatablePath(p.en)).toBe(false)

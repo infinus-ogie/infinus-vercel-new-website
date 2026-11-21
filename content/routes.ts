@@ -288,6 +288,15 @@ export const ROUTE_PAIRS: readonly RoutePair[] = [
     en: live('/insights/sap-mythbusters'),
     sr: live('/sr/insights/sap-mythbusters'),
   },
+  {
+    // The SAP vs Microsoft article. Both paths are the ones the client's two source
+    // documents name, and they follow the MythBusting pair: untranslated slug, /sr prefix.
+    // Both halves went live together, for the same reason.
+    id: 'insights-sap-vs-microsoft',
+    pairing: 'translatable',
+    en: live('/insights/sap-vs-microsoft'),
+    sr: live('/sr/insights/sap-vs-microsoft'),
+  },
 
   // ── A real locale link that is deliberately not indexable ────────────────────
   {

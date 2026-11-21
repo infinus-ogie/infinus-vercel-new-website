@@ -131,6 +131,9 @@ export const ROUTES: readonly RouteExpectation[] = [
   // The SAP MythBusting e-book landing page, in the previously unused /insights space.
   indexable('/insights/sap-mythbusters'),
   serbianPage('/sr/insights/sap-mythbusters'),
+  // The SAP vs Microsoft Insights article, both halves at once.
+  indexable('/insights/sap-vs-microsoft'),
+  serbianPage('/sr/insights/sap-vs-microsoft'),
   {
     // Phase G: the Serbian half of the site's first real locale pair.
     path: '/sr/contact',
@@ -444,8 +447,11 @@ export const EXPECTED_COUNTS = {
    * English counterparts at NEW paths, +4 -> 32. Every public page in either language now has
    * a counterpart.
    */
-  /** +4 in the final client-feedback phase: the Careers and MythBusting pairs. */
-  indexable: 36,
+  /**
+   * +4 in the final client-feedback phase: the Careers and MythBusting pairs. +2 for the
+   * SAP vs Microsoft pair.
+   */
+  indexable: 38,
   /** /privacy and /sr/politika-privatnosti — the Privacy Policy, one page per locale */
   noindex: 2,
   /** /cfo — page still built behind its redirect */
@@ -465,19 +471,19 @@ export const EXPECTED_COUNTS = {
    * pages -> 34; splitting the Privacy Policy by locale swaps /politika-privatnosti for
    * /privacy and adds /sr/politika-privatnosti -> 35; H4 adds the four English GROW /
    * Professional Services pages -> 39; the final client-feedback phase adds the Careers
-   * pair -> 41 and the MythBusting pair -> 43.
+   * pair -> 41 and the MythBusting pair -> 43; the SAP vs Microsoft pair -> 45.
    */
-  manifestPages: 43,
+  manifestPages: 45,
   /** route handlers in app-path-routes-manifest.json */
   manifestHandlers: 8,
-  /** total manifest entries: 43 pages + 8 handlers + 1 _not-found */
-  manifestTotal: 52,
+  /** total manifest entries: 45 pages + 8 handlers + 1 _not-found */
+  manifestTotal: 54,
   /**
-   * Rendered .html files: 43 built pages + _not-found. /politika-privatnosti is in the
+   * Rendered .html files: 45 built pages + _not-found. /politika-privatnosti is in the
    * fixture as a redirect source but produces no HTML, so it is NOT counted here.
    */
-  renderedHtml: 44,
-  sitemapUrls: 36,
-  /** the 38 public pages whose <head> is snapshotted (36 indexable + 2 legal pages) */
-  snapshotPages: 38,
+  renderedHtml: 46,
+  sitemapUrls: 38,
+  /** the 40 public pages whose <head> is snapshotted (38 indexable + 2 legal pages) */
+  snapshotPages: 40,
 } as const
