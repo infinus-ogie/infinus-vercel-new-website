@@ -22,17 +22,25 @@ const plain = (runs: RichText) => runs.map((run) => ('text' in run ? run.text : 
 const squash = (text: string | null | undefined) => (text ?? '').replace(/\s+/g, ' ').trim()
 
 describe('the two approved edits, verbatim', () => {
-  test('English: the SAP Business One sentence carries its availability clause', () => {
-    const intro = plain(getDictionary('en').sapVsMicrosoft.intro.paragraphs[0])
-    expect(intro).toContain(
-      'Before making a final decision, it is also worth looking at SAP Business One, SAP’s ERP solution for the same market segment, which is available in the cloud and on-premises.'
+  // Dejan's review: the SAP Business One sentence opens its own paragraph, and the partner
+  // link reads "B-ONE Solutions" in both locales.
+  test('English: the SAP Business One sentence opens its own paragraph, with its availability clause', () => {
+    const [first, second] = getDictionary('en').sapVsMicrosoft.intro.paragraphs.map(plain)
+    expect(first).toBe(
+      'If you already use Navision, Microsoft Dynamics 365 Business Central is a natural option to consider. It is Microsoft’s ERP solution for small and midsize businesses.'
+    )
+    expect(second).toBe(
+      'Before making a final decision, it is also worth looking at SAP Business One, SAP’s ERP solution for the same market segment, which is available in the cloud and on-premises. SAP Business One · B-ONE Solutions'
     )
   })
 
-  test('Serbian: the SAP Business One sentence carries its availability clause', () => {
-    const intro = plain(getDictionary('sr').sapVsMicrosoft.intro.paragraphs[0])
-    expect(intro).toContain(
-      'Pre nego što donesete konačnu odluku, vredi pogledati i SAP Business One, SAP-ovo rešenje za isti tržišni segment, koje je dostupno u cloud-u i on-premise.'
+  test('Serbian: the SAP Business One sentence opens its own paragraph, with its availability clause', () => {
+    const [first, second] = getDictionary('sr').sapVsMicrosoft.intro.paragraphs.map(plain)
+    expect(first).toBe(
+      'Ako već koristite Navision, logično je da razmotrite Microsoft Dynamics 365 Business Central, Microsoftovo ERP rešenje za mala i srednja preduzeća.'
+    )
+    expect(second).toBe(
+      'Pre nego što donesete konačnu odluku, vredi pogledati i SAP Business One, SAP-ovo rešenje za isti tržišni segment, koje je dostupno u cloud-u i on-premise. SAP Business One · B-ONE Solutions'
     )
   })
 

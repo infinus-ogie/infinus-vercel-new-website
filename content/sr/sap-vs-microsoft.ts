@@ -7,11 +7,17 @@
  * Public copy starts at the document's full title. The "Za Ogija" note above it, with
  * the menu, URL and button lines, is implementation guidance and is not carried across.
  *
- * ── The only two departures from the document, both owner-approved ─────────────
- *   1. The SAP Business One sentence in the first paragraph gained its availability
- *      clause ("koje je dostupno u cloud-u i on-premise").
+ * ── Departures from the document, all owner-approved ────────────────────────────
+ * At launch:
+ *   1. The SAP Business One sentence gained its availability clause ("koje je
+ *      dostupno u cloud-u i on-premise").
  *   2. Every em dash became a spaced hyphen, per the copy rule in CLAUDE.md.
- * Bold runs, link texts and link destinations are exactly the document's.
+ * After Dejan's review of the published page:
+ *   3. That sentence ("Pre nego što donesete konačnu odluku, …") opens its own paragraph
+ *      instead of continuing the first one.
+ *   4. The partner link reads "B-ONE Solutions" instead of "B-ONE Solutions u Srbiji".
+ *      Its destination is unchanged.
+ * Otherwise bold runs, link texts and link destinations are exactly the document's.
  *
  * ── Not from the document ───────────────────────────────────────────────────────
  * `metadata.description` is a DRAFT assembled from the document's own headings: the
@@ -41,12 +47,15 @@ export const sapVsMicrosoft: SapVsMicrosoftDictionary = {
       [
         { kind: 'text', text: 'Ako već koristite Navision, logično je da razmotrite ' },
         { kind: 'strong', text: 'Microsoft Dynamics 365 Business Central' },
-        { kind: 'text', text: ', Microsoftovo ERP rešenje za mala i srednja preduzeća. Pre nego što donesete konačnu odluku, vredi pogledati i ' },
+        { kind: 'text', text: ', Microsoftovo ERP rešenje za mala i srednja preduzeća.' },
+      ],
+      [
+        { kind: 'text', text: 'Pre nego što donesete konačnu odluku, vredi pogledati i ' },
         { kind: 'strong', text: 'SAP Business One' },
         { kind: 'text', text: ', SAP-ovo rešenje za isti tržišni segment, koje je dostupno u cloud-u i on-premise. ' },
         { kind: 'link', text: 'SAP Business One', href: 'https://www.sap.com/products/erp/business-one.html' },
         { kind: 'text', text: ' · ' },
-        { kind: 'link', text: 'B-ONE Solutions u Srbiji', href: 'https://b-one.rs/' },
+        { kind: 'link', text: 'B-ONE Solutions', href: 'https://b-one.rs/' },
       ],
       [
         { kind: 'strong', text: 'Šta se u vašem poslovanju promenilo otkako ste uveli Navision?' },

@@ -7,11 +7,17 @@
  * Public copy starts at the document's full title. The "For Ogi" note above it, with
  * the menu, URL and button lines, is implementation guidance and is not carried across.
  *
- * ── The only two departures from the document, both owner-approved ─────────────
- *   1. The SAP Business One sentence in the first paragraph gained its availability
- *      clause ("which is available in the cloud and on-premises").
+ * ── Departures from the document, all owner-approved ────────────────────────────
+ * At launch:
+ *   1. The SAP Business One sentence gained its availability clause ("which is
+ *      available in the cloud and on-premises").
  *   2. Every em dash became a spaced hyphen, per the copy rule in CLAUDE.md.
- * Bold runs, link texts and link destinations are exactly the document's.
+ * After Dejan's review of the published page:
+ *   3. That sentence ("Before making a final decision, …") opens its own paragraph
+ *      instead of continuing the first one.
+ *   4. The partner link reads "B-ONE Solutions" instead of "B-ONE Solutions in Serbia".
+ *      Its destination is unchanged.
+ * Otherwise bold runs, link texts and link destinations are exactly the document's.
  *
  * ── Not from the document ───────────────────────────────────────────────────────
  * `metadata.description` is a DRAFT assembled from the document's own headings: the
@@ -41,12 +47,15 @@ export const sapVsMicrosoft: SapVsMicrosoftDictionary = {
       [
         { kind: 'text', text: 'If you already use Navision, ' },
         { kind: 'strong', text: 'Microsoft Dynamics 365 Business Central' },
-        { kind: 'text', text: ' is a natural option to consider. It is Microsoft’s ERP solution for small and midsize businesses. Before making a final decision, it is also worth looking at ' },
+        { kind: 'text', text: ' is a natural option to consider. It is Microsoft’s ERP solution for small and midsize businesses.' },
+      ],
+      [
+        { kind: 'text', text: 'Before making a final decision, it is also worth looking at ' },
         { kind: 'strong', text: 'SAP Business One' },
         { kind: 'text', text: ', SAP’s ERP solution for the same market segment, which is available in the cloud and on-premises. ' },
         { kind: 'link', text: 'SAP Business One', href: 'https://www.sap.com/products/erp/business-one.html' },
         { kind: 'text', text: ' · ' },
-        { kind: 'link', text: 'B-ONE Solutions in Serbia', href: 'https://b-one.rs/' },
+        { kind: 'link', text: 'B-ONE Solutions', href: 'https://b-one.rs/' },
       ],
       [
         { kind: 'strong', text: 'What has changed in your business since you introduced Navision?' },
