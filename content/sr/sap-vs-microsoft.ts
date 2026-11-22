@@ -17,6 +17,10 @@
  *      instead of continuing the first one.
  *   4. The partner link reads "B-ONE Solutions" instead of "B-ONE Solutions u Srbiji".
  *      Its destination is unchanged.
+ *   5. The closing CTA reads "Zakažite sastanak i zatražite budžetsku ponudu" instead of
+ *      the document's "Zakažite prezentaciju i zatražite budžetsku ponudu": Infinus does
+ *      not offer a demo to every prospect, so the button invites a meeting. Same button,
+ *      same #contact-form target.
  * Otherwise bold runs, link texts and link destinations are exactly the document's.
  *
  * ── Not from the document ───────────────────────────────────────────────────────
@@ -176,6 +180,6 @@ export const sapVsMicrosoft: SapVsMicrosoftDictionary = {
       { kind: 'break' },
       { kind: 'text', text: 'Infinus nudi konkurentnu cenu i efikasnu implementaciju za obim koji dogovorimo sa vama.' },
     ],
-    cta: 'Zakažite prezentaciju i zatražite budžetsku ponudu',
+    cta: 'Zakažite sastanak i zatražite budžetsku ponudu',
   },
 }

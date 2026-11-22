@@ -33,8 +33,10 @@ import type {
  * endpoint, same Zod rules, reCAPTCHA token and honeypot as the homepage. It is rendered
  * exactly as the homepage renders it, with this locale's `home.contactShort` copy.
  *
- * The document's final bold line ("Book a demo and request a budgetary quote") is the
- * button, and it jumps to that form. `tabIndex={-1}` with `scroll-mt-24` on the target is the
+ * The document's final bold line is the button, and it jumps to that form. Its label was
+ * changed after launch from a demo to a meeting ("Book a meeting and request a budgetary
+ * quote" / "Zakažite sastanak i zatražite budžetsku ponudu"), because a demo is not offered
+ * to every prospect. `tabIndex={-1}` with `scroll-mt-24` on the target is the
  * same pattern MythBustersPage uses: the jump lands focus at the top of the form and keeps
  * its heading clear of the fixed navbar.
  *
