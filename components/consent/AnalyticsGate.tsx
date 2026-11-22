@@ -14,7 +14,9 @@
  * that mechanically on every build.
  *
  * Trackers mounted here, classified by what they actually transmit rather than by name:
- *   - GAFast            sends GA4 `page_view` on mount and on route change.
+ *   - GAFast            sends the initial GA4 `page_view` when this gate opens. Later
+ *                       client-side navigations are counted by GA4 Enhanced Measurement
+ *                       (history events), not by this site; see GAFast.
  *   - AITrafficTracker  sends a GA4 `ai_traffic` event derived from document.referrer.
  *   - ViClickTracker    sends GA4 `vi_download_click` / `vi_zip_click` on download
  *                       clicks. It ALSO has a D&B branch, which self-guards on
@@ -38,9 +40,13 @@ export function AnalyticsGate() {
 
   return (
     <>
+      {/* The id is already normalised (lib/consent.ts). It is still encoded for the URL and
+          embedded with JSON.stringify rather than between hand-written quotes, so no value
+          can break out of either context: a raw newline there is what took GA4 down
+          site-wide. */}
       <Script
         id="ga4-loader"
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`}
         strategy="afterInteractive"
       />
       <Script id="ga4-init" strategy="afterInteractive">
@@ -48,12 +54,12 @@ export function AnalyticsGate() {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });
+          gtag('config', ${JSON.stringify(GA_MEASUREMENT_ID)}, { send_page_view: false });
         `}
       </Script>
-      {/* GAFast uses useSearchParams(); the Suspense boundary keeps that hook from
-          forcing the page to bail out of static rendering — the original cause of a
-          site-wide noindex on this site. */}
+      {/* GAFast no longer reads useSearchParams(), but the Suspense boundary stays: it
+          costs nothing, and it is what kept that hook from forcing static pages to bail out
+          of static rendering — the original cause of a site-wide noindex on this site. */}
       <React.Suspense fallback={null}>
         <GAFast />
       </React.Suspense>

@@ -13,6 +13,7 @@ import type { HomeDictionary } from "@/content/dictionary";
 import { useRecaptcha } from "@/components/security/useRecaptcha";
 import { HoneypotField, appendHoneypot } from "@/components/security/HoneypotField";
 import { RECAPTCHA_FIELD } from "@/lib/security/fields";
+import { trackEvent, pageParams, type PageContext } from "@/lib/analytics";
 
 /**
  * The short business enquiry form on the homepage.
@@ -56,7 +57,19 @@ function createSchema(messages: HomeDictionary["contactShort"]["validation"]) {
 type FormValues = z.infer<ReturnType<typeof createSchema>>;
 type FieldErrors = Partial<Record<keyof FormValues | "general", string>>;
 
-export function HomeContactSection({ copy }: { copy: HomeDictionary["contactShort"] }) {
+export function HomeContactSection({
+  copy,
+  leadTracking,
+}: {
+  copy: HomeDictionary["contactShort"];
+  /**
+   * When given, a GA4 `generate_lead` event with this page and language is sent once the
+   * server confirms the enquiry was delivered: never on a validation failure, a server
+   * refusal or a network error, never without analytics consent, and never with anything
+   * the visitor typed. Omitted on the homepage, which sends no lead event.
+   */
+  leadTracking?: PageContext;
+}) {
   const schema = createSchema(copy.validation);
   const recaptcha = useRecaptcha();
 
@@ -121,6 +134,9 @@ export function HomeContactSection({ copy }: { copy: HomeDictionary["contactShor
 
       if (result.success) {
         setIsSubmitted(true);
+        if (leadTracking) {
+          trackEvent("generate_lead", pageParams(leadTracking));
+        }
       } else {
         // Rendered, unlike the Contact page's equivalent — see the dictionary note.
         setErrors({ general: copy.error });

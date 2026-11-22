@@ -32,6 +32,7 @@ export default function EnglishSapVsMicrosoftPage() {
       content={content}
       contactForm={dictionary.home.contactShort}
       jsonLd={buildSapVsMicrosoftJsonLd("en")}
+      locale="en"
     />
   )
 }

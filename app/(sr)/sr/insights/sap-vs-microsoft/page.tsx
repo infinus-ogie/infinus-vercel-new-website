@@ -40,6 +40,7 @@ export default function SerbianSapVsMicrosoftPage() {
       content={content}
       contactForm={dictionary.home.contactShort}
       jsonLd={buildSapVsMicrosoftJsonLd("sr")}
+      locale="sr"
     />
   )
 }

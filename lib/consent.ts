@@ -20,8 +20,28 @@ export const CONSENT_VERSION = 1 as const
 /** 12 months, expressed in seconds. */
 export const CONSENT_MAX_AGE_SECONDS = 365 * 24 * 60 * 60
 
-/** Google Analytics measurement id. Inlined at build time; falls back to the id previously hardcoded in app/layout.tsx. */
-export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-S0YZ6MZWK1'
+/** The Infinus GA4 property, previously hardcoded in app/layout.tsx. */
+export const DEFAULT_GA_MEASUREMENT_ID = 'G-S0YZ6MZWK1'
+
+/**
+ * Normalise a configured GA4 measurement id.
+ *
+ * The production value of NEXT_PUBLIC_GA_ID carried a trailing newline. Interpolated raw, it
+ * put a line break inside the init script's string literal, which is a syntax error: the
+ * script never ran, `gtag` was never defined and no page on the site sent a single hit. It
+ * also broke the `ga-disable-<id>` key that consent withdrawal relies on.
+ *
+ * So the value is trimmed, and anything that is still not a plain `G-…` id falls back to the
+ * property's own id rather than reaching a script. The format check is also what makes the
+ * value safe to embed in the inline script and the loader URL.
+ */
+export function normalizeGaMeasurementId(raw: string | null | undefined): string {
+  const value = (raw ?? '').trim()
+  return /^G-[A-Z0-9]+$/.test(value) ? value : DEFAULT_GA_MEASUREMENT_ID
+}
+
+/** Google Analytics measurement id. Inlined at build time, then normalised. */
+export const GA_MEASUREMENT_ID = normalizeGaMeasurementId(process.env.NEXT_PUBLIC_GA_ID)
 
 export type ConsentCategory = 'necessary' | 'analytics' | 'marketing'
 

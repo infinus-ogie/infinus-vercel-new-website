@@ -4,6 +4,9 @@ import { Section } from "@/components/ui/section"
 import { Button } from "@/components/ui/button"
 import { CampaignHeading } from "@/components/campaign/CampaignHero"
 import { HomeContactSection } from "@/components/home/HomeContactSection"
+import { TrackedLink } from "@/components/analytics/TrackedLink"
+import type { Locale } from "@/lib/i18n"
+import { pageParams, type PageContext } from "@/lib/analytics"
 import type {
   HomeDictionary,
   RichText,
@@ -40,7 +43,15 @@ import type {
  * same pattern MythBustersPage uses: the jump lands focus at the top of the form and keeps
  * its heading clear of the fixed navbar.
  *
- * A server component; only the form is a client component.
+ * ── Analytics ──────────────────────────────────────────────────────────────────
+ * Two GA4 events, both sent only with analytics consent and both carrying `page` and
+ * `page_language` so campaign reports can split EN from SR:
+ *   · `cta_click` { cta: "book_meeting", page, page_language } when the button is clicked, the
+ *     convention the GROW and Professional Services CTAs already use;
+ *   · `generate_lead` { page, page_language } when /api/contact confirms the form was sent.
+ * Neither carries anything the visitor typed.
+ *
+ * A server component; only the form and the tracked CTA link are client components.
  */
 export interface SapVsMicrosoftPageProps {
   content: SapVsMicrosoftDictionary
@@ -48,10 +59,15 @@ export interface SapVsMicrosoftPageProps {
   contactForm: HomeDictionary["contactShort"]
   /** Serialised JSON-LD for this locale, built by the route file. */
   jsonLd: string
+  /** The page's language, sent with its analytics events. */
+  locale: Locale
 }
 
 /** The CTA's target. Identical in both locales, like every other anchor on the site. */
 export const SAP_VS_MICROSOFT_FORM_ID = "contact-form"
+
+/** The `page` value this article reports to GA4, in both locales. */
+export const SAP_VS_MICROSOFT_ANALYTICS_PAGE = "sap-vs-microsoft"
 
 /**
  * Render one paragraph or bullet from the dictionary's inline runs.
@@ -92,8 +108,9 @@ function Rich({ runs }: { runs: RichText }) {
   )
 }
 
-export function SapVsMicrosoftPage({ content, contactForm, jsonLd }: SapVsMicrosoftPageProps) {
+export function SapVsMicrosoftPage({ content, contactForm, jsonLd, locale }: SapVsMicrosoftPageProps) {
   const { intro, comparison, closing } = content
+  const analytics: PageContext = { page: SAP_VS_MICROSOFT_ANALYTICS_PAGE, language: locale }
 
   return (
     <>
@@ -216,7 +233,13 @@ export function SapVsMicrosoftPage({ content, contactForm, jsonLd }: SapVsMicros
                 size="lg"
                 className="h-auto min-h-12 max-w-full whitespace-normal py-3 text-center shadow-none focus-visible:ring-white focus-visible:ring-offset-brand-navy"
               >
-                <a href={`#${SAP_VS_MICROSOFT_FORM_ID}`}>{closing.cta}</a>
+                <TrackedLink
+                  href={`#${SAP_VS_MICROSOFT_FORM_ID}`}
+                  event="cta_click"
+                  params={{ cta: "book_meeting", ...pageParams(analytics) }}
+                >
+                  {closing.cta}
+                </TrackedLink>
               </Button>
             </div>
           </div>
@@ -230,7 +253,7 @@ export function SapVsMicrosoftPage({ content, contactForm, jsonLd }: SapVsMicros
           tabIndex={-1}
           className="scroll-mt-24 focus:outline-none"
         >
-          <HomeContactSection copy={contactForm} />
+          <HomeContactSection copy={contactForm} leadTracking={analytics} />
         </div>
       </Section>
     </>
