@@ -62,5 +62,5 @@ const pageConfig = createSimplePageConfig(PATH, content.metadata.title, content.
 })
 
 export default function SerbianContactPage() {
-  return <ContactPage content={content} jsonLd={pageConfig} />
+  return <ContactPage content={content} jsonLd={pageConfig} locale="sr" />
 }

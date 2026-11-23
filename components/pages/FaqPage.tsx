@@ -5,6 +5,7 @@ import { FAQItem } from "@/components/content/faq-item"
 import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
 import type { PageConfig } from "@/lib/page-config"
 import type { FaqDictionary } from "@/content/dictionary"
+import { CtaLink } from "@/components/analytics/CtaLink"
 
 /**
  * The FAQ page body, shared by `/faq` and `/sr/faq`.
@@ -74,18 +75,21 @@ export function FaqPage({ content, jsonLd }: FaqPageProps) {
               {content.cta.body}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <CtaLink
+                next
+                cta="contact_us"
                 href={content.cta.contactHref}
                 className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors"
               >
                 {content.cta.contactLabel}
-              </a>
-              <a
+              </CtaLink>
+              <CtaLink
+                cta="email_us"
                 href={content.cta.emailHref}
                 className="inline-flex items-center justify-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary bg-transparent hover:bg-primary/10 transition-colors"
               >
                 {content.cta.emailLabel}
-              </a>
+              </CtaLink>
             </div>
           </div>
         </Container>

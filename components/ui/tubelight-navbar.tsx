@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { isContactPath, trackCtaClick } from "@/lib/analytics"
 import { ChevronDown, Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { navbarSurfaceFor, navbarTextColorFor } from "@/lib/navbar-surface"
@@ -338,6 +339,7 @@ export function NavBar({ items, className }: NavBarProps) {
                 <Link
                   href={item.url}
                   onClick={() => {
+                    if (isContactPath(item.url)) trackCtaClick("nav_contact", pathname)
                     setActiveTab(item.name)
                     setOpenSubmenu(null)
                     // If clicking on a hash link from a different page, ensure proper navigation

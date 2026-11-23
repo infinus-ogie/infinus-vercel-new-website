@@ -186,7 +186,7 @@ describe.each(['en', 'sr'] as const)('%s form: generate_lead', (language) => {
     expect(gtag).not.toHaveBeenCalled()
   })
 
-  test('the homepage passes no leadTracking, so it sends no lead event', async () => {
+  test('without leadTracking the form sends no lead event', async () => {
     setConsent(true)
     respond(async () => ({ success: true }))
     render(<HomeContactSection copy={copy} />)

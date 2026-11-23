@@ -5,6 +5,7 @@ import { Clock, MessageSquare, Users } from "lucide-react"
 import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
 import type { PageConfig } from "@/lib/page-config"
 import type { ContactDictionary } from "@/content/dictionary"
+import type { Locale } from "@/lib/i18n"
 
 /**
  * The Contact page body, shared by /contact and /sr/contact.
@@ -31,9 +32,11 @@ export interface ContactPageProps {
   content: ContactDictionary
   /** Locale-specific JSON-LD input, built by the route file. */
   jsonLd: PageConfig
+  /** The route's locale. Carried by the form's generate_lead event as page_language. */
+  locale: Locale
 }
 
-export function ContactPage({ content, jsonLd }: ContactPageProps) {
+export function ContactPage({ content, jsonLd, locale }: ContactPageProps) {
   return (
     <>
       {/* Auto-generated JSON-LD - updates automatically when the page config changes */}
@@ -41,7 +44,7 @@ export function ContactPage({ content, jsonLd }: ContactPageProps) {
 
 
       {/* Contact hero, details and form */}
-      <Contact2 content={content} />
+      <Contact2 content={content} leadTracking={{ page: "contact", language: locale }} />
 
       {/* CTA Section */}
       <Section>

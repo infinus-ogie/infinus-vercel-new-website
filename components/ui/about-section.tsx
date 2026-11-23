@@ -5,11 +5,11 @@
 
 // If you use lucide-react + shadcn/ui:
 import Image from "next/image";
-import Link from "next/link";
 import { CheckCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getDictionary } from "@/content/dictionary";
 import type { HomeDictionary } from "@/content/dictionary";
+import { CtaLink } from "@/components/analytics/CtaLink";
 
 /**
  * Phase H1: the inline `defaultCopy` moved to content/en/home.ts VERBATIM, and the type is
@@ -66,9 +66,9 @@ export default function AboutSection({
 
             <div className="mt-8">
               <Button asChild className="btn-primary h-11 px-5 rounded-xl inline-flex items-center gap-2">
-                <Link href={copy.ctaHref}>
+                <CtaLink next cta="about_contact" href={copy.ctaHref}>
                   {copy.ctaLabel} <ArrowRight className="h-4 w-4" />
-                </Link>
+                </CtaLink>
               </Button>
             </div>
           </div>

@@ -40,5 +40,5 @@ export const metadata = {
 const jsonLd = buildHomeJsonLd("en")
 
 export default function EnglishHomePage() {
-  return <HomePage content={content} jsonLd={jsonLd} anchorBase={PATH} />
+  return <HomePage content={content} jsonLd={jsonLd} anchorBase={PATH} locale="en" />
 }

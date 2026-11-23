@@ -13,6 +13,7 @@ import type { Locale } from "@/lib/i18n";
 import { useRecaptcha } from "@/components/security/useRecaptcha";
 import { HoneypotField, appendHoneypot } from "@/components/security/HoneypotField";
 import { RECAPTCHA_FIELD } from "@/lib/security/fields";
+import { CtaLink } from "@/components/analytics/CtaLink";
 
 /**
  * The e-book download form.
@@ -338,7 +339,7 @@ export function EbookForm({
           <h3 className="text-lg font-semibold text-slate-900">{s.nextHeading}</h3>
           <p className="mt-2 text-sm text-slate-600">{s.nextBody}</p>
           <Button asChild className="mt-4">
-            <a href={s.contactHref}>{s.expertCta}</a>
+            <CtaLink next cta="talk_to_specialist" href={s.contactHref}>{s.expertCta}</CtaLink>
           </Button>
         </div>
 

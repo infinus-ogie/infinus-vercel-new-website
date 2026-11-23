@@ -4,12 +4,12 @@ import { motion, Variants } from "framer-motion";
 import { Award, Shield, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { HeroPartnerBadge } from "./HeroPartnerBadge";
 import { TrustStrip } from "./TrustStrip";
 import { getDictionary } from "@/content/dictionary";
 import type { HomeDictionary } from "@/content/dictionary";
+import { CtaLink } from "@/components/analytics/CtaLink";
 
 
 function ElegantShape({
@@ -232,7 +232,7 @@ function HeroGeometric({
                             size="lg"
                             className="bg-white px-9 text-[15px] font-semibold text-[#00144a] shadow-none ring-1 ring-[#00144a]/15 transition-colors hover:bg-slate-100 hover:text-[#00144a] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00144a] md:px-10"
                         >
-                            <Link href={hero.ctaHref}>{hero.ctaLabel}</Link>
+                            <CtaLink next cta="contact_us" href={hero.ctaHref}>{hero.ctaLabel}</CtaLink>
                         </Button>
                     </motion.div>
 

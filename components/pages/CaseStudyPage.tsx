@@ -1,11 +1,11 @@
 import { Section } from "@/components/ui/section"
 import { AutoJsonLd } from "@/components/seo/AutoJsonLd"
 import { CheckCircle2, MessageCircle } from "lucide-react"
-import Link from "next/link"
 import Image from "next/image"
 import { splitTechnologies } from "@/lib/case-study-technologies"
 import type { PageConfig } from "@/lib/page-config"
 import type { CaseStudiesDictionary, CaseStudyEntry } from "@/content/dictionary"
+import { CtaLink } from "@/components/analytics/CtaLink"
 
 /**
  * The case-study page body, shared by all TEN case-study routes (five English, five
@@ -154,13 +154,15 @@ export function CaseStudyPage({ entry, labels, contactHref, heroImage, jsonLd }:
                 {labels.ctaHeading}
               </h2>
               <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-                <Link
+                <CtaLink
+                  next
+                  cta="contact_us"
                   href={contactHref}
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 px-7 py-3.5 text-base font-semibold text-slate-900 shadow-lg hover:shadow-xl transition-all"
                 >
                   <MessageCircle className="h-5 w-5" strokeWidth={1.5} />
                   {labels.ctaButton}
-                </Link>
+                </CtaLink>
               </div>
               <p className="inline-flex items-center gap-2 text-sm text-white/65">
                 <CheckCircle2 className="h-4 w-4" strokeWidth={1.5} />

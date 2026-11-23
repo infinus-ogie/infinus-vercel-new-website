@@ -11,6 +11,7 @@ import type { ContactDictionary } from "@/content/dictionary";
 import { useRecaptcha } from "@/components/security/useRecaptcha";
 import { HoneypotField, appendHoneypot } from "@/components/security/HoneypotField";
 import { RECAPTCHA_FIELD } from "@/lib/security/fields";
+import { trackEvent, pageParams, type PageContext } from "@/lib/analytics";
 
 /**
  * The live contact form.
@@ -66,9 +67,15 @@ interface FormErrors {
 interface Contact2Props {
   /** All user-facing copy for this locale. See content/{en,sr}/contact.ts. */
   content: ContactDictionary;
+  /**
+   * When given, one GA4 `generate_lead` with this page and language is sent for each
+   * enquiry the server confirms: never on a validation failure, a refusal or a network
+   * error, never without analytics consent, and never with anything the visitor typed.
+   */
+  leadTracking?: PageContext;
 }
 
-export const Contact2 = ({ content }: Contact2Props) => {
+export const Contact2 = ({ content, leadTracking }: Contact2Props) => {
   const { details, form, success, privacy } = content
   const contactFormSchema = createContactFormSchema(content.validation)
   const recaptcha = useRecaptcha()
@@ -164,8 +171,10 @@ export const Contact2 = ({ content }: Contact2Props) => {
       const result = await response.json()
 
       if (result.success) {
-        console.log("Form submitted successfully:", validatedData)
         setIsSubmitted(true)
+        if (leadTracking) {
+          trackEvent("generate_lead", pageParams(leadTracking))
+        }
         setFormData({
           name: "",
           email: "",

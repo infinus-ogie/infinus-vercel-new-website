@@ -7,6 +7,7 @@ import { LocaleSwitcherNav } from "@/components/i18n/LocaleSwitcherNav"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
+import { isContactPath, trackCtaClick } from "@/lib/analytics"
 import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -315,7 +316,10 @@ export function NavBarDemo() {
                         ) : (
                           <Link
                             href={item.url}
-                            onClick={() => closeMobileMenu()}
+                            onClick={() => {
+                              if (isContactPath(item.url)) trackCtaClick("nav_contact", pathname)
+                              closeMobileMenu()
+                            }}
                             className={cn(
                               "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
                               textColor === 'text-white/90' 

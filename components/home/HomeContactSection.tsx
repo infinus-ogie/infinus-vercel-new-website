@@ -66,7 +66,7 @@ export function HomeContactSection({
    * When given, a GA4 `generate_lead` event with this page and language is sent once the
    * server confirms the enquiry was delivered: never on a validation failure, a server
    * refusal or a network error, never without analytics consent, and never with anything
-   * the visitor typed. Omitted on the homepage, which sends no lead event.
+   * the visitor typed. The homepage passes page "home"; SAP vs Microsoft passes its own page.
    */
   leadTracking?: PageContext;
 }) {

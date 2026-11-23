@@ -31,6 +31,7 @@ import {
   BadgeCheck,
   BarChart3,
 } from "lucide-react";
+import { CtaLink } from "@/components/analytics/CtaLink";
 
 /**
  * The ProjectPulse page body, shared by /projectpulse and /sr/projectpulse.
@@ -390,12 +391,14 @@ export function ProjectPulsePage({ content }: ProjectPulsePageProps) {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
-              <a
+              <CtaLink
+                next
+                cta="book_discovery_call"
                 href={content.contactHref}
                 className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400/50 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 hover:from-yellow-500 hover:to-yellow-600 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 {content.hero.ctaDiscovery}
-              </a>
+              </CtaLink>
 
               <button
                 type="button"
@@ -753,13 +756,15 @@ export function ProjectPulsePage({ content }: ProjectPulsePageProps) {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-                <a
+                <CtaLink
+                  next
+                  cta="book_discovery_call"
                   href={content.contactHref}
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 px-7 py-3.5 text-base font-semibold text-slate-900 shadow-lg hover:shadow-xl transition-all"
                 >
                   <MessageCircle className="h-5 w-5" strokeWidth={1.5} />
                   {content.cta.primaryCta}
-                </a>
+                </CtaLink>
 
                 <a
                   href={content.brochureHref}

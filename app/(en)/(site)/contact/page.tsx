@@ -64,5 +64,5 @@ const pageConfig = createSimplePageConfig(
 )
 
 export default function EnglishContactPage() {
-  return <ContactPage content={content} jsonLd={pageConfig} />
+  return <ContactPage content={content} jsonLd={pageConfig} locale="en" />
 }

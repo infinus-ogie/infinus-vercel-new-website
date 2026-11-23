@@ -10,6 +10,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { getDictionary } from "@/content/dictionary";
 import type { HomeDictionary } from "@/content/dictionary";
+import { CtaLink } from "@/components/analytics/CtaLink";
 
 type Domain = {
   label: string;
@@ -123,13 +124,15 @@ export default function DomainExpertiseSection({
                   >
                     {copy.modal.close}
                   </button>
-                  <Link
+                  <CtaLink
+                    next
+                    cta="industry_contact"
                     href={copy.contactHref}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     onClick={closeModal}
                   >
                     {copy.modal.contact}
-                  </Link>
+                  </CtaLink>
                 </div>
               </div>
             </div>

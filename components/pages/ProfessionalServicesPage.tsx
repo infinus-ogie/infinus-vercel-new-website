@@ -23,6 +23,7 @@ import { FeatureTile } from "@/components/ui/FeatureTile";
 import { StatPills } from "@/components/ui/StatPills";
 import { IndustriesScroll } from "@/components/ui/IndustriesScroll";
 import type { GrowthDictionary, HomeDictionary } from "@/content/dictionary";
+import { CtaLink } from "@/components/analytics/CtaLink";
 
 /**
  * The Professional Services page, shared by /professional-services (English) and
@@ -263,16 +264,17 @@ export function ProfessionalServicesPage({ copy, shared, trust, jsonLd }: Profes
           <p className="text-lg text-slate-600 leading-relaxed">{shared.ctaBody}</p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a
+            <CtaLink
+              next
+              cta="send_inquiry"
               href={shared.contactHref}
-              onClick={() => window.gtag?.("event", "cta_click", { cta: "send_inquiry", page: "professional-services" })}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2F62D9] hover:bg-[#2857c7] active:translate-y-px
                          px-6 py-3 text-white text-base font-semibold shadow-sm focus-visible:outline-none
                          focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#2F62D9] min-h-[48px]"
             >
               <MessageCircle className="h-4 w-4 opacity-90" />
               {shared.ctaButton}
-            </a>
+            </CtaLink>
           </div>
 
           <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 text-sm text-slate-700">

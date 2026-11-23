@@ -7,6 +7,7 @@ import DomainExpertiseSection from "@/components/ui/domain-expertise-section"
 import AboutSection from "@/components/ui/about-section"
 import { HomeContactSection } from "@/components/home/HomeContactSection"
 import type { HomeDictionary } from "@/content/dictionary"
+import type { Locale } from "@/lib/i18n"
 
 /**
  * The homepage body, shared by `/` and `/sr`.
@@ -31,9 +32,11 @@ export interface HomePageProps {
   jsonLd: string
   /** This page's own path — "/" or "/sr". */
   anchorBase: string
+  /** The route's locale. Carried by the form's generate_lead event as page_language. */
+  locale: Locale
 }
 
-export function HomePage({ content, jsonLd, anchorBase }: HomePageProps) {
+export function HomePage({ content, jsonLd, anchorBase, locale }: HomePageProps) {
   return (
     <>
       {/* JSON-LD Script */}
@@ -78,7 +81,10 @@ export function HomePage({ content, jsonLd, anchorBase }: HomePageProps) {
             `join-team`, because an anchor that says "join-team" and shows a sales form is
             worse than no anchor at all. */}
         <Section id="contact-form" surface="surface-1" topFade data-section="contact-form">
-          <HomeContactSection copy={content.contactShort} />
+          <HomeContactSection
+            copy={content.contactShort}
+            leadTracking={{ page: "home", language: locale }}
+          />
         </Section>
 
     </>
